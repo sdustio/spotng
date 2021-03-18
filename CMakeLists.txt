@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
-project(sdrobot)
+project(sdrobot VERSION 1.0)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
+  set(CMAKE_C_STANDARD 11)
 endif()
 
 # Default to C++14
@@ -22,9 +22,10 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 add_executable(robot src/robot.cpp)
-ament_target_dependencies(robot rclcpp std_msgs)
+ament_target_dependencies(robot rclcpp std_msgs Eigen3)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
