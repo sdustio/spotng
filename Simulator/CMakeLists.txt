@@ -1,12 +1,12 @@
 FILE(GLOB_RECURSE headers *.hpp)
 FILE(GLOB_RECURSE sources *.cpp)
 
-add_executable(MoonSim ${headers} ${sources})
-target_link_libraries(MoonSim
-  MoonController
-  MoonRobot
+add_executable(Sim ${headers} ${sources})
+target_link_libraries(Sim
+  Controller
+  Robot
 )
 
 install(TARGETS
-  MoonSim
+  Sim
   DESTINATION lib/${PROJECT_NAME})
