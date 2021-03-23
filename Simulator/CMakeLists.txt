@@ -1,12 +1,12 @@
-FILE(GLOB_RECURSE headers *.hpp)
-FILE(GLOB_RECURSE sources *.cpp)
-
-add_executable(Sim ${headers} ${sources})
-target_link_libraries(Sim
+add_executable(sdrobot-sim
+  src/main.cpp
+)
+target_include_directories(sdrobot-sim PRIVATE include)
+target_link_libraries(sdrobot-sim PRIVATE
   Controller
   Robot
 )
 
 install(TARGETS
-  Sim
+  sdrobot-sim
   DESTINATION lib/${PROJECT_NAME})

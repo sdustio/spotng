@@ -1,7 +1,7 @@
-FILE(GLOB_RECURSE headers *.hpp)
-FILE(GLOB_RECURSE sources *.cpp)
-
-add_library(Robot SHARED ${headers} ${sources})
+add_library(Robot STATIC
+  src/Model.cpp
+)
+target_include_directories(Robot PUBLIC include)
 
 install(TARGETS
   Robot

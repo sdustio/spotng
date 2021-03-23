@@ -1,12 +1,13 @@
-FILE(GLOB_RECURSE headers *.hpp)
-FILE(GLOB_RECURSE sources *.cpp)
-
-add_executable(HW ${headers} ${sources})
-target_link_libraries(HW
+add_executable(sdrobot
+  src/main.cpp
+  src/Bridge.cpp
+)
+target_include_directories(sdrobot PRIVATE include)
+target_link_libraries(sdrobot PRIVATE
   Controller
   Robot
 )
 
 install(TARGETS
-  HW
+  sdrobot
   DESTINATION lib/${PROJECT_NAME})
