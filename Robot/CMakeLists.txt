@@ -1,5 +1,6 @@
 add_library(Robot STATIC
   src/Model.cpp
+  src/PeriodicTask.cpp
 )
 target_include_directories(Robot PUBLIC include)
 

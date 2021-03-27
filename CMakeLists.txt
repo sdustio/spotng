@@ -23,8 +23,7 @@ find_package(ament_cmake REQUIRED)
 
 add_subdirectory(Robot)
 add_subdirectory(Controller)
-add_subdirectory(Hardware)
-add_subdirectory(Simulator)
+add_subdirectory(Interface)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
