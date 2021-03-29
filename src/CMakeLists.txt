@@ -1,0 +1,20 @@
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
+
+set(LIB_SOURCES
+  Types.cpp
+)
+
+add_subdirectory(Task)
+add_subdirectory(Robot)
+add_subdirectory(Controller)
+
+add_library(RobotLib SHARED
+  ${LIB_SOURCES}
+)
+ament_target_dependencies(RobotLib rclcpp std_msgs Eigen3)
+
+install(TARGETS
+  RobotLib
+  DESTINATION lib/${PROJECT_NAME})

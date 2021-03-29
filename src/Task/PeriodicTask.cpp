@@ -5,11 +5,11 @@
  *  * 在单独线程中运行的周期函数的实现。周期性任务有一个任务管理器，用于度量它们运行所需的时间。
  *  */
 
-#include "PeriodicTask.hpp"
+#include "Task/PeriodicTask.h"
 
 namespace sd
 {
-	namespace utils
+	namespace task
 	{
 		/*!
 			 *  * Construct a new task within a TaskManager
@@ -18,7 +18,7 @@ namespace sd
 			 *  * @param period : how often to run 多久跑一次
 			 *  * @param name : name of task 任务名称
 			 *  */
-		PeriodicTask::PeriodicTask(PeriodicTaskManager *taskManager, std::chrono::nanoseconds period,
+		PeriodicTask::PeriodicTask(PeriodicTaskManager *taskManager, nanoseconds period,
 								   std::string name)
 			: _period(period), _name(name)
 		{
@@ -73,8 +73,8 @@ namespace sd
 		 *  */
 		void PeriodicTask::clearMax()
 		{
-			_maxPeriodTime = std::chrono::nanoseconds::zero();
-			_maxRuntime = std::chrono::nanoseconds::zero();
+			_maxPeriodTime = nanoseconds::zero();
+			_maxRuntime = nanoseconds::zero();
 		}
 
 		/*!
@@ -86,7 +86,12 @@ namespace sd
 			if (!_running)
 				return;
 			printf("|%-20s|%6.4f|%6.4f|%6.4f|%6.4f|%6.4f\n", _name.c_str(),
-				   _lastRuntime, _maxRuntime, _period, _lastPeriodTime, _maxPeriodTime);
+				   nsToSecF(_lastRuntime), nsToSecF(_maxRuntime),
+				   nsToSecF(_period), nsToSecF(_lastPeriodTime), nsToSecF(_maxPeriodTime));
+		}
+
+		double PeriodicTask::nsToSecF(nanoseconds d){
+			return d.count() / 1e9;
 		}
 
 		/*!
@@ -95,17 +100,17 @@ namespace sd
 		 *  */
 		void PeriodicTask::loopFunction()
 		{
-			printf("[PeriodicTask] Start %s (%d ns)\n", _name.c_str(), _period.count());
+			printf("[PeriodicTask] Start %s (%6.4f s)\n", _name.c_str(), nsToSecF(_period));
 
-			auto last_tp = std::chrono::steady_clock::now();
+			auto last_tp = steady_clock::now();
 
 			while (_running)
 			{
-				auto now = std::chrono::steady_clock::now();
+				auto now = steady_clock::now();
 				_lastPeriodTime = now - last_tp;
 				last_tp = now;
 				run();
-				auto now = std::chrono::steady_clock::now();
+				now = steady_clock::now();
 				_lastRuntime = now - last_tp;
 				last_tp = now;
 				_maxPeriodTime = std::max(_maxPeriodTime, _lastPeriodTime);
@@ -170,6 +175,6 @@ namespace sd
 			}
 		}
 
-	} // namespace utils
+	} // namespace task
 
 } // namespace sd
