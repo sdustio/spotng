@@ -1,0 +1,8 @@
+{
+    "cmake.configureOnOpen": true,
+    "window.title": "${rootName}${separator}${dirty}${activeEditorShort}${separator}${appName}",
+    "cmake.configureOnEdit": true,
+    "cmake.configureEnvironment": {
+        "sdapi_DIR": "${workspaceFolder}/../../install/sdapi/"
+    },
+}
