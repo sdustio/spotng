@@ -17,12 +17,11 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-include_directories(include interface)
+include_directories(include)
 add_subdirectory(src)
 
 # if(BUILD_TESTING)
