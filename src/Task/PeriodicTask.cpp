@@ -18,8 +18,8 @@ namespace sd
 			 *  * @param period : how often to run 多久跑一次
 			 *  * @param name : name of task 任务名称
 			 *  */
-		PeriodicTask::PeriodicTask(PeriodicTaskManager *taskManager, nanoseconds period,
-								   std::string name)
+		PeriodicTask::PeriodicTask(PeriodicTaskManager *taskManager, chrono::nanoseconds period,
+								   string name)
 			: _period(period), _name(name)
 		{
 			taskManager->addTask(this); //向任务管理器添加新任务
@@ -38,7 +38,7 @@ namespace sd
 			}
 			init();
 			_running = true;
-			_thread = std::thread(&PeriodicTask::loopFunction, this); //开一个线程运行执行周期运行程序
+			_thread = thread(&PeriodicTask::loopFunction, this); //开一个线程运行执行周期运行程序
 		}
 
 		/*!
@@ -54,7 +54,7 @@ namespace sd
 			}
 			_running = false;
 			printf("[PeriodicTask] Waiting for %s to stop...\n", _name.c_str());
-			_thread.join(); //调用该函数会阻塞当前线程。阻塞调用者(caller)所在的线程直至被join的std::thread对象标识的线程执行结束。
+			_thread.join(); //调用该函数会阻塞当前线程。阻塞调用者(caller)所在的线程直至被join的thread对象标识的线程执行结束。
 			printf("[PeriodicTask] Done!\n");
 			cleanup();
 		}
@@ -73,8 +73,8 @@ namespace sd
 		 *  */
 		void PeriodicTask::clearMax()
 		{
-			_maxPeriodTime = nanoseconds::zero();
-			_maxRuntime = nanoseconds::zero();
+			_maxPeriodTime = chrono::nanoseconds::zero();
+			_maxRuntime = chrono::nanoseconds::zero();
 		}
 
 		/*!
@@ -90,7 +90,7 @@ namespace sd
 				   nsToSecF(_period), nsToSecF(_lastPeriodTime), nsToSecF(_maxPeriodTime));
 		}
 
-		double PeriodicTask::nsToSecF(nanoseconds d){
+		double PeriodicTask::nsToSecF(chrono::nanoseconds d){
 			return d.count() / 1e9;
 		}
 
@@ -102,19 +102,19 @@ namespace sd
 		{
 			printf("[PeriodicTask] Start %s (%6.4f s)\n", _name.c_str(), nsToSecF(_period));
 
-			auto last_tp = steady_clock::now();
+			auto last_tp = chrono::steady_clock::now();
 
 			while (_running)
 			{
-				auto now = steady_clock::now();
+				auto now = chrono::steady_clock::now();
 				_lastPeriodTime = now - last_tp;
 				last_tp = now;
 				run();
-				now = steady_clock::now();
+				now = chrono::steady_clock::now();
 				_lastRuntime = now - last_tp;
 				last_tp = now;
-				_maxPeriodTime = std::max(_maxPeriodTime, _lastPeriodTime);
-				_maxRuntime = std::max(_maxRuntime, _lastRuntime);
+				_maxPeriodTime = max(_maxPeriodTime, _lastPeriodTime);
+				_maxRuntime = max(_maxRuntime, _lastRuntime);
 			}
 			printf("[PeriodicTask] %s has stopped!\n", _name.c_str());
 		}
