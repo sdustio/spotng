@@ -9,7 +9,7 @@
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
-  <depend>sdapi</depend>>
+  <depend>sdrobot_api</depend>>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

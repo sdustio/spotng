@@ -3,6 +3,7 @@
     "window.title": "${rootName}${separator}${dirty}${activeEditorShort}${separator}${appName}",
     "cmake.configureOnEdit": true,
     "cmake.configureEnvironment": {
-        "sdapi_DIR": "${workspaceFolder}/../../install/sdapi/"
+        "sdrobot_api_DIR": "${workspaceFolder}/../../install/sdrobot_api/"
     },
+    "editor.tabSize": 2
 }

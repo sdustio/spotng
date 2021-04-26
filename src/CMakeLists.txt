@@ -1,6 +1,6 @@
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(sdapi REQUIRED)
+find_package(sdrobot_api REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 set(LIB_SOURCES
@@ -14,7 +14,7 @@ add_subdirectory(Controller)
 add_library(RobotLib SHARED
   ${LIB_SOURCES}
 )
-ament_target_dependencies(RobotLib rclcpp std_msgs sdapi Eigen3)
+ament_target_dependencies(RobotLib rclcpp std_msgs sdrobot_api Eigen3)
 
 install(TARGETS
   RobotLib
