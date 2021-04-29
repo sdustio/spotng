@@ -9,7 +9,6 @@ set(LIB_SOURCES
 
 add_subdirectory(Task)
 add_subdirectory(Robot)
-add_subdirectory(Controller)
 
 add_library(RobotLib SHARED
   ${LIB_SOURCES}
