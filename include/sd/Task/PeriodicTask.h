@@ -5,12 +5,8 @@
 #include <vector>
 #include <chrono>
 
-using namespace std;
-
-namespace sd
+namespace sd::task
 {
-  namespace task
-  {
 
     class PeriodicTaskManager;
 
@@ -21,8 +17,8 @@ namespace sd
     class PeriodicTask
     {
     public:
-      PeriodicTask(PeriodicTaskManager *taskManager, chrono::nanoseconds period,
-                   string name); //构造时会将构造的任务添加到任务管理器 taskManager
+      PeriodicTask(PeriodicTaskManager *taskManager, std::chrono::nanoseconds period,
+                   std::string name); //构造时会将构造的任务添加到任务管理器 taskManager
       void start();                   //开始运行的任务 开一个线程运行执行周期运行程序
       void stop();                    //停止运行的任务
       void printStatus();             //打印运行状态
@@ -39,36 +35,36 @@ namespace sd
       /*!
    * Get the desired period for the task 获得任务所需的周期
    */
-      chrono::nanoseconds getPeriod() { return _period; }
+      std::chrono::nanoseconds getPeriod() { return _period; }
 
       /*!
    * Get how long the most recent run took 了解最近一次跑步花了多长时间
    */
-      chrono::nanoseconds getRuntime() { return _lastRuntime; }
+      std::chrono::nanoseconds getRuntime() { return _lastRuntime; }
 
       /*!
    * Get the maximum time in between runs 获取运行之间的最大时间
    */
-      chrono::nanoseconds getMaxPeriod() { return _maxPeriodTime; }
+      std::chrono::nanoseconds getMaxPeriod() { return _maxPeriodTime; }
 
       /*!
    * Get the maximum time it took for a run 获得运行所需的最大时间
    */
-      chrono::nanoseconds getMaxRuntime() { return _maxRuntime; }
+      std::chrono::nanoseconds getMaxRuntime() { return _maxRuntime; }
 
     private:
       void loopFunction(); //运行代码的地方 以一个固定周期运行
-      double nsToSecF(chrono::nanoseconds d);
+      double nsToSecF(std::chrono::nanoseconds d);
 
-      chrono::nanoseconds _period; //周期
-      chrono::nanoseconds _lastRuntime = chrono::nanoseconds::zero();
-      chrono::nanoseconds _lastPeriodTime = chrono::nanoseconds::zero();
-      chrono::nanoseconds _maxPeriodTime = chrono::nanoseconds::zero();
-      chrono::nanoseconds _maxRuntime = chrono::nanoseconds::zero();
+      std::chrono::nanoseconds _period; //周期
+      std::chrono::nanoseconds _lastRuntime = std::chrono::nanoseconds::zero();
+      std::chrono::nanoseconds _lastPeriodTime = std::chrono::nanoseconds::zero();
+      std::chrono::nanoseconds _maxPeriodTime = std::chrono::nanoseconds::zero();
+      std::chrono::nanoseconds _maxRuntime = std::chrono::nanoseconds::zero();
 
       volatile bool _running = false;
-      string _name;   //任务名
-      thread _thread; //任务线程
+      std::string _name;   //任务名
+      std::thread _thread; //任务线程
     };
 
     /*!
@@ -86,7 +82,7 @@ namespace sd
       void stopAll();
 
     private:
-      vector<PeriodicTask *> _tasks;
+      std::vector<PeriodicTask *> _tasks;
     };
 
     /*!
@@ -96,8 +92,8 @@ namespace sd
     class PeriodicCallFunction : public PeriodicTask
     {
     public:
-      PeriodicCallFunction(PeriodicTaskManager *taskManager, chrono::nanoseconds period,
-                           string name, void (*function)())
+      PeriodicCallFunction(PeriodicTaskManager *taskManager, std::chrono::nanoseconds period,
+                           std::string name, void (*function)())
           : PeriodicTask(taskManager, period, name), _function(function) {}
       void cleanup() {}
       void init() {}
@@ -133,5 +129,4 @@ namespace sd
       T *_obj;
     };
 
-  } // namespace task
-} // namespace sd
+} // namespace sd::task

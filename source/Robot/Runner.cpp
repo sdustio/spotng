@@ -4,9 +4,9 @@ namespace sd::robot
 {
   using std::placeholders::_1;
 
-  Runner::Runner(std::shared_ptr<interface::Interface> itf): Node(NODE_NAME, NODE_NS)
+  Runner::Runner(std::shared_ptr<interface::Interface> itf):
+    Node(NODE_NAME, NODE_NS), mInterface(std::move(itf))
   {
-    mInterface = std::move(itf);
     mDesiredStateCmd = std::make_shared<dynamics::DesiredStateCmd>();
 
     Init();
@@ -36,10 +36,4 @@ namespace sd::robot
       msg->pa, static_cast<sd::robot::dynamics::Mode>(msg->mode));
   }
 
-  int Run(std::shared_ptr<interface::Interface> itf, int argc, char * argv[]){
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Runner>(std::move(itf)));
-    rclcpp::shutdown();
-    return 0;
-  }
 } // namespace sd::robot

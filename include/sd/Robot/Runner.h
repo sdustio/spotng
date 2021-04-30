@@ -40,6 +40,4 @@ namespace sd::robot
     interface::IMUData mIMUData;
   };
 
-  int Run(std::shared_ptr<interface::Interface>, int argc, char * argv[]);
-
 } // namespace sd::robot
