@@ -21,8 +21,8 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-include_directories(include)
-add_subdirectory(src)
+include_directories(include source)
+add_subdirectory(source)
 
 # if(BUILD_TESTING)
 #   find_package(ament_lint_auto REQUIRED)

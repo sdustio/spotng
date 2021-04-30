@@ -58,19 +58,15 @@ namespace sd::robot::interface
     // todo is there status for the vectornav?
   };
 
-
-
   class Interface
   {
   public:
-    explicit Interface();
-
     interface::SPICmd *getSPICommand() { return &mSPICmd; }
     interface::SPIData *getSPIData() { return &mSPIData; }
     interface::IMUData *getIMUData() { return &mIMUData; }
-    virtual bool Init();   // return true if ok
-    virtual bool RunSPI(); // return true if ok
-    virtual bool RunIMU(); // return true if ok
+    virtual bool Init() = 0;   // return true if ok
+    virtual bool RunSPI() = 0; // return true if ok
+    virtual bool RunIMU() = 0; // return true if ok
   private:
     interface::SPICmd mSPICmd;
     interface::SPIData mSPIData;

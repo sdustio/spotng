@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sdrobot_api/msg/driver_cmd.hpp"
@@ -20,15 +21,15 @@ namespace sd::robot
   class Runner : public rclcpp::Node
   {
   public:
-    explicit Runner(interface::Interface*);
-    int Init();
-    void Run();
+    explicit Runner(std::shared_ptr<interface::Interface>);
+    bool Init();
+    bool Run();
 
   private:
     void handleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr) const;
 
-    interface::Interface* mInterface;
-    dynamics::DesiredStateCmd* mDesiredStateCmd;
+    std::shared_ptr<interface::Interface> mInterface;
+    std::shared_ptr<dynamics::DesiredStateCmd> mDesiredStateCmd;
 
     rclcpp::Subscription<sdrobot_api::msg::DriverCmd>::SharedPtr mDriverCmdSub;
     rclcpp::Publisher<sdrobot_api::msg::MotionData>::SharedPtr mMotionDataPub;
@@ -38,5 +39,7 @@ namespace sd::robot
     interface::SPIData mSPIData;
     interface::IMUData mIMUData;
   };
+
+  int Run(std::shared_ptr<interface::Interface>, int argc, char * argv[]);
 
 } // namespace sd::robot
