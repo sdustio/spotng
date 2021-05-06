@@ -7,10 +7,10 @@
 
 #include "sd/Task/PeriodicTask.h"
 
-using namespace std;
-
 namespace sd::task
 {
+		using namespace std;
+
 		/*!
 			 *  * Construct a new task within a TaskManager
 			 *  * 在TaskManager中构造一个新任务
