@@ -26,7 +26,7 @@ namespace sd::robot
     mInterface->Init();
 
     mDriverCmdSub = this->create_subscription<sdrobot_api::msg::DriverCmd>(
-        TOPIC_CMD, 10, std::bind(&Runner::handleDriverCmd, this, _1));
+        TOPIC_CMD, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->handleDriverCmd(std::move(msg)); });
 
     return true;
   }
