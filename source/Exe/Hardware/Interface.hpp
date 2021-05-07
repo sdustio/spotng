@@ -5,8 +5,8 @@ namespace sd::robot::interface::hardware
   class Interface: public sd::robot::interface::Interface
   {
     public:
-      bool Init();
-      bool RunSPI();
-      bool RunIMU();
+      bool Init() override;
+      bool RunSPI() override;
+      bool RunIMU() override;
   };
 } // namespace sd::robot::interface::hardware

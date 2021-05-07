@@ -36,9 +36,6 @@ namespace sd::robot
   private:
     void handleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr) const;
 
-    std::shared_ptr<interface::Interface> mInterface;
-    std::shared_ptr<dynamics::DesiredStateCmd> mDesiredStateCmd;
-
     rclcpp::Subscription<sdrobot_api::msg::DriverCmd>::SharedPtr mDriverCmdSub;
     rclcpp::Publisher<sdrobot_api::msg::MotionData>::SharedPtr mMotionDataPub;
 
@@ -46,6 +43,9 @@ namespace sd::robot
     rclcpp::TimerBase::SharedPtr mSPITimer;
     rclcpp::TimerBase::SharedPtr mIMUTimer;
     rclcpp::TimerBase::SharedPtr mDYNTimer;
+
+    std::shared_ptr<interface::Interface> mInterface;
+    std::shared_ptr<dynamics::DesiredStateCmd> mDesiredStateCmd;
 
     interface::SPICmd mSPICmd;
     interface::SPIData mSPIData;
