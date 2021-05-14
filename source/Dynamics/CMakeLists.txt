@@ -1,5 +1,5 @@
 list(APPEND srcs
-  Runner.cpp
+  DesiredState.cpp
 )
 
 list(TRANSFORM srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")

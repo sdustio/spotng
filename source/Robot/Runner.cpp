@@ -1,15 +1,15 @@
-#include <chrono>
-
-#include "sd/Robot/Runner.h"
+#include "Robot/Runner.hpp"
 
 namespace sd::robot
 {
   using std::placeholders::_1;
   using namespace std::chrono_literals;
 
-  Runner::Runner(std::shared_ptr<interface::Interface> itf) : Node(NODE_NAME, NODE_NS), mInterface(std::move(itf))
+  Runner::Runner(std::shared_ptr<interface::Interface> itf) :
+    Node(ros::NODE_NAME, ros::NODE_NS),
+    mInterface(std::move(itf))
   {
-    mDesiredStateCmd = std::make_shared<dynamics::DesiredStateCmd>();
+    mDesiredStateCmd = std::make_shared<sd::dynamics::DesiredStateCmd<double>>(ctrldt::DYNsec);
 
     Init();
 
@@ -26,7 +26,7 @@ namespace sd::robot
     mInterface->Init();
 
     mDriverCmdSub = this->create_subscription<sdrobot_api::msg::DriverCmd>(
-        TOPIC_CMD, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->handleDriverCmd(std::move(msg)); });
+        ros::TOPIC_CMD, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->handleDriverCmd(std::move(msg)); });
 
     return true;
   }
@@ -40,7 +40,7 @@ namespace sd::robot
   {
     mDesiredStateCmd->UpdateCmd(
         msg->mv[0], msg->mv[1], msg->tr,
-        msg->pa, static_cast<sd::robot::dynamics::Mode>(msg->mode));
+        msg->pa, static_cast<sd::dynamics::Mode>(msg->mode));
   }
 
 } // namespace sd::robot

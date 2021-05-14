@@ -66,6 +66,8 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "dense": "cpp",
+        "core": "cpp"
     }
 }

@@ -1,8 +1,8 @@
 #include "sd/Robot/Interface.h"
 
-namespace sd::robot::interface::hardware
+namespace sd::hardware
 {
-  class Interface: public sd::robot::interface::Interface
+  class RobotInterface: public sd::robot::interface::Interface
   {
     public:
       bool Init() override;
