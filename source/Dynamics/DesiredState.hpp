@@ -32,17 +32,18 @@ namespace sd::dynamics
 
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    explicit DesiredStateCmd(float dt): mDt(dt){};
+    explicit DesiredStateCmd(float dt) : mDt(dt){};
 
-    bool UpdateCmd(float mv_x, float mv_y, float tr, float pa, Mode m){
+    bool UpdateCmd(float mv_x, float mv_y, float tr, float pa, Mode m)
+    {
       {
-    mCmdMvX = mv_x;
-    mCmdMvY = mv_y;
-    mCmdTr = tr;
-    mCmdPa = pa;
-    mCmdMode = m;
-    return true;
-  }
+        mCmdMvX = mv_x;
+        mCmdMvY = mv_y;
+        mCmdTr = tr;
+        mCmdPa = pa;
+        mCmdMode = m;
+        return true;
+      }
     }
 
   private:
