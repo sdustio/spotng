@@ -29,7 +29,7 @@ namespace sd::dynamics
     Vision
   };
 
-  namespace limits
+  namespace CmdLimits
   {
     constexpr float MaxAngleR = 0.4;
     constexpr float MinAngleR = -0.4;
@@ -41,6 +41,8 @@ namespace sd::dynamics
     constexpr float MinVelY = -2.0;
     constexpr float MaxRateYaw = 2.5;
     constexpr float MinRateYaw = -2.5;
+    constexpr float DeadbandRegion = 0.075;
+    constexpr float Filter = 0.1;
   }
 
 } // namespace sd::dynamics

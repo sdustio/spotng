@@ -6,47 +6,61 @@
 namespace sd::dynamics
 {
   template <typename T>
-  class DesiredStateData
-  {
-  public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    DesiredStateData() { zero(); }
-
-    void zero()
-    {
-      mStateDes = Vec12<T>::Zero();
-      mPreStateDes = Vec12<T>::Zero();
-      mStateTrajDes = Eigen::Matrix<T, 12, 10>::Zero();
-    }
-
-    // Instantaneous desired state command 瞬时期望状态指令
-    Vec12<T> mStateDes;
-    Vec12<T> mPreStateDes;
-    // Desired future state trajectory (for up to 10 timestep MPC) 期望的未来状态轨迹(最多10个时间步长MPC)
-    Eigen::Matrix<T, 12, 10> mStateTrajDes;
-  };
-
-  template <typename T>
   class DesiredStateCmd
   {
 
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    explicit DesiredStateCmd(float dt) : mDt(dt){};
+    explicit DesiredStateCmd(float dt) : mDt(dt){mStateDes = Vec12<T>::Zero();}
 
     bool UpdateCmd(float mv_x, float mv_y, float tr, float pa, Mode m)
     {
+      mCmdMode = m;
+      if (mCmdMode == Mode::Stand || mCmdMode == Mode::RecoveryStand)
       {
-        mCmdMvX = mv_x;
-        mCmdMvY = mv_y;
-        mCmdTr = tr;
-        mCmdPa = pa;
-        mCmdMode = m;
-        return true;
+        mv_x = 0.0;
+        mv_y = 0.0;
       }
+      mCmdMvX = mCmdMvX * (T(1) - CmdLimits::Filter) + mv_x * CmdLimits::Filter;
+      mCmdMvY = mCmdMvY * (T(1) - CmdLimits::Filter) + mv_y * CmdLimits::Filter;
+      mCmdTr = mCmdTr * (T(1) - CmdLimits::Filter) + tr * CmdLimits::Filter;
+      mCmdPa = mCmdPa * (T(1) - CmdLimits::Filter) + pa * CmdLimits::Filter;
+      return true;
     }
 
   private:
+    bool CmdtoStateData()
+    {
+
+      mStateDes.setZero();
+      mStateDes(StateIdx::VelX) = Deadband(mCmdMvX, CmdLimits::MinVelX, CmdLimits::MaxVelX);
+      mStateDes(StateIdx::VelY) = Deadband(mCmdMvY, CmdLimits::MinVelY, CmdLimits::MaxVelY);
+      mStateDes(StateIdx::VelZ) = 0.0;
+      mStateDes(StateIdx::PosX) = mDt * mStateDes(StateIdx::VelX);
+      mStateDes(StateIdx::PosY) = mDt * mStateDes(StateIdx::VelY);
+      mStateDes(StateIdx::PosZ) = 0.26;
+      mStateDes(StateIdx::RateR) = 0.0;
+      mStateDes(StateIdx::RateP) = 0.0;
+      mStateDes(StateIdx::RateY) = Deadband(mCmdTr, CmdLimits::MinRateYaw, CmdLimits::MaxRateYaw);
+      mStateDes(StateIdx::AngleR) = 0.0;
+      mStateDes(StateIdx::AngleP) = Deadband(mCmdPa, CmdLimits::MinAngleP, CmdLimits::MaxAngleP);
+      mStateDes(StateIdx::AngleY) = mDt * mStateDes(StateIdx::RateY);
+
+      return true;
+    }
+
+    float Deadband(float v, float minVal, float maxVal)
+    {
+      if (v < CmdLimits::DeadbandRegion && v > -CmdLimits::DeadbandRegion)
+      {
+        return 0.0;
+      }
+      else
+      {
+        return (v / 2) * (maxVal - minVal);
+      }
+    }
+
     float mCmdMvX;
     float mCmdMvY;
     float mCmdTr;
@@ -55,8 +69,8 @@ namespace sd::dynamics
 
     // Dynamics matrix for discrete time approximation
     Mat12<T> mA;
-    DesiredStateData<T> mData;
-    float mDt;
+    Vec12<T> mStateDes;
+    T mDt;
   };
 
 }
