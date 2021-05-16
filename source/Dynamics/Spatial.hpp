@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kinematics/Rotation.hpp"
+#include "Dynamics/Rotation.hpp"
 
 namespace sd::dynamics
 {
@@ -26,7 +26,7 @@ namespace sd::dynamics
    */
     explicit SpatialInertia(T mass, const Vec3<T> &com, const Mat3<T> &inertia)
     {
-      Mat3<T> cSkew = sd::kinematics::VecToSkewMat(com); //质心向量转反对称矩阵
+      Mat3<T> cSkew = VecToSkewMat(com); //质心向量转反对称矩阵
 
       mSpatialInertia.template topLeftCorner<3, 3>() =
           inertia + mass * cSkew * cSkew.transpose();
@@ -65,7 +65,7 @@ namespace sd::dynamics
       mSpatialInertia(2, 0) = a(8);
       mSpatialInertia(2, 1) = a(7);
       mSpatialInertia(2, 2) = a(6);
-      Mat3<T> cSkew = sd::kinematics::VecToSkewMat(Vec3<T>(a(1), a(2), a(3)));
+      Mat3<T> cSkew = VecToSkewMat(Vec3<T>(a(1), a(2), a(3)));
       mSpatialInertia.template topRightCorner<3, 3>() = cSkew;
       mSpatialInertia.template bottomLeftCorner<3, 3>() = cSkew.transpose();
       mSpatialInertia.template bottomRightCorner<3, 3>() = a(0) * Mat3<T>::Identity();
@@ -85,8 +85,8 @@ namespace sd::dynamics
       Mat3<T> E = P.template topLeftCorner<3, 3>();
       Mat3<T> Ibar = E.trace() * Mat3<T>::Identity() - E;
       mSpatialInertia.template topLeftCorner<3, 3>() = Ibar;
-      mSpatialInertia.template topRightCorner<3, 3>() = sd::kinematics::VecToSkewMat(h);
-      mSpatialInertia.template bottomLeftCorner<3, 3>() = sd::kinematics::VecToSkewMat(h).transpose();
+      mSpatialInertia.template topRightCorner<3, 3>() = VecToSkewMat(h);
+      mSpatialInertia.template bottomLeftCorner<3, 3>() = VecToSkewMat(h).transpose();
       mSpatialInertia.template bottomRightCorner<3, 3>() = m * Mat3<T>::Identity();
     }
 
@@ -113,7 +113,7 @@ namespace sd::dynamics
    */
     const MassProperties<T> CalcMassProperties() const {
       MassProperties<T> m;
-      Vec3<T> h = sd::kinematics::MatToSkewVec(mSpatialInertia.template topRightCorner<3, 3>());
+      Vec3<T> h = MatToSkewVec(mSpatialInertia.template topRightCorner<3, 3>());
       m << mSpatialInertia(5, 5), h(0), h(1), h(2), mSpatialInertia(0, 0), mSpatialInertia(1, 1),
           mSpatialInertia(2, 2), mSpatialInertia(2, 1), mSpatialInertia(2, 0), mSpatialInertia(1, 0);
       return m;
@@ -130,7 +130,7 @@ namespace sd::dynamics
     const Vec3<T> CalcCOM() const{
       T m = CalcMass();
       Mat3<T> mcSkew = mSpatialInertia.template topRightCorner<3, 3>();
-      return sd::kinematics::MatToSkewVec(mcSkew) / m;
+      return MatToSkewVec(mcSkew) / m;
     }
 
     /*!
@@ -151,7 +151,7 @@ namespace sd::dynamics
    */
     Mat4<T> CalcPseudoInertiaMat()
     {
-      Vec3<T> h = sd::kinematics::MatToSkewVec(mSpatialInertia.template topRightCorner<3, 3>());
+      Vec3<T> h = MatToSkewVec(mSpatialInertia.template topRightCorner<3, 3>());
       Mat3<T> Ibar = mSpatialInertia.template topLeftCorner<3, 3>();
       T m = mSpatialInertia(5, 5);
       Mat4<T> P;
@@ -166,15 +166,15 @@ namespace sd::dynamics
     /*!
    * Flip inertia matrix around an axis.  This isn't efficient, but it works!
    */
-    SpatialInertia FlipAlongAxis(sd::kinematics::CoordinateAxis axis)
+    SpatialInertia FlipAlongAxis(CoordinateAxis axis)
     {
       Mat4<T> P = CalcPseudoInertiaMat();
       Mat4<T> X = Mat4<T>::Identity();
-      if (axis == sd::kinematics::CoordinateAxis::X)
+      if (axis == CoordinateAxis::X)
         X(0, 0) = -1;
-      else if (axis == sd::kinematics::CoordinateAxis::Y)
+      else if (axis == CoordinateAxis::Y)
         X(1, 1) = -1;
-      else if (axis == sd::kinematics::CoordinateAxis::Z)
+      else if (axis == CoordinateAxis::Z)
         X(2, 2) = -1;
       P = X * P * X;
       return SpatialInertia(P);

@@ -5,7 +5,7 @@
 
 #include "sd/Types.hpp"
 
-namespace sd::kinematics
+namespace sd::dynamics
 {
   enum class CoordinateAxis
   {
