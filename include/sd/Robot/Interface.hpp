@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "sd/Types.h"
+#include "sd/Types.hpp"
 
 namespace sd::robot::interface
 {

@@ -1,4 +1,6 @@
-#include "sd/Robot/Interface.h"
+#pragma once
+
+#include "sd/Robot/Interface.hpp"
 
 namespace sd::hardware
 {

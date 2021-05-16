@@ -6,8 +6,8 @@
 #include "sdrobot_api/msg/driver_cmd.hpp"
 #include "sdrobot_api/msg/motion_data.hpp"
 
-#include "sd/Robot/Runner.h"
-#include "sd/Robot/Interface.h"
+#include "sd/Robot/Runner.hpp"
+#include "sd/Robot/Interface.hpp"
 
 #include "Dynamics/DesiredState.hpp"
 

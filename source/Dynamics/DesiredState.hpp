@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sd/Types.h"
-#include "sd/Dynamics/State.h"
+#include "sd/Types.hpp"
+#include "sd/Dynamics/State.hpp"
 
 namespace sd::dynamics
 {
