@@ -27,6 +27,7 @@ namespace sd::dynamics
       mCmdPa = mCmdPa * (T(1) - CmdLimits::Filter) + pa * CmdLimits::Filter;
       return true;
     }
+    const Vec12<T>& GetStateDes() const {return mStateDes;}
 
   private:
     bool CmdtoStateData()
@@ -68,9 +69,9 @@ namespace sd::dynamics
     Mode mCmdMode;
 
     // Dynamics matrix for discrete time approximation
-    Mat12<T> mA;
     Vec12<T> mStateDes;
     T mDt;
   };
 
+  template class DesiredStateCmd<double>; //for compile check
 }

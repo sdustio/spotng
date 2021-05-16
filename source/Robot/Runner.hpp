@@ -10,6 +10,7 @@
 #include "sd/Robot/Interface.hpp"
 
 #include "Dynamics/DesiredState.hpp"
+#include "Robot/Model.hpp"
 
 
 namespace sd::robot
