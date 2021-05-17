@@ -2,8 +2,9 @@
 
 namespace sd::robot::model
 {
-  using sd::dynamics::BuildSpatialInertia;
-  using sd::dynamics::InertiaMat;
+  using dynamics::SpatialInertia;
+  using dynamics::InertiaMat;
+  using dynamics::BuildSpatialInertia;
 
   template <typename T>
   Quadruped<T>::Quadruped()
@@ -13,8 +14,8 @@ namespace sd::robot::model
     rotorRotationalInertiaZ << 33, 0, 0, 0, 33, 0, 0, 0, 63;
     rotorRotationalInertiaZ = 1e-6 * rotorRotationalInertiaZ;
 
-    Mat3<T> RY = sd::dynamics::CoordinateRot<T>(sd::dynamics::CoordinateAxis::Y, M_PI / 2);
-    Mat3<T> RX = sd::dynamics::CoordinateRot<T>(sd::dynamics::CoordinateAxis::X, M_PI / 2);
+    Mat3<T> RY = dynamics::CoordinateRot<T>(dynamics::CoordinateAxis::Y, M_PI / 2);
+    Mat3<T> RX = dynamics::CoordinateRot<T>(dynamics::CoordinateAxis::X, M_PI / 2);
     InertiaMat<T> rotorRotationalInertiaX =
         RY * rotorRotationalInertiaZ * RY.transpose();
     InertiaMat<T> rotorRotationalInertiaY =

@@ -7,8 +7,6 @@
 namespace sd::robot::model
 {
 
-  using sd::dynamics::SpatialInertia;
-
   template <typename T>
   class Quadruped
   {
@@ -16,6 +14,7 @@ namespace sd::robot::model
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
     explicit Quadruped();
+
     /*!
    * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
    * @param leg : the leg index
@@ -33,8 +32,8 @@ namespace sd::robot::model
     Vec3<T> mAbadLocation, mAbadRotorLocation;
     Vec3<T> mHipLocation, mHipRotorLocation;
     Vec3<T> mKneeLocation, mKneeRotorLocation;
-    SpatialInertia<T> mAbadSpatialInertia, mHipSpatialInertia, mKneeSpatialInertia;
-    SpatialInertia<T> mAbadRotorSpatialInertia, mHipRotorSpatialInertia, mKneeRotorSpatialInertia;
-    SpatialInertia<T> mBodySpatialInertia;
+    dynamics::SpatialInertia<T> mAbadSpatialInertia, mHipSpatialInertia, mKneeSpatialInertia;
+    dynamics::SpatialInertia<T> mAbadRotorSpatialInertia, mHipRotorSpatialInertia, mKneeRotorSpatialInertia;
+    dynamics::SpatialInertia<T> mBodySpatialInertia;
   };
 } // namespace sd::robot::model

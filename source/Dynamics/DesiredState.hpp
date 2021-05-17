@@ -72,5 +72,4 @@ namespace sd::dynamics
     T mDt;
   };
 
-  template class DesiredStateCmd<double>; //for compile check
 }
