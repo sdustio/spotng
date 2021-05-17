@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "sd/Types.hpp"
+
 namespace sd::dynamics
 {
   namespace StateIdx
@@ -44,5 +46,8 @@ namespace sd::dynamics
     constexpr float DeadbandRegion = 0.075;
     constexpr float Filter = 0.1;
   }
+
+  template <typename T>
+  using StateVec = Eigen::Matrix<T, 12, 1>;
 
 } // namespace sd::dynamics

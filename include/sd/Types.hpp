@@ -5,21 +5,18 @@
 
 namespace sd
 {
-    // Rotation Matrix
-    template <typename T>
-    using RotMat = typename Eigen::Matrix<T, 3, 3>;
 
     // 2x1 Vector
     template <typename T>
-    using Vec2 = typename Eigen::Matrix<T, 2, 1>;
+    using Vec2 = Eigen::Matrix<T, 2, 1>;
 
     // 3x1 Vector
     template <typename T>
-    using Vec3 = typename Eigen::Matrix<T, 3, 1>;
+    using Vec3 = Eigen::Matrix<T, 3, 1>;
 
     // 4x1 Vector
     template <typename T>
-    using Vec4 = typename Eigen::Matrix<T, 4, 1>;
+    using Vec4 = Eigen::Matrix<T, 4, 1>;
 
     // 6x1 Vector
     template <typename T>
@@ -43,27 +40,15 @@ namespace sd
 
     // 3x3 Matrix
     template <typename T>
-    using Mat3 = typename Eigen::Matrix<T, 3, 3>;
-
-    // 4x1 Vector
-    template <typename T>
-    using Quat = typename Eigen::Matrix<T, 4, 1>;
-
-    // Spatial Vector (6x1, all subspaces)
-    template <typename T>
-    using SVec = typename Eigen::Matrix<T, 6, 1>;
-
-    // Spatial Transform (6x6)
-    template <typename T>
-    using SXform = typename Eigen::Matrix<T, 6, 6>;
+    using Mat3 = Eigen::Matrix<T, 3, 3>;
 
     // 6x6 Matrix
     template <typename T>
-    using Mat6 = typename Eigen::Matrix<T, 6, 6>;
+    using Mat6 = Eigen::Matrix<T, 6, 6>;
 
     // 12x12 Matrix
     template <typename T>
-    using Mat12 = typename Eigen::Matrix<T, 12, 12>;
+    using Mat12 = Eigen::Matrix<T, 12, 12>;
 
     // 18x18 Matrix
     template <typename T>
@@ -83,30 +68,26 @@ namespace sd
 
     // 4x4 Matrix
     template <typename T>
-    using Mat4 = typename Eigen::Matrix<T, 4, 4>;
-
-    // 10x1 Vector
-    template <typename T>
-    using MassProperties = typename Eigen::Matrix<T, 10, 1>;
+    using Mat4 = Eigen::Matrix<T, 4, 4>;
 
     // Dynamically sized vector
     template <typename T>
-    using DVec = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
+    using DVec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
     // Dynamically sized matrix
     template <typename T>
-    using DMat = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+    using DMat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
     // Dynamically sized matrix with spatial vector columns
     template <typename T>
-    using D6Mat = typename Eigen::Matrix<T, 6, Eigen::Dynamic>;
+    using D6Mat = Eigen::Matrix<T, 6, Eigen::Dynamic>;
 
     // Dynamically sized matrix with cartesian vector columns
     template <typename T>
-    using D3Mat = typename Eigen::Matrix<T, 3, Eigen::Dynamic>;
+    using D3Mat = Eigen::Matrix<T, 3, Eigen::Dynamic>;
 
     // std::vector (a list) of Eigen things
     template <typename T>
-    using vectorAligned = typename std::vector<T, Eigen::aligned_allocator<T>>;
+    using VectorAligned = std::vector<T, Eigen::aligned_allocator<T>>;
 
 }

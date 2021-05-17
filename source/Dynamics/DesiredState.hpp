@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sd/Types.hpp"
 #include "sd/Dynamics/State.hpp"
 
 namespace sd::dynamics
@@ -69,7 +68,7 @@ namespace sd::dynamics
     Mode mCmdMode;
 
     // Dynamics matrix for discrete time approximation
-    Vec12<T> mStateDes;
+    StateVec<T> mStateDes;
     T mDt;
   };
 

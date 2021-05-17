@@ -3,16 +3,10 @@
 #include <cmath>
 #include <type_traits>
 
-#include "sd/Types.hpp"
+#include "sd/Dynamics/Kinematics.hpp"
 
 namespace sd::dynamics
 {
-  enum class CoordinateAxis
-  {
-    X,
-    Y,
-    Z
-  };
 
   /*!
  * Square a number
@@ -54,14 +48,14 @@ namespace sd::dynamics
  * 转换成一个旋转了1弧度的帧!
  */
   template <typename T>
-  Mat3<T> CoordinateRot(CoordinateAxis axis, T theta)
+  RotMat<T> CoordinateRot(CoordinateAxis axis, T theta)
   {
     static_assert(std::is_floating_point<T>::value,
                   "must use floating point value");
     T s = std::sin(theta);
     T c = std::cos(theta);
 
-    Mat3<T> R;
+    RotMat<T> R;
 
     if (axis == CoordinateAxis::X)
     {
@@ -83,11 +77,11 @@ namespace sd::dynamics
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
   template <typename T>
-  Mat3<typename T::Scalar> RPYToRotMat(const Eigen::MatrixBase<T> &v)
+  RotMat<typename T::Scalar> RPYToRotMat(const Eigen::MatrixBase<T> &v)
   {
     static_assert(T::ColsAtCompileTime == 1 && T::RowsAtCompileTime == 3,
                   "must have 3x1 vector");
-    Mat3<typename T::Scalar> m = CoordinateRot(CoordinateAxis::X, v[0]) *
+    RotMat<typename T::Scalar> m = CoordinateRot(CoordinateAxis::X, v[0]) *
                                  CoordinateRot(CoordinateAxis::Y, v[1]) *
                                  CoordinateRot(CoordinateAxis::Z, v[2]);
     return m;
@@ -128,7 +122,7 @@ namespace sd::dynamics
     static_assert(T::ColsAtCompileTime == 3 && T::RowsAtCompileTime == 3,
                   "Must have 3x3 matrix");
     Quat<typename T::Scalar> q;
-    Mat3<typename T::Scalar> r = r1.transpose();
+    RotMat<typename T::Scalar> r = r1.transpose();
     typename T::Scalar tr = r.trace();
     if (tr > 0.0)
     {
@@ -173,7 +167,7 @@ namespace sd::dynamics
  *坐标转换为指定方向的具有指定方向的坐标系 通过四元数
  */
   template <typename T>
-  Mat3<typename T::Scalar> QuatToRotMat(
+  RotMat<typename T::Scalar> QuatToRotMat(
       const Eigen::MatrixBase<T> &q)
   {
     static_assert(T::ColsAtCompileTime == 1 && T::RowsAtCompileTime == 4,
@@ -183,7 +177,7 @@ namespace sd::dynamics
     typename T::Scalar e2 = q(2);
     typename T::Scalar e3 = q(3);
 
-    Mat3<typename T::Scalar> R;
+    RotMat<typename T::Scalar> R;
 
     R << 1 - 2 * (e2 * e2 + e3 * e3), 2 * (e1 * e2 - e0 * e3),
         2 * (e1 * e3 + e0 * e2), 2 * (e1 * e2 + e0 * e3),
@@ -220,7 +214,7 @@ namespace sd::dynamics
   {
     static_assert(T::ColsAtCompileTime == 1 && T::RowsAtCompileTime == 3,
                   "Must have 3x1 vec");
-    Mat3<typename T::Scalar> R = RPYToRotMat(rpy);
+    RotMat<typename T::Scalar> R = RPYToRotMat(rpy);
     Quat<typename T::Scalar> q = RotMatToQuat(R);
     return q;
   }

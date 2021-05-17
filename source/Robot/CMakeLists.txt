@@ -1,4 +1,5 @@
 list(APPEND srcs
+  Model.cpp
   Runner.cpp
 )
 

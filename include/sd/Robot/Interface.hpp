@@ -54,7 +54,7 @@ namespace sd::robot::interface
   {
     Vec3<float> acc;
     Vec3<float> gyro;
-    Quat<float> quat;
+    Vec4<float> quat;
     // todo is there status for the vectornav?
   };
 
