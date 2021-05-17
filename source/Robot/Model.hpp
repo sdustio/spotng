@@ -4,7 +4,7 @@
 
 #include "Dynamics/Inertia.hpp"
 
-namespace sd::robot::model
+namespace sd::robot
 {
 
   template <typename T>

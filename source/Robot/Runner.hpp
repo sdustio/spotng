@@ -19,7 +19,7 @@ namespace sd::robot
   class Runner : public rclcpp::Node
   {
   public:
-    explicit Runner(std::shared_ptr<interface::Interface>);
+    explicit Runner(std::shared_ptr<Interface>);
     bool Init();
     bool Run();
 
@@ -34,14 +34,10 @@ namespace sd::robot
     rclcpp::TimerBase::SharedPtr mIMUTimer;
     rclcpp::TimerBase::SharedPtr mDYNTimer;
 
-    std::shared_ptr<interface::Interface> mInterface;
-
-    interface::SPICmd mSPICmd;
-    interface::SPIData mSPIData;
-    interface::IMUData mIMUData;
+    std::shared_ptr<Interface> mInterface;
 
     dynamics::DesiredStateCmd<double> mDesiredStateCmd;
-    model::Quadruped<double> mQuadruped;
+    Quadruped<double> mQuadruped;
   };
 
 } // namespace sd::robot

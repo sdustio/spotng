@@ -1,6 +1,6 @@
 #pragma once
 
-namespace sd::robot::model
+namespace sd::robot
 {
   namespace Leg
   {

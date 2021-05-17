@@ -4,7 +4,7 @@
 
 #include "sd/Types.hpp"
 
-namespace sd::robot::interface
+namespace sd::robot
 {
 
   struct SPICmd
@@ -61,16 +61,16 @@ namespace sd::robot::interface
   class Interface
   {
   public:
-    interface::SPICmd *getSPICommand() { return &mSPICmd; }
-    interface::SPIData *getSPIData() { return &mSPIData; }
-    interface::IMUData *getIMUData() { return &mIMUData; }
+    const SPICmd& GetSPICmd() const { return mSPICmd; }
+    const SPIData& GetSPIData() const { return mSPIData; }
+    const IMUData& GetIMUData() const { return mIMUData; }
     virtual bool Init() = 0;   // return true if ok
     virtual bool RunSPI() = 0; // return true if ok
     virtual bool RunIMU() = 0; // return true if ok
   private:
-    interface::SPICmd mSPICmd;
-    interface::SPIData mSPIData;
-    interface::IMUData mIMUData;
+    SPICmd mSPICmd;
+    SPIData mSPIData;
+    IMUData mIMUData;
   };
 
 } // namespace sd::robot::interface

@@ -5,7 +5,7 @@ namespace sd::robot
   using std::placeholders::_1;
   using namespace std::chrono_literals;
 
-  Runner::Runner(std::shared_ptr<interface::Interface> itf) :
+  Runner::Runner(std::shared_ptr<Interface> itf) :
     Node(ros::NODE_NAME, ros::NODE_NS),
     mInterface(std::move(itf)),
     mDesiredStateCmd(ctrldt::DYNsec)

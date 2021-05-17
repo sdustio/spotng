@@ -1,6 +1,6 @@
 #include "Robot/Model.hpp"
 
-namespace sd::robot::model
+namespace sd::robot
 {
   using dynamics::SpatialInertia;
   using dynamics::InertiaMat;

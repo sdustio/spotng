@@ -4,7 +4,7 @@
 
 namespace sd::hardware
 {
-  class RobotInterface: public robot::interface::Interface
+  class RobotInterface: public robot::Interface
   {
     public:
       bool Init() override;
