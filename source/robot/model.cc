@@ -1,4 +1,4 @@
-#include "Robot/Model.hpp"
+#include "robot/model.h"
 
 namespace sd::robot
 {
@@ -21,44 +21,44 @@ namespace sd::robot
     InertiaMat<T> rotorRotationalInertiaY =
         RX * rotorRotationalInertiaZ * RX.transpose();
     Vec3<T> rotorCOM(0, 0, 0);
-    mAbadRotorSpatialInertia = BuildSpatialInertia<T>(0.055, rotorCOM, rotorRotationalInertiaX);
-    mKneeRotorSpatialInertia = mHipRotorSpatialInertia = BuildSpatialInertia<T>(0.055, rotorCOM, rotorRotationalInertiaY);
+    abad_rotor_spatial_inertia_ = BuildSpatialInertia<T>(0.055, rotorCOM, rotorRotationalInertiaX);
+    knee_rotor_spatial_inertia_ = hip_rotor_spatial_inertia_ = BuildSpatialInertia<T>(0.055, rotorCOM, rotorRotationalInertiaY);
 
     // spatial inertias
     InertiaMat<T> abadRotationalInertia;
     abadRotationalInertia << 381, 58, 0.45, 58, 560, 0.95, 0.45, 0.95, 444;
     abadRotationalInertia = abadRotationalInertia * 1e-6;
     Vec3<T> abadCOM(0, 0.036, 0); // LEFT
-    mAbadSpatialInertia = BuildSpatialInertia<T>(0.54, abadCOM, abadRotationalInertia);
+    abad_spatial_inertia_ = BuildSpatialInertia<T>(0.54, abadCOM, abadRotationalInertia);
 
     Mat3<T> hipRotationalInertia;
     hipRotationalInertia << 1983, 245, 13, 245, 2103, 1.5, 13, 1.5, 408;
     hipRotationalInertia = hipRotationalInertia * 1e-6;
     Vec3<T> hipCOM(0, 0.016, -0.02);
-    mHipSpatialInertia = BuildSpatialInertia<T>(0.634, hipCOM, hipRotationalInertia);
+    hip_spatial_inertia_ = BuildSpatialInertia<T>(0.634, hipCOM, hipRotationalInertia);
 
     Mat3<T> kneeRotationalInertia, kneeRotationalInertiaRotated;
     kneeRotationalInertiaRotated << 6, 0, 0, 0, 248, 0, 0, 0, 245;
     kneeRotationalInertiaRotated = kneeRotationalInertiaRotated * 1e-6;
     kneeRotationalInertia = RY * kneeRotationalInertiaRotated * RY.transpose();
     Vec3<T> kneeCOM(0, 0, -0.061);
-    mKneeSpatialInertia = BuildSpatialInertia<T>(0.064, kneeCOM, kneeRotationalInertia);
+    knee_spatial_inertia_ = BuildSpatialInertia<T>(0.064, kneeCOM, kneeRotationalInertia);
 
     Mat3<T> bodyRotationalInertia;
     bodyRotationalInertia << 11253, 0, 0, 0, 36203, 0, 0, 0, 42673;
     bodyRotationalInertia = bodyRotationalInertia * 1e-6;
     Vec3<T> bodyCOM(0, 0, 0);
-    mBodySpatialInertia = BuildSpatialInertia<T>(Properties::BodyMass, bodyCOM,
+    body_spatial_inertia_ = BuildSpatialInertia<T>(Properties::body_mass, bodyCOM,
                                               bodyRotationalInertia);
 
     // locations
-    mAbadRotorLocation = Vec3<T>(0.125, 0.049, 0);
-    mAbadLocation =
-        Vec3<T>(Properties::BodyLength, Properties::BodyWidth, 0) * 0.5;
-    mHipLocation = Vec3<T>(0, Properties::AbadLinkLength, 0);
-    mHipRotorLocation = Vec3<T>(0, 0.04, 0);
-    mKneeLocation = Vec3<T>(0, 0, -Properties::HipLinkLength);
-    mKneeRotorLocation = Vec3<T>(0, 0, 0);
+    abad_rotor_location_ = Vec3<T>(0.125, 0.049, 0);
+    abad_location_ =
+        Vec3<T>(Properties::body_length, Properties::body_width, 0) * 0.5;
+    hip_location_ = Vec3<T>(0, Properties::abad_link_length, 0);
+    hip_rotor_location_ = Vec3<T>(0, 0.04, 0);
+    knee_location_ = Vec3<T>(0, 0, -Properties::hip_link_length);
+    knee_rotor_location_ = Vec3<T>(0, 0, 0);
   }
 
   template class Quadruped<double>;

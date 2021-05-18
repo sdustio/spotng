@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sd/Types.hpp"
+#include "sd/types.h"
 
 namespace sd::dynamics
 {

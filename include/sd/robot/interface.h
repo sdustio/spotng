@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "sd/Types.hpp"
+#include "sd/types.h"
 
 namespace sd::robot
 {
@@ -61,16 +61,16 @@ namespace sd::robot
   class Interface
   {
   public:
-    const SPICmd& GetSPICmd() const { return mSPICmd; }
-    const SPIData& GetSPIData() const { return mSPIData; }
-    const IMUData& GetIMUData() const { return mIMUData; }
+    const SPICmd& GetSPICmd() const { return spi_cmd_; }
+    const SPIData& GetSPIData() const { return spi_data_; }
+    const IMUData& GetIMUData() const { return imu_data_; }
     virtual bool Init() = 0;   // return true if ok
     virtual bool RunSPI() = 0; // return true if ok
     virtual bool RunIMU() = 0; // return true if ok
   private:
-    SPICmd mSPICmd;
-    SPIData mSPIData;
-    IMUData mIMUData;
+    SPICmd spi_cmd_;
+    SPIData spi_data_;
+    IMUData imu_data_;
   };
 
 } // namespace sd::robot::interface

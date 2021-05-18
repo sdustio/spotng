@@ -1,4 +1,4 @@
-#include "Hardware/Interface.hpp"
+#include "hardware/interface.h"
 
 namespace sd::hardware
 {

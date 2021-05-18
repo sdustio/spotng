@@ -4,17 +4,17 @@ find_package(sdrobot_api REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 set(SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cc
 )
 
-add_subdirectory(Robot)
-add_subdirectory(Hardware)
+add_subdirectory(robot)
+add_subdirectory(hardware)
 
-add_executable(SdRobot
+add_executable(sdrobot
   ${SOURCES}
 )
-ament_target_dependencies(SdRobot sdrobot_api rclcpp std_msgs Eigen3)
+ament_target_dependencies(sdrobot sdrobot_api rclcpp std_msgs Eigen3)
 
 install(TARGETS
-  SdRobot
+  sdrobot
   DESTINATION lib/${PROJECT_NAME})

@@ -1,7 +1,5 @@
-#include <memory>
-
-#include "Robot/Runner.hpp"
-#include "Hardware/Interface.hpp"
+#include "robot/runner.h"
+#include "hardware/interface.h"
 
 int main(int argc, char* argv[]){
   std::shared_ptr<sd::robot::Interface> itf = std::make_shared<sd::hardware::RobotInterface>();

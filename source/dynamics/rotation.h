@@ -3,7 +3,7 @@
 #include <cmath>
 #include <type_traits>
 
-#include "sd/Dynamics/Kinematics.hpp"
+#include "sd/dynamics/kinematics.h"
 
 namespace sd::dynamics
 {
