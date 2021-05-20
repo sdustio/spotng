@@ -15,7 +15,10 @@
  * floating base don't do anything.
  */
 
+#include <string>
+
 #include "dynamics/fb_model.h"
+#include "dynamics/spatial.h"
 
 namespace sd::dynamics
 {
@@ -44,7 +47,7 @@ namespace sd::dynamics
 
     // Rotation to absolute coords
     Mat3<T> Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-    Mat6<T> Xc = createSXform(Rai, gc_location_.at(gc_index));
+    Mat6<T> Xc = CreateSXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
@@ -101,7 +104,7 @@ namespace sd::dynamics
 
     // Rotation to absolute coords
     Mat3<T> Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-    Mat6<T> Xc = createSXform(Rai, gc_location_.at(gc_index));
+    Mat6<T> Xc = CreateSXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
@@ -210,7 +213,7 @@ namespace sd::dynamics
     for (size_t i = 6; i < n_dof_; i++)
     {
       IA_[i] = Ibody_[i]; // initialize
-      Mat6<T> XJrot = jointXform(joint_types_[i], joint_axes_[i],
+      Mat6<T> XJrot = JointXform(joint_types_[i], joint_axes_[i],
                                  state_.q[i - 6] * gear_ratios_[i]);
       Xuprot_[i] = XJrot * Xrot_[i];
       Srot_[i] = S_[i] * gear_ratios_[i];
@@ -511,8 +514,10 @@ namespace sd::dynamics
                           CoordinateAxis jointAxis,
                           const Mat6<T> &Xtree, const Mat6<T> &Xrot)
   {
-    return AddBody(SpatialInertia<T>(inertia), SpatialInertia<T>(rotorInertia),
-                   gearRatio, parent, jointType, jointAxis, Xtree, Xrot);
+    return AddBody(
+        MassPropertiesToSpatialInertia(inertia),
+        MassPropertiesToSpatialInertia(rotorInertia),
+        gearRatio, parent, jointType, jointAxis, Xtree, Xrot);
   }
 
   template <typename T>
@@ -564,21 +569,21 @@ namespace sd::dynamics
       return;
 
     // calculate joint transformations
-    Xup_[5] = createSXform(quaternionToRotationMatrix(state_.body_orientation),
+    Xup_[5] = CreateSXform(QuatToRotMat(state_.body_orientation),
                            state_.body_position);
     v_[5] = state_.body_velocity;
     for (size_t i = 6; i < n_dof_; i++)
     {
       // joint xform
-      Mat6<T> XJ = jointXform(joint_types_[i], joint_axes_[i], state_.q[i - 6]);
+      Mat6<T> XJ = JointXform(joint_types_[i], joint_axes_[i], state_.q[i - 6]);
       Xup_[i] = XJ * Xtree_[i];
-      S_[i] = jointMotionSubspace<T>(joint_types_[i], joint_axes_[i]);
+      S_[i] = JointMotionSubspace<T>(joint_types_[i], joint_axes_[i]);
       SVec<T> vJ = S_[i] * state_.qd[i - 6];
       // total velocity of body i
       v_[i] = Xup_[i] * v_[parents_[i]] + vJ;
 
       // Same for rotors
-      Mat6<T> XJrot = jointXform(joint_types_[i], joint_axes_[i],
+      Mat6<T> XJrot = JointXform(joint_types_[i], joint_axes_[i],
                                  state_.q[i - 6] * gear_ratios_[i]);
       Srot_[i] = S_[i] * gear_ratios_[i];
       SVec<T> vJrot = Srot_[i] * state_.qd[i - 6];
@@ -586,8 +591,8 @@ namespace sd::dynamics
       vrot_[i] = Xuprot_[i] * v_[parents_[i]] + vJrot;
 
       // Coriolis accelerations
-      c_[i] = motionCrossProduct(v_[i], vJ);
-      crot_[i] = motionCrossProduct(vrot_[i], vJrot);
+      c_[i] = MotionCrossProduct(v_[i], vJ);
+      crot_[i] = MotionCrossProduct(vrot_[i], vJrot);
     }
 
     // calculate from absolute transformations
@@ -611,12 +616,12 @@ namespace sd::dynamics
       if (!compute_contact_info_[j])
         continue;
       size_t i = gc_parent_.at(j);
-      Mat6<T> Xai = invertSXform(Xa_[i]); // from link to absolute
+      Mat6<T> Xai = InvertSXform(Xa_[i]); // from link to absolute
       SVec<T> vSpatial = Xai * v_[i];
 
       // foot position in world
-      gc_p_.at(j) = sXFormPoint(Xai, gc_location_.at(j));
-      gc_v_.at(j) = spatialToLinearVelocity(vSpatial, gc_p_.at(j));
+      gc_p_.at(j) = SXformPoint(Xai, gc_location_.at(j));
+      gc_v_.at(j) = SpatialToLinearVelocity(vSpatial, gc_p_.at(j));
     }
     kinematics_uptodate_ = true;
   }
@@ -644,14 +649,14 @@ namespace sd::dynamics
 
       // Rotation to absolute coords
       Mat3<T> Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-      Mat6<T> Xc = createSXform(Rai, gc_location_.at(k));
+      Mat6<T> Xc = CreateSXform(Rai, gc_location_.at(k));
 
       // Bias acceleration
       SVec<T> ac = Xc * avp_[i];
       SVec<T> vc = Xc * v_[i];
 
       // Correct to classical
-      Jcdqd_[k] = spatialToLinearAcceleration(ac, vc);
+      Jcdqd_[k] = SpatialToLinearAcceleration(ac, vc);
 
       // rows for linear velcoity in the world
       D3Mat<T> Xout = Xc.template bottomRows<3>();
@@ -730,19 +735,19 @@ namespace sd::dynamics
     // Floating base force
     Mat6<T> Ifb = Ibody_[5];
     SVec<T> hfb = Ifb * v_[5];
-    fvp_[5] = Ifb * avp_[5] + forceCrossProduct(v_[5], hfb);
+    fvp_[5] = Ifb * avp_[5] + ForceCrossProduct(v_[5], hfb);
 
     for (size_t i = 6; i < n_dof_; i++)
     {
       // Force on body i
       Mat6<T> Ii = Ibody_[i];
       SVec<T> hi = Ii * v_[i];
-      fvp_[i] = Ii * avp_[i] + forceCrossProduct(v_[i], hi);
+      fvp_[i] = Ii * avp_[i] + ForceCrossProduct(v_[i], hi);
 
       // Force on rotor i
       Mat6<T> Ir = Irot_[i];
       SVec<T> hr = Ir * vrot_[i];
-      fvprot_[i] = Ir * avprot_[i] + forceCrossProduct(vrot_[i], hr);
+      fvprot_[i] = Ir * avprot_[i] + ForceCrossProduct(vrot_[i], hr);
     }
 
     for (size_t i = n_dof_ - 1; i > 5; i--)
@@ -773,8 +778,8 @@ namespace sd::dynamics
   Vec3<T> FBModel<T>::GetPosition(const int link_idx)
   {
     ForwardKinematics();
-    Mat6<T> Xai = invertSXform(Xa_[link_idx]); // from link to absolute
-    Vec3<T> link_pos = sXFormPoint(Xai, Vec3<T>::Zero());
+    Mat6<T> Xai = InvertSXform(Xa_[link_idx]); // from link to absolute
+    Vec3<T> link_pos = SXformPoint(Xai, Vec3<T>::Zero());
     return link_pos;
   }
 
@@ -782,8 +787,8 @@ namespace sd::dynamics
   Vec3<T> FBModel<T>::GetPosition(const int link_idx, const Vec3<T> &local_pos)
   {
     ForwardKinematics();
-    Mat6<T> Xai = invertSXform(Xa_[link_idx]); // from link to absolute
-    Vec3<T> link_pos = sXFormPoint(Xai, local_pos);
+    Mat6<T> Xai = InvertSXform(Xa_[link_idx]); // from link to absolute
+    Vec3<T> link_pos = SXformPoint(Xai, local_pos);
     return link_pos;
   }
 
@@ -793,7 +798,7 @@ namespace sd::dynamics
   {
     ForwardAccelerationKinematics();
     Mat3<T> R = GetOrientation(link_idx);
-    return R * spatialToLinearAcceleration(a_[link_idx], v_[link_idx], point);
+    return R * SpatialToLinearAcceleration(a_[link_idx], v_[link_idx], point);
   }
 
   template <typename T>
@@ -801,7 +806,7 @@ namespace sd::dynamics
   {
     ForwardAccelerationKinematics();
     Mat3<T> R = GetOrientation(link_idx);
-    return R * spatialToLinearAcceleration(a_[link_idx], v_[link_idx], Vec3<T>::Zero());
+    return R * SpatialToLinearAcceleration(a_[link_idx], v_[link_idx], Vec3<T>::Zero());
   }
 
   template <typename T>
@@ -810,7 +815,7 @@ namespace sd::dynamics
   {
     ForwardKinematics();
     Mat3<T> Rai = GetOrientation(link_idx);
-    return Rai * spatialToLinearVelocity(v_[link_idx], point);
+    return Rai * SpatialToLinearVelocity(v_[link_idx], point);
   }
 
   template <typename T>
@@ -818,7 +823,7 @@ namespace sd::dynamics
   {
     ForwardKinematics();
     Mat3<T> Rai = GetOrientation(link_idx);
-    return Rai * spatialToLinearVelocity(v_[link_idx], Vec3<T>::Zero());
+    return Rai * SpatialToLinearVelocity(v_[link_idx], Vec3<T>::Zero());
   }
 
   template <typename T>
@@ -855,17 +860,15 @@ namespace sd::dynamics
     // initialize
     for (size_t i = 5; i < n_dof_; i++)
     {
-      IC_[i].setMatrix(Ibody_[i]);
+      IC_[i] = Ibody_[i];
     }
 
     // backward loop
     for (size_t i = n_dof_ - 1; i > 5; i--)
     {
       // Propagate inertia down the tree
-      IC_[parents_[i]].addMatrix(Xup_[i].transpose() * IC_[i] *
-                                 Xup_[i]);
-      IC_[parents_[i]].addMatrix(Xuprot_[i].transpose() * Irot_[i] *
-                                 Xuprot_[i]);
+      IC_[parents_[i]] += Xup_[i].transpose() * IC_[i] * Xup_[i];
+      IC_[parents_[i]] += Xuprot_[i].transpose() * Irot_[i] * Xuprot_[i];
     }
     composite_inertias_uptodate_ = true;
   }
@@ -956,7 +959,7 @@ namespace sd::dynamics
 
     // Spatial force for floating base
     SVec<T> hb = Ibody_[5] * v_[5];
-    f_[5] = Ibody_[5] * a_[5] + forceCrossProduct(v_[5], hb);
+    f_[5] = Ibody_[5] * a_[5] + ForceCrossProduct(v_[5], hb);
 
     // loop through joints
     for (size_t i = 6; i < n_dof_; i++)
@@ -966,9 +969,9 @@ namespace sd::dynamics
       SVec<T> hr = Irot_[i] * vrot_[i];
 
       // spatial force
-      f_[i] = Ibody_[i] * a_[i] + forceCrossProduct(v_[i], hi);
+      f_[i] = Ibody_[i] * a_[i] + ForceCrossProduct(v_[i], hi);
       frot_[i] =
-          Irot_[i] * arot_[i] + forceCrossProduct(vrot_[i], hr);
+          Irot_[i] * arot_[i] + ForceCrossProduct(vrot_[i], hr);
     }
 
     DVec<T> genForce(n_dof_);
@@ -999,29 +1002,29 @@ namespace sd::dynamics
 
     // float-base articulated inertia
     SVec<T> ivProduct = Ibody_[5] * v_[5];
-    pA_[5] = forceCrossProduct(v_[5], ivProduct);
+    pA_[5] = ForceCrossProduct(v_[5], ivProduct);
 
     // loop 1, down the tree
     for (size_t i = 6; i < n_dof_; i++)
     {
       ivProduct = Ibody_[i] * v_[i];
-      pA_[i] = forceCrossProduct(v_[i], ivProduct);
+      pA_[i] = ForceCrossProduct(v_[i], ivProduct);
 
       // same for rotors
       SVec<T> vJrot = Srot_[i] * state_.qd[i - 6];
       vrot_[i] = Xuprot_[i] * v_[parents_[i]] + vJrot;
-      crot_[i] = motionCrossProduct(vrot_[i], vJrot);
+      crot_[i] = MotionCrossProduct(vrot_[i], vJrot);
       ivProduct = Irot_[i] * vrot_[i];
-      pArot_[i] = forceCrossProduct(vrot_[i], ivProduct);
+      pArot_[i] = ForceCrossProduct(vrot_[i], ivProduct);
     }
 
     // adjust pA for external forces
     for (size_t i = 5; i < n_dof_; i++)
     {
       // TODO add if statement (avoid these calculations if the force is zero)
-      Mat3<T> R = rotationFromSXform(Xa_[i]);
-      Vec3<T> p = translationFromSXform(Xa_[i]);
-      Mat6<T> iX = createSXform(R.transpose(), -R * p);
+      Mat3<T> R = RotationFromSXform(Xa_[i]);
+      Vec3<T> p = TranslationFromSXform(Xa_[i]);
+      Mat6<T> iX = CreateSXform(R.transpose(), -R * p);
       pA_[i] = pA_[i] - iX.transpose() * external_forces_.at(i);
     }
 
@@ -1057,8 +1060,8 @@ namespace sd::dynamics
     }
 
     // output
-    RotMat<T> Rup = rotationFromSXform(Xup_[5]);
-    dstate.dBodyPosition =
+    RotMat<T> Rup = RotationFromSXform(Xup_[5]);
+    dstate.body_position_d =
         Rup.transpose() * state_.body_velocity.template block<3, 1>(3, 0);
     dstate.body_velocity_d = afb;
     // qdd is set in the for loop above
@@ -1084,7 +1087,7 @@ namespace sd::dynamics
 
     // Rotation to absolute coords
     Mat3<T> Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-    Mat6<T> Xc = createSXform(Rai, gc_location_.at(gc_index));
+    Mat6<T> Xc = CreateSXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
@@ -1134,7 +1137,7 @@ namespace sd::dynamics
 
     // Rotation to absolute coords
     Mat3<T> Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-    Mat6<T> Xc = createSXform(Rai, gc_location_.at(gc_index));
+    Mat6<T> Xc = CreateSXform(Rai, gc_location_.at(gc_index));
 
     // D is a subslice of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
