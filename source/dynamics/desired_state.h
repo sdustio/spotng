@@ -9,7 +9,6 @@ namespace sd::dynamics
   {
 
   public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     explicit DesiredStateCmd(float dt) : dt_(dt){state_des_ = Vec12<T>::Zero();}
 
     bool UpdateCmd(float mv_x, float mv_y, float tr, float pa, Mode m)

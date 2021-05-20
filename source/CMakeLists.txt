@@ -7,6 +7,7 @@ set(SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cc
 )
 
+add_subdirectory(dynamics)
 add_subdirectory(robot)
 add_subdirectory(hardware)
 

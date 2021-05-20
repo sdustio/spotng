@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <eigen3/Eigen/Dense>
 
 namespace sd
@@ -85,9 +84,5 @@ namespace sd
     // Dynamically sized matrix with cartesian vector columns
     template <typename T>
     using D3Mat = Eigen::Matrix<T, 3, Eigen::Dynamic>;
-
-    // std::vector (a list) of Eigen things
-    template <typename T>
-    using VectorAligned = std::vector<T, Eigen::aligned_allocator<T>>;
 
 }
