@@ -455,21 +455,21 @@ namespace sd::dynamics
   /*!
   * Add a body
   * @param inertia The inertia of the body
-  * @param rotorInertia The inertia of the rotor the body is connected to
-  * @param gearRatio The gear ratio between the body and the rotor
+  * @param rotor_inertia The inertia of the rotor the body is connected to
+  * @param gear_ratio The gear ratio between the body and the rotor
   * @param parent The parent body, which is also assumed to be the body the rotor
   * is connected to
-  * @param jointType The type of joint (prismatic or revolute)
-  * @param jointAxis The joint axis (X,Y,Z), in the parent's frame
+  * @param joint_type The type of joint (prismatic or revolute)
+  * @param joint_axis The joint axis (X,Y,Z), in the parent's frame
   * @param Xtree  The coordinate transformation from parent to this body
   * @param Xrot  The coordinate transformation from parent to this body's rotor
   * @return The body's ID (can be used as the parent)
   */
   template <typename T>
   int FBModel<T>::AddBody(const SpatialInertia<T> &inertia,
-                          const SpatialInertia<T> &rotorInertia,
-                          T gearRatio, int parent, JointType jointType,
-                          CoordinateAxis jointAxis,
+                          const SpatialInertia<T> &rotor_inertia,
+                          T gear_ratio, int parent, JointType joint_type,
+                          CoordinateAxis joint_axis,
                           const Mat6<T> &Xtree, const Mat6<T> &Xrot)
   {
     if ((size_t)parent >= n_dof_)
@@ -480,13 +480,13 @@ namespace sd::dynamics
     }
 
     parents_.push_back(parent);
-    gear_ratios_.push_back(gearRatio);
-    joint_types_.push_back(jointType);
-    joint_axes_.push_back(jointAxis);
+    gear_ratios_.push_back(gear_ratio);
+    joint_types_.push_back(joint_type);
+    joint_axes_.push_back(joint_axis);
     Xtree_.push_back(Xtree);
     Xrot_.push_back(Xrot);
     Ibody_.push_back(inertia);
-    Irot_.push_back(rotorInertia);
+    Irot_.push_back(rotor_inertia);
     n_dof_++;
 
     AddDynamicsVars(1);
@@ -497,27 +497,27 @@ namespace sd::dynamics
   /*!
   * Add a body
   * @param inertia The inertia of the body
-  * @param rotorInertia The inertia of the rotor the body is connected to
-  * @param gearRatio The gear ratio between the body and the rotor
+  * @param rotor_inertia The inertia of the rotor the body is connected to
+  * @param gear_ratio The gear ratio between the body and the rotor
   * @param parent The parent body, which is also assumed to be the body the rotor
   * is connected to
-  * @param jointType The type of joint (prismatic or revolute)
-  * @param jointAxis The joint axis (X,Y,Z), in the parent's frame
+  * @param joint_type The type of joint (prismatic or revolute)
+  * @param joint_axis The joint axis (X,Y,Z), in the parent's frame
   * @param Xtree  The coordinate transformation from parent to this body
   * @param Xrot  The coordinate transformation from parent to this body's rotor
   * @return The body's ID (can be used as the parent)
   */
   template <typename T>
   int FBModel<T>::AddBody(const MassProperties<T> &inertia,
-                          const MassProperties<T> &rotorInertia,
-                          T gearRatio, int parent, JointType jointType,
-                          CoordinateAxis jointAxis,
+                          const MassProperties<T> &rotor_inertia,
+                          T gear_ratio, int parent, JointType joint_type,
+                          CoordinateAxis joint_axis,
                           const Mat6<T> &Xtree, const Mat6<T> &Xrot)
   {
     return AddBody(
         MassPropertiesToSpatialInertia(inertia),
-        MassPropertiesToSpatialInertia(rotorInertia),
-        gearRatio, parent, jointType, jointAxis, Xtree, Xrot);
+        MassPropertiesToSpatialInertia(rotor_inertia),
+        gear_ratio, parent, joint_type, joint_axis, Xtree, Xrot);
   }
 
   template <typename T>
@@ -952,9 +952,9 @@ namespace sd::dynamics
   */
   template <typename T>
   DVec<T> FBModel<T>::InverseDynamics(
-      const FBModelStateDerivative<T> &dState)
+      const FBModelStateDerivative<T> &dstate)
   {
-    SetDState(dState);
+    SetDState(dstate);
     ForwardAccelerationKinematics();
 
     // Spatial force for floating base

@@ -69,16 +69,16 @@ namespace sd::dynamics
 
     void AddBase(const SpatialInertia<T> &inertia);
     void AddBase(T mass, const Vec3<T> &com, const Mat3<T> &I);
-    int AddGroundContactPoint(int bodyID, const Vec3<T> &location,
-                              bool isFoot = false);
-    void AddGroundContactBoxPoints(int bodyId, const Vec3<T> &dims);
+    int AddGroundContactPoint(int body_id, const Vec3<T> &location,
+                              bool is_foot = false);
+    void AddGroundContactBoxPoints(int body_id, const Vec3<T> &dims);
     int AddBody(const SpatialInertia<T> &inertia,
-                const SpatialInertia<T> &rotorInertia, T gearRatio, int parent,
-                JointType jointType, CoordinateAxis jointAxis,
+                const SpatialInertia<T> &rotor_inertia, T gear_ratio, int parent,
+                JointType joint_type, CoordinateAxis joint_axis,
                 const Mat6<T> &Xtree, const Mat6<T> &Xrot);
     int AddBody(const MassProperties<T> &inertia,
-                const MassProperties<T> &rotorInertia, T gearRatio, int parent,
-                JointType jointType, CoordinateAxis jointAxis,
+                const MassProperties<T> &rotor_inertia, T gear_ratio, int parent,
+                JointType joint_type, CoordinateAxis joint_axis,
                 const Mat6<T> &Xtree, const Mat6<T> &Xrot);
     void Check();
     T TotalRotorMass();
@@ -172,11 +172,11 @@ namespace sd::dynamics
     /*!
     * Update the state derivative of the simulator, invalidating previous results.
     更新模拟器的状态导数，使之前的结果无效。
-    * @param dState : the new state derivative
+    * @param dstate : the new state derivative
     */
-    void SetDState(const FBModelStateDerivative<T> &dState)
+    void SetDState(const FBModelStateDerivative<T> &dstate)
     {
-      dstate_ = dState;
+      dstate_ = dstate;
       acc_uptodate_ = false;
     }
 
@@ -204,7 +204,7 @@ namespace sd::dynamics
     DVec<T> GeneralizedCoriolisForce();
     DMat<T> GeneralizedMassMatrix();
 
-    DVec<T> InverseDynamics(const FBModelStateDerivative<T> &dState);
+    DVec<T> InverseDynamics(const FBModelStateDerivative<T> &dstate);
     void RunABA(const DVec<T> &tau, FBModelStateDerivative<T> &dstate);
 
     /*!

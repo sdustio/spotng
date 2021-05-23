@@ -1,5 +1,7 @@
 #include "robot/runner.h"
 
+#include "dynamics/spatial.h"
+
 namespace sd::robot
 {
   using std::placeholders::_1;
@@ -23,11 +25,10 @@ namespace sd::robot
 
 
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
-        ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->handleDriverCmd(std::move(msg)); });
+        ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->HandleDriverCmd(std::move(msg)); });
 
     dyn_timer_ = this->create_wall_timer(
         ctrldt::kDYN, [this]() { this->Run(); });
-
 
     return true;
   }
@@ -37,7 +38,7 @@ namespace sd::robot
     return true;
   }
 
-  void Runner::handleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
+  void Runner::HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
   {
     desired_state_cmd_.UpdateCmd(
         msg->mv[0], msg->mv[1], msg->tr,

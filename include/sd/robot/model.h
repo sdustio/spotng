@@ -2,20 +2,13 @@
 
 namespace sd::robot
 {
-  namespace leg
+  struct LegIdx
   {
-    struct Idx
-    {
-      constexpr static int fr = 0; // Front Right
-      constexpr static int fl = 1; // Front Left
-      constexpr static int hr = 2; // Hind Right
-      constexpr static int hl = 3; // Hind Left
-    };
-
-    // the i-th leg is on the left (+) or right (-) of the robot.
-    // 第i条腿是在机器人的左边(+)还是右边(-)。
-    constexpr int SideSigns[4] = {-1, 1, -1, 1};
-  }
+    constexpr static int fr = 0; // Front Right
+    constexpr static int fl = 1; // Front Left
+    constexpr static int hr = 2; // Hind Right
+    constexpr static int hl = 3; // Hind Left
+  };
 
   struct Properties
   {

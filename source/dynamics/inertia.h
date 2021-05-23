@@ -143,7 +143,7 @@ namespace sd::dynamics
     else if (axis == CoordinateAxis::Z)
       X(2, 2) = -1;
     P = X * P * X;
-    return SpatialInertia<T>(P);
+    return PseudoInertiaMatToSpatialInertia(P);
   }
 
 } // namespace sd::dynamics

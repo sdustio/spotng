@@ -24,7 +24,8 @@ namespace sd::robot
     bool Run();
 
   private:
-    void handleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr);
+    void HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr);
+    void _test();
 
     rclcpp::Subscription<sdrobot_api::msg::DriverCmd>::SharedPtr driver_cmd_sub_;
     rclcpp::Publisher<sdrobot_api::msg::MotionData>::SharedPtr motion_data_pub_;
