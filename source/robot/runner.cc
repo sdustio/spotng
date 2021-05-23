@@ -24,6 +24,8 @@ namespace sd::robot
         ctrldt::kIMU, [this]() { this->interface_->RunIMU(); });
 
 
+    quadruped_.BuildModel(fbmodel_);
+
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
         ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->HandleDriverCmd(std::move(msg)); });
 

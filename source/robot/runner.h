@@ -39,6 +39,7 @@ namespace sd::robot
 
     dynamics::DesiredStateCmd<double> desired_state_cmd_;
     Quadruped<double> quadruped_;
+    dynamics::FBModel<double> fbmodel_;
   };
 
 } // namespace sd::robot
