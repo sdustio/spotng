@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sd/robot/model.h"
+#include "sd/robot/interface.h"
 
 #include "dynamics/inertia.h"
 #include "dynamics/fb_model.h"
@@ -14,6 +15,9 @@ namespace sd::robot
   public:
     explicit Quadruped();
 
+    /*!
+    * Build a FloatingBaseModel of the quadruped 建立一个四足动物的浮动模型
+    */
     bool BuildModel(dynamics::FBModel<T> &model);
 
     /*!
@@ -31,19 +35,19 @@ namespace sd::robot
     * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
     */
     template <typename T2>
-    Vec3<T> WithLegSigns(const Eigen::MatrixBase<T2> &v, int leg_id)
+    static Vec3<T> WithLegSigns(const Eigen::MatrixBase<T2> &v, int leg_id)
     {
       static_assert(T2::ColsAtCompileTime == 1 && T2::RowsAtCompileTime == 3,
                     "Must have 3x1 matrix");
       switch (leg_id)
       {
-      case LegIdx::fr:
+      case leg::Idx::fr:
         return Vec3<T>(v[0], -v[1], v[2]);
-      case LegIdx::fl:
+      case leg::Idx::fl:
         return Vec3<T>(v[0], v[1], v[2]);
-      case LegIdx::hr:
+      case leg::Idx::hr:
         return Vec3<T>(-v[0], -v[1], v[2]);
-      case LegIdx::hl:
+      case leg::Idx::hl:
         return Vec3<T>(-v[0], v[1], v[2]);
       default:
         throw std::runtime_error("Invalid leg id!");
@@ -57,11 +61,31 @@ namespace sd::robot
     Vec3<T> GetHipLocation(int leg) const
     {
       assert(leg >= 0 && leg < 4);
-      Vec3<T> pHip((leg == LegIdx::fr || leg == LegIdx::fl) ? abad_location_(0) : -abad_location_(0),
-                   (leg == LegIdx::fl || leg == LegIdx::hl) ? abad_location_(1) : -abad_location_(1),
+      Vec3<T> pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
+                   (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
                    abad_location_(2));
       return pHip;
     }
+
+    /*!
+    * Update the "leg data" from a SPIne board message
+    * 从spine卡 更新腿部信息
+    */
+    void UpdateLegData(const SPIData& data);
+
+    /*!
+    * Update the "leg command" for the SPIne board message
+    * 向控制器发送控制命令
+    */
+    void UpdateLegCmd(SPICmd& cmd);
+
+    /*!
+    * Compute the position of the foot and its Jacobian.  This is done in the local
+    * leg coordinate system. If J/p are NULL, the calculation will be skipped.
+    */
+    void ComputeLegJacobianAndPosition(int leg);
+
+    void SetEnabled(bool enabled) { legs_enabled = enabled; };
 
   private:
     Vec3<T> abad_location_, abad_rotor_location_;
@@ -70,6 +94,10 @@ namespace sd::robot
     dynamics::SpatialInertia<T> abad_spatial_inertia_, hip_spatial_inertia_, knee_spatial_inertia_;
     dynamics::SpatialInertia<T> abad_rotor_spatial_inertia_, hip_rotor_spatial_inertia_, knee_rotor_spatial_inertia_;
     dynamics::SpatialInertia<T> body_spatial_inertia_;
+
+    leg::Cmd<T> leg_cmd[4];
+    leg::Data<T> leg_data[4];
+    bool legs_enabled = false;
 
     const T side_signs_[4] = {-1, 1, -1, 1};
   };
