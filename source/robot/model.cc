@@ -174,7 +174,7 @@ namespace sd::robot
   }
 
   template <typename T>
-  void Quadruped<T>::UpdateLegData(const SPIData& data)
+  void LegCtrl<T>::UpdateLegData(const SPIData &data)
   {
     for (int leg = 0; leg < 4; leg++)
     {
@@ -197,29 +197,29 @@ namespace sd::robot
   }
 
   template <typename T>
-  void Quadruped<T>::UpdateLegCmd(SPICmd &cmd)
+  void LegCtrl<T>::UpdateLegCmd(SPICmd &cmd)
   {
     for (int leg = 0; leg < 4; leg++)
     {
       // tauFF 获得从控制器来的力矩
-      Vec3<T> legTorque = leg_cmd[leg].tau_feed_forward;
+      Vec3<T> leg_torque = leg_cmd[leg].tau_feed_forward;
 
       // forceFF 获得从控制器来的力矩
-      Vec3<T> footForce = leg_cmd[leg].force_feed_forward;
+      Vec3<T> foot_force = leg_cmd[leg].force_feed_forward;
 
       // cartesian PD 直角坐标下pd
-      footForce +=
+      foot_force +=
           leg_cmd[leg].kp_cartesian * (leg_cmd[leg].p_des - leg_data[leg].p);
-      footForce +=
+      foot_force +=
           leg_cmd[leg].kd_cartesian * (leg_cmd[leg].v_des - leg_data[leg].v);
 
       // Torque 足力转换成力矩
-      legTorque += leg_data[leg].J.transpose() * footForce;
+      leg_torque += leg_data[leg].J.transpose() * foot_force;
 
       // set command: 命令设置 设置力矩
-      cmd.tau_abad_ff[leg] = legTorque(0);
-      cmd.tau_hip_ff[leg] = legTorque(1);
-      cmd.tau_knee_ff[leg] = legTorque(2);
+      cmd.tau_abad_ff[leg] = leg_torque(0);
+      cmd.tau_hip_ff[leg] = leg_torque(1);
+      cmd.tau_knee_ff[leg] = leg_torque(2);
 
       // joint space pd
       // joint space PD
@@ -241,7 +241,7 @@ namespace sd::robot
 
       // estimate torque
       leg_data[leg].tau_estimate =
-          legTorque +
+          leg_torque +
           leg_cmd[leg].kp_joint * (leg_cmd[leg].q_des - leg_data[leg].q) +
           leg_cmd[leg].kd_joint * (leg_cmd[leg].qd_des - leg_data[leg].qd);
 
@@ -250,13 +250,23 @@ namespace sd::robot
   }
 
   template <typename T>
-  void Quadruped<T>::ComputeLegJacobianAndPosition(int leg)
+  void LegCtrl<T>::ZeroLegCmd()
+  {
+    for (auto &cmd : leg_cmd)
+    {
+      cmd.Zero();
+    }
+    legs_enabled = false;
+  }
+
+  template <typename T>
+  void LegCtrl<T>::ComputeLegJacobianAndPosition(int leg)
   {
     T l1 = Properties::abad_link_length;
     T l2 = Properties::hip_link_length;
     T l3 = Properties::knee_link_length;
     T l4 = Properties::knee_link_y_offset;
-    T side_sign = GetSideSign(leg);
+    T side_sign = Quadruped<T>::GetSideSign(leg);
 
     T s1 = std::sin(leg_data[leg].q(0));
     T s2 = std::sin(leg_data[leg].q(1));
@@ -286,4 +296,6 @@ namespace sd::robot
 
   template class Quadruped<double>;
   template class Quadruped<float>;
+  template class LegCtrl<double>;
+  template class LegCtrl<float>;
 }

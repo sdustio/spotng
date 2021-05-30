@@ -10,6 +10,44 @@ namespace sd::robot
 {
 
   template <typename T>
+  class LegCtrl
+  {
+  public:
+    void SetLegEnabled(bool enabled) { legs_enabled = enabled; }
+
+    /*!
+    * Update the "leg data" from a SPIne board message
+    * 从spine卡 更新腿部信息
+    */
+    void UpdateLegData(const SPIData &data);
+
+    /*!
+    * Update the "leg command" for the SPIne board message
+    * 向控制器发送控制命令
+    */
+    void UpdateLegCmd(SPICmd &cmd);
+
+    /*!
+    * Zero all leg commands.  This should be run *before* any control code, so if
+    * the control code is confused and doesn't change the leg command, the legs
+    * won't remember the last command.
+    * 腿部控制命令清零，应运行在任何控制代码之前，否则控制代码混乱，控制命令不会改变，腿部不会记忆上次命令
+    */
+    void ZeroLegCmd();
+
+    /*!
+    * Compute the position of the foot and its Jacobian.  This is done in the local
+    * leg coordinate system. If J/p are NULL, the calculation will be skipped.
+    */
+    void ComputeLegJacobianAndPosition(int leg);
+
+  private:
+    leg::Cmd<T> leg_cmd[4];
+    leg::Data<T> leg_data[4];
+    bool legs_enabled = false;
+  };
+
+  template <typename T>
   class Quadruped
   {
   public:
@@ -25,7 +63,7 @@ namespace sd::robot
     * @param leg : the leg index
     * @return The side sign (-1 for right legs, +1 for left legs)
     */
-    T GetSideSign(int leg) const
+    static const T GetSideSign(int leg)
     {
       assert(leg >= 0 && leg < 4);
       return side_signs_[leg];
@@ -67,25 +105,7 @@ namespace sd::robot
       return pHip;
     }
 
-    /*!
-    * Update the "leg data" from a SPIne board message
-    * 从spine卡 更新腿部信息
-    */
-    void UpdateLegData(const SPIData& data);
-
-    /*!
-    * Update the "leg command" for the SPIne board message
-    * 向控制器发送控制命令
-    */
-    void UpdateLegCmd(SPICmd& cmd);
-
-    /*!
-    * Compute the position of the foot and its Jacobian.  This is done in the local
-    * leg coordinate system. If J/p are NULL, the calculation will be skipped.
-    */
-    void ComputeLegJacobianAndPosition(int leg);
-
-    void SetEnabled(bool enabled) { legs_enabled = enabled; };
+    LegCtrl<T>& GetLegCtrl() {return leg_ctrl_;}
 
   private:
     Vec3<T> abad_location_, abad_rotor_location_;
@@ -95,10 +115,9 @@ namespace sd::robot
     dynamics::SpatialInertia<T> abad_rotor_spatial_inertia_, hip_rotor_spatial_inertia_, knee_rotor_spatial_inertia_;
     dynamics::SpatialInertia<T> body_spatial_inertia_;
 
-    leg::Cmd<T> leg_cmd[4];
-    leg::Data<T> leg_data[4];
-    bool legs_enabled = false;
+    LegCtrl<T> leg_ctrl_;
 
-    const T side_signs_[4] = {-1, 1, -1, 1};
+    constexpr static T side_signs_[4] = {-1, 1, -1, 1};
   };
+
 } // namespace sd::robot::model

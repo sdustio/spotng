@@ -20,12 +20,24 @@ namespace sd::robot
   {
   public:
     explicit Runner(std::shared_ptr<Interface>);
+
+    /**
+    * Initializes the robot model, state estimator, leg controller,
+    * robot data, and any control logic specific data.
+    初始化机器人模型，状态估计器，腿部控制器，
+    机器人数据，以及任何控制逻辑特定的数据
+    */
     bool Init();
+
+    /**
+    * Runs the overall robot control system by calling each of the major components
+    * to run each of their respective steps.
+    通过调用每个主要组件来运行整个机器人控制系统运行它们各自的步骤。
+    */
     bool Run();
 
   private:
     void HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr);
-    void _test();
 
     rclcpp::Subscription<sdrobot_api::msg::DriverCmd>::SharedPtr driver_cmd_sub_;
     rclcpp::Publisher<sdrobot_api::msg::MotionData>::SharedPtr motion_data_pub_;
