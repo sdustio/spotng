@@ -79,6 +79,49 @@ namespace sd::robot
         tau_estimate = Vec3<T>::Zero();
       }
     };
-  }
 
-} // namespace sd::robot::model
+    template <typename T>
+    class SideSign
+    {
+    public:
+      /*!
+    * Get if the i-th leg is on the left (+) or right (-) of the robot. 判断第i条腿是在机器人的左边(+)还是右边(-)。
+    * @param leg : the leg index
+    * @return The side sign (-1 for right legs, +1 for left legs)
+    */
+      static const T GetSideSign(int leg)
+      {
+        assert(leg >= 0 && leg < 4);
+        return side_signs_[leg];
+      }
+
+      /*!
+    * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
+    */
+      template <typename T2>
+      static Vec3<T> WithLegSigns(const Eigen::MatrixBase<T2> &v, int leg_id)
+      {
+        static_assert(T2::ColsAtCompileTime == 1 && T2::RowsAtCompileTime == 3,
+                      "Must have 3x1 matrix");
+        switch (leg_id)
+        {
+        case Idx::fr:
+          return Vec3<T>(v[0], -v[1], v[2]);
+        case Idx::fl:
+          return Vec3<T>(v[0], v[1], v[2]);
+        case Idx::hr:
+          return Vec3<T>(-v[0], -v[1], v[2]);
+        case Idx::hl:
+          return Vec3<T>(-v[0], v[1], v[2]);
+        default:
+          throw std::runtime_error("Invalid leg id!");
+        }
+      }
+
+    private:
+      constexpr static T side_signs_[4] = {-1, 1, -1, 1};
+    };
+
+  } // namespace sd::robot::leg
+
+} // namespace sd::robot

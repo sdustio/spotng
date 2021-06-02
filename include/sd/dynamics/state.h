@@ -27,8 +27,7 @@ namespace sd::dynamics
     Off,
     Stand,
     RecoveryStand,
-    Locomotion,
-    Vision
+    Locomotion
   };
 
   struct CmdLimits

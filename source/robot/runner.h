@@ -9,7 +9,7 @@
 #include "sd/robot/runner.h"
 #include "sd/robot/interface.h"
 
-#include "dynamics/desired_state.h"
+#include "controllers/state_cmd.h"
 #include "robot/model.h"
 
 
@@ -49,7 +49,7 @@ namespace sd::robot
 
     std::shared_ptr<Interface> interface_;
 
-    dynamics::DesiredStateCmd<double> desired_state_cmd_;
+    ctrl::StateCmd<double> state_cmd_;
     Quadruped<double> quadruped_;
     dynamics::FBModel<double> fbmodel_;
   };

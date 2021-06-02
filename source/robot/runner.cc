@@ -10,7 +10,7 @@ namespace sd::robot
   Runner::Runner(std::shared_ptr<Interface> itf) :
     Node(ros::kNodeName, ros::kNodeNs),
     interface_(std::move(itf)),
-    desired_state_cmd_(ctrldt::DYNsec)
+    state_cmd_(ctrldt::DYNsec)
   {
     Init();
   }
@@ -27,6 +27,8 @@ namespace sd::robot
 
     // build dynamic model
     quadruped_.BuildModel(fbmodel_);
+
+    // init state estimator
 
     // sub cmd and register cmd handler
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
@@ -60,7 +62,7 @@ namespace sd::robot
 
   void Runner::HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
   {
-    desired_state_cmd_.UpdateCmd(
+    state_cmd_.UpdateCmd(
         msg->mv[0], msg->mv[1], msg->tr,
         msg->pa, static_cast<dynamics::Mode>(msg->mode));
   }
