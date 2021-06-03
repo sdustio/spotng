@@ -6,6 +6,13 @@
 
 namespace sd::robot
 {
+  enum class Mode : uint8_t
+  {
+    Off,
+    Stand,
+    RecoveryStand,
+    Locomotion
+  };
 
   struct SPICmd
   {
@@ -61,7 +68,7 @@ namespace sd::robot
   class Interface
   {
   public:
-    SPICmd& GetSPICmd() { return spi_cmd_; }
+    SPICmd& GetSPICmdForUpdate() { return spi_cmd_; }
     const SPIData& GetSPIData() const { return spi_data_; }
     const IMUData& GetIMUData() const { return imu_data_; }
     virtual bool Init() = 0;   // return true if ok

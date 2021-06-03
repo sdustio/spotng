@@ -69,6 +69,8 @@
         "typeinfo": "cpp",
         "dense": "cpp",
         "core": "cpp",
-        "stdvector": "cpp"
+        "stdvector": "cpp",
+        "geometry": "cpp",
+        "lu": "cpp"
     }
 }

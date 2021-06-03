@@ -48,23 +48,23 @@ namespace sd::robot
 
     // Update the data from the robot
     auto leg_ctrl = quadruped_.GetLegCtrl();
-    leg_ctrl.UpdateLegData(interface_->GetSPIData());
-    leg_ctrl.ZeroLegCmd();
+    leg_ctrl.UpdateData(interface_->GetSPIData());
+    leg_ctrl.ZeroCmd();
     leg_ctrl.SetLegEnabled(true);
 
     // Run ctrl
     // ctrl->runController();
 
     // Update cmd to the robot
-    leg_ctrl.UpdateLegCmd(interface_->GetSPICmd());
+    leg_ctrl.UpdateSPICmd(interface_->GetSPICmdForUpdate());
     return true;
   }
 
   void Runner::HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
   {
-    state_cmd_.UpdateCmd(
+    state_cmd_.Update(
         msg->mv[0], msg->mv[1], msg->tr,
-        msg->pa, static_cast<dynamics::Mode>(msg->mode));
+        msg->pa, static_cast<Mode>(msg->mode));
   }
 
 } // namespace sd::robot
