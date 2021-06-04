@@ -48,30 +48,30 @@ namespace sd::robot
     bodyRotationalInertia << 11253, 0, 0, 0, 36203, 0, 0, 0, 42673;
     bodyRotationalInertia = bodyRotationalInertia * 1e-6;
     Vector3d bodyCOM(0, 0, 0);
-    body_spatial_inertia_ = BuildSpatialInertia(Properties::body_mass, bodyCOM,
+    body_spatial_inertia_ = BuildSpatialInertia(QuadrupedProperties::body_mass, bodyCOM,
                                                    bodyRotationalInertia);
 
     // locations
     abad_rotor_location_ = Vector3d(0.125, 0.049, 0);
     abad_location_ =
-        Vector3d(Properties::body_length, Properties::body_width, 0) * 0.5;
-    hip_location_ = Vector3d(0, Properties::abad_link_length, 0);
+        Vector3d(QuadrupedProperties::body_length, QuadrupedProperties::body_width, 0) * 0.5;
+    hip_location_ = Vector3d(0, QuadrupedProperties::abad_link_length, 0);
     hip_rotor_location_ = Vector3d(0, 0.04, 0);
-    knee_location_ = Vector3d(0, 0, -Properties::hip_link_length);
+    knee_location_ = Vector3d(0, 0, -QuadrupedProperties::hip_link_length);
     knee_rotor_location_ = Vector3d(0, 0, 0);
   }
 
-  bool Quadruped::BuildModel(dynamics::FBModel &model)
+  bool Quadruped::BuildModel(dynamics::FBModelPtr &model)
   {
     // we assume the cheetah's body (not including rotors) can be modeled as a uniformly distributed box.
     //我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
-    Vector3d bodyDims(Properties::body_length, Properties::body_width, Properties::body_height);
+    Vector3d bodyDims(QuadrupedProperties::body_length, QuadrupedProperties::body_width, QuadrupedProperties::body_height);
 
-    // model.addBase(_bodyMass, Vector3d(0,0,0), RotInertiaOfBox(_bodyMass,
+    // model->addBase(_bodyMass, Vector3d(0,0,0), RotInertiaOfBox(_bodyMass,
     // bodyDims));
-    model.AddBase(body_spatial_inertia_);
+    model->AddBase(body_spatial_inertia_);
     // add contact for the cheetah's body
-    model.AddGroundContactBoxPoints(5, bodyDims);
+    model->AddGroundContactBoxPoints(5, bodyDims);
 
     const int base_id = 5;
     int body_id = base_id;
@@ -94,16 +94,16 @@ namespace sd::robot
 
       if (side_sign < 0)
       {
-        model.AddBody(
+        model->AddBody(
             SpatialInertiaFlipAlongAxis(abad_spatial_inertia_, CoordinateAxis::Y),
             SpatialInertiaFlipAlongAxis(abad_rotor_spatial_inertia_, CoordinateAxis::Y),
-            Properties::abad_gear_ratio, base_id, JointType::Revolute,
+            QuadrupedProperties::abad_gear_ratio, base_id, JointType::Revolute,
             CoordinateAxis::X, xtree_abad, xtree_abad_rotor);
       }
       else
       {
-        model.AddBody(
-            abad_spatial_inertia_, abad_rotor_spatial_inertia_, Properties::abad_gear_ratio,
+        model->AddBody(
+            abad_spatial_inertia_, abad_rotor_spatial_inertia_, QuadrupedProperties::abad_gear_ratio,
             base_id, JointType::Revolute, CoordinateAxis::X, xtree_abad, xtree_abad_rotor);
       }
 
@@ -118,22 +118,22 @@ namespace sd::robot
 
       if (side_sign < 0)
       {
-        model.AddBody(
+        model->AddBody(
             SpatialInertiaFlipAlongAxis(hip_spatial_inertia_, CoordinateAxis::Y),
             SpatialInertiaFlipAlongAxis(hip_rotor_spatial_inertia_, CoordinateAxis::Y),
-            Properties::hip_gear_ratio, body_id - 1, JointType::Revolute,
+            QuadrupedProperties::hip_gear_ratio, body_id - 1, JointType::Revolute,
             CoordinateAxis::Y, xtree_hip, xtree_hip_rotor);
       }
       else
       {
 
-        model.AddBody(
-            hip_spatial_inertia_, hip_rotor_spatial_inertia_, Properties::hip_gear_ratio,
+        model->AddBody(
+            hip_spatial_inertia_, hip_rotor_spatial_inertia_, QuadrupedProperties::hip_gear_ratio,
             body_id - 1, JointType::Revolute, CoordinateAxis::Y, xtree_hip, xtree_hip_rotor);
       }
 
       // add knee ground contact point
-      model.AddGroundContactPoint(body_id, Vector3d(0, 0, -Properties::hip_link_length));
+      model->AddGroundContactPoint(body_id, Vector3d(0, 0, -QuadrupedProperties::hip_link_length));
 
       // Knee Joint
       body_id++;
@@ -141,34 +141,34 @@ namespace sd::robot
       Matrix6d xtree_knee_rotor = CreateSpatialXform(I3, knee_rotor_location_);
       if (side_sign < 0)
       {
-        model.AddBody(
+        model->AddBody(
             SpatialInertiaFlipAlongAxis(knee_spatial_inertia_, CoordinateAxis::Y),
             SpatialInertiaFlipAlongAxis(knee_rotor_spatial_inertia_, CoordinateAxis::Y),
-            Properties::knee_gear_ratio, body_id - 1, JointType::Revolute,
+            QuadrupedProperties::knee_gear_ratio, body_id - 1, JointType::Revolute,
             CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
-        model.AddGroundContactPoint(
-            body_id, Vector3d(0, Properties::knee_link_y_offset, -Properties::knee_link_length), true);
+        model->AddGroundContactPoint(
+            body_id, Vector3d(0, QuadrupedProperties::knee_link_y_offset, -QuadrupedProperties::knee_link_length), true);
       }
       else
       {
 
-        model.AddBody(
-            knee_spatial_inertia_, knee_rotor_spatial_inertia_, Properties::knee_gear_ratio,
+        model->AddBody(
+            knee_spatial_inertia_, knee_rotor_spatial_inertia_, QuadrupedProperties::knee_gear_ratio,
             body_id - 1, JointType::Revolute, CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
-        model.AddGroundContactPoint(
-            body_id, Vector3d(0, -Properties::knee_link_y_offset, -Properties::knee_link_length), true);
+        model->AddGroundContactPoint(
+            body_id, Vector3d(0, -QuadrupedProperties::knee_link_y_offset, -QuadrupedProperties::knee_link_length), true);
       }
 
       // add foot
-      //model.addGroundContactPoint(body_id, Vector3d(0, 0, -_kneeLinkLength), true);
+      //model->addGroundContactPoint(body_id, Vector3d(0, 0, -_kneeLinkLength), true);
 
       side_sign *= -1;
     }
 
     Vector3d g(0, 0, -9.81);
-    model.SetGravity(g);
+    model->SetGravity(g);
 
     return true;
   }

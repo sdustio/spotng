@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sd/types.h"
 #include "sd/dynamics/fb_model.h"
 
@@ -92,7 +94,7 @@ namespace sd::robot
 
   } // namespace sd::robot::leg
 
-  struct Properties
+  struct QuadrupedProperties
   {
     constexpr static double body_length = 0.19 * 2;
     constexpr static double body_width = 0.049 * 2;
@@ -128,7 +130,7 @@ namespace sd::robot
     /*!
     * Build a FloatingBaseModel of the quadruped 建立一个四足动物的浮动模型
     */
-    bool BuildModel(dynamics::FBModel &model);
+    bool BuildModel(dynamics::FBModelPtr &model);
 
 
     /*!
@@ -153,4 +155,6 @@ namespace sd::robot
     dynamics::SpatialInertia body_spatial_inertia_;
   };
 
+  using QuadrupedPtr = std::unique_ptr<Quadruped>;
+  using QuadrupedSharedPtr = std::shared_ptr<Quadruped>;
 } // namespace sd::robot

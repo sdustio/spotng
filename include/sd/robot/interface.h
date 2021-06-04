@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 #include "sd/types.h"
 
@@ -79,5 +80,8 @@ namespace sd::robot
     SPIData spi_data_;
     IMUData imu_data_;
   };
+
+  using InterfacePtr = std::unique_ptr<Interface>;
+  using InterfaceSharedPtr = std::shared_ptr<Interface>;
 
 } // namespace sd::robot::interface

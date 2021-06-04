@@ -1,5 +1,5 @@
 list(APPEND srcs
-  leg.cc
+  leg_ctrl.cc
   state_cmd.cc
 )
 

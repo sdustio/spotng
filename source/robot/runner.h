@@ -9,7 +9,7 @@
 #include "sd/robot/runner.h"
 #include "sd/robot/interface.h"
 #include "sd/robot/model.h"
-#include "sd/controllers/leg.h"
+#include "sd/controllers/leg_ctrl.h"
 #include "sd/controllers/state_cmd.h"
 
 
@@ -20,7 +20,7 @@ namespace sd::robot
   class Runner : public rclcpp::Node
   {
   public:
-    explicit Runner(std::shared_ptr<Interface>);
+    explicit Runner(InterfacePtr);
 
     /**
     * Initializes the robot model, state estimator, leg controller,
@@ -50,10 +50,10 @@ namespace sd::robot
 
     std::shared_ptr<Interface> interface_;
 
-    ctrl::StateCmd state_cmd_;
-    ctrl::LegCtrl leg_ctrl_;
-    Quadruped quadruped_;
-    dynamics::FBModel fbmodel_;
+    ctrl::StateCmdPtr state_cmd_;
+    ctrl::LegCtrlPtr leg_ctrl_;
+    QuadrupedPtr quadruped_;
+    dynamics::FBModelPtr fbmodel_;
   };
 
 } // namespace sd::robot

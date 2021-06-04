@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "sd/dynamics/kinematics.h"
@@ -439,5 +440,8 @@ namespace sd::dynamics
     MatrixXd qdd_from_subqdd_;
     Eigen::ColPivHouseholderQR<Matrix6d> invIA5_;
   };
+
+  using FBModelPtr = std::unique_ptr<FBModel>;
+  using FBModelSharedPtr = std::shared_ptr<FBModel>;
 
 } // namespace sd::dynamics

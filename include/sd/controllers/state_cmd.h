@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sd/robot/interface.h"
 
 namespace sd::ctrl
@@ -62,5 +64,8 @@ namespace sd::ctrl
     Vector12d state_des_;
     double dt_;
   };
+
+  using StateCmdPtr = std::unique_ptr<StateCmd>;
+  using StateCmdSharedPtr = std::shared_ptr<StateCmd>;
 
 }

@@ -1,4 +1,4 @@
-#include "sd/controllers/leg.h"
+#include "sd/controllers/leg_ctrl.h"
 
 namespace sd::ctrl
 {
@@ -87,10 +87,10 @@ namespace sd::ctrl
 
   void LegCtrl::ComputeLegJacobianAndPosition(int leg)
   {
-    double l1 = robot::Properties::abad_link_length;
-    double l2 = robot::Properties::hip_link_length;
-    double l3 = robot::Properties::knee_link_length;
-    double l4 = robot::Properties::knee_link_y_offset;
+    double l1 = robot::QuadrupedProperties::abad_link_length;
+    double l2 = robot::QuadrupedProperties::hip_link_length;
+    double l3 = robot::QuadrupedProperties::knee_link_length;
+    double l4 = robot::QuadrupedProperties::knee_link_y_offset;
     double side_sign = robot::leg::SideSign::GetSideSign(leg);
 
     double s1 = std::sin(data_[leg].q(0));

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sd/robot/model.h"
 #include "sd/robot/interface.h"
 
@@ -11,9 +13,9 @@ namespace sd::ctrl
   public:
     void SetLegEnabled(bool enabled) { enabled_ = enabled; }
 
-    const robot::leg::Data *GetData() { return data_; }
+    const robot::leg::Data& GetData(int leg) { return data_[leg]; }
 
-    robot::leg::Cmd *GetCmdForUpdate() { return cmd_; }
+    robot::leg::Cmd& GetCmdForUpdate(int leg) { return cmd_[leg]; }
 
     /*!
     * Update the "leg data" from a SPIne board message
@@ -47,4 +49,6 @@ namespace sd::ctrl
     bool enabled_ = false;
   };
 
+  using LegCtrlPtr = std::unique_ptr<LegCtrl>;
+  using LegCtrlSharedPtr = std::shared_ptr<LegCtrl>;
 }
