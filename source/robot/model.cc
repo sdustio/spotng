@@ -61,8 +61,9 @@ namespace sd::robot
     knee_rotor_location_ = Vector3d(0, 0, 0);
   }
 
-  bool Quadruped::BuildModel(dynamics::FBModelPtr &model)
+  dynamics::FBModelPtr Quadruped::BuildModel()
   {
+    dynamics::FBModelPtr model = std::make_unique<dynamics::FBModel>();
     // we assume the cheetah's body (not including rotors) can be modeled as a uniformly distributed box.
     //我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
     Vector3d bodyDims(QuadrupedProperties::body_length, QuadrupedProperties::body_width, QuadrupedProperties::body_height);
@@ -170,6 +171,6 @@ namespace sd::robot
     Vector3d g(0, 0, -9.81);
     model->SetGravity(g);
 
-    return true;
+    return model;
   }
 }

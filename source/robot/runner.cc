@@ -9,10 +9,6 @@ namespace sd::robot
     Node(ros::kNodeName, ros::kNodeNs),
     interface_(std::move(itf))
   {
-    state_cmd_= std::make_unique<ctrl::StateCmd>(ctrldt::DYNsec);
-    leg_ctrl_ = std::make_unique<ctrl::LegCtrl>();
-    quadruped_ = std::make_unique<Quadruped>();
-    fbmodel_ = std::make_unique<dynamics::FBModel>();
     Init();
   }
 
@@ -27,11 +23,16 @@ namespace sd::robot
 
 
     // build dynamic model
-    quadruped_->BuildModel(fbmodel_);
+    quadruped_ = std::make_unique<Quadruped>();
+    fbmodel_ = quadruped_->BuildModel();
+
+    // init ctrls
+    leg_ctrl_ = std::make_unique<ctrl::LegCtrl>();
 
     // init state estimator
 
     // sub cmd and register cmd handler
+    state_cmd_= std::make_unique<ctrl::StateCmd>(ctrldt::DYNsec);
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
         ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg) {this->HandleDriverCmd(std::move(msg)); });
 

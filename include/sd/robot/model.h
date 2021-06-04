@@ -130,7 +130,7 @@ namespace sd::robot
     /*!
     * Build a FloatingBaseModel of the quadruped 建立一个四足动物的浮动模型
     */
-    bool BuildModel(dynamics::FBModelPtr &model);
+    dynamics::FBModelPtr BuildModel();
 
 
     /*!
