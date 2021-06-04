@@ -8,9 +8,10 @@
 
 #include "sd/robot/runner.h"
 #include "sd/robot/interface.h"
+#include "sd/robot/model.h"
+#include "sd/controllers/leg.h"
+#include "sd/controllers/state_cmd.h"
 
-#include "controllers/state_cmd.h"
-#include "robot/model.h"
 
 
 namespace sd::robot
@@ -49,9 +50,10 @@ namespace sd::robot
 
     std::shared_ptr<Interface> interface_;
 
-    ctrl::StateCmd<double> state_cmd_;
-    Quadruped<double> quadruped_;
-    dynamics::FBModel<double> fbmodel_;
+    ctrl::StateCmd state_cmd_;
+    ctrl::LegCtrl leg_ctrl_;
+    Quadruped quadruped_;
+    dynamics::FBModel fbmodel_;
   };
 
 } // namespace sd::robot

@@ -1,8 +1,6 @@
 list(APPEND srcs
-  inertia.cc
-  rotation.cc
-  spatial.cc
-  fb_model.cc
+  leg.cc
+  state_cmd.cc
 )
 
 list(TRANSFORM srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")

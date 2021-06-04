@@ -16,25 +16,25 @@ namespace sd::robot
 
   struct SPICmd
   {
-    float q_des_abad[4];
-    float q_des_hip[4];
-    float q_des_knee[4];
+    double q_des_abad[4];
+    double q_des_hip[4];
+    double q_des_knee[4];
 
-    float qd_des_abad[4];
-    float qd_des_hip[4];
-    float qd_des_knee[4];
+    double qd_des_abad[4];
+    double qd_des_hip[4];
+    double qd_des_knee[4];
 
-    float kp_abad[4];
-    float kp_hip[4];
-    float kp_knee[4];
+    double kp_abad[4];
+    double kp_hip[4];
+    double kp_knee[4];
 
-    float kd_abad[4];
-    float kd_hip[4];
-    float kd_knee[4];
+    double kd_abad[4];
+    double kd_hip[4];
+    double kd_knee[4];
 
-    float tau_abad_ff[4];
-    float tau_hip_ff[4];
-    float tau_knee_ff[4];
+    double tau_abad_ff[4];
+    double tau_hip_ff[4];
+    double tau_knee_ff[4];
 
     uint8_t flags[4];
   };
@@ -44,12 +44,12 @@ namespace sd::robot
       */
   struct SPIData
   {
-    float q_abad[4];
-    float q_hip[4];
-    float q_knee[4];
-    float qd_abad[4];
-    float qd_hip[4];
-    float qd_knee[4];
+    double q_abad[4];
+    double q_hip[4];
+    double q_knee[4];
+    double qd_abad[4];
+    double qd_hip[4];
+    double qd_knee[4];
     uint8_t flags[4];
     uint8_t spi_driver_status;
   };
@@ -59,9 +59,9 @@ namespace sd::robot
       */
   struct IMUData
   {
-    Vec3<float> acc;
-    Vec3<float> gyro;
-    Vec4<float> quat;
+    Vector3d acc;
+    Vector3d gyro;
+    Vector4d quat;
     // todo is there status for the vectornav?
   };
 

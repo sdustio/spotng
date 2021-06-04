@@ -71,6 +71,12 @@
         "core": "cpp",
         "stdvector": "cpp",
         "geometry": "cpp",
-        "lu": "cpp"
+        "lu": "cpp",
+        "bitset": "cpp",
+        "codecvt": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "iomanip": "cpp",
+        "variant": "cpp"
     }
 }

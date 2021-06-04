@@ -20,32 +20,30 @@ namespace sd::dynamics
   };
 
   // Rotation Matrix
-  template <typename T>
-  using RotMat = Mat3<T>;
+  using RotMat = Matrix3d;
 
   // Quaternions
-  template <typename T>
-  using Quat = Vec4<T>;
+  using Quat = Vector4d;
 
   // Spatial Mass Matrix
-  template <typename T>
-  using SpatialInertia = Mat6<T>;
+  using SpatialInertia = Matrix6d;
 
   // Spatial Vector (6x1, all subspaces)
-  template <typename T>
-  using SVec = Vec6<T>;
+  using SpatialVec = Vector6d;
 
   // Spatial Transform (6x6)
-  template <typename T>
-  using SXform = Mat6<T>;
+  using SpatialXform = Matrix6d;
 
   // 10x1 Vector
-  template <typename T>
-  using MassProperties = Vec10<T>;
+  using MassProperties = Vector10d;
 
-  template <typename T>
-  using InertiaMat = Mat3<T>;
+  using InertiaMat = Matrix3d;
 
-  template <typename T>
-  using PseudoInertiaMat = Mat4<T>;
+  using PseudoInertiaMat = Matrix4d;
+
+  // Dynamically sized matrix with spatial vector columns
+  using SpatialVecXd = Eigen::Matrix<double, 6, Eigen::Dynamic>;
+
+  // Dynamically sized matrix with cartesian vector columns
+  using CartesianVecXd = Matrix3Xd;
 }

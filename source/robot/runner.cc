@@ -1,7 +1,5 @@
 #include "robot/runner.h"
 
-#include "dynamics/spatial.h"
-
 namespace sd::robot
 {
   using std::placeholders::_1;
@@ -47,16 +45,16 @@ namespace sd::robot
     // stateEstimator->run();
 
     // Update the data from the robot
-    auto leg_ctrl = quadruped_.GetLegCtrl();
-    leg_ctrl.UpdateData(interface_->GetSPIData());
-    leg_ctrl.ZeroCmd();
-    leg_ctrl.SetLegEnabled(true);
+    leg_ctrl_.UpdateData(interface_->GetSPIData());
+    leg_ctrl_.ZeroCmd();
+    leg_ctrl_.SetLegEnabled(true);
 
     // Run ctrl
+    state_cmd_.CmdtoStateData();
     // ctrl->runController();
 
     // Update cmd to the robot
-    leg_ctrl.UpdateSPICmd(interface_->GetSPICmdForUpdate());
+    leg_ctrl_.UpdateSPICmd(interface_->GetSPICmdForUpdate());
     return true;
   }
 
