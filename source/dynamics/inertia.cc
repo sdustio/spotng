@@ -1,5 +1,3 @@
-#pragma once
-
 #include "sd/dynamics/rotation.h"
 #include "sd/dynamics/inertia.h"
 
