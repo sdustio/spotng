@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <array>
 
 #include "sd/types.h"
 
@@ -17,27 +18,27 @@ namespace sd::robot
 
   struct SPICmd
   {
-    double q_des_abad[4];
-    double q_des_hip[4];
-    double q_des_knee[4];
+    std::array<double, 4> q_des_abad;
+    std::array<double, 4> q_des_hip;
+    std::array<double, 4> q_des_knee;
 
-    double qd_des_abad[4];
-    double qd_des_hip[4];
-    double qd_des_knee[4];
+    std::array<double, 4> qd_des_abad;
+    std::array<double, 4> qd_des_hip;
+    std::array<double, 4> qd_des_knee;
 
-    double kp_abad[4];
-    double kp_hip[4];
-    double kp_knee[4];
+    std::array<double, 4> kp_abad;
+    std::array<double, 4> kp_hip;
+    std::array<double, 4> kp_knee;
 
-    double kd_abad[4];
-    double kd_hip[4];
-    double kd_knee[4];
+    std::array<double, 4> kd_abad;
+    std::array<double, 4> kd_hip;
+    std::array<double, 4> kd_knee;
 
-    double tau_abad_ff[4];
-    double tau_hip_ff[4];
-    double tau_knee_ff[4];
+    std::array<double, 4> tau_abad_ff;
+    std::array<double, 4> tau_hip_ff;
+    std::array<double, 4> tau_knee_ff;
 
-    uint8_t flags[4];
+    std::array<uint8_t, 4> flags;
   };
 
   /*!
@@ -45,13 +46,13 @@ namespace sd::robot
       */
   struct SPIData
   {
-    double q_abad[4];
-    double q_hip[4];
-    double q_knee[4];
-    double qd_abad[4];
-    double qd_hip[4];
-    double qd_knee[4];
-    uint8_t flags[4];
+    std::array<double, 4> q_abad;
+    std::array<double, 4> q_hip;
+    std::array<double, 4> q_knee;
+    std::array<double, 4> qd_abad;
+    std::array<double, 4> qd_hip;
+    std::array<double, 4> qd_knee;
+    std::array<uint8_t, 4> flags;
     uint8_t spi_driver_status;
   };
 
