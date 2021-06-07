@@ -13,9 +13,9 @@ namespace sd::ctrl
   public:
     void SetLegEnabled(bool enabled) { enabled_ = enabled; }
 
-    const robot::leg::Data& GetData(int leg) { return data_[leg]; }
+    const robot::leg::Datas& GetDatas() const { return datas_; }
 
-    robot::leg::Cmd& GetCmdForUpdate(int leg) { return cmd_[leg]; }
+    robot::leg::Cmds& GetCmdsForUpdate() { return cmds_; }
 
     /*!
     * Update the "leg data" from a SPIne board message
@@ -44,8 +44,9 @@ namespace sd::ctrl
     void ComputeLegJacobianAndPosition(int leg);
 
   private:
-    robot::leg::Cmd cmd_[4];
-    robot::leg::Data data_[4];
+    robot::leg::Cmds cmds_;
+    robot::leg::Datas datas_;
+
     bool enabled_ = false;
   };
 

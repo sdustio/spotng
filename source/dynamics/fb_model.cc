@@ -427,7 +427,7 @@ namespace sd::dynamics
       throw std::runtime_error("Invalid dof and parents length");
   }
 
-  double FBModel::TotalNonRotorMass()
+  double FBModel::TotalNonRotorMass() const
   {
     double totalMass = 0;
     for (size_t i = 0; i < n_dof_; i++)
@@ -437,7 +437,7 @@ namespace sd::dynamics
     return totalMass;
   }
 
-  double FBModel::TotalRotorMass()
+  double FBModel::TotalRotorMass() const
   {
     double totalMass = 0;
     for (size_t i = 0; i < n_dof_; i++)

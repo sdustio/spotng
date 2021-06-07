@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 
 #include "sd/types.h"
 #include "sd/dynamics/fb_model.h"
@@ -92,6 +93,8 @@ namespace sd::robot
       constexpr static double side_signs_[4] = {-1.0, 1.0, -1.0, 1.0};
     };
 
+    using Cmds = std::array<robot::leg::Cmd, 4>;
+    using Datas = std::array<robot::leg::Data, 4>;
   } // namespace sd::robot::leg
 
   struct QuadrupedProperties
@@ -119,6 +122,12 @@ namespace sd::robot
 
     constexpr static double joint_damping = 0.01;
     constexpr static double joint_dry_friction = 0.2;
+
+    constexpr static int num_act_joint = 12;
+    constexpr static int num_q = 19;
+    constexpr static int dim_config = 18;
+    constexpr static int num_leg = 4;
+    constexpr static int num_leg_joint = 3;
   };
 
 

@@ -136,27 +136,27 @@ namespace sd::dynamics
     * Compute the total mass of bodies which are rotors
     * @return
     */
-    double TotalRotorMass();
+    double TotalRotorMass() const;
 
     /*!
     * Compute the total mass of bodies which are not rotors.
     * @return
     */
-    double TotalNonRotorMass();
+    double TotalNonRotorMass() const;
 
     /*!
     * Get vector of parents, where parents[i] is the parent body of body i
     其中，parents[i]是body i的父体
     * @return Vector of parents
     */
-    const std::vector<int> &GetParentVector() { return parents_; }
+    const std::vector<int> &GetParentVector() const { return parents_; }
 
     /*!
     * Get vector of body spatial inertias
     得到机体的空间惯量矢量
     * @return Vector of body spatial inertias
     */
-    const std::vector<SpatialInertia> &GetBodyInertiaVector()
+    const std::vector<SpatialInertia> &GetBodyInertiaVector() const
     {
       return Ibody_;
     }
@@ -166,7 +166,7 @@ namespace sd::dynamics
     得到转子的空间惯量矢量
     * @return Vector of rotor spatial inertias
     */
-    const std::vector<SpatialInertia> &GetRotorInertiaVector()
+    const std::vector<SpatialInertia> &GetRotorInertiaVector() const
     {
       return Irot_;
     }

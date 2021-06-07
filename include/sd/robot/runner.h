@@ -15,11 +15,11 @@ namespace sd::robot
 
   namespace ctrldt
   {
-    constexpr std::chrono::milliseconds kSPI(int(1.0 / 0.04));      //0.04kHz
-    constexpr std::chrono::microseconds kIMU(int(1000 * 1.0 / 10)); //10kHz
-    constexpr std::chrono::milliseconds kDYN(int(1.0 / 0.5));       //0.5kHz
-    constexpr double SPIsec = kSPI.count() / 1'000;
-    constexpr double IMUsec = kIMU.count() / 1'000'000;
-    constexpr double DYNsec = kDYN.count() / 1'000;
+    constexpr std::chrono::milliseconds kSPIdt(int(1.0 / 0.04));      //0.04kHz
+    constexpr std::chrono::microseconds kIMUdt(int(1000 * 1.0 / 10)); //10kHz
+    constexpr std::chrono::milliseconds kDYNdt(int(1.0 / 0.5));       //0.5kHz
+    constexpr double kSPIsec = kSPIdt.count() / 1'000;
+    constexpr double kIMUsec = kIMUdt.count() / 1'000'000;
+    constexpr double kDYNsec = kDYNdt.count() / 1'000;
   }
 }
