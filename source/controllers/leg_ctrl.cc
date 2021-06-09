@@ -4,7 +4,7 @@ namespace sd::ctrl
 {
   void LegCtrl::UpdateData(const robot::SPIData &data)
   {
-    for (int leg = 0; leg < 4; leg++)
+    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // q: 关节角
       datas_[leg].q(0) = data.q_abad[leg];
@@ -26,7 +26,7 @@ namespace sd::ctrl
 
   void LegCtrl::UpdateSPICmd(robot::SPICmd &cmd)
   {
-    for (int leg = 0; leg < 4; leg++)
+    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // tauFF 获得从控制器来的力矩
       Vector3d leg_torque = cmds_[leg].tau_feed_forward;
@@ -85,12 +85,12 @@ namespace sd::ctrl
     enabled_ = false;
   }
 
-  void LegCtrl::ComputeLegJacobianAndPosition(int leg)
+  void LegCtrl::ComputeLegJacobianAndPosition(std::size_t leg)
   {
-    double l1 = robot::QuadrupedProperties::abad_link_length;
-    double l2 = robot::QuadrupedProperties::hip_link_length;
-    double l3 = robot::QuadrupedProperties::knee_link_length;
-    double l4 = robot::QuadrupedProperties::knee_link_y_offset;
+    double l1 = robot::ModelAttrs::abad_link_length;
+    double l2 = robot::ModelAttrs::hip_link_length;
+    double l3 = robot::ModelAttrs::knee_link_length;
+    double l4 = robot::ModelAttrs::knee_link_y_offset;
     double side_sign = robot::leg::SideSign::GetSideSign(leg);
 
     double s1 = std::sin(datas_.at(leg).q(0));

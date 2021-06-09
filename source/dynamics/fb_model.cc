@@ -295,7 +295,7 @@ namespace sd::dynamics
     // the floating base has 6 DOFs
 
     n_dof_ = 6;
-    for (size_t i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
       parents_.push_back(0);
       gear_ratios_.push_back(0);

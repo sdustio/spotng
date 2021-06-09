@@ -14,10 +14,10 @@ namespace sd::robot
 
     struct Idx
     {
-      constexpr static int fr = 0; // Front Right
-      constexpr static int fl = 1; // Front Left
-      constexpr static int hr = 2; // Hind Right
-      constexpr static int hl = 3; // Hind Left
+      constexpr static std::size_t fr = 0; // Front Right
+      constexpr static std::size_t fl = 1; // Front Left
+      constexpr static std::size_t hr = 2; // Hind Right
+      constexpr static std::size_t hl = 3; // Hind Left
     };
 
     /*!
@@ -63,16 +63,15 @@ namespace sd::robot
       * @param leg : the leg index
       * @return The side sign (-1 for right legs, +1 for left legs)
       */
-      static double GetSideSign(int leg)
+      static double GetSideSign(std::size_t leg)
       {
-        assert(leg >= 0 && leg < 4);
-        return side_signs_[leg];
+        return side_signs_.at(leg);
       }
 
       /*!
       * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
       */
-      static Vector3d WithLegSigns(const Vector3d &v, int leg_id)
+      static Vector3d WithLegSigns(const Vector3d &v, std::size_t leg_id)
       {
         switch (leg_id)
         {
@@ -90,14 +89,14 @@ namespace sd::robot
       }
 
     private:
-      constexpr static double side_signs_[4] = {-1.0, 1.0, -1.0, 1.0};
+      constexpr static std::array<double, 4> side_signs_{-1.0, 1.0, -1.0, 1.0};
     };
 
     using Cmds = std::array<robot::leg::Cmd, 4>;
     using Datas = std::array<robot::leg::Data, 4>;
   } // namespace sd::robot::leg
 
-  struct QuadrupedProperties
+  struct ModelAttrs
   {
     constexpr static double body_length = 0.19 * 2;
     constexpr static double body_width = 0.049 * 2;
@@ -146,9 +145,9 @@ namespace sd::robot
     * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
     * @param leg : the leg index
     */
-    Vector3d GetHipLocation(int leg) const
+    Vector3d GetHipLocation(std::size_t leg) const
     {
-      assert(leg >= 0 && leg < 4);
+      assert(leg >= 0 && leg < ModelAttrs::num_leg);
       Vector3d pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
                    abad_location_(2));
