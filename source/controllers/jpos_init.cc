@@ -70,6 +70,15 @@ namespace sd::ctrl
     }
 
     jpos_trj_.SetParam(ini, fin, mid, end_time_);
+
+    Matrix3d kp, kd;
+    kp << 5, 0, 0, 0, 5, 0, 0, 0, 5;
+    kd << 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1;
+
+    for (auto & cmd: ctrl->GetCmdsForUpdate()){
+      cmd.kp_joint = kp;
+      cmd.kd_joint = kd;
+    }
   }
 
 }
