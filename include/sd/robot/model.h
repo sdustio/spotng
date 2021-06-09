@@ -147,7 +147,6 @@ namespace sd::robot
     */
     Vector3d GetHipLocation(std::size_t leg) const
     {
-      assert(leg >= 0 && leg < ModelAttrs::num_leg);
       Vector3d pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
                    abad_location_(2));
