@@ -5,7 +5,8 @@ namespace sd::ctrl
 {
   using robot::ctrldt::kDYNsec;
 
-  JPosInit::JPosInit(double end_time) : end_time_(end_time), ini_jpos_(robot::QuadrupedProperties::num_act_joint)
+  JPosInit::JPosInit(double end_time) :
+    end_time_(end_time), ini_jpos_(robot::QuadrupedProperties::num_act_joint)
   {
     target_jpos_ = {
         -0.6, -1.0, 2.7,
@@ -28,7 +29,6 @@ namespace sd::ctrl
     }
 
     if(curr_time_ < end_time_){
-      //TODO trj
       return false;
     }
     return true;

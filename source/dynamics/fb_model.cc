@@ -499,13 +499,13 @@ namespace sd::dynamics
     {
       if (!compute_contact_info_[j])
         continue;
-      size_t i = gc_parent_.at(j);
+      size_t i = gc_parent_[j];
       Matrix6d Xai = InvertSpatialXform(Xa_[i]); // from link to absolute
       SpatialVec vSpatial = Xai * v_[i];
 
       // foot position in world
-      gc_p_.at(j) = SpatialXformPoint(Xai, gc_location_.at(j));
-      gc_v_.at(j) = SpatialToLinearVelocity(vSpatial, gc_p_.at(j));
+      gc_p_[j] = SpatialXformPoint(Xai, gc_location_[j]);
+      gc_v_[j] = SpatialToLinearVelocity(vSpatial, gc_p_[j]);
     }
     kinematics_uptodate_ = true;
   }
@@ -524,11 +524,11 @@ namespace sd::dynamics
       if (!compute_contact_info_[k])
         continue;
 
-      size_t i = gc_parent_.at(k);
+      size_t i = gc_parent_[k];
 
       // Rotation to absolute coords
       Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
-      Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(k));
+      Matrix6d Xc = CreateSpatialXform(Rai, gc_location_[k]);
 
       // Bias acceleration
       SpatialVec ac = Xc * avp_[i];
@@ -856,7 +856,7 @@ namespace sd::dynamics
       Matrix3d R = RotationFromSpatialXform(Xa_[i]);
       Vector3d p = TranslationFromSpatialXform(Xa_[i]);
       Matrix6d iX = CreateSpatialXform(R.transpose(), -R * p);
-      pA_[i] = pA_[i] - iX.transpose() * external_forces_.at(i);
+      pA_[i] = pA_[i] - iX.transpose() * external_forces_[i];
     }
 
     // Pat's magic principle of least constraint

@@ -7,20 +7,20 @@ namespace sd::ctrl
     for (int leg = 0; leg < 4; leg++)
     {
       // q: 关节角
-      datas_.at(leg).q(0) = data.q_abad.at(leg);
-      datas_.at(leg).q(1) = data.q_hip.at(leg);
-      datas_.at(leg).q(2) = data.q_knee.at(leg);
+      datas_[leg].q(0) = data.q_abad[leg];
+      datas_[leg].q(1) = data.q_hip[leg];
+      datas_[leg].q(2) = data.q_knee[leg];
 
       // qd 关节角速度？
-      datas_.at(leg).qd(0) = data.qd_abad.at(leg);
-      datas_.at(leg).qd(1) = data.qd_hip.at(leg);
-      datas_.at(leg).qd(2) = data.qd_knee.at(leg);
+      datas_[leg].qd(0) = data.qd_abad[leg];
+      datas_[leg].qd(1) = data.qd_hip[leg];
+      datas_[leg].qd(2) = data.qd_knee[leg];
 
       // J and p 雅可比和足端位置
       ComputeLegJacobianAndPosition(leg);
 
       // v 足端速度
-      datas_.at(leg).v = datas_.at(leg).J * datas_.at(leg).qd;
+      datas_[leg].v = datas_[leg].J * datas_[leg].qd;
     }
   }
 
@@ -29,50 +29,50 @@ namespace sd::ctrl
     for (int leg = 0; leg < 4; leg++)
     {
       // tauFF 获得从控制器来的力矩
-      Vector3d leg_torque = cmds_.at(leg).tau_feed_forward;
+      Vector3d leg_torque = cmds_[leg].tau_feed_forward;
 
       // forceFF 获得从控制器来的力矩
-      Vector3d foot_force = cmds_.at(leg).force_feed_forward;
+      Vector3d foot_force = cmds_[leg].force_feed_forward;
 
       // cartesian PD 直角坐标下pd
       foot_force +=
-          cmds_.at(leg).kp_cartesian * (cmds_.at(leg).p_des - datas_.at(leg).p);
+          cmds_[leg].kp_cartesian * (cmds_[leg].p_des - datas_[leg].p);
       foot_force +=
-          cmds_.at(leg).kd_cartesian * (cmds_.at(leg).v_des - datas_.at(leg).v);
+          cmds_[leg].kd_cartesian * (cmds_[leg].v_des - datas_[leg].v);
 
       // Torque 足力转换成力矩
-      leg_torque += datas_.at(leg).J.transpose() * foot_force;
+      leg_torque += datas_[leg].J.transpose() * foot_force;
 
       // set command: 命令设置 设置力矩
-      cmd.tau_abad_ff.at(leg) = leg_torque(0);
-      cmd.tau_hip_ff.at(leg) = leg_torque(1);
-      cmd.tau_knee_ff.at(leg) = leg_torque(2);
+      cmd.tau_abad_ff[leg] = leg_torque(0);
+      cmd.tau_hip_ff[leg] = leg_torque(1);
+      cmd.tau_knee_ff[leg] = leg_torque(2);
 
       // joint space pd
       // joint space PD
-      cmd.kd_abad.at(leg) = cmds_.at(leg).kd_joint(0, 0);
-      cmd.kd_hip.at(leg) = cmds_.at(leg).kd_joint(1, 1);
-      cmd.kd_knee.at(leg) = cmds_.at(leg).kd_joint(2, 2);
+      cmd.kd_abad[leg] = cmds_[leg].kd_joint(0, 0);
+      cmd.kd_hip[leg] = cmds_[leg].kd_joint(1, 1);
+      cmd.kd_knee[leg] = cmds_[leg].kd_joint(2, 2);
 
-      cmd.kp_abad.at(leg) = cmds_.at(leg).kp_joint(0, 0);
-      cmd.kp_hip.at(leg) = cmds_.at(leg).kp_joint(1, 1);
-      cmd.kp_knee.at(leg) = cmds_.at(leg).kp_joint(2, 2);
+      cmd.kp_abad[leg] = cmds_[leg].kp_joint(0, 0);
+      cmd.kp_hip[leg] = cmds_[leg].kp_joint(1, 1);
+      cmd.kp_knee[leg] = cmds_[leg].kp_joint(2, 2);
 
-      cmd.q_des_abad.at(leg) = cmds_.at(leg).q_des(0);
-      cmd.q_des_hip.at(leg) = cmds_.at(leg).q_des(1);
-      cmd.q_des_knee.at(leg) = cmds_.at(leg).q_des(2);
+      cmd.q_des_abad[leg] = cmds_[leg].q_des(0);
+      cmd.q_des_hip[leg] = cmds_[leg].q_des(1);
+      cmd.q_des_knee[leg] = cmds_[leg].q_des(2);
 
-      cmd.qd_des_abad.at(leg) = cmds_.at(leg).qd_des(0);
-      cmd.qd_des_hip.at(leg) = cmds_.at(leg).qd_des(1);
-      cmd.qd_des_knee.at(leg) = cmds_.at(leg).qd_des(2);
+      cmd.qd_des_abad[leg] = cmds_[leg].qd_des(0);
+      cmd.qd_des_hip[leg] = cmds_[leg].qd_des(1);
+      cmd.qd_des_knee[leg] = cmds_[leg].qd_des(2);
 
       // estimate torque
-      datas_.at(leg).tau_estimate =
+      datas_[leg].tau_estimate =
           leg_torque +
-          cmds_.at(leg).kp_joint * (cmds_.at(leg).q_des - datas_.at(leg).q) +
-          cmds_.at(leg).kd_joint * (cmds_.at(leg).qd_des - datas_.at(leg).qd);
+          cmds_[leg].kp_joint * (cmds_[leg].q_des - datas_[leg].q) +
+          cmds_[leg].kd_joint * (cmds_[leg].qd_des - datas_[leg].qd);
 
-      cmd.flags.at(leg) = enabled_ ? 1 : 0;
+      cmd.flags[leg] = enabled_ ? 1 : 0;
     }
   }
 

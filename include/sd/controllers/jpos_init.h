@@ -4,6 +4,7 @@
 
 #include "sd/robot/model.h"
 #include "sd/controllers/leg_ctrl.h"
+#include "sd/dynamics/bspline.h"
 
 namespace sd::ctrl
 {
@@ -23,6 +24,8 @@ namespace sd::ctrl
     std::vector<double> ini_jpos_;
     std::vector<double> target_jpos_;
     std::vector<double> mid_jpos_;
+
+    dynamics::BSpline jpos_trj_;
   };
 
 }
