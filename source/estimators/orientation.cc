@@ -1,7 +1,7 @@
 #include "sd/estimators/orientation.h"
 #include "sd/dynamics/rotation.h"
 
-namespace sd::estimators
+namespace sd::est
 {
   bool Orientation::Run(StateEst &ret, const robot::IMUData &imu)
   {

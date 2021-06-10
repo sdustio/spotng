@@ -32,8 +32,8 @@ namespace sd::robot
 
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
-    est_orientation_ = std::make_unique<estimators::Orientation>();
-    est_contact_ = std::make_unique<estimators::Contact>();
+    est_orientation_ = std::make_unique<est::Orientation>();
+    est_contact_ = std::make_unique<est::Contact>();
 
     // sub cmd and register cmd handler
     ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);

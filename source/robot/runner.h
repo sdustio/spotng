@@ -63,9 +63,9 @@ namespace sd::robot
     ctrl::LegPtr ctrl_leg_;
     ctrl::JPosInitPtr ctrl_jpos_init_;
 
-    estimators::StateEst est_ret_;
-    estimators::OrientationPtr est_orientation_;
-    estimators::ContactPtr est_contact_;
+    est::StateEst est_ret_;
+    est::OrientationPtr est_orientation_;
+    est::ContactPtr est_contact_;
 
     Vector4d contact_phase_;
   };

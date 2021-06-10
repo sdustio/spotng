@@ -4,7 +4,7 @@
 
 #include "sd/estimators/state_est.h"
 
-namespace sd::estimators
+namespace sd::est
 {
 
   /*!

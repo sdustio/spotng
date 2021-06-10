@@ -5,7 +5,7 @@
 #include "sd/robot/interface.h"
 #include "sd/estimators/state_est.h"
 
-namespace sd::estimators
+namespace sd::est
 {
   /*!
   * Get quaternion, rotation matrix, angular velocity (body and world),

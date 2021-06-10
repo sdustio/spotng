@@ -2,7 +2,7 @@
 
 #include "sd/dynamics/kinematics.h"
 
-namespace sd::estimators
+namespace sd::est
 {
   struct StateEst
   {
