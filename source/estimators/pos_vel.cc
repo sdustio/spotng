@@ -12,13 +12,13 @@ namespace sd::est
     _vs.setZero();
     //状态转移矩阵，计算K+1时刻状态值X[k+1] 自己写出来算下就知道
     _A.setZero();
-    _A.block(0, 0, 3, 3) = Matrix3d::Identity();
-    _A.block(0, 3, 3, 3) = dt * Matrix3d::Identity();
-    _A.block(3, 3, 3, 3) = Matrix3d::Identity();
-    _A.block(6, 6, 12, 12) = Matrix12d::Identity();
+    _A.block<3, 3>(0, 0) = Matrix3d::Identity();
+    _A.block<3, 3>(0, 3) = dt * Matrix3d::Identity();
+    _A.block<3, 3>(3, 3) = Matrix3d::Identity();
+    _A.block<12, 12>(6, 6) = Matrix12d::Identity();
     //输入矩阵
     _B.setZero();
-    _B.block(3, 0, 3, 3) = dt * Matrix3d::Identity();
+    _B.block<3, 3>(3, 0) = dt * Matrix3d::Identity();
     //观测矩阵
     //观测量[p1 p2 p3 p4 v1 v2 v3 v4 z1 z2 z3 z4]（v z都在世界坐标下p在机身坐标系） p v 是向量 z是标量 pib=pb-piw vi=vb
     MatrixXd C1(3, 6);
@@ -26,15 +26,15 @@ namespace sd::est
     MatrixXd C2(3, 6);
     C2 << Matrix3d::Zero(), Matrix3d::Identity();
     _C.setZero();
-    _C.block(0, 0, 3, 6) = C1;
-    _C.block(3, 0, 3, 6) = C1;
-    _C.block(6, 0, 3, 6) = C1;
-    _C.block(9, 0, 3, 6) = C1;
-    _C.block(0, 6, 12, 12) = -1. * Matrix12d::Identity();
-    _C.block(12, 0, 3, 6) = C2;
-    _C.block(15, 0, 3, 6) = C2;
-    _C.block(18, 0, 3, 6) = C2;
-    _C.block(21, 0, 3, 6) = C2;
+    _C.block<3, 6>(0, 0) = C1;
+    _C.block<3, 6>(3, 0) = C1;
+    _C.block<3, 6>(6, 0) = C1;
+    _C.block<3, 6>(9, 0) = C1;
+    _C.block<12, 12>(0, 6) = -1. * Matrix12d::Identity();
+    _C.block<3, 6>(12, 0) = C2;
+    _C.block<3, 6>(15, 0) = C2;
+    _C.block<3, 6>(18, 0) = C2;
+    _C.block<3, 6>(21, 0) = C2;
     _C(27, 17) = 1.;
     _C(26, 14) = 1.;
     _C(25, 11) = 1.;
@@ -45,11 +45,11 @@ namespace sd::est
     _P = 100. * _P;
     //初始状态估计噪声
     _Q0.setIdentity();
-    _Q0.block(0, 0, 3, 3) = (dt / 20.) * Matrix3d::Identity();
-    _Q0.block(3, 3, 3, 3) =
+    _Q0.block<3, 3>(0, 0) = (dt / 20.) * Matrix3d::Identity();
+    _Q0.block<3, 3>(3, 3) =
         (dt * 9.8 / 20.) * Matrix3d::Identity();
 
-    _Q0.block(6, 6, 12, 12) = dt * Matrix12d::Identity();
+    _Q0.block<12, 12>(6, 6) = dt * Matrix12d::Identity();
 
     _R0.setIdentity();
 
@@ -67,15 +67,15 @@ namespace sd::est
     double sensor_noise_zfoot = robot::ctrlparams::kFootHeightSensorNoise;
     //状态估计噪声
     Matrix18d Q = Matrix18d::Identity();
-    Q.block(0, 0, 3, 3) = _Q0.block(0, 0, 3, 3) * process_noise_pimu;
-    Q.block(3, 3, 3, 3) = _Q0.block(3, 3, 3, 3) * process_noise_vimu;
-    Q.block(6, 6, 12, 12) = _Q0.block(6, 6, 12, 12) * process_noise_pfoot;
+    Q.block<3, 3>(0, 0) = _Q0.block<3, 3>(0, 0) * process_noise_pimu;
+    Q.block<3, 3>(3, 3) = _Q0.block<3, 3>(3, 3) * process_noise_vimu;
+    Q.block<12, 12>(6, 6) = _Q0.block<12, 12>(6, 6) * process_noise_pfoot;
     //观测噪声矩阵
     Matrix28d R = Matrix28d::Identity();
-    R.block(0, 0, 12, 12) = _R0.block(0, 0, 12, 12) * sensor_noise_pimu_rel_foot;
-    R.block(12, 12, 12, 12) =
-        _R0.block(12, 12, 12, 12) * sensor_noise_vimu_rel_foot;
-    R.block(24, 24, 4, 4) = _R0.block(24, 24, 4, 4) * sensor_noise_zfoot;
+    R.block<12, 12>(0, 0) = _R0.block<12, 12>(0, 0) * sensor_noise_pimu_rel_foot;
+    R.block<12, 12>(12, 12) =
+        _R0.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
+    R.block<4, 4>(24, 24) = _R0.block<4, 4>(24, 24) * sensor_noise_zfoot;
 
     int qindex = 0;
     int rindex1 = 0;
@@ -139,11 +139,11 @@ namespace sd::est
 
       // printf("Trust %d: %.3f\n", i, trust);
       //摆动腿和支撑腿刚触地，即将离地时状态，测量噪声协方差增大
-      Q.block(qindex, qindex, 3, 3) =
-          (1. + (1. - trust) * high_suspect_number) * Q.block(qindex, qindex, 3, 3); //p
+      Q.block<3, 3>(qindex, qindex) =
+          (1. + (1. - trust) * high_suspect_number) * Q.block<3, 3>(qindex, qindex); //p
 
-      R.block(rindex1, rindex1, 3, 3) = 1 * R.block(rindex1, rindex1, 3, 3);                                             //p
-      R.block(rindex2, rindex2, 3, 3) = (1. + (1. - trust) * high_suspect_number) * R.block(rindex2, rindex2, 3, 3); //v
+      R.block<3, 3>(rindex1, rindex1) = 1 * R.block(rindex1, rindex1, 3, 3);                                             //p
+      R.block<3, 3>(rindex2, rindex2) = (1. + (1. - trust) * high_suspect_number) * R.block<3, 3>(rindex2, rindex2); //v
       R(rindex3, rindex3) = (1. + (1. - trust) * high_suspect_number) * R(rindex3, rindex3);                         //z
 
       trusts(i) = trust;
@@ -185,15 +185,15 @@ namespace sd::est
     Matrix18d Pt = _P.transpose(); //??
     _P = (_P + Pt) / 2.;                        //??
 
-    if (_P.block(0, 0, 2, 2).determinant() > 0.000001)
+    if (_P.block<2, 2>(0, 0).determinant() > 0.000001)
     { //??
-      _P.block(0, 2, 2, 16).setZero();
-      _P.block(2, 0, 16, 2).setZero();
-      _P.block(0, 0, 2, 2) /= 10.;
+      _P.block<2, 16>(0, 2).setZero();
+      _P.block<16, 2>(2, 0).setZero();
+      _P.block<2, 2>(0, 0) /= 10.;
     }
     //输出状态量
-    ret.position = _xhat.block(0, 0, 3, 1);
-    ret.v_world = _xhat.block(3, 0, 3, 1);
+    ret.position = _xhat.block<3, 1>(0, 0);
+    ret.v_world = _xhat.block<3, 1>(3, 0);
     ret.v_body = ret.rot_body * ret.v_world;
 
     return true;
