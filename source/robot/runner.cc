@@ -28,7 +28,7 @@ namespace sd::robot
 
     // init ctrls
     leg_ctrl_ = std::make_unique<ctrl::LegCtrl>();
-    jpos_ctrl_ = std::make_unique<ctrl::JPosInit>();
+    jpos_ctrl_ = std::make_unique<ctrl::JPosInit>(3.); //endtime = 3.0
 
     // init state estimator
     // TODO initializeStateEstimator
