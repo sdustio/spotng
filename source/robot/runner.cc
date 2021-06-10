@@ -32,8 +32,9 @@ namespace sd::robot
 
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
-    est_orientation_ = std::make_unique<est::Orientation>();
     est_contact_ = std::make_unique<est::Contact>();
+    est_orientation_ = std::make_unique<est::Orientation>();
+    est_pos_vel_ = std::make_unique<est::PosVel>();
 
     // sub cmd and register cmd handler
     ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
@@ -51,14 +52,15 @@ namespace sd::robot
 
   bool Runner::Run()
   {
-    // Run the state estimator step
-    est_orientation_->Run(est_ret_, interface_->GetIMUData());
-    est_contact_->Run(est_ret_, contact_phase_);
-
     // Update the data from the robot
     ctrl_leg_->UpdateData(interface_->GetSPIData());
     ctrl_leg_->ZeroCmd();
     ctrl_leg_->SetLegEnabled(true);
+
+    // Run the state estimator step
+    est_contact_->Run(est_ret_, contact_phase_);
+    est_orientation_->Run(est_ret_, interface_->GetIMUData());
+    est_pos_vel_->Run(est_ret_, ctrl_leg_->GetDatas(), quadruped_);
 
     if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
     {

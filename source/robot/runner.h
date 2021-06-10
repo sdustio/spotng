@@ -18,6 +18,7 @@
 
 #include "sd/estimators/orientation.h"
 #include "sd/estimators/contact.h"
+#include "sd/estimators/pos_vel.h"
 
 
 namespace sd::robot
@@ -66,6 +67,7 @@ namespace sd::robot
     est::StateEst est_ret_;
     est::OrientationPtr est_orientation_;
     est::ContactPtr est_contact_;
+    est::PosVelPtr est_pos_vel_;
 
     Vector4d contact_phase_;
   };
