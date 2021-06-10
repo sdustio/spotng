@@ -20,8 +20,8 @@ namespace sd::est
     bool Run(StateEst& ret, const robot::IMUData& imu);
 
   private:
-    dynamics::Quat _ori_ini_inv;
-    bool _b_first_visit = true;
+    dynamics::Quat ori_ini_inv_;
+    bool b_first_visit_ = true;
   };
 
   using OrientationPtr = std::unique_ptr<Orientation>;

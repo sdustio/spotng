@@ -9,16 +9,16 @@ namespace sd::est
     ret.orientation = imu.quat; // 和 microstrainImu 顺序相同
 
     //初值
-    if (_b_first_visit)
+    if (b_first_visit_)
     {
       Vector3d rpy_ini = dynamics::QuatToRPY(ret.orientation); //四元数转欧拉角
       rpy_ini[0] = 0;                                          //roll  pitch 设零
       rpy_ini[1] = 0;
-      _ori_ini_inv = dynamics::RPYToQuat(-rpy_ini); //初始四元数的逆
-      _b_first_visit = false;
+      ori_ini_inv_ = dynamics::RPYToQuat(-rpy_ini); //初始四元数的逆
+      b_first_visit_ = false;
     }
 
-    ret.orientation = dynamics::QuatProduct(_ori_ini_inv, ret.orientation); //两四元数相乘
+    ret.orientation = dynamics::QuatProduct(ori_ini_inv_, ret.orientation); //两四元数相乘
 
     ret.rpy = dynamics::QuatToRPY(ret.orientation); //转欧拉角
 
