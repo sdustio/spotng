@@ -13,13 +13,13 @@ namespace sd::robot
     const std::string kTopicMotion = "sd/robot_motion";
   }
 
-  namespace ctrldt
+  namespace ctrlparams
   {
     constexpr std::chrono::milliseconds kSPIdt(int(1.0 / 0.04));      //0.04kHz
     constexpr std::chrono::microseconds kIMUdt(int(1000 * 1.0 / 10)); //10kHz
-    constexpr std::chrono::milliseconds kDYNdt(int(1.0 / 0.5));       //0.5kHz
+    constexpr std::chrono::milliseconds kCtrldt(int(1.0 / 0.5));       //0.5kHz
     constexpr double kSPIsec = kSPIdt.count() / 1'000;
     constexpr double kIMUsec = kIMUdt.count() / 1'000'000;
-    constexpr double kDYNsec = kDYNdt.count() / 1'000;
+    constexpr double kCtrlsec = kCtrldt.count() / 1'000;
   }
 }

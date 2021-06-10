@@ -3,7 +3,7 @@
 
 namespace sd::ctrl
 {
-  using robot::ctrldt::kDYNsec;
+  using robot::ctrlparams::kCtrlsec;
 
   JPosInit::JPosInit(double end_time) : end_time_(end_time), ini_jpos_{},
                                         target_jpos_{
@@ -21,7 +21,7 @@ namespace sd::ctrl
 
   bool JPosInit::IsInitialized(LegCtrlPtr &ctrl)
   {
-    curr_time_ += kDYNsec;
+    curr_time_ += kCtrlsec;
     if (first_visit_)
     {
       UpdateInitial(ctrl);

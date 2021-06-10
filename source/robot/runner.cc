@@ -16,10 +16,10 @@ namespace sd::robot
     // interface init & run periodically
     interface_->Init();
     spi_timer_ = this->create_wall_timer(
-        ctrldt::kSPIdt, [this]()
+        ctrlparams::kSPIdt, [this]()
         { this->interface_->RunSPI(); });
     imu_timer_ = this->create_wall_timer(
-        ctrldt::kIMUdt, [this]()
+        ctrlparams::kIMUdt, [this]()
         { this->interface_->RunIMU(); });
 
     // build dynamic model
@@ -34,14 +34,14 @@ namespace sd::robot
     // TODO initializeStateEstimator
 
     // sub cmd and register cmd handler
-    state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrldt::kDYNsec);
+    state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
         ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg)
         { this->HandleDriverCmd(std::move(msg)); });
 
     // run main ctrl periodically
     dyn_timer_ = this->create_wall_timer(
-        ctrldt::kDYNdt, [this]()
+        ctrlparams::kCtrldt, [this]()
         { this->Run(); });
 
     return true;
