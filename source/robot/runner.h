@@ -2,18 +2,22 @@
 
 #include <memory>
 
+
 #include "rclcpp/rclcpp.hpp"
 #include "sdrobot_api/msg/driver_cmd.hpp"
 #include "sdrobot_api/msg/motion_data.hpp"
 
+
 #include "sd/robot/runner.h"
 #include "sd/robot/interface.h"
 #include "sd/robot/model.h"
+
 #include "sd/controllers/leg.h"
 #include "sd/controllers/jpos_init.h"
 #include "sd/controllers/state_cmd.h"
-#include "sd/estimators/orientation.h"
 
+#include "sd/estimators/orientation.h"
+#include "sd/estimators/contact.h"
 
 
 namespace sd::robot
@@ -60,7 +64,10 @@ namespace sd::robot
     ctrl::JPosInitPtr ctrl_jpos_init_;
 
     estimators::StateEst est_ret_;
-    estimators::OrientationPtr est_ori_;
+    estimators::OrientationPtr est_orientation_;
+    estimators::ContactPtr est_contact_;
+
+    Vector4d contact_phase_;
   };
 
 } // namespace sd::robot

@@ -24,11 +24,11 @@ namespace sd::estimators
 
     ret.rot_body = dynamics::QuatToRotMat(ret.orientation); //转旋转矩阵
 
-    ret.omega_body = imu.gyro.template cast<double>(); //得机体下角速度
+    ret.omega_body = imu.gyro; //得机体下角速度
 
     ret.omega_world = ret.rot_body.transpose() * ret.omega_body; //得世界下角速度
 
-    ret.a_body = imu.acc.template cast<double>(); //得加速度
+    ret.a_body = imu.acc; //得加速度
     ret.a_world = ret.rot_body.transpose() * ret.a_body;
 
     return true;
