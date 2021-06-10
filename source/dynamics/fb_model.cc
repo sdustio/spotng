@@ -39,12 +39,12 @@ namespace sd::dynamics
     dstate_out = VectorXd::Zero(n_dof_);
 
     // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
+    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
     Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
-    SpatialVec F = Xc.transpose().template rightCols<3>() * force_ics_at_contact;
+    SpatialVec F = Xc.transpose().rightCols<3>() * force_ics_at_contact;
 
     double LambdaInv = 0;
     double tmp = 0;
@@ -87,12 +87,12 @@ namespace sd::dynamics
     dstate_out.qdd.setZero();
 
     // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
+    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
     Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
-    SpatialVec F = Xc.transpose().template rightCols<3>() * force_ics_at_contact;
+    SpatialVec F = Xc.transpose().rightCols<3>() * force_ics_at_contact;
 
     double LambdaInv = 0;
     double tmp = 0;
@@ -527,7 +527,7 @@ namespace sd::dynamics
       size_t i = gc_parent_[k];
 
       // Rotation to absolute coords
-      Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
+      Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
       Matrix6d Xc = CreateSpatialXform(Rai, gc_location_[k]);
 
       // Bias acceleration
@@ -538,7 +538,7 @@ namespace sd::dynamics
       Jcdqd_[k] = SpatialToLinearAcceleration(ac, vc);
 
       // rows for linear velcoity in the world
-      CartesianVecXd Xout = Xc.template bottomRows<3>();
+      CartesianVecXd Xout = Xc.bottomRows<3>();
 
       // from tips to base
       while (i > 5)
@@ -547,7 +547,7 @@ namespace sd::dynamics
         Xout = Xout * Xup_[i];
         i = parents_[i];
       }
-      Jc_[k].template leftCols<6>() = Xout;
+      Jc_[k].leftCols<6>() = Xout;
     }
   }
 
@@ -579,7 +579,7 @@ namespace sd::dynamics
 
     // Gravity comp force is the same as force required to accelerate
     // oppostite gravity
-    G_.template topRows<6>() = -IC_[5] * ag_[5];
+    G_.topRows<6>() = -IC_[5] * ag_[5];
     for (size_t i = 6; i < n_dof_; i++)
     {
       ag_[i] = Xup_[i] * ag_[parents_[i]];
@@ -625,14 +625,14 @@ namespace sd::dynamics
     }
 
     // Force on floating base
-    Cqd_.template topRows<6>() = fvp_[5];
+    Cqd_.topRows<6>() = fvp_[5];
     return Cqd_;
   }
 
   Matrix3d FBModel::GetOrientation(int link_idx)
   {
     ForwardKinematics();
-    Matrix3d Rai = Xa_[link_idx].template block<3, 3>(0, 0);
+    Matrix3d Rai = Xa_[link_idx].block<3, 3>(0, 0);
     Rai.transposeInPlace();
     return Rai;
   }
@@ -687,7 +687,7 @@ namespace sd::dynamics
     ForwardKinematics();
     Matrix3d Rai = GetOrientation(link_idx);
     // Vector3d v3 =
-    return Rai * v_[link_idx].template head<3>();
+    return Rai * v_[link_idx].head<3>();
     ;
   }
 
@@ -695,7 +695,7 @@ namespace sd::dynamics
   {
     ForwardAccelerationKinematics();
     Matrix3d Rai = GetOrientation(link_idx);
-    return Rai * a_[link_idx].template head<3>();
+    return Rai * a_[link_idx].head<3>();
   }
 
   void FBModel::CompositeInertias()
@@ -726,7 +726,7 @@ namespace sd::dynamics
     H_.setZero();
 
     // Top left corner is the locked inertia of the whole system
-    H_.template topLeftCorner<6, 6>() = IC_[5];
+    H_.topLeftCorner<6, 6>() = IC_[5];
 
     for (size_t j = 6; j < n_dof_; j++)
     {
@@ -751,8 +751,8 @@ namespace sd::dynamics
       }
 
       // Force on floating base
-      H_.template block<6, 1>(0, j) = f;
-      H_.template block<1, 6>(j, 0) = f.adjoint();
+      H_.block<6, 1>(0, j) = f;
+      H_.block<1, 6>(j, 0) = f.adjoint();
     }
     return H_;
   }
@@ -769,7 +769,7 @@ namespace sd::dynamics
 
     // Initialize gravity with model info
     SpatialVec aGravity = SpatialVec::Zero();
-    aGravity.template tail<3>() = gravity_;
+    aGravity.tail<3>() = gravity_;
 
     // Spatial force for floating base
     a_[5] = -Xup_[5] * aGravity + dstate_.body_velocity_d;
@@ -817,7 +817,7 @@ namespace sd::dynamics
       f_[parents_[i]] += Xup_[i].transpose() * f_[i];
       f_[parents_[i]] += Xuprot_[i].transpose() * frot_[i];
     }
-    genForce.template head<6>() = f_[5];
+    genForce.head<6>() = f_[5];
     return genForce;
   }
 
@@ -893,7 +893,7 @@ namespace sd::dynamics
     // output
     RotMat Rup = RotationFromSpatialXform(Xup_[5]);
     dstate.body_position_d =
-        Rup.transpose() * state_.body_velocity.template block<3, 1>(3, 0);
+        Rup.transpose() * state_.body_velocity.block<3, 1>(3, 0);
     dstate.body_velocity_d = afb;
     // qdd is set in the for loop above
   }
@@ -908,12 +908,12 @@ namespace sd::dynamics
     size_t i = i_opsp;
 
     // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
+    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
     Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
 
     // D is one column of an extended force propagator matrix (See Wensing, 2012
     // ICRA)
-    SpatialVec F = Xc.transpose().template rightCols<3>() * force_ics_at_contact;
+    SpatialVec F = Xc.transpose().rightCols<3>() * force_ics_at_contact;
 
     double LambdaInv = 0;
     double tmp = 0;
@@ -946,7 +946,7 @@ namespace sd::dynamics
     size_t i = i_opsp;
 
     // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].template block<3, 3>(0, 0).transpose();
+    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
     Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
 
     // D is a subslice of an extended force propagator matrix (See Wensing, 2012

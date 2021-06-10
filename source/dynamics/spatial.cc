@@ -11,8 +11,8 @@ namespace sd::dynamics
   {
     RotMat R = CoordinateRot(axis, theta);
     SpatialXform X = SpatialXform::Zero();
-    X.template topLeftCorner<3, 3>() = R;
-    X.template bottomRightCorner<3, 3>() = R;
+    X.topLeftCorner<3, 3>() = R;
+    X.bottomRightCorner<3, 3>() = R;
     return X;
   }
 
@@ -80,10 +80,10 @@ namespace sd::dynamics
   Matrix4d SpatialXformToHomogeneous(const SpatialXform &X)
   {
     Matrix4d H = Matrix4d::Zero();
-    RotMat R = X.template topLeftCorner<3, 3>();
-    Matrix3d skewR = X.template bottomLeftCorner<3, 3>();
-    H.template topLeftCorner<3, 3>() = R;
-    H.template topRightCorner<3, 1>() = MatToSkewVec(skewR * R.transpose());
+    RotMat R = X.topLeftCorner<3, 3>();
+    Matrix3d skewR = X.bottomLeftCorner<3, 3>();
+    H.topLeftCorner<3, 3>() = R;
+    H.topRightCorner<3, 1>() = MatToSkewVec(skewR * R.transpose());
     H(3, 3) = 1;
     return H;
   }
@@ -93,12 +93,12 @@ namespace sd::dynamics
  */
   SpatialXform HomogeneousToSpatialXform(const Matrix4d &H)
   {
-    Matrix3d R = H.template topLeftCorner<3, 3>();
-    Vector3d translate = H.template topRightCorner<3, 1>();
+    Matrix3d R = H.topLeftCorner<3, 3>();
+    Vector3d translate = H.topRightCorner<3, 1>();
     SpatialXform X = SpatialXform::Zero();
-    X.template topLeftCorner<3, 3>() = R;
-    X.template bottomLeftCorner<3, 3>() = VecToSkewMat(translate) * R;
-    X.template bottomRightCorner<3, 3>() = R;
+    X.topLeftCorner<3, 3>() = R;
+    X.bottomLeftCorner<3, 3>() = VecToSkewMat(translate) * R;
+    X.bottomRightCorner<3, 3>() = R;
     return X;
   }
 
@@ -108,9 +108,9 @@ namespace sd::dynamics
   SpatialXform CreateSpatialXform(const RotMat &R, const Vector3d &r)
   {
     SpatialXform X = SpatialXform::Zero();
-    X.template topLeftCorner<3, 3>() = R;
-    X.template bottomRightCorner<3, 3>() = R;
-    X.template bottomLeftCorner<3, 3>() = -R * VecToSkewMat(r);
+    X.topLeftCorner<3, 3>() = R;
+    X.bottomRightCorner<3, 3>() = R;
+    X.bottomLeftCorner<3, 3>() = -R * VecToSkewMat(r);
     return X;
   }
 
@@ -119,7 +119,7 @@ namespace sd::dynamics
  */
   RotMat RotationFromSpatialXform(const SpatialXform &X)
   {
-    RotMat R = X.template topLeftCorner<3, 3>();
+    RotMat R = X.topLeftCorner<3, 3>();
     return R;
   }
 
@@ -130,7 +130,7 @@ namespace sd::dynamics
   {
     RotMat R = RotationFromSpatialXform(X);
     Vector3d r =
-        -MatToSkewVec(R.transpose() * X.template bottomLeftCorner<3, 3>());
+        -MatToSkewVec(R.transpose() * X.bottomLeftCorner<3, 3>());
     return r;
   }
 
@@ -141,7 +141,7 @@ namespace sd::dynamics
   {
     RotMat R = RotationFromSpatialXform(X);
     Vector3d r =
-        -MatToSkewVec(R.transpose() * X.template bottomLeftCorner<3, 3>());
+        -MatToSkewVec(R.transpose() * X.bottomLeftCorner<3, 3>());
     SpatialXform Xinv = CreateSpatialXform(R.transpose(), -R * r);
     return Xinv;
   }
@@ -161,9 +161,9 @@ namespace sd::dynamics
       v(2) = 1;
 
     if (joint == JointType::Prismatic)
-      phi.template bottomLeftCorner<3, 1>() = v;
+      phi.bottomLeftCorner<3, 1>() = v;
     else if (joint == JointType::Revolute)
-      phi.template topLeftCorner<3, 1>() = v;
+      phi.topLeftCorner<3, 1>() = v;
     else
       throw std::runtime_error("Unknown motion subspace");
 
@@ -220,8 +220,8 @@ namespace sd::dynamics
  */
   Vector3d SpatialToLinearVelocity(const SpatialVec &v, const Vector3d &x)
   {
-    Vector3d vsAng = v.template topLeftCorner<3, 1>();
-    Vector3d vsLin = v.template bottomLeftCorner<3, 1>();
+    Vector3d vsAng = v.topLeftCorner<3, 1>();
+    Vector3d vsLin = v.bottomLeftCorner<3, 1>();
     Vector3d vLinear = vsLin + vsAng.cross(x);
     return vLinear;
   }
@@ -231,7 +231,7 @@ namespace sd::dynamics
  */
   Vector3d SpatialToAngularVelocity(const SpatialVec &v)
   {
-    Vector3d vsAng = v.template topLeftCorner<3, 1>();
+    Vector3d vsAng = v.topLeftCorner<3, 1>();
     return vsAng;
   }
 
@@ -243,7 +243,7 @@ namespace sd::dynamics
   {
     Vector3d acc;
     // classical accleration = spatial linear acc + omega x v
-    acc = a.template tail<3>() + v.template head<3>().cross(v.template tail<3>());
+    acc = a.tail<3>() + v.head<3>().cross(v.tail<3>());
     return acc;
   }
 
@@ -257,7 +257,7 @@ namespace sd::dynamics
     Vector3d vlin_x = SpatialToLinearVelocity(v, x);
 
     // classical accleration = spatial linear acc + omega x v
-    Vector3d acc = alin_x + v.template head<3>().cross(vlin_x);
+    Vector3d acc = alin_x + v.head<3>().cross(vlin_x);
     return acc;
   }
 
@@ -280,8 +280,8 @@ namespace sd::dynamics
   SpatialVec ForceToSpatialForce(const Vector3d &f, const Vector3d &p)
   {
     SpatialVec fs;
-    fs.template topLeftCorner<3, 1>() = p.cross(f);
-    fs.template bottomLeftCorner<3, 1>() = f;
+    fs.topLeftCorner<3, 1>() = p.cross(f);
+    fs.bottomLeftCorner<3, 1>() = f;
     return fs;
   }
 
