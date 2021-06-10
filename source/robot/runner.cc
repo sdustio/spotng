@@ -27,14 +27,14 @@ namespace sd::robot
     fbmodel_ = quadruped_->BuildModel();
 
     // init ctrls
-    leg_ctrl_ = std::make_unique<ctrl::Leg>();
-    jpos_ctrl_ = std::make_unique<ctrl::JPosInit>(3.); //endtime = 3.0
+    ctrl_leg_ = std::make_unique<ctrl::Leg>();
+    ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>(3.); //endtime = 3.0
 
     // init state estimator
-    // TODO initializeStateEstimator
+    est_ori_ = std::make_unique<estimators::Orientation>();
 
     // sub cmd and register cmd handler
-    state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
+    ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
         ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg)
         { this->HandleDriverCmd(std::move(msg)); });
@@ -50,29 +50,29 @@ namespace sd::robot
   bool Runner::Run()
   {
     // Run the state estimator step
-    // TODO stateEstimator->run();
+    est_ori_->Run(est_ret_, interface_->GetIMUData());
 
     // Update the data from the robot
-    leg_ctrl_->UpdateData(interface_->GetSPIData());
-    leg_ctrl_->ZeroCmd();
-    leg_ctrl_->SetLegEnabled(true);
+    ctrl_leg_->UpdateData(interface_->GetSPIData());
+    ctrl_leg_->ZeroCmd();
+    ctrl_leg_->SetLegEnabled(true);
 
-    if (jpos_ctrl_->IsInitialized(leg_ctrl_))
+    if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
     {
       // Run ctrl
-      state_cmd_->CmdtoStateData();
+      ctrl_state_cmd_->CmdtoStateData();
       // TODO ctrl->runController();
     }
 
     // Update cmd to the robot
-    leg_ctrl_->UpdateSPICmd(interface_->GetSPICmdForUpdate());
+    ctrl_leg_->UpdateSPICmd(interface_->GetSPICmdForUpdate());
     // TODO publish motion data
     return true;
   }
 
   void Runner::HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
   {
-    state_cmd_->Update(
+    ctrl_state_cmd_->Update(
         msg->mv[0], msg->mv[1], msg->tr,
         msg->pa, static_cast<Mode>(msg->mode));
   }

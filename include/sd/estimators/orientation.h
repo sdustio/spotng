@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sd/robot/interface.h"
 #include "sd/estimators/state_est.h"
 
@@ -21,5 +23,8 @@ namespace sd::estimators
     dynamics::Quat _ori_ini_inv;
     bool _b_first_visit = true;
   };
+
+  using OrientationPtr = std::unique_ptr<Orientation>;
+  using OrientationSharedPtr = std::shared_ptr<Orientation>;
 
 }

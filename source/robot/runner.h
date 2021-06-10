@@ -12,6 +12,7 @@
 #include "sd/controllers/leg.h"
 #include "sd/controllers/jpos_init.h"
 #include "sd/controllers/state_cmd.h"
+#include "sd/estimators/orientation.h"
 
 
 
@@ -51,11 +52,15 @@ namespace sd::robot
 
     std::shared_ptr<Interface> interface_;
 
-    ctrl::StateCmdPtr state_cmd_;
-    ctrl::LegPtr leg_ctrl_;
-    ctrl::JPosInitPtr jpos_ctrl_;
     QuadrupedPtr quadruped_;
     dynamics::FBModelPtr fbmodel_;
+
+    ctrl::StateCmdPtr ctrl_state_cmd_;
+    ctrl::LegPtr ctrl_leg_;
+    ctrl::JPosInitPtr ctrl_jpos_init_;
+
+    estimators::StateEst est_ret_;
+    estimators::OrientationPtr est_ori_;
   };
 
 } // namespace sd::robot
