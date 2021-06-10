@@ -19,7 +19,7 @@ namespace sd::ctrl
   {
   }
 
-  bool JPosInit::IsInitialized(LegCtrlPtr &ctrl)
+  bool JPosInit::IsInitialized(LegPtr &ctrl)
   {
     curr_time_ += kCtrlsec;
     if (first_visit_)
@@ -49,7 +49,7 @@ namespace sd::ctrl
     return true;
   }
 
-  void JPosInit::UpdateInitial(const LegCtrlPtr &ctrl)
+  void JPosInit::UpdateInitial(const LegPtr &ctrl)
   {
     std::array<double, 3 * dynamics::bspline::kDim> ini{};
     std::array<double, 3 * dynamics::bspline::kDim> fin{};

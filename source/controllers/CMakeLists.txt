@@ -1,5 +1,5 @@
 list(APPEND srcs
-  leg_ctrl.cc
+  leg.cc
   state_cmd.cc
   jpos_init.cc
 )

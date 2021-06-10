@@ -27,7 +27,7 @@ namespace sd::robot
     fbmodel_ = quadruped_->BuildModel();
 
     // init ctrls
-    leg_ctrl_ = std::make_unique<ctrl::LegCtrl>();
+    leg_ctrl_ = std::make_unique<ctrl::Leg>();
     jpos_ctrl_ = std::make_unique<ctrl::JPosInit>(3.); //endtime = 3.0
 
     // init state estimator

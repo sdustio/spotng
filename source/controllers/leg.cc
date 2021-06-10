@@ -1,8 +1,8 @@
-#include "sd/controllers/leg_ctrl.h"
+#include "sd/controllers/leg.h"
 
 namespace sd::ctrl
 {
-  void LegCtrl::UpdateData(const robot::SPIData &data)
+  void Leg::UpdateData(const robot::SPIData &data)
   {
     for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
@@ -24,7 +24,7 @@ namespace sd::ctrl
     }
   }
 
-  void LegCtrl::UpdateSPICmd(robot::SPICmd &cmd)
+  void Leg::UpdateSPICmd(robot::SPICmd &cmd)
   {
     for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
@@ -76,7 +76,7 @@ namespace sd::ctrl
     }
   }
 
-  void LegCtrl::ZeroCmd()
+  void Leg::ZeroCmd()
   {
     for (auto &cmd : cmds_)
     {
@@ -85,7 +85,7 @@ namespace sd::ctrl
     enabled_ = false;
   }
 
-  void LegCtrl::ComputeLegJacobianAndPosition(std::size_t leg)
+  void Leg::ComputeLegJacobianAndPosition(std::size_t leg)
   {
     double l1 = robot::ModelAttrs::abad_link_length;
     double l2 = robot::ModelAttrs::hip_link_length;

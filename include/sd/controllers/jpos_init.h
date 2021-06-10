@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sd/robot/model.h"
-#include "sd/controllers/leg_ctrl.h"
+#include "sd/controllers/leg.h"
 #include "sd/dynamics/bspline.h"
 
 namespace sd::ctrl
@@ -10,10 +10,10 @@ namespace sd::ctrl
   {
   public:
     JPosInit(double end_time);
-    bool IsInitialized(LegCtrlPtr &ctrl);
+    bool IsInitialized(LegPtr &ctrl);
 
   private:
-    void UpdateInitial(const LegCtrlPtr &ctrl);
+    void UpdateInitial(const LegPtr &ctrl);
 
     double end_time_;
     double curr_time_ = 0.0;

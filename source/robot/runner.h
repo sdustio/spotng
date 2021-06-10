@@ -9,7 +9,7 @@
 #include "sd/robot/runner.h"
 #include "sd/robot/interface.h"
 #include "sd/robot/model.h"
-#include "sd/controllers/leg_ctrl.h"
+#include "sd/controllers/leg.h"
 #include "sd/controllers/jpos_init.h"
 #include "sd/controllers/state_cmd.h"
 
@@ -52,7 +52,7 @@ namespace sd::robot
     std::shared_ptr<Interface> interface_;
 
     ctrl::StateCmdPtr state_cmd_;
-    ctrl::LegCtrlPtr leg_ctrl_;
+    ctrl::LegPtr leg_ctrl_;
     ctrl::JPosInitPtr jpos_ctrl_;
     QuadrupedPtr quadruped_;
     dynamics::FBModelPtr fbmodel_;

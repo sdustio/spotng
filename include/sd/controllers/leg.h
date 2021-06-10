@@ -8,7 +8,7 @@
 namespace sd::ctrl
 {
 
-  class LegCtrl
+  class Leg
   {
   public:
     void SetLegEnabled(bool enabled) { enabled_ = enabled; }
@@ -50,6 +50,6 @@ namespace sd::ctrl
     bool enabled_ = false;
   };
 
-  using LegCtrlPtr = std::unique_ptr<LegCtrl>;
-  using LegCtrlSharedPtr = std::shared_ptr<LegCtrl>;
+  using LegPtr = std::unique_ptr<Leg>;
+  using LegSharedPtr = std::shared_ptr<Leg>;
 }
