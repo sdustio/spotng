@@ -9,6 +9,7 @@ set(SOURCES
 
 add_subdirectory(dynamics)
 add_subdirectory(controllers)
+add_subdirectory(estimators)
 add_subdirectory(robot)
 add_subdirectory(hardware)
 
