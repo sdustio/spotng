@@ -142,7 +142,7 @@ namespace sd::est
       Q.block<3, 3>(qindex, qindex) =
           (1. + (1. - trust) * high_suspect_number) * Q.block<3, 3>(qindex, qindex); //p
 
-      R.block<3, 3>(rindex1, rindex1) = 1 * R.block(rindex1, rindex1, 3, 3);                                             //p
+      R.block<3, 3>(rindex1, rindex1) = 1 * R.block<3, 3>(rindex1, rindex1);                                             //p
       R.block<3, 3>(rindex2, rindex2) = (1. + (1. - trust) * high_suspect_number) * R.block<3, 3>(rindex2, rindex2); //v
       R(rindex3, rindex3) = (1. + (1. - trust) * high_suspect_number) * R(rindex3, rindex3);                         //z
 
