@@ -28,7 +28,7 @@ namespace sd::robot
 
     // init ctrls
     ctrl_leg_ = std::make_unique<ctrl::Leg>();
-    ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>(3.); //endtime = 3.0
+    ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>();
 
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;

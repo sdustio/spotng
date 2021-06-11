@@ -5,17 +5,17 @@ namespace sd::ctrl
 {
   using robot::ctrlparams::kCtrlsec;
 
-  JPosInit::JPosInit(double end_time) : end_time_(end_time), ini_jpos_{},
-                                        target_jpos_{
-                                            -0.6, -1.0, 2.7,
-                                            0.6, -1.0, 2.7,
-                                            -0.6, -1.0, 2.7,
-                                            0.6, -1.0, 2.7},
-                                        mid_jpos_{
-                                            -1.8, 0., 2.7,
-                                            1.8, 0., 2.7,
-                                            -1.7, 0.5, 0.5,
-                                            1.7, 0.5, 0.5}
+  JPosInit::JPosInit() : end_time_(kEndTime), ini_jpos_{},
+                         target_jpos_{
+                             -0.6, -1.0, 2.7,
+                             0.6, -1.0, 2.7,
+                             -0.6, -1.0, 2.7,
+                             0.6, -1.0, 2.7},
+                         mid_jpos_{
+                             -1.8, 0., 2.7,
+                             1.8, 0., 2.7,
+                             -1.7, 0.5, 0.5,
+                             1.7, 0.5, 0.5}
   {
   }
 
@@ -75,7 +75,8 @@ namespace sd::ctrl
     kp << 5, 0, 0, 0, 5, 0, 0, 0, 5;
     kd << 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1;
 
-    for (auto & cmd: ctrl->GetCmdsForUpdate()){
+    for (auto &cmd : ctrl->GetCmdsForUpdate())
+    {
       cmd.kp_joint = kp;
       cmd.kd_joint = kd;
     }

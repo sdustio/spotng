@@ -6,10 +6,13 @@
 
 namespace sd::ctrl
 {
+
+  constexpr double kEndTime = 3.;
+
   class JPosInit
   {
   public:
-    JPosInit(double end_time);
+    JPosInit();
     bool IsInitialized(LegPtr &ctrl);
 
   private:
