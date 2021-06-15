@@ -47,16 +47,27 @@ namespace sd::ctrl
   /**
  * Constructor to automatically setup a basic gait
  */
-  GaitScheduler::GaitScheduler()
+  GaitSkd::GaitSkd()
   {
     Initialize();
     dt_ = robot::ctrlparams::kCtrlsec;
   }
 
+  bool GaitSkd::SetNextGait(const GaitType gait)
+  {
+    gait_data_.next_gait = gait;
+    return true;
+  }
+
+  const GaitData &GaitSkd::GetGaitData() const
+  {
+    return gait_data_;
+  }
+
   /**
  * Initialize the gait data
  */
-  void GaitScheduler::Initialize()
+  void GaitSkd::Initialize()
   {
     // Start the gait in a trot since we use this the most 开始步态在小跑，因为我们使用这个最多
     gait_data_.current_gait = GaitType::STAND;
@@ -71,7 +82,7 @@ namespace sd::ctrl
  * Executes the Gait Schedule step to calculate values for the defining
  * gait parameters.
  */
-  void GaitScheduler::Step()
+  void GaitSkd::Step()
   {
 
     // Modify the gait with settings 修改步态设置（切换步态）
@@ -187,7 +198,7 @@ namespace sd::ctrl
   /**
  *步态切换
  */
-  void GaitScheduler::ModifyGait()
+  void GaitSkd::ModifyGait()
   {
     // Use NaturalGaitModification from FSM_State 使用fsm来的设定
     if (gait_data_.current_gait != gait_data_.next_gait)
@@ -225,7 +236,7 @@ namespace sd::ctrl
  * These add flexibility to be used for very irregular gaits and transitions.
  * 这些增加了灵活性，以用于非常不规则的步态和过渡
  */
-  void GaitScheduler::CreateGait()
+  void GaitSkd::CreateGait()
   {
 
     // Case structure gets the appropriate parameters
@@ -399,7 +410,7 @@ namespace sd::ctrl
     CalcAuxiliaryGaitData();
   }
 
-  void GaitScheduler::CalcAuxiliaryGaitData()
+  void GaitSkd::CalcAuxiliaryGaitData()
   {
 
     // Set the gait parameters for each foot

@@ -26,10 +26,6 @@ namespace sd::robot
     quadruped_ = std::make_unique<Quadruped>();
     fbmodel_ = quadruped_->BuildModel();
 
-    // init ctrls
-    ctrl_leg_ = std::make_unique<ctrl::Leg>();
-    ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>();
-
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
     est_contact_ = std::make_unique<est::Contact>();
@@ -41,6 +37,11 @@ namespace sd::robot
     driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
         ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg)
         { this->HandleDriverCmd(std::move(msg)); });
+
+    // init ctrls
+    ctrl_leg_ = std::make_unique<ctrl::Leg>();
+    ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>();
+    ctrl_gait_skd_ = std::make_unique<ctrl::GaitSkd>();
 
     // run main ctrl periodically
     dyn_timer_ = this->create_wall_timer(
@@ -65,6 +66,7 @@ namespace sd::robot
     if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
     {
       // Run ctrl
+      ctrl_gait_skd_->Step();
       ctrl_state_cmd_->CmdtoStateData();
       // TODO ctrl->runController();
     }

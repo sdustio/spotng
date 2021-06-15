@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sd/types.h"
 
 namespace sd::ctrl
@@ -80,18 +82,18 @@ namespace sd::ctrl
  * Utility to process GaitData and schedule foot steps and swings.
  * 实用程序，以处理步态数据和计划的步伐和摆动。
  */
-  class GaitScheduler
+  class GaitSkd
   {
   public:
-    // Constructors for the GaitScheduler
-    GaitScheduler(); //构造函数
+    // Constructors for the GaitSkd
+    GaitSkd(); //构造函数
 
     // Iteration step for scheduler logic 逻辑循环
     void Step();
 
-    bool SetNextGait(const GaitType gait){gait_data_.next_gait = gait;}
+    bool SetNextGait(const GaitType gait);
 
-    const GaitData& GetGait() const{ return gait_data_;}
+    const GaitData& GetGaitData() const;
 
   private:
     // Initialize the Gait Scheduler//初始化
@@ -124,4 +126,7 @@ namespace sd::ctrl
     //摆动时间
     double swing_time_natural = 0.25;
   };
+
+  using GaitSkdPtr = std::unique_ptr<GaitSkd>;
+  using GaitSkdSharedPtr = std::shared_ptr<GaitSkd>;
 }
