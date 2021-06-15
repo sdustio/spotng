@@ -7,51 +7,51 @@ namespace sd::est
   bool PosVel::Setup()
   {
     double dt = robot::ctrlparams::kCtrlsec;
-    _xhat.setZero(); //状态估计值
-    _ps.setZero();
-    _vs.setZero();
+    xhat_.setZero(); //状态估计值
+    ps_.setZero();
+    vs_.setZero();
     //状态转移矩阵，计算K+1时刻状态值X[k+1] 自己写出来算下就知道
-    _A.setZero();
-    _A.block<3, 3>(0, 0) = Matrix3d::Identity();
-    _A.block<3, 3>(0, 3) = dt * Matrix3d::Identity();
-    _A.block<3, 3>(3, 3) = Matrix3d::Identity();
-    _A.block<12, 12>(6, 6) = Matrix12d::Identity();
+    A_.setZero();
+    A_.block<3, 3>(0, 0) = Matrix3d::Identity();
+    A_.block<3, 3>(0, 3) = dt * Matrix3d::Identity();
+    A_.block<3, 3>(3, 3) = Matrix3d::Identity();
+    A_.block<12, 12>(6, 6) = Matrix12d::Identity();
     //输入矩阵
-    _B.setZero();
-    _B.block<3, 3>(3, 0) = dt * Matrix3d::Identity();
+    B_.setZero();
+    B_.block<3, 3>(3, 0) = dt * Matrix3d::Identity();
     //观测矩阵
     //观测量[p1 p2 p3 p4 v1 v2 v3 v4 z1 z2 z3 z4]（v z都在世界坐标下p在机身坐标系） p v 是向量 z是标量 pib=pb-piw vi=vb
     MatrixXd C1(3, 6);
     C1 << Matrix3d::Identity(), Matrix3d::Zero();
     MatrixXd C2(3, 6);
     C2 << Matrix3d::Zero(), Matrix3d::Identity();
-    _C.setZero();
-    _C.block<3, 6>(0, 0) = C1;
-    _C.block<3, 6>(3, 0) = C1;
-    _C.block<3, 6>(6, 0) = C1;
-    _C.block<3, 6>(9, 0) = C1;
-    _C.block<12, 12>(0, 6) = -1. * Matrix12d::Identity();
-    _C.block<3, 6>(12, 0) = C2;
-    _C.block<3, 6>(15, 0) = C2;
-    _C.block<3, 6>(18, 0) = C2;
-    _C.block<3, 6>(21, 0) = C2;
-    _C(27, 17) = 1.;
-    _C(26, 14) = 1.;
-    _C(25, 11) = 1.;
-    _C(24, 8) = 1.;
+    C_.setZero();
+    C_.block<3, 6>(0, 0) = C1;
+    C_.block<3, 6>(3, 0) = C1;
+    C_.block<3, 6>(6, 0) = C1;
+    C_.block<3, 6>(9, 0) = C1;
+    C_.block<12, 12>(0, 6) = -1. * Matrix12d::Identity();
+    C_.block<3, 6>(12, 0) = C2;
+    C_.block<3, 6>(15, 0) = C2;
+    C_.block<3, 6>(18, 0) = C2;
+    C_.block<3, 6>(21, 0) = C2;
+    C_(27, 17) = 1.;
+    C_(26, 14) = 1.;
+    C_(25, 11) = 1.;
+    C_(24, 8) = 1.;
 
     //初始不确定性
-    _P.setIdentity();
-    _P = 100. * _P;
+    P_.setIdentity();
+    P_ = 100. * P_;
     //初始状态估计噪声
-    _Q0.setIdentity();
-    _Q0.block<3, 3>(0, 0) = (dt / 20.) * Matrix3d::Identity();
-    _Q0.block<3, 3>(3, 3) =
+    Q0_.setIdentity();
+    Q0_.block<3, 3>(0, 0) = (dt / 20.) * Matrix3d::Identity();
+    Q0_.block<3, 3>(3, 3) =
         (dt * 9.8 / 20.) * Matrix3d::Identity();
 
-    _Q0.block<12, 12>(6, 6) = dt * Matrix12d::Identity();
+    Q0_.block<12, 12>(6, 6) = dt * Matrix12d::Identity();
 
-    _R0.setIdentity();
+    R0_.setIdentity();
 
     return true;
   }
@@ -67,15 +67,15 @@ namespace sd::est
     double sensor_noise_zfoot = robot::ctrlparams::kFootHeightSensorNoise;
     //状态估计噪声
     Matrix18d Q = Matrix18d::Identity();
-    Q.block<3, 3>(0, 0) = _Q0.block<3, 3>(0, 0) * process_noise_pimu;
-    Q.block<3, 3>(3, 3) = _Q0.block<3, 3>(3, 3) * process_noise_vimu;
-    Q.block<12, 12>(6, 6) = _Q0.block<12, 12>(6, 6) * process_noise_pfoot;
+    Q.block<3, 3>(0, 0) = Q0_.block<3, 3>(0, 0) * process_noise_pimu;
+    Q.block<3, 3>(3, 3) = Q0_.block<3, 3>(3, 3) * process_noise_vimu;
+    Q.block<12, 12>(6, 6) = Q0_.block<12, 12>(6, 6) * process_noise_pfoot;
     //观测噪声矩阵
     Matrix28d R = Matrix28d::Identity();
-    R.block<12, 12>(0, 0) = _R0.block<12, 12>(0, 0) * sensor_noise_pimu_rel_foot;
+    R.block<12, 12>(0, 0) = R0_.block<12, 12>(0, 0) * sensor_noise_pimu_rel_foot;
     R.block<12, 12>(12, 12) =
-        _R0.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
-    R.block<4, 4>(24, 24) = _R0.block<4, 4>(24, 24) * sensor_noise_zfoot;
+        R0_.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
+    R.block<4, 4>(24, 24) = R0_.block<4, 4>(24, 24) * sensor_noise_zfoot;
 
     int qindex = 0;
     int rindex1 = 0;
@@ -93,8 +93,8 @@ namespace sd::est
     Vector4d trusts = Vector4d::Zero();
     Vector3d p0, v0;
     //初始位置 速度
-    p0 << _xhat[0], _xhat[1], _xhat[2];
-    v0 << _xhat[3], _xhat[4], _xhat[5];
+    p0 << xhat_[0], xhat_[1], xhat_[2];
+    v0 << xhat_[3], xhat_[4], xhat_[5];
 
     //构成状态变量等
     for (int i = 0; i < robot::ModelAttrs::num_leg; i++)
@@ -148,52 +148,52 @@ namespace sd::est
 
       trusts(i) = trust;
       //处理后的
-      _ps.segment(i1, 3) = -p_f;                                  //足端位置在世界坐标系描述
-      _vs.segment(i1, 3) = (1.0f - trust) * v0 + trust * (-dp_f); //足端速度在世界坐标系描述
+      ps_.segment(i1, 3) = -p_f;                                  //足端位置在世界坐标系描述
+      vs_.segment(i1, 3) = (1.0f - trust) * v0 + trust * (-dp_f); //足端速度在世界坐标系描述
       pzs(i) = (1.0f - trust) * (p0(2) + p_f(2));
     }
 
     Vector28d y;
 
-    y << _ps, _vs, pzs;
+    y << ps_, vs_, pzs;
 
     //卡尔曼滤波
-    _xhat = _A * _xhat + _B * a; //状态预测方程
+    xhat_ = A_ * xhat_ + B_ * a; //状态预测方程
 
-    Matrix18d At = _A.transpose();
+    Matrix18d At = A_.transpose();
 
-    Matrix18d Pm = _A * _P * At + Q; //不确定性预测方程
+    Matrix18d Pm = A_ * P_ * At + Q; //不确定性预测方程
 
     //卡尔曼增益准备
-    Eigen::Matrix<double, 18, 28> Ct = _C.transpose();
+    Eigen::Matrix<double, 18, 28> Ct = C_.transpose();
 
-    Vector28d yModel = _C * _xhat; //预测的观测值
+    Vector28d yModel = C_ * xhat_; //预测的观测值
 
     Vector28d ey = y - yModel; //误差 卡尔曼增益计算准备
 
-    Matrix28d S = _C * Pm * Ct + R; //卡尔曼增益计算准备
+    Matrix28d S = C_ * Pm * Ct + R; //卡尔曼增益计算准备
 
     // todo compute LU only once
     Vector28d S_ey = S.lu().solve(ey); //求逆？？
 
-    _xhat += Pm * Ct * S_ey; //？？
+    xhat_ += Pm * Ct * S_ey; //？？
 
-    Eigen::Matrix<double, 28, 18> S_C = S.lu().solve(_C); //？?
+    Eigen::Matrix<double, 28, 18> S_C = S.lu().solve(C_); //？?
 
-    _P = (Matrix18d::Identity() - Pm * Ct * S_C) * Pm; //最佳估计不确定性协方差??
+    P_ = (Matrix18d::Identity() - Pm * Ct * S_C) * Pm; //最佳估计不确定性协方差??
 
-    Matrix18d Pt = _P.transpose(); //??
-    _P = (_P + Pt) / 2.;                        //??
+    Matrix18d Pt = P_.transpose(); //??
+    P_ = (P_ + Pt) / 2.;                        //??
 
-    if (_P.block<2, 2>(0, 0).determinant() > 0.000001)
+    if (P_.block<2, 2>(0, 0).determinant() > 0.000001)
     { //??
-      _P.block<2, 16>(0, 2).setZero();
-      _P.block<16, 2>(2, 0).setZero();
-      _P.block<2, 2>(0, 0) /= 10.;
+      P_.block<2, 16>(0, 2).setZero();
+      P_.block<16, 2>(2, 0).setZero();
+      P_.block<2, 2>(0, 0) /= 10.;
     }
     //输出状态量
-    ret.position = _xhat.block<3, 1>(0, 0);
-    ret.v_world = _xhat.block<3, 1>(3, 0);
+    ret.position = xhat_.block<3, 1>(0, 0);
+    ret.v_world = xhat_.block<3, 1>(3, 0);
     ret.v_body = ret.rot_body * ret.v_world;
 
     return true;
