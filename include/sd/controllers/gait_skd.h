@@ -89,6 +89,10 @@ namespace sd::ctrl
     // Iteration step for scheduler logic 逻辑循环
     void Step();
 
+    bool SetNextGait(const GaitType gait){gait_data_.next_gait = gait;}
+
+    const GaitData& GetGait() const{ return gait_data_;}
+
   private:
     // Initialize the Gait Scheduler//初始化
     void Initialize();
