@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 
 #include "sd/types.h"
 
@@ -13,20 +14,8 @@ namespace sd::ctrl
   enum class GaitType : uint8_t
   {
     STAND,
-    STAND_CYCLE,
-    STATIC_WALK,
-    AMBLE,
-    TROT_WALK,
     TROT,
-    TROT_RUN,
-    PACE,
-    BOUND,
-    ROTARY_GALLOP,
-    TRAVERSE_GALLOP,
-    PRONK,
-    THREE_FOOT,
-    CUSTOM,
-    TRANSITION_TO_STAND
+    Count
   };
 
   /**
@@ -105,6 +94,8 @@ namespace sd::ctrl
 
     //创建步态
     void CreateGait();
+    void CreateGaitStand();
+    void CreateGaitTrot();
 
     //计算辅助步态数据
     void CalcAuxiliaryGaitData();
@@ -125,6 +116,8 @@ namespace sd::ctrl
     double switching_phase_natural = 0.5;
     //摆动时间
     double swing_time_natural = 0.25;
+
+    std::array<void(GaitSkd::*)(), size_t(GaitType::Count)> create_gait_methods_;
   };
 
   using GaitSkdPtr = std::unique_ptr<GaitSkd>;

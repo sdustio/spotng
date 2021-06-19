@@ -51,6 +51,10 @@ namespace sd::ctrl
   {
     Initialize();
     dt_ = robot::ctrlparams::kCtrlsec;
+    create_gait_methods_ = {
+      &GaitSkd::CreateGaitStand,
+      &GaitSkd::CreateGaitTrot
+      };
   }
 
   bool GaitSkd::SetNextGait(const GaitType gait)
@@ -239,10 +243,16 @@ namespace sd::ctrl
   void GaitSkd::CreateGait()
   {
 
-    // Case structure gets the appropriate parameters
-    switch (gait_data_.next_gait)
-    {
-    case GaitType::STAND:
+    (this->*create_gait_methods_[size_t(gait_data_.next_gait)])();
+
+    // Gait has switched
+    gait_data_.current_gait = gait_data_.next_gait;
+
+    // Calculate the auxilliary gait information
+    CalcAuxiliaryGaitData();
+  }
+
+  void GaitSkd::CreateGaitStand(){
       gait_data_.gait_name = "STAND";
       gait_data_.gait_enabled << 1, 1, 1, 1;
       gait_data_.period_time_nominal = 10.0;
@@ -250,49 +260,9 @@ namespace sd::ctrl
       gait_data_.switching_phase_nominal = 1.0;
       gait_data_.phase_offset << 0.5, 0.5, 0.5, 0.5;
       gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
+  }
 
-    case GaitType::STAND_CYCLE:
-      gait_data_.gait_name = "STAND_CYCLE";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 1.0;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 1.0;
-      gait_data_.phase_offset << 0.5, 0.5, 0.5, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::STATIC_WALK:
-      gait_data_.gait_name = "STATIC_WALK";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 1.25;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.8;
-      gait_data_.phase_offset << 0.25, 0.0, 0.75, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::AMBLE:
-      gait_data_.gait_name = "AMBLE";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.5;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.6250;
-      gait_data_.phase_offset << 0.0, 0.5, 0.25, 0.75;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::TROT_WALK:
-      gait_data_.gait_name = "TROT_WALK";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.5;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.6;
-      gait_data_.phase_offset << 0.0, 0.5, 0.5, 0.0;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::TROT:
+  void GaitSkd::CreateGaitTrot(){
       gait_data_.gait_name = "TROT";
       gait_data_.gait_enabled << 1, 1, 1, 1;
       gait_data_.period_time_nominal = 0.5;
@@ -300,114 +270,6 @@ namespace sd::ctrl
       gait_data_.switching_phase_nominal = 0.5;
       gait_data_.phase_offset << 0.0, 0.5, 0.5, 0.0;
       gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::TROT_RUN:
-      gait_data_.gait_name = "TROT_RUN";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.4;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.4;
-      gait_data_.phase_offset << 0.0, 0.5, 0.5, 0.0;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::PACE:
-      gait_data_.gait_name = "PACE";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.35;
-      gait_data_.initial_phase = 0.25;
-      gait_data_.switching_phase_nominal = 0.5;
-      gait_data_.phase_offset << 0.0, 0.5, 0.0, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::BOUND:
-      gait_data_.gait_name = "BOUND";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.4;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.4;
-      gait_data_.phase_offset << 0.0, 0.0, 0.5, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::ROTARY_GALLOP:
-      gait_data_.gait_name = "ROTARY_GALLOP";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.4;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.2;
-      gait_data_.phase_offset << 0.0, 0.8571, 0.3571, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::TRAVERSE_GALLOP:
-      // TODO: find the right sequence, should be easy
-      gait_data_.gait_name = "TRAVERSE_GALLOP";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.5;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.2;
-      gait_data_.phase_offset << 0.0, 0.8571, 0.3571, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::PRONK:
-      gait_data_.gait_name = "PRONK";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.5;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.5;
-      gait_data_.phase_offset << 0.0, 0.0, 0.0, 0.0;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::THREE_FOOT:
-      gait_data_.gait_name = "THREE_FOOT";
-      gait_data_.gait_enabled << 0, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.4;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.666;
-      gait_data_.phase_offset << 0.0, 0.666, 0.0, 0.333;
-      gait_data_.phase_scale << 0.0, 1.0, 1.0, 1.0;
-      break;
-
-    case GaitType::CUSTOM:
-      gait_data_.gait_name = "CUSTOM";
-      // TODO: get custom gait parameters from operator GUI
-      break;
-
-    case GaitType::TRANSITION_TO_STAND:
-      gait_data_.gait_name = "TRANSITION_TO_STAND";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      auto oldGaitPeriodTimeNominal = gait_data_.period_time_nominal;
-      gait_data_.period_time_nominal = 3 * gait_data_.period_time_nominal;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = (gait_data_.period_time_nominal + oldGaitPeriodTimeNominal * (gait_data_.switching_phase_nominal - 1)) / gait_data_.period_time_nominal;
-      gait_data_.phase_offset << (gait_data_.period_time_nominal + oldGaitPeriodTimeNominal * (gait_data_.phase_variable(0) - 1)) / gait_data_.period_time_nominal,
-          (gait_data_.period_time_nominal + oldGaitPeriodTimeNominal * (gait_data_.phase_variable(1) - 1)) / gait_data_.period_time_nominal,
-          (gait_data_.period_time_nominal + oldGaitPeriodTimeNominal * (gait_data_.phase_variable(2) - 1)) / gait_data_.period_time_nominal,
-          (gait_data_.period_time_nominal + oldGaitPeriodTimeNominal * (gait_data_.phase_variable(3) - 1)) / gait_data_.period_time_nominal;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
-      break;
-      /*
-        case GaitType::TRANSITION_FROM_STAND:
-          gait_data_.gait_name = "TRANSITION_FROM_STAND";
-          gait_data_.gait_enabled << 1, 1, 1, 1;
-
-
-          gait_data_.phaseScale << 1.0, 1.0, 1.0, 1.0;
-
-          break;
-      */
-    }
-
-    // Gait has switched
-    gait_data_.current_gait = gait_data_.next_gait;
-
-    // Calculate the auxilliary gait information
-    CalcAuxiliaryGaitData();
   }
 
   void GaitSkd::CalcAuxiliaryGaitData()
