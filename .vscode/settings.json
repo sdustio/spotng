@@ -3,7 +3,7 @@
     "window.title": "${rootName}${separator}${dirty}${activeEditorShort}${separator}${appName}",
     "cmake.configureOnEdit": true,
     "cmake.configureEnvironment": {
-        "sdrobot_msgs_DIR": "${workspaceFolder}/../../install/sdrobot_msgs/"
+        "sdrobot_interfaces_DIR": "${workspaceFolder}/../../install/sdrobot_interfaces/"
     },
     "editor.tabSize": 2,
     "files.associations": {

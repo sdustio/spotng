@@ -1,5 +1,5 @@
 find_package(rclcpp REQUIRED)
-find_package(sdrobot_msgs REQUIRED)
+find_package(sdrobot_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 
@@ -16,7 +16,7 @@ add_subdirectory(hardware)
 add_executable(sdrobot
   ${SOURCES}
 )
-ament_target_dependencies(sdrobot rclcpp sdrobot_msgs sensor_msgs Eigen3)
+ament_target_dependencies(sdrobot rclcpp sdrobot_interfaces sensor_msgs Eigen3)
 
 install(TARGETS
   sdrobot

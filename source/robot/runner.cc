@@ -26,8 +26,8 @@ namespace sd::robot
 
     // sub cmd and register cmd handler
     ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
-    cmd_sub_ = this->create_subscription<sdrobot_msgs::msg::Cmd>(
-        ros::kTopicCmd, 10, [this](const sdrobot_msgs::msg::Cmd::SharedPtr msg)
+    cmd_sub_ = this->create_subscription<sdrobot_interfaces::msg::Cmd>(
+        ros::kTopicCmd, 10, [this](const sdrobot_interfaces::msg::Cmd::SharedPtr msg)
         { this->HandleCmd(msg); });
 
     // build dynamic model
@@ -79,7 +79,7 @@ namespace sd::robot
     return true;
   }
 
-  void Runner::HandleCmd(const sdrobot_msgs::msg::Cmd::SharedPtr &msg)
+  void Runner::HandleCmd(const sdrobot_interfaces::msg::Cmd::SharedPtr &msg)
   {
     ctrl_state_cmd_->Update(
         msg->linear_velocity.x, msg->linear_velocity.y,

@@ -4,7 +4,7 @@
 
 
 #include "rclcpp/rclcpp.hpp"
-#include "sdrobot_msgs/msg/cmd.hpp"
+#include "sdrobot_interfaces/msg/cmd.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 
 
@@ -46,10 +46,10 @@ namespace sd::robot
     bool Run();
 
   private:
-    void HandleCmd(const sdrobot_msgs::msg::Cmd::SharedPtr&);
+    void HandleCmd(const sdrobot_interfaces::msg::Cmd::SharedPtr&);
     void HandleIMU(const sensor_msgs::msg::Imu::SharedPtr&);
 
-    rclcpp::Subscription<sdrobot_msgs::msg::Cmd>::SharedPtr cmd_sub_;
+    rclcpp::Subscription<sdrobot_interfaces::msg::Cmd>::SharedPtr cmd_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 
     int iter = 0;
