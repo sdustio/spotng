@@ -16,7 +16,7 @@ add_subdirectory(hardware)
 add_executable(sdrobot
   ${SOURCES}
 )
-ament_target_dependencies(sdrobot sdrobot_msgs sensor_msgs Eigen3)
+ament_target_dependencies(sdrobot rclcpp sdrobot_msgs sensor_msgs Eigen3)
 
 install(TARGETS
   sdrobot
