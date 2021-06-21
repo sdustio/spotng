@@ -11,9 +11,4 @@ namespace sd::hardware
   {
     return true;
   }
-
-  bool RobotInterface::RunIMU()
-  {
-    return true;
-  }
 }

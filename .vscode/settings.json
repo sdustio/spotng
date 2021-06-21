@@ -3,7 +3,10 @@
     "window.title": "${rootName}${separator}${dirty}${activeEditorShort}${separator}${appName}",
     "cmake.configureOnEdit": true,
     "cmake.configureEnvironment": {
-        "sdrobot_api_DIR": "${workspaceFolder}/../../install/sdrobot_api/"
+        "sdrobot_msgs_DIR": "${workspaceFolder}/../../install/sdrobot_msgs/"
     },
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "files.associations": {
+        "*.tcc": "cpp"
+    }
 }

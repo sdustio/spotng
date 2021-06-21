@@ -9,6 +9,5 @@ namespace sd::hardware
     public:
       bool Init() override;
       bool RunSPI() override;
-      bool RunIMU() override;
   };
 } // namespace sd::hardware

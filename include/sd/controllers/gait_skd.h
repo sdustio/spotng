@@ -13,9 +13,10 @@ namespace sd::ctrl
  */
   enum class GaitType : uint8_t
   {
+    // TODO rename var naming
     STAND,
     TROT,
-    Count
+    Count_
   };
 
   /**
@@ -117,7 +118,7 @@ namespace sd::ctrl
     //摆动时间
     double swing_time_natural = 0.25;
 
-    std::array<void(GaitSkd::*)(), size_t(GaitType::Count)> create_gait_methods_;
+    std::array<void(GaitSkd::*)(), size_t(GaitType::Count_)> create_gait_methods_;
   };
 
   using GaitSkdPtr = std::unique_ptr<GaitSkd>;

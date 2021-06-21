@@ -10,10 +10,10 @@ namespace sd::robot
 {
   enum class Mode : uint8_t
   {
-    Off,
+    Init,
     Stand,
-    RecoveryStand,
-    Locomotion
+    Locomotion,
+    RecoveryStand
   };
 
   struct SPICmd
@@ -72,14 +72,11 @@ namespace sd::robot
   public:
     SPICmd& GetSPICmdForUpdate() { return spi_cmd_; }
     const SPIData& GetSPIData() const { return spi_data_; }
-    const IMUData& GetIMUData() const { return imu_data_; }
     virtual bool Init() = 0;   // return true if ok
     virtual bool RunSPI() = 0; // return true if ok
-    virtual bool RunIMU() = 0; // return true if ok
   private:
     SPICmd spi_cmd_;
     SPIData spi_data_;
-    IMUData imu_data_;
   };
 
   using InterfacePtr = std::unique_ptr<Interface>;

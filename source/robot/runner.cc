@@ -18,9 +18,17 @@ namespace sd::robot
     spi_timer_ = this->create_wall_timer(
         ctrlparams::kSPIdt, [this]()
         { this->interface_->RunSPI(); });
-    imu_timer_ = this->create_wall_timer(
-        ctrlparams::kIMUdt, [this]()
-        { this->interface_->RunIMU(); });
+
+    // sub imu and register imu handler
+    imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
+        ros::kTopicIMU, 10, [this](const sensor_msgs::msg::Imu::SharedPtr msg)
+        { this->HandleIMU(msg); });
+
+    // sub cmd and register cmd handler
+    ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
+    cmd_sub_ = this->create_subscription<sdrobot_msgs::msg::Cmd>(
+        ros::kTopicCmd, 10, [this](const sdrobot_msgs::msg::Cmd::SharedPtr msg)
+        { this->HandleCmd(msg); });
 
     // build dynamic model
     quadruped_ = std::make_unique<Quadruped>();
@@ -32,19 +40,13 @@ namespace sd::robot
     est_orientation_ = std::make_unique<est::Orientation>();
     est_pos_vel_ = std::make_unique<est::PosVel>();
 
-    // sub cmd and register cmd handler
-    ctrl_state_cmd_ = std::make_unique<ctrl::StateCmd>(ctrlparams::kCtrlsec);
-    driver_cmd_sub_ = this->create_subscription<sdrobot_api::msg::DriverCmd>(
-        ros::kTopicCmd, 10, [this](const sdrobot_api::msg::DriverCmd::SharedPtr msg)
-        { this->HandleDriverCmd(std::move(msg)); });
-
     // init ctrls
     ctrl_leg_ = std::make_unique<ctrl::Leg>();
     ctrl_jpos_init_ = std::make_unique<ctrl::JPosInit>();
     ctrl_gait_skd_ = std::make_unique<ctrl::GaitSkd>();
 
     // run main ctrl periodically
-    dyn_timer_ = this->create_wall_timer(
+    ctrl_timer_ = this->create_wall_timer(
         ctrlparams::kCtrldt, [this]()
         { this->Run(); });
 
@@ -60,7 +62,7 @@ namespace sd::robot
 
     // Run the state estimator step
     est_contact_->Run(est_ret_, contact_phase_);
-    est_orientation_->Run(est_ret_, interface_->GetIMUData());
+    est_orientation_->Run(est_ret_, imu_data_);
     est_pos_vel_->Run(est_ret_, ctrl_leg_->GetDatas(), quadruped_);
 
     if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
@@ -77,11 +79,19 @@ namespace sd::robot
     return true;
   }
 
-  void Runner::HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr msg)
+  void Runner::HandleCmd(const sdrobot_msgs::msg::Cmd::SharedPtr &msg)
   {
     ctrl_state_cmd_->Update(
-        msg->mv[0], msg->mv[1], msg->tr,
-        msg->pa, static_cast<Mode>(msg->mode));
+        msg->linear_velocity.x, msg->linear_velocity.y,
+        msg->angular_velocity.z, msg->rpy_angle.y,
+        static_cast<Mode>(msg->mode));
+  }
+
+  void Runner::HandleIMU(const sensor_msgs::msg::Imu::SharedPtr &msg)
+  {
+    imu_data_.acc << msg->linear_acceleration.x, msg->linear_acceleration.y, msg->linear_acceleration.z;
+    imu_data_.gyro << msg->angular_velocity.x, msg->angular_velocity.y, msg->angular_velocity.z;
+    imu_data_.quat << msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w;
   }
 
 } // namespace sd::robot

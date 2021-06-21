@@ -4,8 +4,8 @@
 
 
 #include "rclcpp/rclcpp.hpp"
-#include "sdrobot_api/msg/driver_cmd.hpp"
-#include "sdrobot_api/msg/motion_data.hpp"
+#include "sdrobot_msgs/msg/cmd.hpp"
+#include "sensor_msgs/msg/imu.hpp"
 
 
 #include "sd/robot/runner.h"
@@ -46,15 +46,15 @@ namespace sd::robot
     bool Run();
 
   private:
-    void HandleDriverCmd(const sdrobot_api::msg::DriverCmd::SharedPtr);
+    void HandleCmd(const sdrobot_msgs::msg::Cmd::SharedPtr&);
+    void HandleIMU(const sensor_msgs::msg::Imu::SharedPtr&);
 
-    rclcpp::Subscription<sdrobot_api::msg::DriverCmd>::SharedPtr driver_cmd_sub_;
-    rclcpp::Publisher<sdrobot_api::msg::MotionData>::SharedPtr motion_data_pub_;
+    rclcpp::Subscription<sdrobot_msgs::msg::Cmd>::SharedPtr cmd_sub_;
+    rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 
     int iter = 0;
     rclcpp::TimerBase::SharedPtr spi_timer_;
-    rclcpp::TimerBase::SharedPtr imu_timer_;
-    rclcpp::TimerBase::SharedPtr dyn_timer_;
+    rclcpp::TimerBase::SharedPtr ctrl_timer_;
 
     std::shared_ptr<Interface> interface_;
 
@@ -72,6 +72,7 @@ namespace sd::robot
     est::PosVelPtr est_pos_vel_;
 
     Vector4d contact_phase_;
+    IMUData imu_data_;
   };
 
 } // namespace sd::robot
