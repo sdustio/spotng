@@ -13,11 +13,11 @@ add_subdirectory(estimators)
 add_subdirectory(robot)
 add_subdirectory(hardware)
 
-add_executable(sdrobot
+add_executable(runner
   ${SOURCES}
 )
-ament_target_dependencies(sdrobot rclcpp sdrobot_interfaces sensor_msgs Eigen3)
+ament_target_dependencies(runner rclcpp sdrobot_interfaces sensor_msgs Eigen3)
 
 install(TARGETS
-  sdrobot
+  runner
   DESTINATION lib/${PROJECT_NAME})

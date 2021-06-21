@@ -8,7 +8,7 @@ namespace sd::robot
   namespace ros
   {
     constexpr char kNodeNs[] = "sd";
-    constexpr char kNodeName[] = "Robot";
+    constexpr char kNodeName[] = "RobotRunner";
     constexpr char kTopicCmd[] = "sd/robot_cmd";
     constexpr char kTopicMotion[] = "sd/robot_motion";
     constexpr char kTopicIMU[] = "imu";
