@@ -42,7 +42,7 @@ namespace sd::ctrl
 
   fsm::StateCtrlSharedPtr FSM::GetStateCtrl(fsm::State state)
   {
-    return state_ctrls_[size_t(state)];
+    return state_ctrls_[static_cast<size_t>(state)];
   }
 
   bool FSM::Run(robot::Mode mode)

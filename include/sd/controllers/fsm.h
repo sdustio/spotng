@@ -14,7 +14,7 @@ namespace sd::ctrl
     /**
     * Enumerate all of the operating modes
     */
-    enum class OperatingMode
+    enum class OperatingMode : size_t
     {
       Normal,
       Transitioning,
