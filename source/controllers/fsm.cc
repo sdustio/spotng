@@ -40,7 +40,7 @@ namespace sd::ctrl
     return true;
   }
 
-  fsm::StateCtrlSharedPtr FSM::GetStateCtrl(fsm::State state)
+  fsm::StateCtrlPtr FSM::GetStateCtrl(fsm::State state)
   {
     return state_ctrls_[static_cast<size_t>(state)];
   }

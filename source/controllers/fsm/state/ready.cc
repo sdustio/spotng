@@ -8,6 +8,5 @@ namespace sd::ctrl::fsm
   bool StateReady::Run(){}
   State StateReady::CheckTransition(){}
   TransitionData StateReady::Transition(){}
-  State StateReady::GetState(){}
 
 } // namespace sd::ctrl::fsm

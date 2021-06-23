@@ -63,7 +63,7 @@ namespace sd::robot
 
   dynamics::FBModelPtr Quadruped::BuildModel()
   {
-    dynamics::FBModelPtr model = std::make_unique<dynamics::FBModel>();
+    dynamics::FBModelPtr model = std::make_shared<dynamics::FBModel>();
     // we assume the cheetah's body (not including rotors) can be modeled as a uniformly distributed box.
     //我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
     Vector3d bodyDims(ModelAttrs::body_length, ModelAttrs::body_width, ModelAttrs::body_height);

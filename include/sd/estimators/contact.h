@@ -20,7 +20,6 @@ namespace sd::est
     bool Run(StateEst &ret, const Vector4d &contact_phase);
   };
 
-  using ContactPtr = std::unique_ptr<Contact>;
-  using ContactSharedPtr = std::shared_ptr<Contact>;
+  using ContactPtr = std::shared_ptr<Contact>;
 
 }

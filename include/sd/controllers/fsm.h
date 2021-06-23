@@ -38,19 +38,6 @@ namespace sd::ctrl
       bool done = false;
     };
 
-    class SafetyChecker
-    {
-    public:
-      // Pre checks to make sure controls are safe to run
-      bool checkSafeOrientation(); // robot's orientation is safe to control
-
-      // Post checks to make sure controls can be sent to robot
-      bool checkPDesFoot();         // desired foot position is not too far
-      bool checkForceFeedForward(); // desired feedforward forces are not too large
-
-    private:
-    };
-
     class StateCtrl
     {
     public:
@@ -70,19 +57,33 @@ namespace sd::ctrl
       virtual TransitionData Transition() = 0;
 
       // Return State Enum
-      virtual State GetState() = 0;
+      virtual State GetState() const = 0;
 
       // Pre controls safety checks
-      virtual bool NeedCheckSafeOrientation() = 0;
+      virtual bool NeedCheckSafeOrientation() const = 0;
 
       // Post control safety checks
-      virtual bool NeedCheckPDesFoot() = 0;
-      virtual bool NeedCheckForceFeedForward() = 0;
-      virtual bool NeedCheckLegSingularity() = 0;
+      virtual bool NeedCheckPDesFoot() const = 0;
+      virtual bool NeedCheckForceFeedForward() const = 0;
+      virtual bool NeedCheckLegSingularity() const = 0;
     };
 
-    using StateCtrlPtr = std::unique_ptr<StateCtrl>;
-    using StateCtrlSharedPtr = std::shared_ptr<StateCtrl>;
+    using StateCtrlPtr = std::shared_ptr<StateCtrl>;
+
+    class SafetyChecker
+    {
+    public:
+      bool PreCheck(const StateCtrlPtr &ctrl, robot::Mode mode);
+      bool PostCheck(const StateCtrlPtr &ctrl, robot::Mode mode);
+
+    private:
+      // Pre checks to make sure controls are safe to run
+      bool CheckSafeOrientation(); // robot's orientation is safe to control
+
+      // Post checks to make sure controls can be sent to robot
+      bool CheckPDesFoot();         // desired foot position is not too far
+      bool CheckForceFeedForward(); // desired feedforward forces are not too large
+    };
 
   } // namespace fsm
 
@@ -105,10 +106,10 @@ namespace sd::ctrl
     bool Run(robot::Mode mode);
 
   private:
-    fsm::StateCtrlSharedPtr GetStateCtrl(fsm::State state);
-    std::array<fsm::StateCtrlSharedPtr, size_t(fsm::State::Count_)> state_ctrls_;
-    fsm::StateCtrlSharedPtr current_state_ctrl_;
-    fsm::StateCtrlSharedPtr next_state_ctrl_;
+    fsm::StateCtrlPtr GetStateCtrl(fsm::State state);
+    std::array<fsm::StateCtrlPtr, size_t(fsm::State::Count_)> state_ctrls_;
+    fsm::StateCtrlPtr current_state_ctrl_;
+    fsm::StateCtrlPtr next_state_ctrl_;
 
     fsm::State next_state_;
     fsm::OperatingMode opmode_;

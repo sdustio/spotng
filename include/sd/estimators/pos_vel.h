@@ -26,7 +26,6 @@ namespace sd::est
     Eigen::Matrix<double, 28, 18> C_; //观测阵
   };
 
-  using PosVelPtr = std::unique_ptr<PosVel>;
-  using PosVelSharedPtr = std::shared_ptr<PosVel>;
+  using PosVelPtr = std::shared_ptr<PosVel>;
 
 }

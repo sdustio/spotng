@@ -12,7 +12,17 @@ namespace sd::ctrl::fsm
     bool Run() override;
     State CheckTransition() override;
     TransitionData Transition() override;
-    State GetState() override;
+
+    State GetState() const override;
+
+    // Pre controls safety checks
+    bool NeedCheckSafeOrientation() const override;
+
+    // Post control safety checks
+    bool NeedCheckPDesFoot() const override;
+    bool NeedCheckForceFeedForward() const override;
+    bool NeedCheckLegSingularity() const override;
+
   };
 
 } // namespace sd::ctrl::fsm

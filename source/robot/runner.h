@@ -28,7 +28,7 @@ namespace sd::robot
   class Runner : public rclcpp::Node
   {
   public:
-    explicit Runner(InterfacePtr);
+    explicit Runner(const InterfacePtr&);
 
     /**
     * Initializes the robot model, state estimator, leg controller,

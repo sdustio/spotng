@@ -79,7 +79,6 @@ namespace sd::robot
     SPIData spi_data_;
   };
 
-  using InterfacePtr = std::unique_ptr<Interface>;
-  using InterfaceSharedPtr = std::shared_ptr<Interface>;
+  using InterfacePtr = std::shared_ptr<Interface>;
 
 } // namespace sd::robot::interface

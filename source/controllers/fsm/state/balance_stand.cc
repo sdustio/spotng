@@ -8,6 +8,5 @@ namespace sd::ctrl::fsm
   bool StateBalanceStand::Run(){}
   State StateBalanceStand::CheckTransition(){}
   TransitionData StateBalanceStand::Transition(){}
-  State StateBalanceStand::GetState(){}
 
 } // namespace sd::ctrl::fsm

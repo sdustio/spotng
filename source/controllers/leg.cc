@@ -2,7 +2,7 @@
 
 namespace sd::ctrl
 {
-  void Leg::UpdateData(const robot::SPIData &data)
+  void Leg::UpdateDatas(const robot::SPIData &data)
   {
     for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {

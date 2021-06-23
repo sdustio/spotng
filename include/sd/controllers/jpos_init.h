@@ -29,7 +29,6 @@ namespace sd::ctrl
     dynamics::BSpline jpos_trj_;
   };
 
-  using JPosInitPtr = std::unique_ptr<JPosInit>;
-  using JPosInitSharedPtr = std::shared_ptr<JPosInit>;
+  using JPosInitPtr = std::shared_ptr<JPosInit>;
 
 }

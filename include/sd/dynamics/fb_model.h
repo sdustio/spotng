@@ -441,7 +441,6 @@ namespace sd::dynamics
     Eigen::ColPivHouseholderQR<Matrix6d> invIA5_;
   };
 
-  using FBModelPtr = std::unique_ptr<FBModel>;
-  using FBModelSharedPtr = std::shared_ptr<FBModel>;
+  using FBModelPtr = std::shared_ptr<FBModel>;
 
 } // namespace sd::dynamics

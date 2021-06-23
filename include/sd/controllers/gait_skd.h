@@ -121,6 +121,5 @@ namespace sd::ctrl
     std::array<void(GaitSkd::*)(), size_t(GaitType::Count_)> create_gait_methods_;
   };
 
-  using GaitSkdPtr = std::unique_ptr<GaitSkd>;
-  using GaitSkdSharedPtr = std::shared_ptr<GaitSkd>;
+  using GaitSkdPtr = std::shared_ptr<GaitSkd>;
 }

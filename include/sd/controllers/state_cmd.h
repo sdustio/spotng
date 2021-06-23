@@ -65,7 +65,6 @@ namespace sd::ctrl
     double dt_;
   };
 
-  using StateCmdPtr = std::unique_ptr<StateCmd>;
-  using StateCmdSharedPtr = std::shared_ptr<StateCmd>;
+  using StateCmdPtr = std::shared_ptr<StateCmd>;
 
 }

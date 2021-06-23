@@ -21,7 +21,7 @@ namespace sd::ctrl
     * Update the "leg data" from a SPIne board message
     * 从spine卡 更新腿部信息
     */
-    void UpdateData(const robot::SPIData &data);
+    void UpdateDatas(const robot::SPIData &data);
 
     /*!
     * Update the "leg command" for the SPIne board message
@@ -50,6 +50,5 @@ namespace sd::ctrl
     bool enabled_ = false;
   };
 
-  using LegPtr = std::unique_ptr<Leg>;
-  using LegSharedPtr = std::shared_ptr<Leg>;
+  using LegPtr = std::shared_ptr<Leg>;
 }

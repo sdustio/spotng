@@ -24,7 +24,6 @@ namespace sd::est
     bool b_first_visit_ = true;
   };
 
-  using OrientationPtr = std::unique_ptr<Orientation>;
-  using OrientationSharedPtr = std::shared_ptr<Orientation>;
+  using OrientationPtr = std::shared_ptr<Orientation>;
 
 }

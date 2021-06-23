@@ -162,6 +162,5 @@ namespace sd::robot
     dynamics::SpatialInertia body_spatial_inertia_;
   };
 
-  using QuadrupedPtr = std::unique_ptr<Quadruped>;
-  using QuadrupedSharedPtr = std::shared_ptr<Quadruped>;
+  using QuadrupedPtr = std::shared_ptr<Quadruped>;
 } // namespace sd::robot
