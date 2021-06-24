@@ -11,7 +11,7 @@ namespace sd::ctrl::fsm
     void OnExit() override;
     bool Run() override;
     State CheckTransition(const StateCmdPtr &cmd) override;
-    TransitionData Transition() override;
+    TransitionData Transition(const State next) override;
 
     State GetState() const override{return State::Locomotion;}
 
@@ -21,8 +21,6 @@ namespace sd::ctrl::fsm
     // Post control safety checks
     bool NeedCheckPDesFoot() const override;
     bool NeedCheckForceFeedForward() const override;
-    bool NeedCheckLegSingularity() const override;
-
   };
 
 } // namespace sd::ctrl::fsm

@@ -11,9 +11,9 @@ namespace sd::robot
   enum class Mode : uint8_t
   {
     Init,
-    Stand,
-    Locomotion,
     RecoveryStand,
+    Locomotion,
+    BalanceStand,
     Count_
   };
 

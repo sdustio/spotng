@@ -28,7 +28,7 @@ namespace sd::ctrl
     state_des_(StateIdx::angle_p) = Deadband(cmd_pa_, CmdLimits::min_angle_p, CmdLimits::max_angle_p);
     state_des_(StateIdx::angle_y) = dt_ * state_des_(StateIdx::rate_y);
 
-    // auto mode
+    // TODO auto mode
 
     return true;
   }

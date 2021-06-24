@@ -7,6 +7,6 @@ namespace sd::ctrl::fsm
   void StateBalanceStand::OnExit(){}
   bool StateBalanceStand::Run(){}
   State StateBalanceStand::CheckTransition(const StateCmdPtr &cmd){}
-  TransitionData StateBalanceStand::Transition(){}
+  TransitionData StateBalanceStand::Transition(const State next){}
 
 } // namespace sd::ctrl::fsm

@@ -1,24 +1,17 @@
 #include "sd/controllers/fsm.h"
 
-#include "controllers/fsm/state/off.h"
-#include "controllers/fsm/state/ready.h"
-#include "controllers/fsm/state/stand_up.h"
+#include "controllers/fsm/state/init.h"
 #include "controllers/fsm/state/locomotion.h"
 #include "controllers/fsm/state/recovery_stand.h"
 #include "controllers/fsm/state/balance_stand.h"
 
 namespace sd::ctrl
 {
-  FSM::FSM()
+  FSM::FSM() : state_ctrls_{std::make_shared<fsm::StateInit>(),
+                            std::make_shared<fsm::StateRecoveryStand>(),
+                            std::make_shared<fsm::StateLocomotion>(),
+                            std::make_shared<fsm::StateBalanceStand>()}
   {
-    state_ctrls_ = {
-        std::make_shared<fsm::StateOff>(),
-        std::make_shared<fsm::StateReady>(),
-        std::make_shared<fsm::StateStandUp>(),
-        std::make_shared<fsm::StateLocomotion>(),
-        std::make_shared<fsm::StateRecoveryStand>(),
-        std::make_shared<fsm::StateBalanceStand>()};
-
     // Initialize the FSM with the Off FSM State
     Init();
   }
@@ -26,7 +19,7 @@ namespace sd::ctrl
   bool FSM::Init()
   {
     // Initialize a new FSM State with the control data
-    current_state_ctrl_ = GetStateCtrl(fsm::State::Off);
+    current_state_ctrl_ = GetStateCtrl(fsm::State::Init);
 
     // Enter the new current state cleanly
     current_state_ctrl_->OnEnter();
@@ -57,7 +50,7 @@ namespace sd::ctrl
     //运行机器人控制代码，如果工作模式安全
     if (opmode_ == fsm::OperatingMode::EStop)
     {
-      current_state_ctrl_ = GetStateCtrl(fsm::State::Off);
+      current_state_ctrl_ = GetStateCtrl(fsm::State::Init);
       current_state_ctrl_->OnEnter();
       next_state_ = current_state_ctrl_->GetState();
     }

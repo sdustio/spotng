@@ -7,6 +7,6 @@ namespace sd::ctrl::fsm
   void StateLocomotion::OnExit(){}
   bool StateLocomotion::Run(){}
   State StateLocomotion::CheckTransition(const StateCmdPtr &cmd){}
-  TransitionData StateLocomotion::Transition(){}
+  TransitionData StateLocomotion::Transition(const State next){}
 
 } // namespace sd::ctrl::fsm

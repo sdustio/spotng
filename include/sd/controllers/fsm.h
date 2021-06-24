@@ -24,16 +24,7 @@ namespace sd::ctrl
       EStop,
     };
 
-    enum class State : uint8_t
-    {
-      Off,
-      Ready,
-      StandUp,
-      Locomotion,
-      RecoveryStand,
-      BalanceStand,
-      Count_
-    };
+    using State = robot::Mode;
 
     struct TransitionData
     {
@@ -57,18 +48,17 @@ namespace sd::ctrl
       virtual State CheckTransition(const StateCmdPtr &cmd) = 0;
 
       // Runs the transition behaviors and returns true when done transitioning
-      virtual TransitionData Transition() = 0;
+      virtual TransitionData Transition(const State next) = 0;
 
       // Return State Enum
       virtual State GetState() const = 0;
 
       // Pre controls safety checks
-      virtual bool NeedCheckSafeOrientation() const = 0;
+      virtual bool NeedCheckSafeOrientation() const { return false; }
 
       // Post control safety checks
-      virtual bool NeedCheckPDesFoot() const = 0;
-      virtual bool NeedCheckForceFeedForward() const = 0;
-      virtual bool NeedCheckLegSingularity() const = 0;
+      virtual bool NeedCheckPDesFoot() const { return false; }
+      virtual bool NeedCheckForceFeedForward() const { return false; }
     };
 
     using StateCtrlPtr = std::shared_ptr<StateCtrl>;

@@ -47,14 +47,12 @@ namespace sd::ctrl
   /**
  * Constructor to automatically setup a basic gait
  */
-  GaitSkd::GaitSkd()
+  GaitSkd::GaitSkd() : dt_(robot::ctrlparams::kCtrlsec),
+                       create_gait_methods_{
+                           &GaitSkd::CreateGaitStand,
+                           &GaitSkd::CreateGaitTrot}
   {
     Initialize();
-    dt_ = robot::ctrlparams::kCtrlsec;
-    create_gait_methods_ = {
-      &GaitSkd::CreateGaitStand,
-      &GaitSkd::CreateGaitTrot
-      };
   }
 
   bool GaitSkd::SetNextGait(const GaitType gait)
@@ -252,24 +250,26 @@ namespace sd::ctrl
     CalcAuxiliaryGaitData();
   }
 
-  void GaitSkd::CreateGaitStand(){
-      gait_data_.gait_name = "STAND";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 10.0;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 1.0;
-      gait_data_.phase_offset << 0.5, 0.5, 0.5, 0.5;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
+  void GaitSkd::CreateGaitStand()
+  {
+    gait_data_.gait_name = "STAND";
+    gait_data_.gait_enabled << 1, 1, 1, 1;
+    gait_data_.period_time_nominal = 10.0;
+    gait_data_.initial_phase = 0.0;
+    gait_data_.switching_phase_nominal = 1.0;
+    gait_data_.phase_offset << 0.5, 0.5, 0.5, 0.5;
+    gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
   }
 
-  void GaitSkd::CreateGaitTrot(){
-      gait_data_.gait_name = "TROT";
-      gait_data_.gait_enabled << 1, 1, 1, 1;
-      gait_data_.period_time_nominal = 0.5;
-      gait_data_.initial_phase = 0.0;
-      gait_data_.switching_phase_nominal = 0.5;
-      gait_data_.phase_offset << 0.0, 0.5, 0.5, 0.0;
-      gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
+  void GaitSkd::CreateGaitTrot()
+  {
+    gait_data_.gait_name = "TROT";
+    gait_data_.gait_enabled << 1, 1, 1, 1;
+    gait_data_.period_time_nominal = 0.5;
+    gait_data_.initial_phase = 0.0;
+    gait_data_.switching_phase_nominal = 0.5;
+    gait_data_.phase_offset << 0.0, 0.5, 0.5, 0.0;
+    gait_data_.phase_scale << 1.0, 1.0, 1.0, 1.0;
   }
 
   void GaitSkd::CalcAuxiliaryGaitData()
