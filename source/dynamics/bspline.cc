@@ -7,7 +7,7 @@ namespace sd::dynamics
 
   bool is_equal(double x, double y)
   {
-    return (x - y) * (x - y) < 1.e-10;
+    return (x - y) * (x - y) < kZeroEpsilon;
   }
 
   BSpline::BSpline()

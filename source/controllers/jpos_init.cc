@@ -37,7 +37,7 @@ namespace sd::ctrl
       {
         for (int jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
         {
-          auto cmds = ctrl->GetCmdsForUpdate();
+          auto &cmds = ctrl->GetCmdsForUpdate();
           cmds[leg].tau_feed_forward[jidx] = 0.;
           cmds[leg].q_des[jidx] = jpos[3 * leg + jidx];
           cmds[leg].qd_des[jidx] = 0.;

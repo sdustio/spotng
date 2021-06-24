@@ -4,6 +4,8 @@
 
 namespace sd
 {
+    constexpr double kZeroEpsilon = 1.e-10;
+
     using Eigen::Vector2d;
     using Eigen::Vector3d;
     using Eigen::Vector4d;

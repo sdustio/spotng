@@ -13,7 +13,8 @@ namespace sd::robot
     Init,
     Stand,
     Locomotion,
-    RecoveryStand
+    RecoveryStand,
+    Count_
   };
 
   struct SPICmd
