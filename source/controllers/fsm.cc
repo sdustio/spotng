@@ -53,7 +53,6 @@ namespace sd::ctrl
       opmode_ = fsm::OperatingMode::EStop;
     }
 
-
     // Run the robot control code if operating mode is not unsafe
     //运行机器人控制代码，如果工作模式安全
     if (opmode_ == fsm::OperatingMode::EStop)
@@ -124,7 +123,7 @@ namespace sd::ctrl
     return true;
   }
 
-  bool FSM::PreCheck(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
+  bool FSM::PreCheck(const StateCmdPtr &cmd, [[maybe_unused]] const LegPtr &cleg, const est::StateEst &est)
   {
     if (current_state_ctrl_->NeedCheckSafeOrientation() && cmd->GetMode() != robot::Mode::RecoveryStand)
     {
@@ -133,7 +132,7 @@ namespace sd::ctrl
     return true;
   }
 
-  bool FSM::PostCheckAndLimit(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
+  bool FSM::PostCheckAndLimit([[maybe_unused]] const StateCmdPtr &cmd, const LegPtr &cleg, [[maybe_unused]] const est::StateEst &est)
   {
     bool c1, c2;
     if (current_state_ctrl_->NeedCheckPDesFoot())

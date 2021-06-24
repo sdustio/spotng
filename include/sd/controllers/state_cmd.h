@@ -48,7 +48,7 @@ namespace sd::ctrl
 
     bool CmdtoStateData();
     const Vector12d &GetStateDes() const { return state_des_; }
-    const robot::Mode GetMode() const { return cmd_mode_; }
+    robot::Mode GetMode() const { return cmd_mode_; }
 
   private:
     double Deadband(double v, double minVal, double maxVal);

@@ -5,7 +5,7 @@ namespace sd::ctrl::fsm
 
   void StateOff::OnEnter() {}
   void StateOff::OnExit(){}
-  bool StateOff::Run(){}
+  bool StateOff::Run(){return true;}
   State StateOff::CheckTransition(const StateCmdPtr &cmd){}
   TransitionData StateOff::Transition(){}
 
