@@ -3,7 +3,7 @@
 
 namespace sd::est
 {
-  bool Orientation::Run(StateEst &ret, const robot::IMUData &imu)
+  bool Orientation::Run(StateData &ret, const robot::IMUData &imu)
   {
     //复制四元数值
     ret.orientation = imu.quat; // 和 microstrainImu 顺序相同

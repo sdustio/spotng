@@ -17,7 +17,7 @@ namespace sd::est
     * Set the estimated contact by copying the exptected contact state into the
     * estimated contact state
     */
-    bool Run(StateEst &ret, const Vector4d &contact_phase);
+    bool Run(StateData &ret, const Vector4d &contact_phase);
   };
 
   using ContactPtr = std::shared_ptr<Contact>;

@@ -12,7 +12,7 @@ namespace sd::est
   {
   public:
     bool Setup();
-    bool Run(StateEst &ret, const robot::leg::Datas &datas, const robot::QuadrupedPtr &quad);
+    bool Run(StateData &ret, const robot::leg::Datas &datas, const robot::QuadrupedPtr &quad);
 
   private:
     Vector18d xhat_;                  //状态估计值 [p v p1 p2 p3 p4] 世界坐标下

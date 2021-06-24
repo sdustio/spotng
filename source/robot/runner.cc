@@ -41,6 +41,7 @@ namespace sd::robot
 
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
+    est_ret_ = std::make_shared<est::StateEst>();
     est_contact_ = std::make_shared<est::Contact>();
     est_orientation_ = std::make_shared<est::Orientation>();
     est_pos_vel_ = std::make_shared<est::PosVel>();
@@ -61,9 +62,9 @@ namespace sd::robot
     ctrl_leg_->SetLegEnabled(true);
 
     // Run the state estimator step
-    est_contact_->Run(est_ret_, contact_phase_);
-    est_orientation_->Run(est_ret_, imu_data_);
-    est_pos_vel_->Run(est_ret_, ctrl_leg_->GetDatas(), quadruped_);
+    est_contact_->Run(est_ret_->GetDataForUpdate(), contact_phase_);
+    est_orientation_->Run(est_ret_->GetDataForUpdate(), imu_data_);
+    est_pos_vel_->Run(est_ret_->GetDataForUpdate(), ctrl_leg_->GetDatas(), quadruped_);
 
     if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
     {

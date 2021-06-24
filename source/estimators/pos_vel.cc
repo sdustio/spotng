@@ -56,7 +56,7 @@ namespace sd::est
     return true;
   }
 
-  bool PosVel::Run(StateEst &ret, const robot::leg::Datas &datas, const robot::QuadrupedPtr &quad)
+  bool PosVel::Run(StateData &ret, const robot::leg::Datas &datas, const robot::QuadrupedPtr &quad)
   {
 
     double process_noise_pimu = robot::ctrlparams::kIMUProcessNoisePosition;

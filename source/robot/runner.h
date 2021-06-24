@@ -66,7 +66,7 @@ namespace sd::robot
     ctrl::JPosInitPtr ctrl_jpos_init_;
     ctrl::GaitSkdPtr ctrl_gait_skd_;
 
-    est::StateEst est_ret_;
+    est::StateEstPtr est_ret_;
     est::OrientationPtr est_orientation_;
     est::ContactPtr est_contact_;
     est::PosVelPtr est_pos_vel_;

@@ -17,7 +17,7 @@ namespace sd::est
   class Orientation
   {
   public:
-    bool Run(StateEst& ret, const robot::IMUData& imu);
+    bool Run(StateData& ret, const robot::IMUData& imu);
 
   private:
     dynamics::Quat ori_ini_inv_;
