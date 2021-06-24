@@ -5,6 +5,9 @@
 
 #include "sd/types.h"
 #include "sd/robot/interface.h"
+#include "sd/estimators/state_est.h"
+#include "sd/controllers/leg.h"
+#include "sd/controllers/state_cmd.h"
 
 namespace sd::ctrl
 {
@@ -51,7 +54,7 @@ namespace sd::ctrl
       virtual bool Run() = 0;
 
       // Manages state specific transitions
-      virtual State CheckTransition() = 0;
+      virtual State CheckTransition(const StateCmdPtr &cmd) = 0;
 
       // Runs the transition behaviors and returns true when done transitioning
       virtual TransitionData Transition() = 0;
@@ -73,16 +76,12 @@ namespace sd::ctrl
     class SafetyChecker
     {
     public:
-      bool PreCheck(const StateCtrlPtr &ctrl, robot::Mode mode);
-      bool PostCheck(const StateCtrlPtr &ctrl, robot::Mode mode);
-
-    private:
       // Pre checks to make sure controls are safe to run
-      bool CheckSafeOrientation(); // robot's orientation is safe to control
+      bool CheckSafeOrientation(const est::StateEst &est); // robot's orientation is safe to control
 
       // Post checks to make sure controls can be sent to robot
-      bool CheckPDesFoot();         // desired foot position is not too far
-      bool CheckForceFeedForward(); // desired feedforward forces are not too large
+      bool CheckPDesFoot(const LegPtr &cleg);         // desired foot position is not too far
+      bool CheckForceFeedForward(const LegPtr &cleg); // desired feedforward forces are not too large
     };
 
   } // namespace fsm
@@ -103,9 +102,12 @@ namespace sd::ctrl
      * run controls and checks the current state for any transitions. Runs
      * the regular state behavior if all is normal.
      */
-    bool Run(robot::Mode mode);
+    bool Run(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
 
   private:
+    bool PreCheck(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
+    bool PostCheckAndLimit(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
+
     fsm::StateCtrlPtr GetStateCtrl(fsm::State state);
     std::array<fsm::StateCtrlPtr, size_t(fsm::State::Count_)> state_ctrls_;
     fsm::StateCtrlPtr current_state_ctrl_;
@@ -113,7 +115,6 @@ namespace sd::ctrl
 
     fsm::State next_state_;
     fsm::OperatingMode opmode_;
-    robot::Mode ctrl_mode_;
 
     fsm::SafetyChecker safety_checker_;
     fsm::TransitionData transition_data_;

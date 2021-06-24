@@ -38,20 +38,19 @@ namespace sd::ctrl
     constexpr static double filter = 0.1;
   };
 
-
   class StateCmd
   {
 
   public:
-    explicit StateCmd(double dt) : dt_(dt){state_des_ = Vector12d::Zero();}
+    explicit StateCmd(double dt) : dt_(dt) { state_des_ = Vector12d::Zero(); }
 
     bool Update(double mv_x, double mv_y, double tr, double pa, robot::Mode m);
 
     bool CmdtoStateData();
-    const Vector12d& GetStateDes() const {return state_des_;}
+    const Vector12d &GetStateDes() const { return state_des_; }
+    const robot::Mode GetMode() const { return cmd_mode_; }
 
   private:
-
     double Deadband(double v, double minVal, double maxVal);
 
     double cmd_mv_x_;

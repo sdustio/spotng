@@ -10,7 +10,7 @@ namespace sd::ctrl::fsm
     void OnEnter() override;
     void OnExit() override;
     bool Run() override;
-    State CheckTransition() override;
+    State CheckTransition(const StateCmdPtr &cmd) override;
     TransitionData Transition() override;
 
     State GetState() const override{return State::Off;}

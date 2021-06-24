@@ -45,11 +45,14 @@ namespace sd::ctrl
     return state_ctrls_[static_cast<size_t>(state)];
   }
 
-  bool FSM::Run(robot::Mode mode)
+  bool FSM::Run(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
   {
-    ctrl_mode_ = mode;
+    //safetyPreCheck
+    if (!PreCheck(cmd, cleg, est))
+    {
+      opmode_ = fsm::OperatingMode::EStop;
+    }
 
-    //TODO safetyPreCheck
 
     // Run the robot control code if operating mode is not unsafe
     //运行机器人控制代码，如果工作模式安全
@@ -67,7 +70,7 @@ namespace sd::ctrl
       if (opmode_ == fsm::OperatingMode::Normal)
       {
         // Check the current state for any transition 检查任何转换的当前状态
-        next_state_ = current_state_ctrl_->CheckTransition();
+        next_state_ = current_state_ctrl_->CheckTransition(cmd);
 
         // Detect a commanded transition 探测指令转换
         if (next_state_ != current_state_ctrl_->GetState())
@@ -92,7 +95,7 @@ namespace sd::ctrl
         transition_data_ = current_state_ctrl_->Transition();
 
         // Check the robot state for safe operation
-        // TODO post safe check
+        PostCheckAndLimit(cmd, cleg, est);
 
         // Run the state transition
         if (transition_data_.done) //状态转换完成 延时到
@@ -114,10 +117,33 @@ namespace sd::ctrl
       {
         //非转换状态 会进行检查 即任何状态下进行检查并限制
         // Check the robot state for safe operation 检查机器人状态，确保操作安全，并限制
-        // TODO post safe check
+        PostCheckAndLimit(cmd, cleg, est);
       }
     }
 
     return true;
+  }
+
+  bool FSM::PreCheck(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
+  {
+    if (current_state_ctrl_->NeedCheckSafeOrientation() && cmd->GetMode() != robot::Mode::RecoveryStand)
+    {
+      return safety_checker_.CheckSafeOrientation(est);
+    }
+    return true;
+  }
+
+  bool FSM::PostCheckAndLimit(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
+  {
+    bool c1, c2;
+    if (current_state_ctrl_->NeedCheckPDesFoot())
+    {
+      c1 = safety_checker_.CheckPDesFoot(cleg);
+    }
+    if (current_state_ctrl_->NeedCheckForceFeedForward())
+    {
+      c2 = safety_checker_.CheckForceFeedForward(cleg);
+    }
+    return c1 && c2;
   }
 } // namespace sd::ctrl
