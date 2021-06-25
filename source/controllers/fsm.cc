@@ -7,10 +7,14 @@
 
 namespace sd::ctrl
 {
-  FSM::FSM() : state_ctrls_{std::make_shared<fsm::StateInit>(),
-                            std::make_shared<fsm::StateRecoveryStand>(),
-                            std::make_shared<fsm::StateLocomotion>(),
-                            std::make_shared<fsm::StateBalanceStand>()}
+  FSM::FSM(
+      LegPtr &cleg,
+      const StateCmdPtr &cmd,
+      const est::StateEstPtr &est) : leg_ctrl_(cleg), state_cmd_(cmd), state_est_(est),
+                                     state_ctrls_{std::make_shared<fsm::StateInit>(),
+                                                  std::make_shared<fsm::StateRecoveryStand>(),
+                                                  std::make_shared<fsm::StateLocomotion>(),
+                                                  std::make_shared<fsm::StateBalanceStand>()}
   {
     // Initialize the FSM with the Off FSM State
     Init();
@@ -38,10 +42,10 @@ namespace sd::ctrl
     return state_ctrls_[static_cast<size_t>(state)];
   }
 
-  bool FSM::Run(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est)
+  bool FSM::Run()
   {
     //safetyPreCheck
-    if (!PreCheck(cmd, cleg, est))
+    if (!PreCheck())
     {
       opmode_ = fsm::OperatingMode::EStop;
     }
@@ -62,7 +66,7 @@ namespace sd::ctrl
       if (opmode_ == fsm::OperatingMode::Normal)
       {
         // Check the current state for any transition 检查任何转换的当前状态
-        next_state_ = current_state_ctrl_->CheckTransition(cmd);
+        next_state_ = current_state_ctrl_->CheckTransition(state_cmd_);
 
         // Detect a commanded transition 探测指令转换
         if (next_state_ != current_state_ctrl_->GetState())
@@ -84,10 +88,10 @@ namespace sd::ctrl
       if (opmode_ == fsm::OperatingMode::Transitioning)
       {
         //获得转换数据，进行状态转换操作 有时候是延时切换状态 比如MPClocomotion
-        transition_data_ = current_state_ctrl_->Transition();
+        transition_data_ = current_state_ctrl_->Transition(next_state_);
 
         // Check the robot state for safe operation
-        PostCheckAndLimit(cmd, cleg, est);
+        PostCheckAndLimit();
 
         // Run the state transition
         if (transition_data_.done) //状态转换完成 延时到
@@ -109,32 +113,32 @@ namespace sd::ctrl
       {
         //非转换状态 会进行检查 即任何状态下进行检查并限制
         // Check the robot state for safe operation 检查机器人状态，确保操作安全，并限制
-        PostCheckAndLimit(cmd, cleg, est);
+        PostCheckAndLimit();
       }
     }
 
     return true;
   }
 
-  bool FSM::PreCheck(const StateCmdPtr &cmd, [[maybe_unused]] const LegPtr &cleg, const est::StateEst &est)
+  bool FSM::PreCheck()
   {
-    if (current_state_ctrl_->NeedCheckSafeOrientation() && cmd->GetMode() != robot::Mode::RecoveryStand)
+    if (current_state_ctrl_->NeedCheckSafeOrientation() && state_cmd_->GetMode() != robot::Mode::RecoveryStand)
     {
-      return safety_checker_.CheckSafeOrientation(est);
+      return safety_checker_.CheckSafeOrientation(state_est_->GetData());
     }
     return true;
   }
 
-  bool FSM::PostCheckAndLimit([[maybe_unused]] const StateCmdPtr &cmd, const LegPtr &cleg, [[maybe_unused]] const est::StateEst &est)
+  bool FSM::PostCheckAndLimit()
   {
     bool c1, c2;
     if (current_state_ctrl_->NeedCheckPDesFoot())
     {
-      c1 = safety_checker_.CheckPDesFoot(cleg);
+      c1 = safety_checker_.CheckPDesFoot(leg_ctrl_);
     }
     if (current_state_ctrl_->NeedCheckForceFeedForward())
     {
-      c2 = safety_checker_.CheckForceFeedForward(cleg);
+      c2 = safety_checker_.CheckForceFeedForward(leg_ctrl_);
     }
     return c1 && c2;
   }

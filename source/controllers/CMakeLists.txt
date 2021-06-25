@@ -4,6 +4,7 @@ list(APPEND srcs
   jpos_init.cc
   gait_skd.cc
   fsm.cc
+  fsm/state_ctrl.cc
   fsm/safety_checker.cc
   fsm/state/init.cc
   fsm/state/locomotion.cc

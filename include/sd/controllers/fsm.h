@@ -35,6 +35,7 @@ namespace sd::ctrl
     class StateCtrl
     {
     public:
+      StateCtrl(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
       // Behavior to be carried out when entering a state
       virtual void OnEnter() = 0;
 
@@ -59,6 +60,11 @@ namespace sd::ctrl
       // Post control safety checks
       virtual bool NeedCheckPDesFoot() const { return false; }
       virtual bool NeedCheckForceFeedForward() const { return false; }
+
+    protected:
+      LegPtr leg_ctrl_;
+      const StateCmdPtr state_cmd_;
+      const est::StateEstPtr state_est_;
     };
 
     using StateCtrlPtr = std::shared_ptr<StateCtrl>;
@@ -67,11 +73,11 @@ namespace sd::ctrl
     {
     public:
       // Pre checks to make sure controls are safe to run
-      bool CheckSafeOrientation(const est::StateEst &est); // robot's orientation is safe to control
+      bool CheckSafeOrientation(const est::StateData &est); // robot's orientation is safe to control
 
       // Post checks to make sure controls can be sent to robot
-      bool CheckPDesFoot(const LegPtr &cleg);         // desired foot position is not too far
-      bool CheckForceFeedForward(const LegPtr &cleg); // desired feedforward forces are not too large
+      bool CheckPDesFoot(LegPtr &cleg);         // desired foot position is not too far
+      bool CheckForceFeedForward(LegPtr &cleg); // desired feedforward forces are not too large
     };
 
   } // namespace fsm
@@ -79,7 +85,7 @@ namespace sd::ctrl
   class FSM
   {
   public:
-    FSM();
+    FSM(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
 
     /**
     * Initialize the Control FSM with the default settings. SHould be set to
@@ -92,11 +98,15 @@ namespace sd::ctrl
      * run controls and checks the current state for any transitions. Runs
      * the regular state behavior if all is normal.
      */
-    bool Run(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
+    bool Run();
 
   private:
-    bool PreCheck(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
-    bool PostCheckAndLimit(const StateCmdPtr &cmd, const LegPtr &cleg, const est::StateEst &est);
+    bool PreCheck();
+    bool PostCheckAndLimit();
+
+    LegPtr leg_ctrl_;
+    const StateCmdPtr state_cmd_;
+    const est::StateEstPtr state_est_;
 
     fsm::StateCtrlPtr GetStateCtrl(fsm::State state);
     std::array<fsm::StateCtrlPtr, size_t(fsm::State::Count_)> state_ctrls_;

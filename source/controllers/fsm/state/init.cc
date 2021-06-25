@@ -3,11 +3,14 @@
 namespace sd::ctrl::fsm
 {
 
-  StateInit::StateInit() : state_trans_{
-                               State::Init,
-                               State::RecoveryStand,
-                               State::Init,
-                               State::Init} {}
+  StateInit::StateInit(
+      LegPtr &cleg, const StateCmdPtr &cmd,
+      const est::StateEstPtr &est) : StateCtrl(cleg, cmd, est),
+                                     state_trans_{
+                                         State::Init,
+                                         State::RecoveryStand,
+                                         State::RecoveryStand,
+                                         State::RecoveryStand} {}
 
   void StateInit::OnEnter()
   {

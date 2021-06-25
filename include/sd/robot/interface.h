@@ -75,7 +75,7 @@ namespace sd::robot
     const SPIData& GetSPIData() const { return spi_data_; }
     virtual bool Init() = 0;   // return true if ok
     virtual bool RunSPI() = 0; // return true if ok
-  private:
+  protected:
     SPICmd spi_cmd_;
     SPIData spi_data_;
   };

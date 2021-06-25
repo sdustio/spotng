@@ -21,7 +21,7 @@ namespace sd::est
   class StateEst
   {
   public:
-    const StateData &GetData() { return data_; }
+    const StateData &GetData() const { return data_; }
     StateData &GetDataForUpdate() { return data_; }
 
   private:

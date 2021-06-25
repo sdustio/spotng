@@ -2,12 +2,12 @@
 
 namespace sd::ctrl::fsm
 {
-  bool SafetyChecker::CheckSafeOrientation(const est::StateEst &est)
+  bool SafetyChecker::CheckSafeOrientation(const est::StateData &est)
   {
-    return !(abs(est.rpy(0)) >= 0.5 || abs(est.rpy(1)) >= 0.5);
+    return (abs(est.rpy(0)) < 0.5 && abs(est.rpy(1)) < 0.5);
   }
 
-  bool SafetyChecker::CheckPDesFoot(const LegPtr &cleg)
+  bool SafetyChecker::CheckPDesFoot(LegPtr &cleg)
   {
     // Assumed safe to start
     bool check_safe = true;
@@ -72,7 +72,7 @@ namespace sd::ctrl::fsm
     return check_safe;
   }
 
-  bool SafetyChecker::CheckForceFeedForward(const LegPtr &cleg)
+  bool SafetyChecker::CheckForceFeedForward(LegPtr &cleg)
   {
     // Assumed safe to start
     bool check_safe = true;
