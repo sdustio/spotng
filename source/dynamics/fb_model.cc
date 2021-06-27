@@ -33,8 +33,8 @@ namespace sd::dynamics
     UpdateForcePropagators();
     UdpateQddEffects();
 
-    size_t i_opsp = gc_parent_.at(gc_index);
-    size_t i = i_opsp;
+    int i_opsp = gc_parent_.at(gc_index);
+    int i = i_opsp;
 
     dstate_out = VectorXd::Zero(n_dof_);
 
@@ -81,8 +81,8 @@ namespace sd::dynamics
     UpdateForcePropagators();
     UdpateQddEffects();
 
-    size_t i_opsp = gc_parent_.at(gc_index);
-    size_t i = i_opsp;
+    int i_opsp = gc_parent_.at(gc_index);
+    int i = i_opsp;
 
     dstate_out.qdd.setZero();
 
@@ -135,11 +135,11 @@ namespace sd::dynamics
     // These computations are for treating the joint rates like a task space
     // To do so, F computes the dynamic effect of torues onto bodies down the tree
     //
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       qdd_from_subqdd_(i - 6, i - 6) = 1;
       SpatialVec F = (ChiUp_[i].transpose() - Xup_[i].transpose()) * S_[i];
-      size_t j = parents_[i];
+      int j = parents_[i];
       while (j > 5)
       {
         qdd_from_subqdd_(i - 6, j - 6) = S_[j].dot(F);
@@ -156,7 +156,7 @@ namespace sd::dynamics
     if (force_propagators_uptodate_)
       return;
     UpdateArticulatedBodies();
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       ChiUp_[i] = Xup_[i] - S_[i] * Utot_[i].transpose() / d_[i];
     }
@@ -173,7 +173,7 @@ namespace sd::dynamics
     IA_[5] = Ibody_[5];
 
     // loop 1, down the tree
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       IA_[i] = Ibody_[i]; // initialize
       Matrix6d XJrot = JointXform(joint_types_[i], joint_axes_[i],
@@ -183,7 +183,7 @@ namespace sd::dynamics
     }
 
     // Pat's magic principle of least constraint (Guass too!)
-    for (size_t i = n_dof_ - 1; i >= 6; i--)
+    for (int i = n_dof_ - 1; i >= 6; i--)
     {
       U_[i] = IA_[i] * S_[i];
       Urot_[i] = Irot_[i] * Srot_[i];
@@ -266,13 +266,13 @@ namespace sd::dynamics
     C_.setZero(n_dof_, n_dof_);
     Cqd_.setZero(n_dof_);
     G_.setZero(n_dof_);
-    for (size_t i = 0; i < J_.size(); i++)
+    for (int i = 0; i < J_.size(); i++)
     {
       J_[i].setZero(6, n_dof_);
       Jdqd_[i].setZero();
     }
 
-    for (size_t i = 0; i < Jc_.size(); i++)
+    for (int i = 0; i < Jc_.size(); i++)
     {
       Jc_[i].setZero(3, n_dof_);
       Jcdqd_[i].setZero();
@@ -327,7 +327,7 @@ namespace sd::dynamics
                                      const Vector3d &location,
                                      bool isFoot)
   {
-    if ((size_t)bodyID >= n_dof_)
+    if (bodyID >= n_dof_)
     {
       throw std::runtime_error(
           "AddGroundContactPoint got invalid bodyID: " + std::to_string(bodyID) +
@@ -387,7 +387,7 @@ namespace sd::dynamics
                        CoordinateAxis joint_axis,
                        const Matrix6d &Xtree, const Matrix6d &Xrot)
   {
-    if ((size_t)parent >= n_dof_)
+    if (parent >= n_dof_)
     {
       throw std::runtime_error(
           "AddBody got invalid parent: " + std::to_string(parent) +
@@ -430,7 +430,7 @@ namespace sd::dynamics
   double FBModel::TotalNonRotorMass() const
   {
     double totalMass = 0;
-    for (size_t i = 0; i < n_dof_; i++)
+    for (int i = 0; i < n_dof_; i++)
     {
       totalMass += MassFromSpatialInertia(Ibody_[i]);
     }
@@ -440,7 +440,7 @@ namespace sd::dynamics
   double FBModel::TotalRotorMass() const
   {
     double totalMass = 0;
-    for (size_t i = 0; i < n_dof_; i++)
+    for (int i = 0; i < n_dof_; i++)
     {
       totalMass += MassFromSpatialInertia(Irot_[i]);
     }
@@ -456,7 +456,7 @@ namespace sd::dynamics
     Xup_[5] = CreateSpatialXform(QuatToRotMat(state_.body_orientation),
                                  state_.body_position);
     v_[5] = state_.body_velocity;
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       // joint xform
       Matrix6d XJ = JointXform(joint_types_[i], joint_axes_[i], state_.q[i - 6]);
@@ -480,7 +480,7 @@ namespace sd::dynamics
     }
 
     // calculate from absolute transformations
-    for (size_t i = 5; i < n_dof_; i++)
+    for (int i = 5; i < n_dof_; i++)
     {
       if (parents_[i] == 0)
       {
@@ -495,11 +495,11 @@ namespace sd::dynamics
     // ground contact points
     //  // TODO : we end up inverting the same Xa a few times (like for the 8
     //  points on the body). this isn't super efficient.
-    for (size_t j = 0; j < n_ground_contact_; j++)
+    for (int j = 0; j < n_ground_contact_; j++)
     {
       if (!compute_contact_info_[j])
         continue;
-      size_t i = gc_parent_[j];
+      int i = gc_parent_[j];
       Matrix6d Xai = InvertSpatialXform(Xa_[i]); // from link to absolute
       SpatialVec vSpatial = Xai * v_[i];
 
@@ -515,7 +515,7 @@ namespace sd::dynamics
     ForwardKinematics();
     BiasAccelerations();
 
-    for (size_t k = 0; k < n_ground_contact_; k++)
+    for (int k = 0; k < n_ground_contact_; k++)
     {
       Jc_[k].setZero();
       Jcdqd_[k].setZero();
@@ -524,7 +524,7 @@ namespace sd::dynamics
       if (!compute_contact_info_[k])
         continue;
 
-      size_t i = gc_parent_[k];
+      int i = gc_parent_[k];
 
       // Rotation to absolute coords
       Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
@@ -560,7 +560,7 @@ namespace sd::dynamics
     avp_[5] << 0, 0, 0, 0, 0, 0;
 
     // from base to tips
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       // Outward kinamtic propagtion
       avp_[i] = Xup_[i] * avp_[parents_[i]] + c_[i];
@@ -580,7 +580,7 @@ namespace sd::dynamics
     // Gravity comp force is the same as force required to accelerate
     // oppostite gravity
     G_.topRows<6>() = -IC_[5] * ag_[5];
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       ag_[i] = Xup_[i] * ag_[parents_[i]];
       agrot_[i] = Xuprot_[i] * ag_[parents_[i]];
@@ -601,7 +601,7 @@ namespace sd::dynamics
     SpatialVec hfb = Ifb * v_[5];
     fvp_[5] = Ifb * avp_[5] + ForceCrossProduct(v_[5], hfb);
 
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       // Force on body i
       Matrix6d Ii = Ibody_[i];
@@ -614,7 +614,7 @@ namespace sd::dynamics
       fvprot_[i] = Ir * avprot_[i] + ForceCrossProduct(vrot_[i], hr);
     }
 
-    for (size_t i = n_dof_ - 1; i > 5; i--)
+    for (int i = n_dof_ - 1; i > 5; i--)
     {
       // Extract force along the joints
       Cqd_[i] = S_[i].dot(fvp_[i]) + Srot_[i].dot(fvprot_[i]);
@@ -705,13 +705,13 @@ namespace sd::dynamics
 
     ForwardKinematics();
     // initialize
-    for (size_t i = 5; i < n_dof_; i++)
+    for (int i = 5; i < n_dof_; i++)
     {
       IC_[i] = Ibody_[i];
     }
 
     // backward loop
-    for (size_t i = n_dof_ - 1; i > 5; i--)
+    for (int i = n_dof_ - 1; i > 5; i--)
     {
       // Propagate inertia down the tree
       IC_[parents_[i]] += Xup_[i].transpose() * IC_[i] * Xup_[i];
@@ -728,7 +728,7 @@ namespace sd::dynamics
     // Top left corner is the locked inertia of the whole system
     H_.topLeftCorner<6, 6>() = IC_[5];
 
-    for (size_t j = 6; j < n_dof_; j++)
+    for (int j = 6; j < n_dof_; j++)
     {
       // f = spatial force required for a unit qdd_j
       SpatialVec f = IC_[j] * S_[j];
@@ -738,7 +738,7 @@ namespace sd::dynamics
 
       // Propagate down the tree
       f = Xup_[j].transpose() * f + Xuprot_[j].transpose() * frot;
-      size_t i = parents_[j];
+      int i = parents_[j];
       while (i > 5)
       {
         // in here f is expressed in frame {i}
@@ -775,7 +775,7 @@ namespace sd::dynamics
     a_[5] = -Xup_[5] * aGravity + dstate_.body_velocity_d;
 
     // loop through joints
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       // spatial acceleration
       a_[i] = Xup_[i] * a_[parents_[i]] + S_[i] * dstate_.qdd[i - 6] + c_[i];
@@ -795,7 +795,7 @@ namespace sd::dynamics
     f_[5] = Ibody_[5] * a_[5] + ForceCrossProduct(v_[5], hb);
 
     // loop through joints
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       // spatial momentum
       SpatialVec hi = Ibody_[i] * v_[i];
@@ -808,7 +808,7 @@ namespace sd::dynamics
     }
 
     VectorXd genForce(n_dof_);
-    for (size_t i = n_dof_ - 1; i > 5; i--)
+    for (int i = n_dof_ - 1; i > 5; i--)
     {
       // Pull off compoents of force along the joint
       genForce[i] = S_[i].dot(f_[i]) + Srot_[i].dot(frot_[i]);
@@ -836,7 +836,7 @@ namespace sd::dynamics
     pA_[5] = ForceCrossProduct(v_[5], ivProduct);
 
     // loop 1, down the tree
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       ivProduct = Ibody_[i] * v_[i];
       pA_[i] = ForceCrossProduct(v_[i], ivProduct);
@@ -850,7 +850,7 @@ namespace sd::dynamics
     }
 
     // adjust pA for external forces
-    for (size_t i = 5; i < n_dof_; i++)
+    for (int i = 5; i < n_dof_; i++)
     {
       // TODO add if statement (avoid these calculations if the force is zero)
       Matrix3d R = RotationFromSpatialXform(Xa_[i]);
@@ -860,7 +860,7 @@ namespace sd::dynamics
     }
 
     // Pat's magic principle of least constraint
-    for (size_t i = n_dof_ - 1; i >= 6; i--)
+    for (int i = n_dof_ - 1; i >= 6; i--)
     {
       u_[i] = tau[i - 6] - S_[i].transpose() * pA_[i] -
               Srot_[i].transpose() * pArot_[i] - U_[i].transpose() * c_[i] -
@@ -883,7 +883,7 @@ namespace sd::dynamics
 
     // joint accelerations
     dstate.qdd = VectorXd(n_dof_ - 6);
-    for (size_t i = 6; i < n_dof_; i++)
+    for (int i = 6; i < n_dof_; i++)
     {
       dstate.qdd[i - 6] =
           (u_[i] - Utot_[i].transpose() * a_[parents_[i]]) / d_[i];
@@ -904,8 +904,8 @@ namespace sd::dynamics
     UpdateArticulatedBodies();
     UpdateForcePropagators();
 
-    size_t i_opsp = gc_parent_.at(gc_index);
-    size_t i = i_opsp;
+    int i_opsp = gc_parent_.at(gc_index);
+    int i = i_opsp;
 
     // Rotation to absolute coords
     Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
@@ -942,8 +942,8 @@ namespace sd::dynamics
     UpdateArticulatedBodies();
     UpdateForcePropagators();
 
-    size_t i_opsp = gc_parent_.at(gc_index);
-    size_t i = i_opsp;
+    int i_opsp = gc_parent_.at(gc_index);
+    int i = i_opsp;
 
     // Rotation to absolute coords
     Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
@@ -953,7 +953,7 @@ namespace sd::dynamics
     // ICRA)
     SpatialVecXd D = Xc.transpose() * force_directions;
 
-    size_t m = force_directions.cols();
+    int m = force_directions.cols();
 
     MatrixXd LambdaInv = MatrixXd::Zero(m, m);
     VectorXd tmp = VectorXd::Zero(m);
@@ -1000,7 +1000,7 @@ namespace sd::dynamics
 
   void FBModel::ResetExternalForces()
   {
-    for (size_t i = 0; i < n_dof_; i++)
+    for (int i = 0; i < n_dof_; i++)
     {
       external_forces_[i] = SpatialVec::Zero();
     }

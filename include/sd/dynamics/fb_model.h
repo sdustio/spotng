@@ -182,7 +182,7 @@ namespace sd::dynamics
     * @param gc_index : index of contact point
     * @param flag : enable/disable contact calculation
     */
-    void SetContactComputeFlag(size_t gc_index, bool flag)
+    void SetContactComputeFlag(int gc_index, bool flag)
     {
       compute_contact_info_[gc_index] = flag;
     }
@@ -382,7 +382,7 @@ namespace sd::dynamics
     void ResetExternalForces();
 
   private:
-    size_t n_dof_ = 0;
+    int n_dof_ = 0;
     Vector3d gravity_;
     std::vector<int> parents_;
     std::vector<double> gear_ratios_;
@@ -394,8 +394,8 @@ namespace sd::dynamics
     std::vector<SpatialInertia> Ibody_, Irot_;
     std::vector<std::string> body_names_;
 
-    size_t n_ground_contact_ = 0;
-    std::vector<size_t> gc_parent_;
+    int n_ground_contact_ = 0;
+    std::vector<int> gc_parent_;
     std::vector<Vector3d> gc_location_;
     std::vector<uint64_t> gc_foot_indices_;
 
