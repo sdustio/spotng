@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "sd/types.h"
 
@@ -118,7 +118,7 @@ namespace sd::ctrl
     //摆动时间
     double swing_time_natural = 0.25;
 
-    std::map<GaitType, void(GaitSkd::*)()> create_gait_methods_;
+    std::unordered_map<GaitType, void(GaitSkd::*)()> create_gait_methods_;
   };
 
   using GaitSkdPtr = std::shared_ptr<GaitSkd>;

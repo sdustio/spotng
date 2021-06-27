@@ -37,8 +37,8 @@ namespace sd::ctrl::fsm
 
     void JointPDControl(int leg, const Vector3d &qDes, const Vector3d &qdDes);
 
-    std::map<robot::Mode, State> state_trans_;
-    std::map<Flag, void (StateRecoveryStand::*)(const int)> flag_dispatch_;
+    std::unordered_map<robot::Mode, State> state_trans_;
+    std::unordered_map<Flag, void (StateRecoveryStand::*)(const int)> flag_dispatch_;
 
     int iter_ = 0;
 

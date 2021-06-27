@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "sd/types.h"
 #include "sd/robot/interface.h"
@@ -109,7 +109,7 @@ namespace sd::ctrl
     const est::StateEstPtr state_est_;
 
     fsm::StateCtrlPtr GetStateCtrl(fsm::State state);
-    std::map<fsm::State, fsm::StateCtrlPtr> state_ctrls_;
+    std::unordered_map<fsm::State, fsm::StateCtrlPtr> state_ctrls_;
     fsm::StateCtrlPtr current_state_ctrl_;
     fsm::StateCtrlPtr next_state_ctrl_;
 

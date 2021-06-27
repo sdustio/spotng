@@ -17,7 +17,7 @@ namespace sd::ctrl::fsm
     State GetState() const override { return State::Init; }
 
   private:
-    std::map<robot::Mode, State> state_trans_;
+    std::unordered_map<robot::Mode, State> state_trans_;
   };
 
 } // namespace sd::ctrl::fsm
