@@ -11,10 +11,11 @@ namespace sd::ctrl
       LegPtr &cleg,
       const StateCmdPtr &cmd,
       const est::StateEstPtr &est) : leg_ctrl_(cleg), state_cmd_(cmd), state_est_(est),
-                                     state_ctrls_{std::make_shared<fsm::StateInit>(),
-                                                  std::make_shared<fsm::StateRecoveryStand>(),
-                                                  std::make_shared<fsm::StateLocomotion>(),
-                                                  std::make_shared<fsm::StateBalanceStand>()}
+                                     state_ctrls_{
+                                         {fsm::State::Init, std::make_shared<fsm::StateInit>(cleg, cmd, est)},
+                                         {fsm::State::RecoveryStand, std::make_shared<fsm::StateRecoveryStand>(cleg, cmd, est)},
+                                         {fsm::State::Locomotion, std::make_shared<fsm::StateLocomotion>(cleg, cmd, est)},
+                                         {fsm::State::BalanceStand, std::make_shared<fsm::StateBalanceStand>(cleg, cmd, est)}}
   {
     // Initialize the FSM with the Off FSM State
     Init();
@@ -39,7 +40,7 @@ namespace sd::ctrl
 
   fsm::StateCtrlPtr FSM::GetStateCtrl(fsm::State state)
   {
-    return state_ctrls_[static_cast<size_t>(state)];
+    return state_ctrls_[state];
   }
 
   bool FSM::Run()

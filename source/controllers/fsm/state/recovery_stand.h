@@ -4,6 +4,7 @@
 
 namespace sd::ctrl::fsm
 {
+
   class StateRecoveryStand : public StateCtrl
   {
   public:
@@ -17,6 +18,13 @@ namespace sd::ctrl::fsm
     State GetState() const override { return State::RecoveryStand; }
 
   private:
+
+    enum class Flag
+    {
+      StandUp,
+      FoldLegs,
+      RollOver
+    };
     bool UpsideDown();
 
     void StandUp(const int curr_iter);
@@ -29,15 +37,12 @@ namespace sd::ctrl::fsm
 
     void JointPDControl(int leg, const Vector3d &qDes, const Vector3d &qdDes);
 
-    std::array<State, size_t(robot::Mode::Count_)> state_trans_;
-    std::array<void (StateRecoveryStand::*)(const int), 3> flag_dispatch_;
+    std::map<robot::Mode, State> state_trans_;
+    std::map<Flag, void (StateRecoveryStand::*)(const int)> flag_dispatch_;
 
-    int _state_iter = 0;
+    int iter_ = 0;
 
-    static constexpr int flag_stand_up_ = 0;
-    static constexpr int flag_fold_legs_ = 1;
-    static constexpr int flag_roll_over_ = 2;
-    int _flag = flag_fold_legs_;
+    Flag flag_ = Flag::FoldLegs;
 
     // JPos
     Vector3d fold_jpos_[4];

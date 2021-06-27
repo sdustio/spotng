@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <array>
+#include <map>
 
 #include "sd/types.h"
 #include "sd/robot/interface.h"
@@ -17,7 +17,7 @@ namespace sd::ctrl
     /**
     * Enumerate all of the operating modes
     */
-    enum class OperatingMode : size_t
+    enum class OperatingMode : uint8_t
     {
       Normal,
       Transitioning,
@@ -109,7 +109,7 @@ namespace sd::ctrl
     const est::StateEstPtr state_est_;
 
     fsm::StateCtrlPtr GetStateCtrl(fsm::State state);
-    std::array<fsm::StateCtrlPtr, size_t(fsm::State::Count_)> state_ctrls_;
+    std::map<fsm::State, fsm::StateCtrlPtr> state_ctrls_;
     fsm::StateCtrlPtr current_state_ctrl_;
     fsm::StateCtrlPtr next_state_ctrl_;
 

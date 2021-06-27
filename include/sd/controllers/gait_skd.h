@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <array>
+#include <map>
 
 #include "sd/types.h"
 
@@ -14,8 +14,8 @@ namespace sd::ctrl
   enum class GaitType : uint8_t
   {
     // TODO rename var naming
-    STAND,
-    TROT,
+    Stand,
+    Trot,
     Count_
   };
 
@@ -118,7 +118,7 @@ namespace sd::ctrl
     //摆动时间
     double swing_time_natural = 0.25;
 
-    std::array<void(GaitSkd::*)(), size_t(GaitType::Count_)> create_gait_methods_;
+    std::map<GaitType, void(GaitSkd::*)()> create_gait_methods_;
   };
 
   using GaitSkdPtr = std::shared_ptr<GaitSkd>;

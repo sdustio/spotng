@@ -49,8 +49,8 @@ namespace sd::ctrl
  */
   GaitSkd::GaitSkd() : dt_(robot::ctrlparams::kCtrlsec),
                        create_gait_methods_{
-                           &GaitSkd::CreateGaitStand,
-                           &GaitSkd::CreateGaitTrot}
+                           {GaitType::Stand, &GaitSkd::CreateGaitStand},
+                           {GaitType::Trot, &GaitSkd::CreateGaitTrot}}
   {
     Initialize();
   }
@@ -72,7 +72,7 @@ namespace sd::ctrl
   void GaitSkd::Initialize()
   {
     // Start the gait in a trot since we use this the most 开始步态在小跑，因为我们使用这个最多
-    gait_data_.current_gait = GaitType::STAND;
+    gait_data_.current_gait = GaitType::Stand;
 
     // Create the gait from the nominal initial 创建步态从标称初始值
     CreateGait();
@@ -91,7 +91,7 @@ namespace sd::ctrl
     ModifyGait();
 
     //非站立
-    if (gait_data_.current_gait != GaitType::STAND)
+    if (gait_data_.current_gait != GaitType::Stand)
     {
       // Track the reference phase variable 跟踪参考相位变量
       gait_data_.initial_phase = fmod((gait_data_.initial_phase + (dt_ / gait_data_.period_time_nominal)), 1);
@@ -106,7 +106,7 @@ namespace sd::ctrl
       if (gait_data_.gait_enabled(foot) == 1)
       {
         // Monotonic time based phase incrementation 单调时基相位增量
-        if (gait_data_.current_gait == GaitType::STAND)
+        if (gait_data_.current_gait == GaitType::Stand)
         {
           // Don't increment the phase when in stand mode 在站立模式下，不要增加相位
           dphase_ = 0.0;
@@ -241,7 +241,7 @@ namespace sd::ctrl
   void GaitSkd::CreateGait()
   {
 
-    (this->*create_gait_methods_[size_t(gait_data_.next_gait)])();
+    (this->*create_gait_methods_[gait_data_.next_gait])();
 
     // Gait has switched
     gait_data_.current_gait = gait_data_.next_gait;
@@ -252,7 +252,7 @@ namespace sd::ctrl
 
   void GaitSkd::CreateGaitStand()
   {
-    gait_data_.gait_name = "STAND";
+    gait_data_.gait_name = "Stand";
     gait_data_.gait_enabled << 1, 1, 1, 1;
     gait_data_.period_time_nominal = 10.0;
     gait_data_.initial_phase = 0.0;
@@ -263,7 +263,7 @@ namespace sd::ctrl
 
   void GaitSkd::CreateGaitTrot()
   {
-    gait_data_.gait_name = "TROT";
+    gait_data_.gait_name = "Trot";
     gait_data_.gait_enabled << 1, 1, 1, 1;
     gait_data_.period_time_nominal = 0.5;
     gait_data_.initial_phase = 0.0;

@@ -6,14 +6,14 @@ namespace sd::ctrl::fsm
       LegPtr &cleg, const StateCmdPtr &cmd,
       const est::StateEstPtr &est) : StateCtrl(cleg, cmd, est),
                                      state_trans_{
-                                         State::Init,
-                                         State::RecoveryStand,
-                                         State::Locomotion,
-                                         State::BalanceStand},
+                                         {robot::Mode::Init, State::Init},
+                                         {robot::Mode::RecoveryStand, State::RecoveryStand},
+                                         {robot::Mode::Locomotion, State::Locomotion},
+                                         {robot::Mode::BalanceStand, State::BalanceStand}},
                                      flag_dispatch_{
-                                         &StateRecoveryStand::StandUp,
-                                         &StateRecoveryStand::FoldLegs,
-                                         &StateRecoveryStand::RollOver}
+                                         {Flag::StandUp, &StateRecoveryStand::StandUp},
+                                         {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
+                                         {Flag::RollOver, &StateRecoveryStand::RollOver}}
   {
     // goal configuration
     // Folding
@@ -41,7 +41,7 @@ namespace sd::ctrl::fsm
 
   void StateRecoveryStand::OnEnter()
   {
-    _state_iter = 0;
+    iter_ = 0;
 
     // initial configuration, position
     for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
@@ -51,13 +51,13 @@ namespace sd::ctrl::fsm
 
     double body_height = state_est_->GetData().position[2];
 
-    _flag = flag_fold_legs_;
+    flag_ = Flag::FoldLegs;
     if (!UpsideDown())
     { // Proper orientation
       if ((0.2 < body_height) && (body_height < 0.45))
       {
         // printf("[Recovery Balance] body height is %; Stand Up \n", body_height);
-        _flag = flag_stand_up_;
+        flag_ = Flag::StandUp;
       }
     }
   }
@@ -74,14 +74,14 @@ namespace sd::ctrl::fsm
 
   bool StateRecoveryStand::Run()
   {
-    (this->*flag_dispatch_[_flag])(_state_iter);
-    _state_iter++;
+    (this->*flag_dispatch_[flag_])(iter_);
+    iter_++;
     return true;
   }
 
   State StateRecoveryStand::CheckTransition(const StateCmdPtr &cmd)
   {
-    return state_trans_[size_t(cmd->GetMode())];
+    return state_trans_[cmd->GetMode()];
   }
 
   TransitionData StateRecoveryStand::Transition([[maybe_unused]] const State next)
@@ -104,7 +104,7 @@ namespace sd::ctrl::fsm
       for (auto leg = 0; leg < robot::ModelAttrs::num_leg; ++leg)
       {
         SetJPosInterPts(curr_iter, standup_ramp_iter_,
-                         leg, initial_jpos_[leg], stand_jpos_[leg]);
+                        leg, initial_jpos_[leg], stand_jpos_[leg]);
       }
     }
     else if (something_wrong)
@@ -116,15 +116,15 @@ namespace sd::ctrl::fsm
       {
         initial_jpos_[i] = leg_ctrl_->GetDatas()[i].q;
       }
-      _flag = flag_fold_legs_;
-      _state_iter = -1;
+      flag_ = Flag::FoldLegs;
+      iter_ = -1;
 
       // printf("[Recovery Balance - Warning] body height is still too low (%f) or UpsideDown (%d); Folding legs \n",
       //        body_height, UpsideDown());
     }
     else
     {
-      _state_iter = 0;
+      iter_ = 0;
     }
 
     // TODO check contact
@@ -137,23 +137,23 @@ namespace sd::ctrl::fsm
     for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       SetJPosInterPts(curr_iter, fold_ramp_iter_, i,
-                       initial_jpos_[i], fold_jpos_[i]);
+                      initial_jpos_[i], fold_jpos_[i]);
     }
     if (curr_iter >= fold_ramp_iter_ + fold_settle_iter_)
     {
       if (UpsideDown())
       {
-        _flag = flag_roll_over_;
+        flag_ = Flag::RollOver;
         for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
           initial_jpos_[i] = fold_jpos_[i];
       }
       else
       {
-        _flag = flag_stand_up_;
+        flag_ = Flag::StandUp;
         for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
           initial_jpos_[i] = fold_jpos_[i];
       }
-      _state_iter = -1;
+      iter_ = -1;
     }
   }
 
@@ -162,15 +162,15 @@ namespace sd::ctrl::fsm
     for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       SetJPosInterPts(curr_iter, rollover_ramp_iter_, i,
-                       initial_jpos_[i], rolling_jpos_[i]);
+                      initial_jpos_[i], rolling_jpos_[i]);
     }
 
     if (curr_iter > rollover_ramp_iter_ + rollover_settle_iter_)
     {
-      _flag = flag_fold_legs_;
+      flag_ = Flag::FoldLegs;
       for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
         initial_jpos_[i] = rolling_jpos_[i];
-      _state_iter = -1;
+      iter_ = -1;
     }
   }
 

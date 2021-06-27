@@ -17,7 +17,7 @@ namespace sd::ctrl::fsm
     State GetState() const override { return State::Init; }
 
   private:
-    std::array<State, size_t(robot::Mode::Count_)> state_trans_;
+    std::map<robot::Mode, State> state_trans_;
   };
 
 } // namespace sd::ctrl::fsm
