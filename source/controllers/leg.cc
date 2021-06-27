@@ -85,7 +85,7 @@ namespace sd::ctrl
     enabled_ = false;
   }
 
-  void Leg::ComputeLegJacobianAndPosition(std::size_t leg)
+  void Leg::ComputeLegJacobianAndPosition(size_t leg)
   {
     double l1 = robot::ModelAttrs::abad_link_length;
     double l2 = robot::ModelAttrs::hip_link_length;

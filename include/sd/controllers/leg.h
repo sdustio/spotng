@@ -41,7 +41,7 @@ namespace sd::ctrl
     * Compute the position of the foot and its Jacobian.  This is done in the local
     * leg coordinate system. If J/p are NULL, the calculation will be skipped.
     */
-    void ComputeLegJacobianAndPosition(std::size_t leg);
+    void ComputeLegJacobianAndPosition(size_t leg);
 
   private:
     robot::leg::Cmds cmds_;
