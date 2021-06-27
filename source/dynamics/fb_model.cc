@@ -266,13 +266,13 @@ namespace sd::dynamics
     C_.setZero(n_dof_, n_dof_);
     Cqd_.setZero(n_dof_);
     G_.setZero(n_dof_);
-    for (int i = 0; i < J_.size(); i++)
+    for (unsigned i = 0; i < J_.size(); i++)
     {
       J_[i].setZero(6, n_dof_);
       Jdqd_[i].setZero();
     }
 
-    for (int i = 0; i < Jc_.size(); i++)
+    for (unsigned i = 0; i < Jc_.size(); i++)
     {
       Jc_[i].setZero(3, n_dof_);
       Jcdqd_[i].setZero();
@@ -423,7 +423,7 @@ namespace sd::dynamics
 
   void FBModel::Check()
   {
-    if (n_dof_ != parents_.size())
+    if (unsigned(n_dof_) != parents_.size())
       throw std::runtime_error("Invalid dof and parents length");
   }
 
