@@ -76,6 +76,7 @@ namespace sd::ctrl::fsm
   {
     (this->*flag_dispatch_[_flag])(_state_iter);
     _state_iter++;
+    return true;
   }
 
   State StateRecoveryStand::CheckTransition(const StateCmdPtr &cmd)
@@ -85,7 +86,7 @@ namespace sd::ctrl::fsm
 
   TransitionData StateRecoveryStand::Transition([[maybe_unused]] const State next)
   {
-    return TransitionData{.done = true};
+    return TransitionData{true};
   }
 
   void StateRecoveryStand::StandUp(const int curr_iter)

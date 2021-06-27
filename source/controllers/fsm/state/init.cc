@@ -33,7 +33,7 @@ namespace sd::ctrl::fsm
 
   TransitionData StateInit::Transition([[maybe_unused]] const State next)
   {
-    return TransitionData{.done = true};
+    return TransitionData{true};
   }
 
 } // namespace sd::ctrl::fsm
