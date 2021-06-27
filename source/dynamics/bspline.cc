@@ -53,10 +53,10 @@ namespace sd::dynamics
 
     std::array<double, bspline::kDim> _C;
 
-    for (int j(0); j < bspline::kDim; ++j)
+    for (int j = 0; j < bspline::kDim; ++j)
     {
       _C[j] = 0.0;
-      for (int i(0); i <= bspline::kDegree; ++i)
+      for (int i = 0; i <= bspline::kDegree; ++i)
       {
         _C[j] += _N[i] * cpoints_[_span - bspline::kDegree + i][j];
       }
@@ -83,7 +83,7 @@ namespace sd::dynamics
 
     if (CurveDerivsAlg1V(_CK, u, d))
     {
-      for (int m(0); m < bspline::kDim; ++m)
+      for (int m = 0; m < bspline::kDim; ++m)
         ret[m] = _CK[d][m];
       return true;
     }
@@ -92,8 +92,8 @@ namespace sd::dynamics
 
   void BSpline::CalcKnot(double Tf)
   {
-    int _i(0);
-    int _j(0);
+    int _i = 0;
+    int _j = 0;
     int _NumMidKnot(num_knots_ - 2 * bspline::kDegree - 2);
     double _TimeStep = Tf / (_NumMidKnot + 1);
 
@@ -112,7 +112,7 @@ namespace sd::dynamics
     for (_j = 0; _j < bspline::kDegree + 1; ++_j)
       knots_[_i++] = Tf;
 
-    // for(int i(0); i< num_knots_; ++i)
+    // for(int i = 0; i< num_knots_; ++i)
     // std::cout<<knots_[i]<<std::endl;
   }
 
@@ -120,8 +120,8 @@ namespace sd::dynamics
   {
     assert(d <= bspline::kDegree);
 
-    int _k(0);
-    int _j(0);
+    int _k = 0;
+    int _j = 0;
 
     std::vector<std::array<double, bspline::kDegree + 1>> _nders(d + 1);
 
@@ -134,12 +134,12 @@ namespace sd::dynamics
     for (_k = 0; _k <= d; ++_k)
     {
       // Clean Up Column
-      for (int m(0); m < bspline::kDim; ++m)
+      for (int m = 0; m < bspline::kDim; ++m)
         CK[_k][m] = 0.;
 
       for (_j = 0; _j <= bspline::kDegree; ++_j)
       {
-        for (int m(0); m < bspline::kDim; ++m)
+        for (int m = 0; m < bspline::kDim; ++m)
         {
           CK[_k][m] += _nders[_k][_j] * cpoints_[_span - bspline::kDegree + _j][m];
         }
@@ -356,7 +356,7 @@ namespace sd::dynamics
       double Tf)
   {
     // Position
-    for (int m(0); m < bspline::kDim; ++m)
+    for (int m = 0; m < bspline::kDim; ++m)
     {
       cpoints_[0][m] = init[m];
       cpoints_[num_cps_ - 1][m] = fin[m];
@@ -371,7 +371,7 @@ namespace sd::dynamics
     // Vel, Acc, ...
     for (int j(1); j < bspline::kConstLevelIni + 1; ++j)
     {
-      for (int k(0); k < bspline::kDim; ++k)
+      for (int k = 0; k < bspline::kDim; ++k)
       {
         ini_const[k] = init[j * bspline::kDim + k];
 
@@ -392,7 +392,7 @@ namespace sd::dynamics
     int idx(1);
     for (int j(num_cps_ - 2); j > num_cps_ - 2 - bspline::kConstLevelFin; --j)
     {
-      for (int k(0); k < bspline::kDim; ++k)
+      for (int k = 0; k < bspline::kDim; ++k)
       {
         ini_const[k] = fin[idx * bspline::kDim + k];
 
@@ -409,9 +409,9 @@ namespace sd::dynamics
 
   void BSpline::CalcCPoints(const std::array<std::array<double, bspline::kDim>, bspline::kNumMiddle> &middle_pt)
   {
-    for (int i(0); i < bspline::kNumMiddle; ++i)
+    for (int i = 0; i < bspline::kNumMiddle; ++i)
     {
-      for (int m(0); m < bspline::kDim; ++m)
+      for (int m = 0; m < bspline::kDim; ++m)
       {
         cpoints_[bspline::kConstLevelIni + 1 + i][m] = middle_pt[i][m];
       }

@@ -19,25 +19,25 @@ namespace sd::ctrl::fsm
   private:
     bool _UpsideDown();
 
-    void _StandUp(const int iter);
-    void _FoldLegs(const int iter);
-    void _RollOver(const int iter);
+    void _StandUp(const unsigned long curr_iter);
+    void _FoldLegs(const unsigned long curr_iter);
+    void _RollOver(const unsigned long curr_iter);
 
     void _SetJPosInterPts(
-        const int curr_iter, size_t max_iter, int leg,
+        const unsigned long curr_iter, unsigned long max_iter, int leg,
         const Vector3d &ini, const Vector3d &fin);
 
-    std::array<State, size_t(robot::Mode::Count_)> state_trans_;
-    std::array<void(StateRecoveryStand::*)(const int), 3> flag_dispatch_;
+    void jointPDControl(int leg, const Vector3d &qDes, const Vector3d &qdDes);
 
-    int _iter = 0;
-    int _motion_start_iter = 0;
+    std::array<State, size_t(robot::Mode::Count_)> state_trans_;
+    std::array<void (StateRecoveryStand::*)(const unsigned long), 3> flag_dispatch_;
+
+    unsigned long _motion_start_iter = 0;
+    unsigned long _state_iter = 0;
 
     static constexpr int StandUp = 0;
     static constexpr int FoldLegs = 1;
     static constexpr int RollOver = 2;
-
-    unsigned long long _state_iter;
     int _flag = FoldLegs;
 
     // JPos
@@ -45,7 +45,6 @@ namespace sd::ctrl::fsm
     Vector3d stand_jpos[4];
     Vector3d rolling_jpos[4];
     Vector3d initial_jpos[4];
-    Vector3d zero_vec3;
 
     Vector3d f_ff;
 
@@ -62,6 +61,12 @@ namespace sd::ctrl::fsm
     // 0.5 kHz
     const int rollover_ramp_iter = 150;
     const int rollover_settle_iter = 150;
+
+    // Create the cartesian P gain matrix
+    Matrix3d kpMat;
+
+    // Create the cartesian D gain matrix
+    Matrix3d kdMat;
   };
 
 } // namespace sd::ctrl::fsm
