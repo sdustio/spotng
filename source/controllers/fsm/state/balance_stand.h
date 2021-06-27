@@ -7,6 +7,7 @@ namespace sd::ctrl::fsm
   class StateBalanceStand : public StateCtrl
   {
   public:
+    StateBalanceStand(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
     void OnEnter() override;
     void OnExit() override;
     bool Run() override;
@@ -16,12 +17,8 @@ namespace sd::ctrl::fsm
 
     State GetState() const override { return State::BalanceStand; }
 
-    // Pre controls safety checks
-    bool NeedCheckSafeOrientation() const override;
-
-    // Post control safety checks
-    bool NeedCheckPDesFoot() const override;
-    bool NeedCheckForceFeedForward() const override;
+    bool NeedCheckSafeOrientation() const override { return true; }
+    bool NeedCheckForceFeedForward() const override { return true; }
   };
 
 } // namespace sd::ctrl::fsm

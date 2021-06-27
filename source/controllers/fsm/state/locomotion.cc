@@ -3,10 +3,28 @@
 namespace sd::ctrl::fsm
 {
 
+  StateLocomotion::StateLocomotion(
+      LegPtr &cleg, const StateCmdPtr &cmd,
+      const est::StateEstPtr &est) : StateCtrl(cleg, cmd, est),
+                                     state_trans_{
+                                         {robot::Mode::Init, State::Init},
+                                         {robot::Mode::RecoveryStand, State::RecoveryStand},
+                                         {robot::Mode::Locomotion, State::RecoveryStand},
+                                         {robot::Mode::BalanceStand, State::RecoveryStand}} {}
+
   void StateLocomotion::OnEnter() {}
   void StateLocomotion::OnExit(){}
-  bool StateLocomotion::Run(){}
-  State StateLocomotion::CheckTransition(const StateCmdPtr &cmd){}
-  TransitionData StateLocomotion::Transition(const State next){}
+  bool StateLocomotion::Run(){
+    return true;
+  }
+
+  State StateLocomotion::CheckTransition(const StateCmdPtr &cmd)
+  {
+    return state_trans_[cmd->GetMode()];
+  }
+
+  TransitionData StateLocomotion::Transition(const State next){
+    return TransitionData{true};
+  }
 
 } // namespace sd::ctrl::fsm
