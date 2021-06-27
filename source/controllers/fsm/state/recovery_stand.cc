@@ -60,7 +60,6 @@ namespace sd::ctrl::fsm
         _flag = StandUp;
       }
     }
-    _motion_start_iter = 0;
   }
 
   bool StateRecoveryStand::_UpsideDown()
@@ -75,7 +74,7 @@ namespace sd::ctrl::fsm
 
   bool StateRecoveryStand::Run()
   {
-    (this->*flag_dispatch_[_flag])(_state_iter - _motion_start_iter);
+    (this->*flag_dispatch_[_flag])(_state_iter);
     _state_iter++;
   }
 
@@ -89,7 +88,7 @@ namespace sd::ctrl::fsm
     return TransitionData{.done = true};
   }
 
-  void StateRecoveryStand::_StandUp(const unsigned long curr_iter)
+  void StateRecoveryStand::_StandUp(const int curr_iter)
   {
     double body_height = state_est_->GetData().position[2];
     bool something_wrong = false;
@@ -99,7 +98,15 @@ namespace sd::ctrl::fsm
       something_wrong = true;
     }
 
-    if ((curr_iter > floor(standup_ramp_iter * 0.7)) && something_wrong)
+    if (curr_iter <= floor(standup_ramp_iter * 0.7))
+    {
+      for (auto leg = 0; leg < robot::ModelAttrs::num_leg; ++leg)
+      {
+        _SetJPosInterPts(curr_iter, standup_ramp_iter,
+                         leg, initial_jpos[leg], stand_jpos[leg]);
+      }
+    }
+    else if (something_wrong)
     {
       // If body height is too low because of some reason
       // even after the stand up motion is almost over
@@ -109,25 +116,22 @@ namespace sd::ctrl::fsm
         initial_jpos[i] = leg_ctrl_->GetDatas()[i].q;
       }
       _flag = FoldLegs;
-      _motion_start_iter = _state_iter + 1;
+      _state_iter = -1;
 
       // printf("[Recovery Balance - Warning] body height is still too low (%f) or UpsideDown (%d); Folding legs \n",
       //        body_height, _UpsideDown());
     }
     else
     {
-      for (auto leg = 0; leg < robot::ModelAttrs::num_leg; ++leg)
-      {
-        _SetJPosInterPts(curr_iter, standup_ramp_iter,
-                         leg, initial_jpos[leg], stand_jpos[leg]);
-      }
+      _state_iter = 0;
     }
+
     // TODO check contact
     // Vector4d se_contactState(0.5, 0.5, 0.5, 0.5);
     // this->_data->_stateEstimator->setContactPhase(se_contactState);
   }
 
-  void StateRecoveryStand::_FoldLegs(const unsigned long curr_iter)
+  void StateRecoveryStand::_FoldLegs(const int curr_iter)
   {
     for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
@@ -148,11 +152,11 @@ namespace sd::ctrl::fsm
         for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
           initial_jpos[i] = fold_jpos[i];
       }
-      _motion_start_iter = _state_iter + 1;
+      _state_iter = -1;
     }
   }
 
-  void StateRecoveryStand::_RollOver(const unsigned long curr_iter)
+  void StateRecoveryStand::_RollOver(const int curr_iter)
   {
     for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
@@ -165,12 +169,12 @@ namespace sd::ctrl::fsm
       _flag = FoldLegs;
       for (auto i = 0; i < robot::ModelAttrs::num_leg; ++i)
         initial_jpos[i] = rolling_jpos[i];
-      _motion_start_iter = _state_iter + 1;
+      _state_iter = -1;
     }
   }
 
   void StateRecoveryStand::_SetJPosInterPts(
-      const unsigned long curr_iter, unsigned long max_iter, int leg,
+      const int curr_iter, int max_iter, int leg,
       const Vector3d &ini, const Vector3d &fin)
   {
     double a = 0.;

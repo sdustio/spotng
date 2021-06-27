@@ -19,21 +19,20 @@ namespace sd::ctrl::fsm
   private:
     bool _UpsideDown();
 
-    void _StandUp(const unsigned long curr_iter);
-    void _FoldLegs(const unsigned long curr_iter);
-    void _RollOver(const unsigned long curr_iter);
+    void _StandUp(const int curr_iter);
+    void _FoldLegs(const int curr_iter);
+    void _RollOver(const int curr_iter);
 
     void _SetJPosInterPts(
-        const unsigned long curr_iter, unsigned long max_iter, int leg,
+        const int curr_iter, int max_iter, int leg,
         const Vector3d &ini, const Vector3d &fin);
 
     void jointPDControl(int leg, const Vector3d &qDes, const Vector3d &qdDes);
 
     std::array<State, size_t(robot::Mode::Count_)> state_trans_;
-    std::array<void (StateRecoveryStand::*)(const unsigned long), 3> flag_dispatch_;
+    std::array<void (StateRecoveryStand::*)(const int), 3> flag_dispatch_;
 
-    unsigned long _motion_start_iter = 0;
-    unsigned long _state_iter = 0;
+    int _state_iter = 0;
 
     static constexpr int StandUp = 0;
     static constexpr int FoldLegs = 1;
