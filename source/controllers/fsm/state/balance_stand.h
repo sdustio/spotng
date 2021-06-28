@@ -24,7 +24,16 @@ namespace sd::ctrl::fsm
     bool NeedCheckForceFeedForward() const override { return true; }
 
   private:
+    // Parses contact specific controls to the leg controller
+    void Step();
+
     std::unordered_map<robot::Mode, State> state_trans_;
+
+    double last_height_cmd_ = 0.;
+
+    Vector3d ini_body_pos_;
+    Vector3d ini_body_ori_rpy_;
+    double body_weight_;
   };
 
 } // namespace sd::ctrl::fsm

@@ -18,7 +18,7 @@ namespace sd::ctrl::fsm
     return true;
   }
 
-  TransitionData StateLocomotion::Transition(const State next){
+  TransitionData StateLocomotion::Transition([[maybe_unused]] const State next){
     return TransitionData{true};
   }
 
