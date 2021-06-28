@@ -44,7 +44,6 @@ namespace sd::robot
     // init ctrls
     ctrl_leg_ = std::make_shared<ctrl::Leg>();
     ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>();
-    ctrl_gait_skd_ = std::make_shared<ctrl::GaitSkd>();
     ctrl_fsm_ = std::make_shared<ctrl::Fsm>(ctrl_leg_, ctrl_state_cmd_, est_ret_);
 
     // run main ctrl periodically
@@ -70,7 +69,6 @@ namespace sd::robot
     if (ctrl_jpos_init_->IsInitialized(ctrl_leg_))
     {
       // Run ctrl
-      ctrl_gait_skd_->Step();
       ctrl_state_cmd_->CmdtoStateData();
       ctrl_fsm_->Run();
     }

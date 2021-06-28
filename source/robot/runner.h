@@ -15,7 +15,6 @@
 #include "sd/controllers/leg.h"
 #include "sd/controllers/jpos_init.h"
 #include "sd/controllers/state_cmd.h"
-#include "sd/controllers/gait_skd.h"
 #include "sd/controllers/fsm.h"
 
 #include "sd/estimators/orientation.h"
@@ -65,7 +64,6 @@ namespace sd::robot
     ctrl::StateCmdPtr ctrl_state_cmd_;
     ctrl::LegPtr ctrl_leg_;
     ctrl::JPosInitPtr ctrl_jpos_init_;
-    ctrl::GaitSkdPtr ctrl_gait_skd_;
     ctrl::FsmPtr ctrl_fsm_;
 
     est::StateEstPtr est_ret_;

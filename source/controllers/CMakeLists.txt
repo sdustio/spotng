@@ -2,7 +2,6 @@ list(APPEND srcs
   leg.cc
   state_cmd.cc
   jpos_init.cc
-  gait_skd.cc
   fsm.cc
   fsm/state_ctrl.cc
   fsm/safety_checker.cc
