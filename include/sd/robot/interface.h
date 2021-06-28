@@ -14,7 +14,6 @@ namespace sd::robot
     RecoveryStand,
     Locomotion,
     BalanceStand,
-    Count_
   };
 
   struct SPICmd

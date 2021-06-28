@@ -19,7 +19,7 @@ namespace sd::ctrl::fsm
 
   private:
 
-    enum class Flag
+    enum class Flag : uint8_t
     {
       StandUp,
       FoldLegs,

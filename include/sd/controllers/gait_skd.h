@@ -16,7 +16,6 @@ namespace sd::ctrl
     // TODO rename var naming
     Stand,
     Trot,
-    Count_
   };
 
   /**
