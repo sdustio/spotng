@@ -34,17 +34,18 @@ namespace sd::robot
     quadruped_ = std::make_shared<Quadruped>();
     fbmodel_ = quadruped_->BuildModel();
 
-    // init ctrls
-    ctrl_leg_ = std::make_shared<ctrl::Leg>();
-    ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>();
-    ctrl_gait_skd_ = std::make_shared<ctrl::GaitSkd>();
-
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
     est_ret_ = std::make_shared<est::StateEst>();
     est_contact_ = std::make_shared<est::Contact>();
     est_orientation_ = std::make_shared<est::Orientation>();
     est_pos_vel_ = std::make_shared<est::PosVel>();
+
+    // init ctrls
+    ctrl_leg_ = std::make_shared<ctrl::Leg>();
+    ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>();
+    ctrl_gait_skd_ = std::make_shared<ctrl::GaitSkd>();
+    ctrl_fsm_ = std::make_shared<ctrl::Fsm>(ctrl_leg_, ctrl_state_cmd_, est_ret_);
 
     // run main ctrl periodically
     ctrl_timer_ = this->create_wall_timer(
@@ -71,7 +72,7 @@ namespace sd::robot
       // Run ctrl
       ctrl_gait_skd_->Step();
       ctrl_state_cmd_->CmdtoStateData();
-      // TODO ctrl->runController();
+      ctrl_fsm_->Run();
     }
 
     // Update cmd to the robot

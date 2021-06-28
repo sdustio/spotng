@@ -7,7 +7,7 @@
 
 namespace sd::ctrl
 {
-  FSM::FSM(
+  Fsm::Fsm(
       LegPtr &cleg,
       const StateCmdPtr &cmd,
       const est::StateEstPtr &est) : leg_ctrl_(cleg), state_cmd_(cmd), state_est_(est),
@@ -17,13 +17,13 @@ namespace sd::ctrl
                                          {fsm::State::Locomotion, std::make_shared<fsm::StateLocomotion>(cleg, cmd, est)},
                                          {fsm::State::BalanceStand, std::make_shared<fsm::StateBalanceStand>(cleg, cmd, est)}}
   {
-    // Initialize the FSM with the Off FSM State
+    // Initialize the Fsm with the Off Fsm State
     Init();
   }
 
-  bool FSM::Init()
+  bool Fsm::Init()
   {
-    // Initialize a new FSM State with the control data
+    // Initialize a new Fsm State with the control data
     current_state_ctrl_ = GetStateCtrl(fsm::State::Init);
 
     // Enter the new current state cleanly
@@ -32,18 +32,18 @@ namespace sd::ctrl
     // Initialize to not be in transition
     next_state_ctrl_ = current_state_ctrl_;
 
-    // Initialize FSM mode to normal operation
+    // Initialize Fsm mode to normal operation
     opmode_ = fsm::OperatingMode::Normal;
 
     return true;
   }
 
-  fsm::StateCtrlPtr FSM::GetStateCtrl(fsm::State state)
+  fsm::StateCtrlPtr Fsm::GetStateCtrl(fsm::State state)
   {
     return state_ctrls_[state];
   }
 
-  bool FSM::Run()
+  bool Fsm::Run()
   {
     //safetyPreCheck
     if (!PreCheck())
@@ -72,10 +72,10 @@ namespace sd::ctrl
         // Detect a commanded transition 探测指令转换
         if (next_state_ != current_state_ctrl_->GetState())
         {
-          // Set the FSM operating mode to transitioning 将FSM工作模式设置为transitioning
+          // Set the Fsm operating mode to transitioning 将FSM工作模式设置为transitioning
           opmode_ = fsm::OperatingMode::Transitioning;
 
-          // Get the next FSM State by name 按名称获取下一个FSM状态
+          // Get the next Fsm State by name 按名称获取下一个Fsm状态
           next_state_ctrl_ = GetStateCtrl(next_state_);
         }
         else
@@ -106,7 +106,7 @@ namespace sd::ctrl
           // Enter the new current state cleanly 进入新状态
           current_state_ctrl_->OnEnter();
 
-          // Return the FSM to normal operation mode 操作模式设置为一般
+          // Return the Fsm to normal operation mode 操作模式设置为一般
           opmode_ = fsm::OperatingMode::Normal;
         }
       }
@@ -121,7 +121,7 @@ namespace sd::ctrl
     return true;
   }
 
-  bool FSM::PreCheck()
+  bool Fsm::PreCheck()
   {
     if (current_state_ctrl_->NeedCheckSafeOrientation() && state_cmd_->GetMode() != robot::Mode::RecoveryStand)
     {
@@ -130,7 +130,7 @@ namespace sd::ctrl
     return true;
   }
 
-  bool FSM::PostCheckAndLimit()
+  bool Fsm::PostCheckAndLimit()
   {
     bool c1, c2;
     if (current_state_ctrl_->NeedCheckPDesFoot())

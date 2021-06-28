@@ -82,16 +82,10 @@ namespace sd::ctrl
 
   } // namespace fsm
 
-  class FSM
+  class Fsm
   {
   public:
-    FSM(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
-
-    /**
-    * Initialize the Control FSM with the default settings. SHould be set to
-    * Passive state and Normal operation mode.
-    */
-    bool Init();
+    Fsm(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
 
     /**
      * Called each control loop iteration. Decides if the robot is safe to
@@ -101,6 +95,11 @@ namespace sd::ctrl
     bool Run();
 
   private:
+    /**
+    * Initialize the Control Fsm with the default settings. SHould be set to
+    * Passive state and Normal operation mode.
+    */
+    bool Init();
     bool PreCheck();
     bool PostCheckAndLimit();
 
@@ -119,5 +118,7 @@ namespace sd::ctrl
     fsm::SafetyChecker safety_checker_;
     fsm::TransitionData transition_data_;
   };
+
+  using FsmPtr = std::shared_ptr<Fsm>;
 
 } // namespace sd::ctrl
