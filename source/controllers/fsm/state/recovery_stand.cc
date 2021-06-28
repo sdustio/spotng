@@ -79,11 +79,6 @@ namespace sd::ctrl::fsm
     return true;
   }
 
-  State StateRecoveryStand::CheckTransition(const StateCmdPtr &cmd)
-  {
-    return state_trans_[cmd->GetMode()];
-  }
-
   TransitionData StateRecoveryStand::Transition([[maybe_unused]] const State next)
   {
     return TransitionData{true};

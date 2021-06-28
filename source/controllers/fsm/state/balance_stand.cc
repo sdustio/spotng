@@ -18,11 +18,6 @@ namespace sd::ctrl::fsm
     return true;
   }
 
-  State StateBalanceStand::CheckTransition(const StateCmdPtr &cmd)
-  {
-    return state_trans_[cmd->GetMode()];
-  }
-
   TransitionData StateBalanceStand::Transition(const State next){
     return TransitionData{true};
   }

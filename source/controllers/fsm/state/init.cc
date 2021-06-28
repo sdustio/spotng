@@ -26,11 +26,6 @@ namespace sd::ctrl::fsm
     return true;
   }
 
-  State StateInit::CheckTransition(const StateCmdPtr &cmd)
-  {
-    return state_trans_[cmd->GetMode()];
-  }
-
   TransitionData StateInit::Transition([[maybe_unused]] const State next)
   {
     return TransitionData{true};
