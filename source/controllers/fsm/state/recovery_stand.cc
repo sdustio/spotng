@@ -3,8 +3,8 @@
 namespace sd::ctrl::fsm
 {
   StateRecoveryStand::StateRecoveryStand(
-      LegPtr &cleg, const StateCmdPtr &cmd,
-      const est::StateEstPtr &est) : StateCtrl(cleg, cmd, est),
+      const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd,
+      const est::StateEstPtr &est) : StateCtrl(cleg, quad, cmd, est),
                                      state_trans_{
                                          {robot::Mode::Init, State::Init},
                                          {robot::Mode::RecoveryStand, State::RecoveryStand},

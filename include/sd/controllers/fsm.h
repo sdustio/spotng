@@ -3,7 +3,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "sd/types.h"
 #include "sd/robot/interface.h"
 #include "sd/estimators/state_est.h"
 #include "sd/controllers/leg.h"
@@ -35,7 +34,7 @@ namespace sd::ctrl
     class StateCtrl
     {
     public:
-      StateCtrl(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
+      StateCtrl(const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est);
       // Behavior to be carried out when entering a state
       virtual void OnEnter() = 0;
 
@@ -63,6 +62,7 @@ namespace sd::ctrl
 
     protected:
       LegPtr leg_ctrl_;
+      robot::QuadrupedPtr quad_;
       const StateCmdPtr state_cmd_;
       const est::StateEstPtr state_est_;
     };
@@ -85,7 +85,7 @@ namespace sd::ctrl
   class Fsm
   {
   public:
-    Fsm(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
+    Fsm(const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est);
 
     /**
      * Called each control loop iteration. Decides if the robot is safe to
@@ -104,6 +104,7 @@ namespace sd::ctrl
     bool PostCheckAndLimit();
 
     LegPtr leg_ctrl_;
+    robot::QuadrupedPtr quad_;
     const StateCmdPtr state_cmd_;
     const est::StateEstPtr state_est_;
 

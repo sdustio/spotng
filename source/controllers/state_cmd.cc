@@ -20,7 +20,7 @@ namespace sd::ctrl
     state_des_(StateIdx::vel_z) = 0.0;
     state_des_(StateIdx::pos_x) = dt_ * state_des_(StateIdx::vel_x);
     state_des_(StateIdx::pos_y) = dt_ * state_des_(StateIdx::vel_y);
-    state_des_(StateIdx::pos_z) = 0.26;
+    state_des_(StateIdx::pos_z) = 0.0;
     state_des_(StateIdx::rate_r) = 0.0;
     state_des_(StateIdx::rate_p) = 0.0;
     state_des_(StateIdx::rate_y) = Deadband(cmd_tr_, CmdLimits::min_rate_y, CmdLimits::max_rate_y);

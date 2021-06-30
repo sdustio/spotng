@@ -4,8 +4,8 @@ namespace sd::ctrl::fsm
 {
 
   StateBalanceStand::StateBalanceStand(
-      LegPtr &cleg, const StateCmdPtr &cmd,
-      const est::StateEstPtr &est) : StateCtrl(cleg, cmd, est),
+      const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd,
+      const est::StateEstPtr &est) : StateCtrl(cleg, quad, cmd, est),
                                      state_trans_{
                                          {robot::Mode::Init, State::Init},
                                          {robot::Mode::RecoveryStand, State::RecoveryStand},
@@ -17,10 +17,7 @@ namespace sd::ctrl::fsm
     // Initialize GRF to 0s
     // this->footFeedForwardForces = Mat34<T>::Zero();
 
-    // _wbc_ctrl = new LocomotionCtrl<T>(_controlFSMData->_quadruped->buildModel());
-    // _wbc_data = new LocomotionCtrlData<T>();
-
-    // _wbc_ctrl->setFloatingBaseWeight(1000.);
+    wbc_ = std::make_shared<Wbc>(quad_->BuildModel(), 1000.);
   }
 
   void StateBalanceStand::OnEnter()
@@ -34,11 +31,11 @@ namespace sd::ctrl::fsm
     //   ini_body_pos_[2]=0.26;
 
     last_height_cmd_ = ini_body_pos_[2];
-
-    ini_body_ori_rpy_ = state_est_->GetData().rpy;
   }
 
-  void StateBalanceStand::OnExit() {/* do nothing*/}
+  void StateBalanceStand::OnExit()
+  { /* do nothing*/
+  }
   bool StateBalanceStand::Run()
   {
     // TODO check contact
@@ -57,6 +54,35 @@ namespace sd::ctrl::fsm
     return TransitionData{true};
   }
 
-  void StateBalanceStand::Step() {}
+  void StateBalanceStand::Step()
+  {
+
+    wbc_data_.pBody_des = ini_body_pos_;
+    wbc_data_.vBody_des.setZero();
+    wbc_data_.aBody_des.setZero();
+
+    auto &des = state_cmd_->GetStateDes();
+    wbc_data_.pBody_RPY_des[0] = des(StateIdx::angle_r);
+    wbc_data_.pBody_RPY_des[1] = des(StateIdx::angle_p);
+    wbc_data_.pBody_RPY_des[2] = des(StateIdx::angle_y);
+
+    // Height
+    wbc_data_.pBody_des[2] += des(StateIdx::pos_z);
+
+    wbc_data_.vBody_Ori_des.setZero();
+
+    for (auto i = 0; i < 4; ++i)
+    {
+      wbc_data_.pFoot_des[i].setZero();
+      wbc_data_.vFoot_des[i].setZero();
+      wbc_data_.aFoot_des[i].setZero();
+      wbc_data_.Fr_des[i].setZero();
+      wbc_data_.Fr_des[i][2] = body_weight_ / 4.;
+      wbc_data_.contact_state[i] = true;
+    }
+    last_height_cmd_ = wbc_data_.pBody_des[2];
+
+    wbc_->Run(wbc_data_, state_est_, leg_ctrl_);
+  }
 
 } // namespace sd::ctrl::fsm

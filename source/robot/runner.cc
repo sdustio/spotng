@@ -32,7 +32,6 @@ namespace sd::robot
 
     // build dynamic model
     quadruped_ = std::make_shared<Quadruped>();
-    fbmodel_ = quadruped_->BuildModel();
 
     // init state estimator
     contact_phase_ << 0.5, 0.5, 0.5, 0.5;
@@ -44,7 +43,7 @@ namespace sd::robot
     // init ctrls
     ctrl_leg_ = std::make_shared<ctrl::Leg>();
     ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>();
-    ctrl_fsm_ = std::make_shared<ctrl::Fsm>(ctrl_leg_, ctrl_state_cmd_, est_ret_);
+    ctrl_fsm_ = std::make_shared<ctrl::Fsm>(ctrl_leg_, quadruped_, ctrl_state_cmd_, est_ret_);
 
     // run main ctrl periodically
     ctrl_timer_ = this->create_wall_timer(

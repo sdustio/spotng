@@ -8,9 +8,9 @@ namespace sd::ctrl
 {
   struct StateIdx
   {
-    constexpr static int pos_x = 0;   // X position
-    constexpr static int pos_y = 1;   // Y position
-    constexpr static int pos_z = 2;   // Z position
+    constexpr static int pos_x = 0;   // X delta position
+    constexpr static int pos_y = 1;   // Y delta position
+    constexpr static int pos_z = 2;   // Z delta position
     constexpr static int angle_r = 3; // Roll angle
     constexpr static int angle_p = 4; // Pitch angle
     constexpr static int angle_y = 5; // Yaw angle

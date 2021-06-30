@@ -138,7 +138,7 @@ namespace sd::robot
     /*!
     * Build a FloatingBaseModel of the quadruped 建立一个四足动物的浮动模型
     */
-    dynamics::FBModelPtr BuildModel();
+     const dynamics::FBModelPtr& BuildModel();
 
 
     /*!
@@ -160,6 +160,8 @@ namespace sd::robot
     dynamics::SpatialInertia abad_spatial_inertia_, hip_spatial_inertia_, knee_spatial_inertia_;
     dynamics::SpatialInertia abad_rotor_spatial_inertia_, hip_rotor_spatial_inertia_, knee_rotor_spatial_inertia_;
     dynamics::SpatialInertia body_spatial_inertia_;
+
+    dynamics::FBModelPtr model_;
   };
 
   using QuadrupedPtr = std::shared_ptr<Quadruped>;

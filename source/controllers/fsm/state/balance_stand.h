@@ -1,13 +1,14 @@
 #pragma once
 
 #include "sd/controllers/fsm.h"
+#include "sd/controllers/wbc.h"
 
 namespace sd::ctrl::fsm
 {
   class StateBalanceStand : public StateCtrl
   {
   public:
-    StateBalanceStand(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
+    StateBalanceStand(const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est);
     void OnEnter() override;
     void OnExit() override;
     bool Run() override;
@@ -29,10 +30,12 @@ namespace sd::ctrl::fsm
 
     std::unordered_map<robot::Mode, State> state_trans_;
 
+    WbcPtr wbc_;
+    WbcData wbc_data_;
+
     double last_height_cmd_ = 0.;
 
     Vector3d ini_body_pos_;
-    Vector3d ini_body_ori_rpy_;
     double body_weight_;
   };
 

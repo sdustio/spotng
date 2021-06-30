@@ -59,7 +59,6 @@ namespace sd::robot
     std::shared_ptr<Interface> interface_;
 
     QuadrupedPtr quadruped_;
-    dynamics::FBModelPtr fbmodel_;
 
     ctrl::StateCmdPtr ctrl_state_cmd_;
     ctrl::LegPtr ctrl_leg_;

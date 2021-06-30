@@ -9,6 +9,7 @@ list(APPEND srcs
   fsm/state/locomotion.cc
   fsm/state/balance_stand.cc
   fsm/state/recovery_stand.cc
+  wbc.cc
 )
 
 list(TRANSFORM srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")

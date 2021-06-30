@@ -8,14 +8,14 @@
 namespace sd::ctrl
 {
   Fsm::Fsm(
-      LegPtr &cleg,
+      const LegPtr &cleg, const robot::QuadrupedPtr &quad,
       const StateCmdPtr &cmd,
-      const est::StateEstPtr &est) : leg_ctrl_(cleg), state_cmd_(cmd), state_est_(est),
+      const est::StateEstPtr &est) : leg_ctrl_(cleg), quad_(quad), state_cmd_(cmd), state_est_(est),
                                      state_ctrls_{
-                                         {fsm::State::Init, std::make_shared<fsm::StateInit>(cleg, cmd, est)},
-                                         {fsm::State::RecoveryStand, std::make_shared<fsm::StateRecoveryStand>(cleg, cmd, est)},
-                                         {fsm::State::Locomotion, std::make_shared<fsm::StateLocomotion>(cleg, cmd, est)},
-                                         {fsm::State::BalanceStand, std::make_shared<fsm::StateBalanceStand>(cleg, cmd, est)}}
+                                         {fsm::State::Init, std::make_shared<fsm::StateInit>(cleg, quad, cmd, est)},
+                                         {fsm::State::RecoveryStand, std::make_shared<fsm::StateRecoveryStand>(cleg, quad, cmd, est)},
+                                         {fsm::State::Locomotion, std::make_shared<fsm::StateLocomotion>(cleg, quad, cmd, est)},
+                                         {fsm::State::BalanceStand, std::make_shared<fsm::StateBalanceStand>(cleg, quad, cmd, est)}}
   {
     // Initialize the Fsm with the Off Fsm State
     Init();

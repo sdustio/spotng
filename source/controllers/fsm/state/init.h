@@ -7,7 +7,7 @@ namespace sd::ctrl::fsm
   class StateInit : public StateCtrl
   {
   public:
-    StateInit(LegPtr &cleg, const StateCmdPtr &cmd, const est::StateEstPtr &est);
+    StateInit(const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est);
     void OnEnter() override;
     void OnExit() override;
     bool Run() override;
