@@ -29,8 +29,6 @@ namespace sd::ctrl::fsm
       ini_body_pos_[2] = 0.25;
     }
     //   ini_body_pos_[2]=0.26;
-
-    last_height_cmd_ = ini_body_pos_[2];
   }
 
   void StateBalanceStand::OnExit()
@@ -80,7 +78,6 @@ namespace sd::ctrl::fsm
       wbc_data_.Fr_des[i][2] = body_weight_ / 4.;
       wbc_data_.contact_state[i] = true;
     }
-    last_height_cmd_ = wbc_data_.pBody_des[2];
 
     wbc_->Run(wbc_data_, state_est_, leg_ctrl_);
   }

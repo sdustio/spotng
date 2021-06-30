@@ -33,8 +33,6 @@ namespace sd::ctrl::fsm
     WbcPtr wbc_;
     WbcData wbc_data_;
 
-    double last_height_cmd_ = 0.;
-
     Vector3d ini_body_pos_;
     double body_weight_;
   };
