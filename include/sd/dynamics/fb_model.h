@@ -208,30 +208,6 @@ namespace sd::dynamics
     double InvContactInertia(const int gc_index, const Vector3d &force_ics_at_contact);
 
     /*!
-    * Compute the inverse of the contact inertia matrix (mxm)
-    * @param force_directions (6xm) each column denotes a direction of interest
-    *        col = [ moment in i.c.s., force in i.c.s.]
-    *        e.g. if you want the cartesian inv. contact inertia
-    *             force_directions = [ 0_{3x3} I_{3x3}]^T
-    *             if you only want the cartesian inv. contact inertia in one
-    * direction then use the overloaded version.
-    * @return the mxm inverse contact inertia J H^{-1} J^T
-    */
-    double ApplyTestForce(const int gc_index, const Vector3d &force_ics_at_contact,
-                          FBModelStateDerivative &dstate_out);
-
-    /*!
-    * Apply a unit test force at a contact. Returns the inv contact inertia  in
-    * that direction and computes the resultant qdd
-    * @param gc_index index of the contact
-    * @param force_ics_at_contact unit test forcoe
-    * @params dstate - Output paramter of resulting accelerations
-    * @return the 1x1 inverse contact inertia J H^{-1} J^T
-    */
-    double ApplyTestForce(const int gc_index, const Vector3d &force_ics_at_contact,
-                          VectorXd &dstate_out);
-
-    /*!
     * Populate member variables when bodies are added
     * @param count (6 for fb, 1 for joint)
     */
@@ -312,19 +288,19 @@ namespace sd::dynamics
     * Computes the generalized gravitational force (G) in the inverse dynamics
     * @return G (n_dof_ x 1 vector)
     */
-    VectorXd GeneralizedGravityForce();
+    const VectorXd &GeneralizedGravityForce();
 
     /*!
     * Computes the generalized coriolis forces (Cqd) in the inverse dynamics
     * @return Cqd (n_dof_ x 1 vector)
     */
-    VectorXd GeneralizedCoriolisForce();
+    const VectorXd &GeneralizedCoriolisForce();
 
     /*!
     * Computes the Mass Matrix (H) in the inverse dynamics formulation
     * @return H (n_dof_ x n_dof_ matrix)
     */
-    MatrixXd GeneralizedMassMatrix();
+    const MatrixXd &GeneralizedMassMatrix();
 
     /*!
     * Computes the inverse dynamics of the system

@@ -6,7 +6,25 @@ namespace sd::ctrl
   {
   }
 
-  void Wbc::Run([[maybe_unused]] const WbcData& data, [[maybe_unused]] const est::StateEstPtr &est, [[maybe_unused]] LegPtr &cleg)
+  void Wbc::Run(const WbcData &input, const est::StateEstPtr &est, LegPtr &cleg)
+  {
+
+    // Update Model
+    _UpdateModel(est->GetData(), cleg->GetDatas());
+
+    // Task & Contact Update
+    _ContactTaskUpdate(input, cleg);
+
+    // WBC Computation
+    _ComputeWBC();
+    _UpdateLegCMD(cleg);
+  }
+
+  void Wbc::_UpdateModel(const est::StateData &estdata, const robot::leg::Datas &legdata)
   {
   }
+
+  void Wbc::_ComputeWBC() {}
+  void Wbc::_UpdateLegCMD(LegPtr &cleg) {}
+  void Wbc::_ContactTaskUpdate(const WbcData &input, LegPtr &cleg) {}
 }

@@ -9,7 +9,8 @@
 
 namespace sd::ctrl
 {
-  struct WbcData{
+  struct WbcData
+  {
     Vector3d pBody_des;
     Vector3d vBody_des;
     Vector3d aBody_des;
@@ -28,9 +29,14 @@ namespace sd::ctrl
   {
   public:
     Wbc(const dynamics::FBModelPtr &model, double weight);
-    void Run(const WbcData&, const est::StateEstPtr &, LegPtr &);
+    void Run(const WbcData &, const est::StateEstPtr &, LegPtr &);
 
   private:
+    void _UpdateModel(const est::StateData &, const robot::leg::Datas &);
+    void _ComputeWBC();
+    void _UpdateLegCMD(LegPtr &);
+    void _ContactTaskUpdate(const WbcData &, LegPtr &);
+
     dynamics::FBModelPtr model_;
   };
 

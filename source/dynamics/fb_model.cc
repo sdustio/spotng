@@ -24,102 +24,6 @@
 
 namespace sd::dynamics
 {
-  double FBModel::ApplyTestForce(const int gc_index,
-                                 const Vector3d &force_ics_at_contact,
-                                 VectorXd &dstate_out)
-  {
-    ForwardKinematics();
-    UpdateArticulatedBodies();
-    UpdateForcePropagators();
-    UdpateQddEffects();
-
-    int i_opsp = gc_parent_.at(gc_index);
-    int i = i_opsp;
-
-    dstate_out = VectorXd::Zero(n_dof_);
-
-    // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
-    Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
-
-    // D is one column of an extended force propagator matrix (See Wensing, 2012
-    // ICRA)
-    SpatialVec F = Xc.transpose().rightCols<3>() * force_ics_at_contact;
-
-    double LambdaInv = 0;
-    double tmp = 0;
-
-    // from tips to base
-    while (i > 5)
-    {
-      tmp = F.dot(S_[i]);
-      LambdaInv += tmp * tmp / d_[i];
-      dstate_out.tail(n_dof_ - 6) += qdd_from_subqdd_.col(i - 6) * tmp / d_[i];
-
-      // Apply force propagator (see Pat's ICRA 2012 paper)
-      // essentially, since the joint is articulated, only a portion of the force
-      // is felt on the predecessor. So, while Xup^T sends a force backwards as if
-      // the joint was locked, ChiUp^T sends the force backward as if the joint
-      // were free
-      F = ChiUp_[i].transpose() * F;
-      i = parents_[i];
-    }
-
-    dstate_out.head(6) = invIA5_.solve(F);
-    LambdaInv += F.dot(dstate_out.head(6));
-    dstate_out.tail(n_dof_ - 6) += qdd_from_base_acc_ * dstate_out.head(6);
-
-    return LambdaInv;
-  }
-
-  double FBModel::ApplyTestForce(const int gc_index,
-                                 const Vector3d &force_ics_at_contact,
-                                 FBModelStateDerivative &dstate_out)
-  {
-    ForwardKinematics();
-    UpdateArticulatedBodies();
-    UpdateForcePropagators();
-    UdpateQddEffects();
-
-    int i_opsp = gc_parent_.at(gc_index);
-    int i = i_opsp;
-
-    dstate_out.qdd.setZero();
-
-    // Rotation to absolute coords
-    Matrix3d Rai = Xa_[i].block<3, 3>(0, 0).transpose();
-    Matrix6d Xc = CreateSpatialXform(Rai, gc_location_.at(gc_index));
-
-    // D is one column of an extended force propagator matrix (See Wensing, 2012
-    // ICRA)
-    SpatialVec F = Xc.transpose().rightCols<3>() * force_ics_at_contact;
-
-    double LambdaInv = 0;
-    double tmp = 0;
-
-    // from tips to base
-    while (i > 5)
-    {
-      tmp = F.dot(S_[i]);
-      LambdaInv += tmp * tmp / d_[i];
-      dstate_out.qdd += qdd_from_subqdd_.col(i - 6) * tmp / d_[i];
-
-      // Apply force propagator (see Pat's ICRA 2012 paper)
-      // essentially, since the joint is articulated, only a portion of the force
-      // is felt on the predecessor. So, while Xup^T sends a force backwards as if
-      // the joint was locked, ChiUp^T sends the force backward as if the joint
-      // were free
-      F = ChiUp_[i].transpose() * F;
-      i = parents_[i];
-    }
-
-    // TODO: Only carry out the QR once within update Aritculated Bodies
-    dstate_out.body_velocity_d = invIA5_.solve(F);
-    LambdaInv += F.dot(dstate_out.body_velocity_d);
-    dstate_out.qdd += qdd_from_base_acc_ * dstate_out.body_velocity_d;
-
-    return LambdaInv;
-  }
 
   void FBModel::UdpateQddEffects()
   {
@@ -569,7 +473,7 @@ namespace sd::dynamics
     bias_acc_uptodate_ = true;
   }
 
-  VectorXd FBModel::GeneralizedGravityForce()
+  const VectorXd &FBModel::GeneralizedGravityForce()
   {
     CompositeInertias();
 
@@ -592,7 +496,7 @@ namespace sd::dynamics
     return G_;
   }
 
-  VectorXd FBModel::GeneralizedCoriolisForce()
+  const VectorXd &FBModel::GeneralizedCoriolisForce()
   {
     BiasAccelerations();
 
@@ -720,7 +624,7 @@ namespace sd::dynamics
     composite_inertias_uptodate_ = true;
   }
 
-  MatrixXd FBModel::GeneralizedMassMatrix()
+  const MatrixXd &FBModel::GeneralizedMassMatrix()
   {
     CompositeInertias();
     H_.setZero();
