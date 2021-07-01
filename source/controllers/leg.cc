@@ -4,7 +4,7 @@ namespace sd::ctrl
 {
   void Leg::UpdateDatas(const robot::SPIData &data)
   {
-    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
+    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // q: 关节角
       datas_[leg].q(0) = data.q_abad[leg];
@@ -26,7 +26,7 @@ namespace sd::ctrl
 
   void Leg::UpdateSPICmd(robot::SPICmd &cmd)
   {
-    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
+    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // tauFF 获得从控制器来的力矩
       Vector3d leg_torque = cmds_[leg].tau_feed_forward;
@@ -85,7 +85,7 @@ namespace sd::ctrl
     enabled_ = false;
   }
 
-  void Leg::ComputeLegJacobianAndPosition(int leg)
+  void Leg::ComputeLegJacobianAndPosition(size_t leg)
   {
     double l1 = robot::ModelAttrs::abad_link_length;
     double l2 = robot::ModelAttrs::hip_link_length;

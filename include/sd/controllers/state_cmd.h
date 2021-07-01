@@ -8,18 +8,18 @@ namespace sd::ctrl
 {
   struct StateIdx
   {
-    constexpr static int pos_x = 0;   // X delta position
-    constexpr static int pos_y = 1;   // Y delta position
-    constexpr static int pos_z = 2;   // Z delta position
-    constexpr static int angle_r = 3; // Roll angle
-    constexpr static int angle_p = 4; // Pitch angle
-    constexpr static int angle_y = 5; // Yaw angle
-    constexpr static int vel_x = 6;   // X linear velocity
-    constexpr static int vel_y = 7;   // Y linear velocity
-    constexpr static int vel_z = 8;   // Z linear velocity
-    constexpr static int rate_r = 9;  // Roll rate
-    constexpr static int rate_p = 10; // Pitch rate
-    constexpr static int rate_y = 11; // Yaw rate
+    constexpr static size_t pos_x = 0;   // X delta position
+    constexpr static size_t pos_y = 1;   // Y delta position
+    constexpr static size_t pos_z = 2;   // Z delta position
+    constexpr static size_t angle_r = 3; // Roll angle
+    constexpr static size_t angle_p = 4; // Pitch angle
+    constexpr static size_t angle_y = 5; // Yaw angle
+    constexpr static size_t vel_x = 6;   // X linear velocity
+    constexpr static size_t vel_y = 7;   // Y linear velocity
+    constexpr static size_t vel_z = 8;   // Z linear velocity
+    constexpr static size_t rate_r = 9;  // Roll rate
+    constexpr static size_t rate_p = 10; // Pitch rate
+    constexpr static size_t rate_y = 11; // Yaw rate
   };
 
   struct CmdLimits

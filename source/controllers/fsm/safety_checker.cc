@@ -18,7 +18,7 @@ namespace sd::ctrl::fsm
 
     robot::leg::Cmds &cmds = cleg->GetCmdsForUpdate();
     // Check all of the legs
-    for (int leg = 0; leg < 4; leg++)
+    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // Keep the foot from going too far from the body in +x
       if (cmds[leg].p_des(0) > max_p_des)
@@ -84,7 +84,7 @@ namespace sd::ctrl::fsm
     robot::leg::Cmds &cmds = cleg->GetCmdsForUpdate();
 
     // Check all of the legs
-    for (int leg = 0; leg < 4; leg++)
+    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // Limit the lateral forces in +x body frame
       if (cmds[leg].force_feed_forward(0) >

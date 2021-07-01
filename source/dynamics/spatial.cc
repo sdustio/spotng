@@ -208,7 +208,7 @@ namespace sd::dynamics
   {
     Matrix3d I =
         Matrix3d::Identity() * dims.norm() * dims.norm();
-    for (int i = 0; i < 3; i++)
+    for (size_t i = 0; i < 3; i++)
       I(i, i) -= dims(i) * dims(i);
     I = I * mass / 12;
     return I;

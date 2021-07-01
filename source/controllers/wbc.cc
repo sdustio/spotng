@@ -23,10 +23,10 @@ namespace sd::ctrl
 
   void Wbc::_UpdateModel(const est::StateData &estdata, const robot::leg::Datas &legdata)
   {
-    dynamics::FBModelState _state{
-        estdata.orientation,
-        estdata.position,
-    };
+    dynamics::FBModelState _state;
+    _state.body_orientation = estdata.orientation;
+    _state.body_position = estdata.position;
+
     for (size_t i = 0; i < robot::ModelAttrs::num_leg_joint; i++)
     {
       _state.body_velocity[i] = estdata.omega_body[i];
@@ -48,6 +48,6 @@ namespace sd::ctrl
   }
 
   void Wbc::_ComputeWBC() {}
-  void Wbc::_UpdateLegCMD(LegPtr &cleg) {}
-  void Wbc::_ContactTaskUpdate(const WbcData &input, LegPtr &cleg) {}
+  void Wbc::_UpdateLegCMD([[maybe_unused]] LegPtr &cleg) {}
+  void Wbc::_ContactTaskUpdate([[maybe_unused]] const WbcData &input, [[maybe_unused]] LegPtr &cleg) {}
 }

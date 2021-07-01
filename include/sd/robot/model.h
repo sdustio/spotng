@@ -14,10 +14,10 @@ namespace sd::robot
 
     struct Idx
     {
-      constexpr static int fr = 0; // Front Right
-      constexpr static int fl = 1; // Front Left
-      constexpr static int hr = 2; // Hind Right
-      constexpr static int hl = 3; // Hind Left
+      constexpr static size_t fr = 0; // Front Right
+      constexpr static size_t fl = 1; // Front Left
+      constexpr static size_t hr = 2; // Hind Right
+      constexpr static size_t hl = 3; // Hind Left
     };
 
     /*!
@@ -63,7 +63,7 @@ namespace sd::robot
       * @param leg : the leg index
       * @return The side sign (-1 for right legs, +1 for left legs)
       */
-      static double GetSideSign(int leg)
+      static double GetSideSign(size_t leg)
       {
         return side_signs_.at(leg);
       }
@@ -71,7 +71,7 @@ namespace sd::robot
       /*!
       * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
       */
-      static Vector3d WithLegSigns(const Vector3d &v, int leg_id)
+      static Vector3d WithLegSigns(const Vector3d &v, size_t leg_id)
       {
         switch (leg_id)
         {
@@ -122,11 +122,11 @@ namespace sd::robot
     constexpr static double joint_damping = 0.01;
     constexpr static double joint_dry_friction = 0.2;
 
-    constexpr static int num_act_joint = 12;
-    constexpr static int num_q = 19;
-    constexpr static int dim_config = 18;
-    constexpr static int num_leg = 4;
-    constexpr static int num_leg_joint = 3;
+    constexpr static size_t num_act_joint = 12;
+    constexpr static size_t num_q = 19;
+    constexpr static size_t dim_config = 18;
+    constexpr static size_t num_leg = 4;
+    constexpr static size_t num_leg_joint = 3;
   };
 
 
@@ -145,7 +145,7 @@ namespace sd::robot
     * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
     * @param leg : the leg index
     */
-    Vector3d GetHipLocation(int leg) const
+    Vector3d GetHipLocation(size_t leg) const
     {
       Vector3d pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),

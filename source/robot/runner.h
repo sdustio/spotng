@@ -52,7 +52,6 @@ namespace sd::robot
     rclcpp::Subscription<sdrobot_interfaces::msg::Cmd>::SharedPtr cmd_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
 
-    int iter = 0;
     rclcpp::TimerBase::SharedPtr spi_timer_;
     rclcpp::TimerBase::SharedPtr ctrl_timer_;
 
