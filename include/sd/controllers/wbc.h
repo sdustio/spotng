@@ -38,13 +38,20 @@ namespace sd::ctrl
     void _ContactTaskUpdate(const WbcData &, LegPtr &);
 
     dynamics::FBModelPtr model_;
-    VectorXd _full_config;
 
     // TODO rename vars
     MatrixXd _A;
     MatrixXd _Ainv;
     VectorXd _grav;
     VectorXd _coriolis;
+
+    VectorXd _full_config;
+
+    VectorXd _tau_ff;
+    VectorXd _des_jpos;
+    VectorXd _des_jvel;
+
+    std::array<double, robot::ModelAttrs::num_leg_joint> _Kp_joint, _Kd_joint;
   };
 
   using WbcPtr = std::shared_ptr<Wbc>;
