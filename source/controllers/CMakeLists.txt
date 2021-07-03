@@ -13,6 +13,7 @@ list(APPEND srcs
   wbc/task/body_pos.cc
   wbc/task/body_ori.cc
   wbc/task/link_pos.cc
+  wbc/contact/single.cc
 )
 
 list(TRANSFORM srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")

@@ -2,6 +2,11 @@
 #include "sd/dynamics/rotation.h"
 #include "sd/robot/model.h"
 
+#include "controllers/wbc/task/body_pos.h"
+#include "controllers/wbc/task/body_ori.h"
+#include "controllers/wbc/task/link_pos.h"
+#include "controllers/wbc/contact/single.h"
+
 namespace sd::ctrl
 {
   Wbc::Wbc(
@@ -10,15 +15,28 @@ namespace sd::ctrl
                        _full_config(robot::ModelAttrs::num_act_joint),
                        _tau_ff(robot::ModelAttrs::num_act_joint),
                        _des_jpos(robot::ModelAttrs::num_act_joint),
-                       _des_jvel(robot::ModelAttrs::num_act_joint)
+                       _des_jvel(robot::ModelAttrs::num_act_joint),
+                       _Kp_joint(robot::DynamicsAttrs::kp_joint),
+                       _Kd_joint(robot::DynamicsAttrs::kd_joint),
+                       _body_pos_task(std::make_shared<wbc::TaskBodyPos>(model)),
+                       _body_ori_task(std::make_shared<wbc::TaskBodyOri>(model)),
+                       _foot_task({
+                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fr),
+                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fl),
+                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hr),
+                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hl),
+                       }),
+                       _foot_contact({
+                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fr),
+                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fl),
+                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hr),
+                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hl),
+                       })
   {
     (void)weight; // unused
 
     //TODO _full_config size to 12
     _full_config.setZero();
-
-    _Kp_joint = robot::DynamicsAttrs::kp_joint;
-    _Kd_joint = robot::DynamicsAttrs::kd_joint;
   }
 
   void Wbc::Run(const WbcData &input, const est::StateEstPtr &est, LegPtr &cleg)

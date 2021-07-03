@@ -144,6 +144,19 @@ namespace sd::robot
     constexpr static std::array<double, 3> kd_ori = {10, 10, 10};
   };
 
+  struct LinkId
+  {
+    constexpr static size_t fr = 9;  // Front Right Foot
+    constexpr static size_t fl = 11; // Front Left Foot
+    constexpr static size_t hr = 13; // Hind Right Foot
+    constexpr static size_t hl = 15; // Hind Left Foot
+
+    constexpr static size_t fr_abd = 2; // Front Right Abduction
+    constexpr static size_t fl_abd = 0; // Front Left Abduction
+    constexpr static size_t hr_abd = 3; // Hind Right Abduction
+    constexpr static size_t hl_abd = 1; // Hind Left Abduction
+  };
+
   class Quadruped
   {
   public:
