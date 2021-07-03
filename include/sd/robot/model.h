@@ -129,6 +129,20 @@ namespace sd::robot
     constexpr static size_t num_leg_joint = 3;
   };
 
+  struct DynamicsAttrs
+  {
+    constexpr static std::array<double, 3> kp_joint = {3, 3, 3};
+    constexpr static std::array<double, 3> kd_joint = {1, 0.2, 0.2};
+
+    constexpr static std::array<double, 3> kp_body = {100, 100, 100};
+    constexpr static std::array<double, 3> kd_body = {10, 10, 20};
+
+    constexpr static std::array<double, 3> kp_foot = {500, 500, 500};
+    constexpr static std::array<double, 3> kd_foot = {60, 60, 60};
+
+    constexpr static std::array<double, 3> kp_ori = {100, 100, 100};
+    constexpr static std::array<double, 3> kd_ori = {10, 10, 10};
+  };
 
   class Quadruped
   {
@@ -138,8 +152,7 @@ namespace sd::robot
     /*!
     * Build a FloatingBaseModel of the quadruped 建立一个四足动物的浮动模型
     */
-     const dynamics::FBModelPtr& BuildModel();
-
+    const dynamics::FBModelPtr &BuildModel();
 
     /*!
     * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
@@ -148,8 +161,8 @@ namespace sd::robot
     Vector3d GetHipLocation(size_t leg) const
     {
       Vector3d pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
-                   (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
-                   abad_location_(2));
+                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
+                    abad_location_(2));
       return pHip;
     }
 

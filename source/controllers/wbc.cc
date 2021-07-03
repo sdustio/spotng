@@ -1,19 +1,24 @@
 #include "sd/controllers/wbc.h"
+#include "sd/dynamics/rotation.h"
+#include "sd/robot/model.h"
 
 namespace sd::ctrl
 {
-  Wbc::Wbc(const dynamics::FBModelPtr &model, double weight) :
-  model_(model),
-  _full_config(robot::ModelAttrs::num_act_joint),
-  _tau_ff(robot::ModelAttrs::num_act_joint),
-  _des_jpos(robot::ModelAttrs::num_act_joint),
-  _des_jvel(robot::ModelAttrs::num_act_joint)
+  Wbc::Wbc(
+      const dynamics::FBModelPtr &model,
+      double weight) : model_(model),
+                       _full_config(robot::ModelAttrs::num_act_joint),
+                       _tau_ff(robot::ModelAttrs::num_act_joint),
+                       _des_jpos(robot::ModelAttrs::num_act_joint),
+                       _des_jvel(robot::ModelAttrs::num_act_joint)
   {
+    (void)weight; // unused
+
     //TODO _full_config size to 12
     _full_config.setZero();
 
-    _Kp_joint.fill(5.);
-    _Kd_joint.fill(1.5);
+    _Kp_joint = robot::DynamicsAttrs::kp_joint;
+    _Kd_joint = robot::DynamicsAttrs::kd_joint;
   }
 
   void Wbc::Run(const WbcData &input, const est::StateEstPtr &est, LegPtr &cleg)
@@ -57,6 +62,7 @@ namespace sd::ctrl
   }
 
   void Wbc::_ComputeWBC() {}
+
   void Wbc::_UpdateLegCMD(LegPtr &cleg)
   {
     auto &cmds = cleg->GetCmdsForUpdate();
@@ -96,5 +102,48 @@ namespace sd::ctrl
       }
     }
   }
-  void Wbc::_ContactTaskUpdate([[maybe_unused]] const WbcData &input, [[maybe_unused]] LegPtr &cleg) {}
+
+  void Wbc::_ContactTaskUpdate(const WbcData &input, [[maybe_unused]] LegPtr &cleg)
+  {
+    // Wash out the previous setup
+    _CleanUp();
+
+    _quat_des = dynamics::RPYToQuat(input.pBody_RPY_des);
+
+    Vector3d zero_vec3 = Vector3d::Zero();
+
+    _body_ori_task->UpdateTask(_quat_des, input.vBody_Ori_des, zero_vec3);
+    _body_pos_task->UpdateTask(
+        input.pBody_des,
+        input.vBody_des,
+        input.aBody_des);
+
+    _task_list.push_back(_body_ori_task);
+    _task_list.push_back(_body_pos_task);
+
+    for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+    {
+      if (input.contact_state[leg] > 0.)
+      { // Contact
+        _foot_contact[leg]->setRFDesired(input.Fr_des[leg]);
+        _foot_contact[leg]->UpdateContact();
+        _contact_list.push_back(_foot_contact[leg]);
+      }
+      else
+      { // No Contact (swing)
+        _foot_task[leg]->UpdateTask(
+            input.pFoot_des[leg],
+            input.vFoot_des[leg],
+            input.aFoot_des[leg]);
+        //zero_vec3);
+        _task_list.push_back(_foot_task[leg]);
+      }
+    }
+  }
+
+  void Wbc::_CleanUp()
+  {
+    _contact_list.clear();
+    _task_list.clear();
+  }
 }
