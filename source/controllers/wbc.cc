@@ -21,20 +21,20 @@ namespace sd::ctrl
                        _body_pos_task(std::make_shared<wbc::TaskBodyPos>(model)),
                        _body_ori_task(std::make_shared<wbc::TaskBodyOri>(model)),
                        _foot_task({
-                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fr),
-                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fl),
-                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hr),
-                         std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hl),
+                           std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fr),
+                           std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fl),
+                           std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hr),
+                           std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hl),
                        }),
                        _foot_contact({
-                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fr),
-                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fl),
-                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hr),
-                         std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hl),
-                       })
+                           std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fr),
+                           std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fl),
+                           std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hr),
+                           std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hl),
+                       }),
+                       _kin_wbc(robot::ModelAttrs::dim_config),
+                       _wbic(robot::ModelAttrs::dim_config, weight)
   {
-    (void)weight; // unused
-
     //TODO _full_config size to 12
     _full_config.setZero();
   }
@@ -79,7 +79,16 @@ namespace sd::ctrl
     _Ainv = _A.inverse();
   }
 
-  void Wbc::_ComputeWBC() {}
+  void Wbc::_ComputeWBC()
+  {
+    // TEST
+    _kin_wbc.FindConfiguration(_full_config, _task_list, _contact_list,
+                                _des_jpos, _des_jvel);
+
+    // WBIC
+    _wbic.UpdateSetting(_A, _Ainv, _coriolis, _grav);
+    _wbic.MakeTorque(_tau_ff, _task_list, _contact_list);
+  }
 
   void Wbc::_UpdateLegCMD(LegPtr &cleg)
   {

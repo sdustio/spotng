@@ -105,6 +105,30 @@ namespace sd::ctrl
 
     using ContactPtr = std::shared_ptr<Contact>;
 
+    class Wbic
+    {
+    public:
+      Wbic(size_t num_qdot, double weight);
+
+      void UpdateSetting(const MatrixXd &A, const MatrixXd &Ainv,
+                         const VectorXd &cori, const VectorXd &grav);
+
+      void MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list);
+
+    private:
+      VectorXd _W_floating;
+      VectorXd _W_rf;
+    };
+
+    class KinWbc
+    {
+    public:
+      KinWbc(size_t num_qdot);
+      bool FindConfiguration(const VectorXd &curr_config,
+                             const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list,
+                             VectorXd &jpos_cmd, VectorXd &jvel_cmd);
+    };
+
   } // namespace wbc
 
   struct WbcData
@@ -165,6 +189,9 @@ namespace sd::ctrl
 
     std::array<Vector3d, robot::ModelAttrs::num_leg> _Fr_result;
     dynamics::Quat _quat_des;
+
+    wbc::KinWbc _kin_wbc;
+    wbc::Wbic _wbic;
   };
 
   using WbcPtr = std::shared_ptr<Wbc>;

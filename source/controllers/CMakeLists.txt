@@ -10,6 +10,8 @@ list(APPEND srcs
   fsm/state/balance_stand.cc
   fsm/state/recovery_stand.cc
   wbc.cc
+  wbc/wbic.cc
+  wbc/kin_wbc.cc
   wbc/task/body_pos.cc
   wbc/task/body_ori.cc
   wbc/task/link_pos.cc
