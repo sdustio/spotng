@@ -8,7 +8,16 @@ namespace sd::ctrl::wbc
   }
 
   void Wbic::UpdateSetting(const MatrixXd &A, const MatrixXd &Ainv,
-                           const VectorXd &cori, const VectorXd &grav) {}
+                           const VectorXd &cori, const VectorXd &grav)
+  {
+    A_ = A;
+    Ainv_ = Ainv;
+    cori_ = cori;
+    grav_ = grav;
+    b_updatesetting_ = true;
+  }
 
-  void Wbic::MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list) {}
+  void Wbic::MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list)
+  {
+  }
 }

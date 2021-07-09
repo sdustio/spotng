@@ -130,6 +130,18 @@ namespace sd::ctrl
       void MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list);
 
     private:
+      size_t num_act_joint_;
+      size_t num_qdot_;
+
+      MatrixXd A_;
+      MatrixXd Ainv_;
+      VectorXd cori_;
+      VectorXd grav_;
+
+      bool b_updatesetting_ = false;
+      bool b_internal_constraint_;
+
+      // Extra data
       VectorXd _W_floating;
       VectorXd _W_rf;
     };
