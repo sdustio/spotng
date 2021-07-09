@@ -74,7 +74,7 @@ namespace sd::ctrl::wbc
     }
     for (size_t i(0); i < num_act_joint_; ++i)
     {
-      jpos_cmd[i] = curr_config[i + 6] + delta_q[i + 6];
+      jpos_cmd[i] = curr_config[i] + delta_q[i + 6];
       jvel_cmd[i] = qdot[i + 6];
     }
     return true;

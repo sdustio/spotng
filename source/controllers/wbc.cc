@@ -35,7 +35,6 @@ namespace sd::ctrl
                        _kin_wbc(robot::ModelAttrs::dim_config),
                        _wbic(robot::ModelAttrs::dim_config, weight)
   {
-    //TODO _full_config size to 12
     _full_config.setZero();
   }
 
