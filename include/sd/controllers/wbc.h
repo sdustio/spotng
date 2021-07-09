@@ -37,6 +37,10 @@ namespace sd::ctrl
         return true;
       }
 
+      const VectorXd &getCommand() { return op_cmd_; }
+      const MatrixXd &getTaskJacobian() { return Jt_; }
+      const VectorXd &getTaskJacobianDotQdot() { return JtDotQdot_; }
+
       void UpdateKp(size_t idx, double v) { _Kp(idx) = v; }
 
       const VectorXd &GetKp() { return _Kp; }
@@ -44,6 +48,10 @@ namespace sd::ctrl
       void UpdateKd(size_t idx, double v) { _Kd(idx) = v; }
 
       const VectorXd &GetKd() { return _Kd; }
+
+      const VectorXd &getPosError() { return pos_err_; }
+      const VectorXd &getDesVel() { return vel_des_; }
+      const VectorXd &getDesAcc() { return acc_des_; }
 
     protected:
       // Update op_cmd_
@@ -60,6 +68,9 @@ namespace sd::ctrl
       size_t dim_task_;
 
       const dynamics::FBModelPtr _robot_sys;
+
+      VectorXd JtDotQdot_;
+      MatrixXd Jt_;
 
       VectorXd op_cmd_;
       VectorXd pos_err_;
@@ -89,6 +100,7 @@ namespace sd::ctrl
         b_set_contact_ = true;
         return true;
       }
+      const MatrixXd &getContactJacobian() { return Jc_; }
 
     protected:
       virtual bool _UpdateJc() = 0;
@@ -99,6 +111,8 @@ namespace sd::ctrl
       size_t idx_Fz_;
 
       VectorXd Fr_des_;
+
+      MatrixXd Jc_;
 
       bool b_set_contact_ = false;
     };
@@ -127,6 +141,15 @@ namespace sd::ctrl
       bool FindConfiguration(const VectorXd &curr_config,
                              const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list,
                              VectorXd &jpos_cmd, VectorXd &jvel_cmd);
+
+    private:
+      void _PseudoInverse(const MatrixXd &J, MatrixXd &Jinv);
+      void _BuildProjectionMatrix(const MatrixXd &J, MatrixXd &N);
+
+      double threshold_ = 0.001;
+      size_t num_qdot_;
+      size_t num_act_joint_;
+      MatrixXd I_mtx;
     };
 
   } // namespace wbc
