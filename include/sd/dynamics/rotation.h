@@ -6,11 +6,6 @@ namespace sd::dynamics
 {
 
   /*!
- * Square a number
- */
-  double Square(double a);
-
-  /*!
  * Convert radians to degrees 转化弧度到度数
  */
   double RadToDeg(double rad);

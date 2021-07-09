@@ -1,18 +1,10 @@
 #include <cmath>
 
+#include "sd/dynamics/math.h"
 #include "sd/dynamics/rotation.h"
 
 namespace sd::dynamics
 {
-
-  /*!
- * Square a number
- */
-  double Square(double a)
-  {
-    return a * a;
-  }
-
   /*!
  * Convert radians to degrees 转化弧度到度数
  */
