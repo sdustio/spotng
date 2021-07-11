@@ -76,7 +76,7 @@ namespace sd::ctrl::wbc
 
     // Optimization
     // Timer timer;
-    solve_quadprog(G, g0, CE, ce0, CI, ci0, z);
+    quadprogpp::solve_quadprog(G, g0, CE, ce0, CI, ci0, z);
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
     for (size_t i(0); i < _dim_floating; ++i)
