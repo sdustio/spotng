@@ -8,6 +8,8 @@
 #include "sd/dynamics/fb_model.h"
 #include "sd/controllers/leg.h"
 
+#include "QuadProgpp/QuadProg++.hh"
+
 namespace sd::ctrl
 {
 
@@ -130,6 +132,17 @@ namespace sd::ctrl
       void MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list);
 
     private:
+      void _ContactBuilding();
+      void _SetEqualityConstraint(const VectorXd& qddot);
+      void _SetInEqualityConstraint();
+
+      void _SetOptimizationSize();
+      void _SetCost();
+      void _GetSolution(const VectorXd& qddot, VectorXd& cmd);
+
+      void _WeightedInverse(const MatrixXd &J, const MatrixXd &Winv, MatrixXd &Jinv,
+                            double threshold = 0.0001);
+
       size_t num_act_joint_;
       size_t num_qdot_;
 
@@ -139,9 +152,32 @@ namespace sd::ctrl
       VectorXd grav_;
 
       bool b_updatesetting_ = false;
-      bool b_internal_constraint_;
+
+      size_t _dim_opt;
+      size_t _dim_rf;
+      size_t _dim_floating;
+
+      quadprogpp::Vector<double> z;
+      // Cost
+      quadprogpp::Matrix<double> G;
+      quadprogpp::Vector<double> g0;
+
+      // Equality
+      quadprogpp::Matrix<double> CE;
+      quadprogpp::Vector<double> ce0;
+
+      // Inequality
+      quadprogpp::Matrix<double> CI;
+      quadprogpp::Vector<double> ci0;
+
+      MatrixXd _eye;
+      MatrixXd _Jc;
+      VectorXd _JcDotQdot;
 
       // Extra data
+      // Output
+      VectorXd _opt_result;
+      // Input
       VectorXd _W_floating;
       VectorXd _W_rf;
     };

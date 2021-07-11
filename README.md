@@ -5,3 +5,5 @@
 
 TODO
 del useless(or just for sim) code
+
+优化性能(eg. VectorXd -> fixed vector, MatrixXd -> fixed matrix)

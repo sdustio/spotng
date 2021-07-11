@@ -21,6 +21,9 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
+include_directories(vendor)
+add_subdirectory(vendor)
+
 include_directories(include source)
 add_subdirectory(source)
 
