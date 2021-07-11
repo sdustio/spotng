@@ -16,8 +16,16 @@ add_subdirectory(hardware)
 add_executable(runner
   ${SOURCES}
 )
-target_link_libraries(runner quadprog)
-ament_target_dependencies(runner rclcpp sdrobot_interfaces sensor_msgs Eigen3)
+target_include_directories(runner
+  PUBLIC ${CMAKE_SOURCE_DIR}/include
+  PRIVATE ${CMAKE_SOURCE_DIR}/vendor
+)
+target_link_libraries(runner
+  quadprog
+)
+ament_target_dependencies(runner
+  rclcpp sdrobot_interfaces sensor_msgs Eigen3
+)
 
 install(TARGETS
   runner
