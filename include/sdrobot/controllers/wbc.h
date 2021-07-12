@@ -8,8 +8,6 @@
 #include "sdrobot/dynamics/fb_model.h"
 #include "sdrobot/controllers/leg.h"
 
-#include "QuadProgpp/QuadProg++.hh"
-
 namespace sdrobot::ctrl
 {
 
@@ -174,23 +172,18 @@ namespace sdrobot::ctrl
       size_t _dim_rf;
       size_t _dim_Uf;
 
-      size_t _dim_floating;
+      size_t _dim_floating = 6;
 
-      quadprogpp::Vector<double> z;
+      VectorXd z;
       // Cost
-      quadprogpp::Matrix<double> G;
-      quadprogpp::Vector<double> g0;
+      MatrixXd G;
+      VectorXd g0;
 
       // Equality
-      quadprogpp::Matrix<double> CE;
-      quadprogpp::Vector<double> ce0;
-
-      // Inequality
-      quadprogpp::Matrix<double> CI;
-      quadprogpp::Vector<double> ci0;
-
       MatrixXd _dyn_CE;
       VectorXd _dyn_ce0;
+
+      // Inequality
       MatrixXd _dyn_CI;
       VectorXd _dyn_ci0;
 
