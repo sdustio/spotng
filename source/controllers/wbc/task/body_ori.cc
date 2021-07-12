@@ -6,6 +6,10 @@ namespace sdrobot::ctrl::wbc
 {
   TaskBodyOri::TaskBodyOri(const dynamics::FBModelPtr &model) : Task(3, model)
   {
+    Jt_ = MatrixXd::Zero(dim_task_, robot::ModelAttrs::dim_config);
+    Jt_.block(0, 0, 3, 3).setIdentity();
+    JtDotQdot_ = VectorXd::Zero(dim_task_);
+
     _Kp_kin = VectorXd::Constant(dim_task_, 1.);
     for (size_t i = 0; i < 3; i++)
     {
@@ -18,7 +22,7 @@ namespace sdrobot::ctrl::wbc
                                    const Vector3d &acc_des)
   {
     auto ori_cmd = dynamics::RPYToQuat(pos_des);
-    const auto& link_ori = _robot_sys->GetState().body_orientation;
+    const auto &link_ori = _robot_sys->GetState().body_orientation;
     dynamics::Quat link_ori_inv;
 
     link_ori_inv << link_ori[0], -link_ori[1], -link_ori[2], -link_ori[3];
@@ -31,7 +35,7 @@ namespace sdrobot::ctrl::wbc
       ori_err *= (-1.);
     }
     auto ori_err_so3 = dynamics::QuatToSO3(ori_err);
-    const auto& curr_vel = _robot_sys->GetState().body_velocity;
+    const auto &curr_vel = _robot_sys->GetState().body_velocity;
 
     // Configuration space: Local
     // Operational Space: Global
@@ -55,7 +59,7 @@ namespace sdrobot::ctrl::wbc
       acc_des_[i] = acc_des[i];
 
       op_cmd_[i] = _Kp[i] * ori_err_so3[i] +
-                       _Kd[i] * vel_err[i] + acc_des_[i];
+                   _Kd[i] * vel_err[i] + acc_des_[i];
       if (fabs(op_cmd_[i]) > 100)
       {
         // std::cout << "-------------------big problem------------------------------" << std::endl;
