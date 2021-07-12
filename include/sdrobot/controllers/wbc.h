@@ -92,6 +92,11 @@ namespace sdrobot::ctrl
         Fr_des_ = VectorXd::Zero(dim);
       }
 
+      size_t getDim() const { return dim_contact_; }
+      size_t getDimRFConstraint() const { return Uf_.rows(); }
+      size_t getFzIndex() const { return idx_Fz_; }
+
+      const VectorXd &getRFDesired() { return Fr_des_; }
       void setRFDesired(const VectorXd &Fr_des) { Fr_des_ = Fr_des; }
       bool UpdateContact()
       {
@@ -103,18 +108,25 @@ namespace sdrobot::ctrl
         return true;
       }
       const MatrixXd &getContactJacobian() { return Jc_; }
+      const VectorXd &getJcDotQdot() { return JcDotQdot_; }
+      const MatrixXd &getRFConstraintMtx() { return Uf_; }
+      const VectorXd &getRFConstraintVec() { return ieq_vec_; }
 
     protected:
       virtual bool _UpdateJc() = 0;
       virtual bool _UpdateJcDotQdot() = 0;
       virtual bool _UpdateUf() = 0;
       virtual bool _UpdateInequalityVector() = 0;
+
       size_t dim_contact_;
       size_t idx_Fz_;
+      MatrixXd Uf_;
+      VectorXd ieq_vec_;
 
       VectorXd Fr_des_;
 
       MatrixXd Jc_;
+      VectorXd JcDotQdot_;
 
       bool b_set_contact_ = false;
     };
@@ -132,19 +144,22 @@ namespace sdrobot::ctrl
       void MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list);
 
     private:
-      void _ContactBuilding();
-      void _SetEqualityConstraint(const VectorXd& qddot);
+      void _ContactBuilding(const std::vector<ContactPtr> &contact_list);
+      void _SetEqualityConstraint(const VectorXd &qddot);
       void _SetInEqualityConstraint();
 
-      void _SetOptimizationSize();
+      void _SetOptimizationSize(const std::vector<ContactPtr> &contact_list);
       void _SetCost();
-      void _GetSolution(const VectorXd& qddot, VectorXd& cmd);
+      void _GetSolution(const VectorXd &qddot, VectorXd &cmd);
 
       void _WeightedInverse(const MatrixXd &J, const MatrixXd &Winv, MatrixXd &Jinv,
                             double threshold = 0.0001);
 
       size_t num_act_joint_;
       size_t num_qdot_;
+
+      MatrixXd Sa_; // Actuated joint
+      MatrixXd Sv_; // Virtual joint
 
       MatrixXd A_;
       MatrixXd Ainv_;
@@ -154,7 +169,11 @@ namespace sdrobot::ctrl
       bool b_updatesetting_ = false;
 
       size_t _dim_opt;
+      size_t _dim_eq_cstr; // equality constraints
+
       size_t _dim_rf;
+      size_t _dim_Uf;
+
       size_t _dim_floating;
 
       quadprogpp::Vector<double> z;
@@ -170,13 +189,26 @@ namespace sdrobot::ctrl
       quadprogpp::Matrix<double> CI;
       quadprogpp::Vector<double> ci0;
 
+      MatrixXd _dyn_CE;
+      VectorXd _dyn_ce0;
+      MatrixXd _dyn_CI;
+      VectorXd _dyn_ci0;
+
       MatrixXd _eye;
+
+      MatrixXd _Uf;
+      VectorXd _Uf_ieq_vec;
+
       MatrixXd _Jc;
       VectorXd _JcDotQdot;
+      VectorXd _Fr_des;
 
       // Extra data
       // Output
       VectorXd _opt_result;
+      VectorXd _qddot;
+      VectorXd _Fr;
+
       // Input
       VectorXd _W_floating;
       VectorXd _W_rf;

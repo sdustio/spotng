@@ -4,6 +4,12 @@
 3.不可以 delete 智能指针
 
 TODO
-del useless(or just for sim) code
-
-优化性能(eg. VectorXd -> fixed vector, MatrixXd -> fixed matrix)
+- del useless(or just for sim) code
+- 优化性能
+  - dynamic vector/matrix -> fixed vector/matrix
+  - qp algorithm
+- 调整架构
+  - 核心逻辑独立成库，ros2调用独立库
+  - 核心库export 头文件接口化
+- 测试
+- 仿真
