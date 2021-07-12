@@ -45,7 +45,7 @@ namespace sdrobot::ctrl
     _UpdateModel(est->GetData(), cleg->GetDatas());
 
     // Task & Contact Update
-    _ContactTaskUpdate(input, cleg);
+    _ContactTaskUpdate(input);
 
     // WBC Computation
     _ComputeWBC();
@@ -129,7 +129,7 @@ namespace sdrobot::ctrl
     }
   }
 
-  void Wbc::_ContactTaskUpdate(const WbcData &input, [[maybe_unused]] LegPtr &cleg)
+  void Wbc::_ContactTaskUpdate(const WbcData &input)
   {
     // Wash out the previous setup
     _CleanUp();

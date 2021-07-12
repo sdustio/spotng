@@ -257,6 +257,11 @@ namespace sdrobot::dynamics
     Vector3d GetAngularVelocity(const size_t link_idx);
     Vector3d GetAngularAcceleration(const size_t link_idx);
 
+    const std::vector<CartesianVecXd> &GetJc() { return Jc_; }
+    const std::vector<Vector3d> &GetJcdqd() { return Jcdqd_; }
+    const std::vector<Vector3d> &GetGcPos() { return gc_p_; }
+    const std::vector<Vector3d> &GetGcVel() { return gc_v_; }
+
     /*!
     * Forward kinematics of all bodies.  Computes Xup_ (from up the tree) and Xa_
     *(from absolute) Also computes S_ (motion subspace), _v (spatial velocity in
@@ -375,8 +380,7 @@ namespace sdrobot::dynamics
     size_t n_ground_contact_ = 0;
     std::vector<size_t> gc_parent_;
     std::vector<Vector3d> gc_location_;
-    std::vector<uint64_t> gc_foot_indices_;
-
+    std::vector<size_t> gc_foot_indices_;
     std::vector<Vector3d> gc_p_;
     std::vector<Vector3d> gc_v_;
 

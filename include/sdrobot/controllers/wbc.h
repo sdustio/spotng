@@ -254,7 +254,7 @@ namespace sdrobot::ctrl
     void _UpdateModel(const est::StateData &, const robot::leg::Datas &);
     void _ComputeWBC();
     void _UpdateLegCMD(LegPtr &);
-    void _ContactTaskUpdate(const WbcData &, LegPtr &);
+    void _ContactTaskUpdate(const WbcData &);
     void _CleanUp();
 
     dynamics::FBModelPtr model_;
