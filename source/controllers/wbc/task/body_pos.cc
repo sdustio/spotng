@@ -1,6 +1,6 @@
 #include "controllers/wbc/task/body_pos.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
   TaskBodyPos::TaskBodyPos(const dynamics::FBModelPtr& model): Task(3, model)
   {

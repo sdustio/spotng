@@ -1,6 +1,6 @@
 #include "controllers/wbc/task/link_pos.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
   TaskLinkPos::TaskLinkPos(
     const dynamics::FBModelPtr& model, size_t linkid, bool virtual_depend)

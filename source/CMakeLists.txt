@@ -17,7 +17,7 @@ add_executable(runner
   ${SOURCES}
 )
 target_include_directories(runner
-  PUBLIC ${CMAKE_SOURCE_DIR}/include
+  PRIVATE ${CMAKE_SOURCE_DIR}/include
   PRIVATE ${CMAKE_SOURCE_DIR}/vendor
 )
 target_link_libraries(runner

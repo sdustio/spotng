@@ -1,6 +1,6 @@
 #include "controllers/fsm/state/recovery_stand.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
   StateRecoveryStand::StateRecoveryStand(
       const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd,
@@ -199,4 +199,4 @@ namespace sd::ctrl::fsm
     leg_ctrl_->GetCmdsForUpdate()[leg].qd_des = qdDes;
   }
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

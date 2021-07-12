@@ -8,21 +8,21 @@
 #include "sensor_msgs/msg/imu.hpp"
 
 
-#include "sd/robot/runner.h"
-#include "sd/robot/interface.h"
-#include "sd/robot/model.h"
+#include "sdrobot/robot/runner.h"
+#include "sdrobot/robot/interface.h"
+#include "sdrobot/robot/model.h"
 
-#include "sd/controllers/leg.h"
-#include "sd/controllers/jpos_init.h"
-#include "sd/controllers/state_cmd.h"
-#include "sd/controllers/fsm.h"
+#include "sdrobot/controllers/leg.h"
+#include "sdrobot/controllers/jpos_init.h"
+#include "sdrobot/controllers/state_cmd.h"
+#include "sdrobot/controllers/fsm.h"
 
-#include "sd/estimators/orientation.h"
-#include "sd/estimators/contact.h"
-#include "sd/estimators/pos_vel.h"
+#include "sdrobot/estimators/orientation.h"
+#include "sdrobot/estimators/contact.h"
+#include "sdrobot/estimators/pos_vel.h"
 
 
-namespace sd::robot
+namespace sdrobot::robot
 {
 
   class Runner : public rclcpp::Node
@@ -73,4 +73,4 @@ namespace sd::robot
     IMUData imu_data_;
   };
 
-} // namespace sd::robot
+} // namespace sdrobot::robot

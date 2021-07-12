@@ -1,6 +1,6 @@
 #include "hardware/interface.h"
 
-namespace sd::hardware
+namespace sdrobot::hardware
 {
   bool RobotInterface::Init()
   {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/types.h"
+#include "sdrobot/types.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
   * Square a number

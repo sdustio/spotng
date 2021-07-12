@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "sd/robot/model.h"
-#include "sd/robot/interface.h"
+#include "sdrobot/robot/model.h"
+#include "sdrobot/robot/interface.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
 
   class Leg

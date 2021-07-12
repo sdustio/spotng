@@ -1,11 +1,11 @@
-#include "sd/robot/model.h"
-#include "sd/dynamics/rotation.h"
-#include "sd/dynamics/spatial.h"
-#include "sd/dynamics/inertia.h"
+#include "sdrobot/robot/model.h"
+#include "sdrobot/dynamics/rotation.h"
+#include "sdrobot/dynamics/spatial.h"
+#include "sdrobot/dynamics/inertia.h"
 
-using namespace sd::dynamics;
+using namespace sdrobot::dynamics;
 
-namespace sd::robot
+namespace sdrobot::robot
 {
   Quadruped::Quadruped()
   {

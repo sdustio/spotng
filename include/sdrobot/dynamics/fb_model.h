@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "sd/dynamics/kinematics.h"
+#include "sdrobot/dynamics/kinematics.h"
 
 /*
  This class stores the kinematic tree described in "Rigid Body Dynamics
@@ -25,7 +25,7 @@
  与浮动基座相关的转子什么都不做。
  */
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
   * The state of a floating base model (base and joints)
@@ -419,4 +419,4 @@ namespace sd::dynamics
 
   using FBModelPtr = std::shared_ptr<FBModel>;
 
-} // namespace sd::dynamics
+} // namespace sdrobot::dynamics

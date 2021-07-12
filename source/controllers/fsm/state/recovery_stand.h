@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/controllers/fsm.h"
+#include "sdrobot/controllers/fsm.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
 
   class StateRecoveryStand : public StateCtrl
@@ -75,4 +75,4 @@ namespace sd::ctrl::fsm
     Matrix3d kd_mat_;
   };
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

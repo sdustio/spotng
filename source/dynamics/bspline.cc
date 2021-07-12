@@ -1,8 +1,8 @@
 #include "assert.h"
 
-#include "sd/dynamics/bspline.h"
+#include "sdrobot/dynamics/bspline.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
 
   bool is_equal(double x, double y)

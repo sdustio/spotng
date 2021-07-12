@@ -1,9 +1,9 @@
 #include <eigen3/Eigen/LU>
 #include <eigen3/Eigen/SVD>
 
-#include "sd/dynamics/math.h"
+#include "sdrobot/dynamics/math.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   void PseudoInverse(MatrixXd const &matrix, double sigmaThreshold,
                      MatrixXd &invMatrix)
@@ -36,4 +36,4 @@ namespace sd::dynamics
   }
   invMatrix = svd.matrixV() * invS * svd.matrixU().transpose();
   }
-} // namespace sd::dynamics
+} // namespace sdrobot::dynamics

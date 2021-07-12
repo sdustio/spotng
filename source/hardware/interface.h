@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/robot/interface.h"
+#include "sdrobot/robot/interface.h"
 
-namespace sd::hardware
+namespace sdrobot::hardware
 {
   class RobotInterface: public robot::Interface
   {
@@ -10,4 +10,4 @@ namespace sd::hardware
       bool Init() override;
       bool RunSPI() override;
   };
-} // namespace sd::hardware
+} // namespace sdrobot::hardware

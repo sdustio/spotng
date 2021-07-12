@@ -1,6 +1,6 @@
-#include "sd/estimators/contact.h"
+#include "sdrobot/estimators/contact.h"
 
-namespace sd::est
+namespace sdrobot::est
 {
 
   bool Contact::Run(StateData &ret, const Vector4d &contact_phase)

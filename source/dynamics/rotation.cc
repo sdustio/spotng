@@ -1,9 +1,9 @@
 #include <cmath>
 
-#include "sd/dynamics/math.h"
-#include "sd/dynamics/rotation.h"
+#include "sdrobot/dynamics/math.h"
+#include "sdrobot/dynamics/rotation.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
  * Convert radians to degrees 转化弧度到度数
@@ -308,4 +308,4 @@ namespace sd::dynamics
     quat[3] = so3[2] / theta * sin(theta / 2.);
     return quat;
   }
-} // namespace sd::kinematics
+} // namespace sdrobot::kinematics

@@ -1,6 +1,6 @@
 #include "controllers/wbc/contact/single.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
 
   ContactSingle::ContactSingle(

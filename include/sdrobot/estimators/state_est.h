@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sd/dynamics/kinematics.h"
+#include "sdrobot/dynamics/kinematics.h"
 
-namespace sd::est
+namespace sdrobot::est
 {
   struct StateData
   {

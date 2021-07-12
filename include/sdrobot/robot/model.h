@@ -3,10 +3,10 @@
 #include <memory>
 #include <array>
 
-#include "sd/types.h"
-#include "sd/dynamics/fb_model.h"
+#include "sdrobot/types.h"
+#include "sdrobot/dynamics/fb_model.h"
 
-namespace sd::robot
+namespace sdrobot::robot
 {
 
   namespace leg
@@ -94,7 +94,7 @@ namespace sd::robot
 
     using Cmds = std::array<robot::leg::Cmd, 4>;
     using Datas = std::array<robot::leg::Data, 4>;
-  } // namespace sd::robot::leg
+  } // namespace sdrobot::robot::leg
 
   struct ModelAttrs
   {
@@ -191,4 +191,4 @@ namespace sd::robot
   };
 
   using QuadrupedPtr = std::shared_ptr<Quadruped>;
-} // namespace sd::robot
+} // namespace sdrobot::robot

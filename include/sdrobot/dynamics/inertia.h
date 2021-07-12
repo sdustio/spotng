@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/dynamics/kinematics.h"
+#include "sdrobot/dynamics/kinematics.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
    * Construct spatial inertia from mass, center of mass, and 3x3 rotational 从质量、质心和3 * 3的转动惯性来构造空间惯量
@@ -55,4 +55,4 @@ namespace sd::dynamics
    */
   SpatialInertia SpatialInertiaFlipAlongAxis(const SpatialInertia &si, CoordinateAxis axis);
 
-} // namespace sd::dynamics
+} // namespace sdrobot::dynamics

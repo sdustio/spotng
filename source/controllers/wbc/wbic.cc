@@ -1,7 +1,7 @@
-#include "sd/controllers/wbc.h"
-#include "sd/dynamics/math.h"
+#include "sdrobot/controllers/wbc.h"
+#include "sdrobot/dynamics/math.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
   Wbic::Wbic([[maybe_unused]] size_t num_qdot, double weight) : _dim_floating(6),
                                                _W_floating(VectorXd::Constant(6, weight)),

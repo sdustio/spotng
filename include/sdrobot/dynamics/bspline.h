@@ -3,9 +3,9 @@
 #include <array>
 #include <vector>
 
-#include "sd/robot/model.h"
+#include "sdrobot/robot/model.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
 
   /*!

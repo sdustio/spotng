@@ -1,6 +1,6 @@
 #include "controllers/fsm/state/init.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
 
   StateInit::StateInit(
@@ -31,4 +31,4 @@ namespace sd::ctrl::fsm
     return TransitionData{true};
   }
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

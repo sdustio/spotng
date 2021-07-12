@@ -4,13 +4,13 @@
 #include <array>
 #include <vector>
 
-#include "sd/estimators/state_est.h"
-#include "sd/dynamics/fb_model.h"
-#include "sd/controllers/leg.h"
+#include "sdrobot/estimators/state_est.h"
+#include "sdrobot/dynamics/fb_model.h"
+#include "sdrobot/controllers/leg.h"
 
 #include "QuadProgpp/QuadProg++.hh"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
 
   namespace wbc

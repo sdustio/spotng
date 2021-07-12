@@ -1,6 +1,6 @@
 #include "controllers/fsm/state/locomotion.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
 
   StateLocomotion::StateLocomotion(
@@ -22,4 +22,4 @@ namespace sd::ctrl::fsm
     return TransitionData{true};
   }
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

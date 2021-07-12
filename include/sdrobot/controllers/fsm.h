@@ -3,12 +3,12 @@
 #include <memory>
 #include <unordered_map>
 
-#include "sd/robot/interface.h"
-#include "sd/estimators/state_est.h"
-#include "sd/controllers/leg.h"
-#include "sd/controllers/state_cmd.h"
+#include "sdrobot/robot/interface.h"
+#include "sdrobot/estimators/state_est.h"
+#include "sdrobot/controllers/leg.h"
+#include "sdrobot/controllers/state_cmd.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   namespace fsm
   {
@@ -122,4 +122,4 @@ namespace sd::ctrl
 
   using FsmPtr = std::shared_ptr<Fsm>;
 
-} // namespace sd::ctrl
+} // namespace sdrobot::ctrl

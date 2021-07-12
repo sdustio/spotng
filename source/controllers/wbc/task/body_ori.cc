@@ -1,6 +1,6 @@
 #include "controllers/wbc/task/body_ori.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
   TaskBodyOri::TaskBodyOri(const dynamics::FBModelPtr& model): Task(3, model)
   {

@@ -1,6 +1,6 @@
 #include "robot/runner.h"
 
-namespace sd::robot
+namespace sdrobot::robot
 {
   using std::placeholders::_1;
   using namespace std::chrono_literals;
@@ -93,4 +93,4 @@ namespace sd::robot
     imu_data_.quat << msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w;
   }
 
-} // namespace sd::robot
+} // namespace sdrobot::robot

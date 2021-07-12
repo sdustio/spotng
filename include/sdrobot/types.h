@@ -2,7 +2,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-namespace sd
+namespace sdrobot
 {
     constexpr double kZeroEpsilon = 1.e-10;
 

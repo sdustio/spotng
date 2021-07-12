@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/dynamics/kinematics.h"
+#include "sdrobot/dynamics/kinematics.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
   * Calculate the spatial coordinate transform from A to B where B is rotate by

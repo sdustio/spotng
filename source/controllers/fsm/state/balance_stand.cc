@@ -1,6 +1,6 @@
 #include "controllers/fsm/state/balance_stand.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
 
   StateBalanceStand::StateBalanceStand(
@@ -82,4 +82,4 @@ namespace sd::ctrl::fsm
     wbc_->Run(wbc_data_, state_est_, leg_ctrl_);
   }
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

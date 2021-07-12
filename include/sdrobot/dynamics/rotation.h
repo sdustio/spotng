@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/dynamics/kinematics.h"
+#include "sdrobot/dynamics/kinematics.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
 
   /*!
@@ -102,4 +102,4 @@ namespace sd::dynamics
 
   Quat SO3ToQuat(Vector3d &so3);
 
-} // namespace sd::kinematics
+} // namespace sdrobot::kinematics

@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "sd/robot/interface.h"
-#include "sd/estimators/state_est.h"
+#include "sdrobot/robot/interface.h"
+#include "sdrobot/estimators/state_est.h"
 
-namespace sd::est
+namespace sdrobot::est
 {
   /*!
   * Get quaternion, rotation matrix, angular velocity (body and world),

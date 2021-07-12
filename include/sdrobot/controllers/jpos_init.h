@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sd/robot/model.h"
-#include "sd/controllers/leg.h"
-#include "sd/dynamics/bspline.h"
+#include "sdrobot/robot/model.h"
+#include "sdrobot/controllers/leg.h"
+#include "sdrobot/dynamics/bspline.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
 
   constexpr double kEndTime = 3.;

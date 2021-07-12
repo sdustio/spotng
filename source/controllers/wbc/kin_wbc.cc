@@ -1,7 +1,7 @@
-#include "sd/controllers/wbc.h"
-#include "sd/dynamics/math.h"
+#include "sdrobot/controllers/wbc.h"
+#include "sdrobot/dynamics/math.h"
 
-namespace sd::ctrl::wbc
+namespace sdrobot::ctrl::wbc
 {
 
   KinWbc::KinWbc(size_t num_qdot)

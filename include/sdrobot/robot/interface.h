@@ -4,9 +4,9 @@
 #include <memory>
 #include <array>
 
-#include "sd/types.h"
+#include "sdrobot/types.h"
 
-namespace sd::robot
+namespace sdrobot::robot
 {
   enum class Mode : uint8_t
   {
@@ -81,4 +81,4 @@ namespace sd::robot
 
   using InterfacePtr = std::shared_ptr<Interface>;
 
-} // namespace sd::robot::interface
+} // namespace sdrobot::robot::interface

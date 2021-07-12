@@ -1,11 +1,11 @@
-#include "sd/controllers/fsm.h"
+#include "sdrobot/controllers/fsm.h"
 
 #include "controllers/fsm/state/init.h"
 #include "controllers/fsm/state/locomotion.h"
 #include "controllers/fsm/state/recovery_stand.h"
 #include "controllers/fsm/state/balance_stand.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   Fsm::Fsm(
       const LegPtr &cleg, const robot::QuadrupedPtr &quad,
@@ -143,4 +143,4 @@ namespace sd::ctrl
     }
     return c1 && c2;
   }
-} // namespace sd::ctrl
+} // namespace sdrobot::ctrl

@@ -1,6 +1,6 @@
-#include "sd/controllers/state_cmd.h"
+#include "sdrobot/controllers/state_cmd.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   bool StateCmd::Update(double mv_x, double mv_y, double tr, double pa, robot::Mode m)
   {

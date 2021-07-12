@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "sd/robot/model.h"
-#include "sd/estimators/state_est.h"
+#include "sdrobot/robot/model.h"
+#include "sdrobot/estimators/state_est.h"
 
-namespace sd::est
+namespace sdrobot::est
 {
 
   class PosVel

@@ -17,12 +17,12 @@
 
 #include <string>
 
-#include "sd/dynamics/fb_model.h"
-#include "sd/dynamics/rotation.h"
-#include "sd/dynamics/spatial.h"
-#include "sd/dynamics/inertia.h"
+#include "sdrobot/dynamics/fb_model.h"
+#include "sdrobot/dynamics/rotation.h"
+#include "sdrobot/dynamics/spatial.h"
+#include "sdrobot/dynamics/inertia.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
 
   void FBModel::UdpateQddEffects()

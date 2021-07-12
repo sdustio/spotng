@@ -1,13 +1,13 @@
-#include "sd/controllers/wbc.h"
-#include "sd/dynamics/rotation.h"
-#include "sd/robot/model.h"
+#include "sdrobot/controllers/wbc.h"
+#include "sdrobot/dynamics/rotation.h"
+#include "sdrobot/robot/model.h"
 
 #include "controllers/wbc/task/body_pos.h"
 #include "controllers/wbc/task/body_ori.h"
 #include "controllers/wbc/task/link_pos.h"
 #include "controllers/wbc/contact/single.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   Wbc::Wbc(
       const dynamics::FBModelPtr &model,

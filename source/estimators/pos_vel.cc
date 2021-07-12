@@ -1,7 +1,7 @@
-#include "sd/estimators/pos_vel.h"
-#include "sd/robot/runner.h"
+#include "sdrobot/estimators/pos_vel.h"
+#include "sdrobot/robot/runner.h"
 
-namespace sd::est
+namespace sdrobot::est
 {
 
   bool PosVel::Setup()

@@ -1,6 +1,6 @@
-#include "sd/controllers/leg.h"
+#include "sdrobot/controllers/leg.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   void Leg::UpdateDatas(const robot::SPIData &data)
   {

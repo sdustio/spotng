@@ -1,7 +1,7 @@
-#include "sd/dynamics/rotation.h"
-#include "sd/dynamics/spatial.h"
+#include "sdrobot/dynamics/rotation.h"
+#include "sdrobot/dynamics/spatial.h"
 
-namespace sd::dynamics
+namespace sdrobot::dynamics
 {
   /*!
   * Calculate the spatial coordinate transform from A to B where B is rotate by

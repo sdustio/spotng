@@ -1,7 +1,7 @@
-#include "sd/controllers/jpos_init.h"
-#include "sd/robot/runner.h"
+#include "sdrobot/controllers/jpos_init.h"
+#include "sdrobot/robot/runner.h"
 
-namespace sd::ctrl
+namespace sdrobot::ctrl
 {
   using robot::ctrlparams::kCtrlsec;
 

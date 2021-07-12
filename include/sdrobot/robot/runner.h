@@ -3,14 +3,14 @@
 #include <chrono>
 #include <string>
 
-namespace sd::robot
+namespace sdrobot::robot
 {
   namespace ros
   {
     constexpr char kNodeNs[] = "sd";
     constexpr char kNodeName[] = "RobotRunner";
-    constexpr char kTopicCmd[] = "sd/robot_cmd";
-    constexpr char kTopicMotion[] = "sd/robot_motion";
+    constexpr char kTopicCmd[] = "sdrobot/robot_cmd";
+    constexpr char kTopicMotion[] = "sdrobot/robot_motion";
     constexpr char kTopicIMU[] = "imu";
   }
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sd/controllers/fsm.h"
-#include "sd/controllers/wbc.h"
+#include "sdrobot/controllers/fsm.h"
+#include "sdrobot/controllers/wbc.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
   class StateBalanceStand : public StateCtrl
   {
@@ -37,4 +37,4 @@ namespace sd::ctrl::fsm
     double body_weight_;
   };
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm

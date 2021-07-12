@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sd/controllers/fsm.h"
+#include "sdrobot/controllers/fsm.h"
 
-namespace sd::ctrl::fsm
+namespace sdrobot::ctrl::fsm
 {
   class StateInit : public StateCtrl
   {
@@ -23,4 +23,4 @@ namespace sd::ctrl::fsm
     std::unordered_map<robot::Mode, State> state_trans_;
   };
 
-} // namespace sd::ctrl::fsm
+} // namespace sdrobot::ctrl::fsm
