@@ -134,11 +134,10 @@ namespace sdrobot::ctrl
     // Wash out the previous setup
     _CleanUp();
 
-    _quat_des = dynamics::RPYToQuat(input.pBody_RPY_des);
-
-    Vector3d zero_vec3 = Vector3d::Zero();
-
-    _body_ori_task->UpdateTask(_quat_des, input.vBody_Ori_des, zero_vec3);
+    _body_ori_task->UpdateTask(
+        input.pBody_RPY_des,
+        input.vBody_Ori_des,
+        Vector3d::Zero());
     _body_pos_task->UpdateTask(
         input.pBody_des,
         input.vBody_des,

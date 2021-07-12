@@ -87,7 +87,7 @@ namespace sdrobot::dynamics
     * @return The ID of the ground contact point
     */
     size_t AddGroundContactPoint(size_t body_id, const Vector3d &location,
-                              bool is_foot = false);
+                                 bool is_foot = false);
 
     /*!
     * Add the bounding points of a box to the contact model. Assumes the box is
@@ -109,9 +109,9 @@ namespace sdrobot::dynamics
     * @return The body's ID (can be used as the parent)
     */
     size_t AddBody(const SpatialInertia &inertia,
-                const SpatialInertia &rotor_inertia, double gear_ratio, size_t parent,
-                JointType joint_type, CoordinateAxis joint_axis,
-                const Matrix6d &Xtree, const Matrix6d &Xrot);
+                   const SpatialInertia &rotor_inertia, double gear_ratio, size_t parent,
+                   JointType joint_type, CoordinateAxis joint_axis,
+                   const Matrix6d &Xtree, const Matrix6d &Xrot);
 
     /*!
     * Add a body
@@ -127,9 +127,9 @@ namespace sdrobot::dynamics
     * @return The body's ID (can be used as the parent)
     */
     size_t AddBody(const MassProperties &inertia,
-                const MassProperties &rotor_inertia, double gear_ratio, size_t parent,
-                JointType joint_type, CoordinateAxis joint_axis,
-                const Matrix6d &Xtree, const Matrix6d &Xrot);
+                   const MassProperties &rotor_inertia, double gear_ratio, size_t parent,
+                   JointType joint_type, CoordinateAxis joint_axis,
+                   const Matrix6d &Xtree, const Matrix6d &Xrot);
     void Check();
 
     /*!
@@ -224,6 +224,8 @@ namespace sdrobot::dynamics
     * @param state : the new state
     */
     void SetState(const FBModelState &state);
+
+    const FBModelState &GetState() const { return state_; }
 
     /*!
     * Mark all previously calculated values as invalid

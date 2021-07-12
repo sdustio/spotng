@@ -26,8 +26,8 @@ namespace sdrobot::ctrl
             _Kp(dim),
             _Kd(dim) {}
 
-      bool UpdateTask(const VectorXd &pos_des, const VectorXd &vel_des,
-                      const VectorXd &acc_des)
+      bool UpdateTask(const Vector3d &pos_des, const Vector3d &vel_des,
+                      const Vector3d &acc_des)
       {
         _UpdateTaskJacobian();
         _UpdateTaskJDotQdot();
@@ -55,8 +55,8 @@ namespace sdrobot::ctrl
 
     protected:
       // Update op_cmd_
-      virtual bool _UpdateCommand(const VectorXd &pos_des, const VectorXd &vel_des,
-                                  const VectorXd &acc_des) = 0;
+      virtual bool _UpdateCommand(const Vector3d &pos_des, const Vector3d &vel_des,
+                                  const Vector3d &acc_des) = 0;
       // Update Jt_
       virtual bool _UpdateTaskJacobian() = 0;
       // Update JtDotQdot_
@@ -76,6 +76,7 @@ namespace sdrobot::ctrl
       VectorXd pos_err_;
       VectorXd vel_des_, acc_des_;
 
+      VectorXd _Kp_kin;
       VectorXd _Kp, _Kd;
     };
 
