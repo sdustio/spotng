@@ -7,7 +7,7 @@ namespace sdrobot::ctrl::wbc
   TaskBodyOri::TaskBodyOri(const dynamics::FBModelPtr &model) : Task(3, model)
   {
     Jt_ = MatrixXd::Zero(dim_task_, robot::ModelAttrs::dim_config);
-    Jt_.block(0, 0, 3, 3).setIdentity();
+    Jt_.block<3, 3>(0, 0).setIdentity();
     JtDotQdot_ = VectorXd::Zero(dim_task_);
 
     _Kp_kin = VectorXd::Constant(dim_task_, 1.);

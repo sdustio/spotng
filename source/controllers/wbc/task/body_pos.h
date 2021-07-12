@@ -12,13 +12,13 @@ namespace sdrobot::ctrl::wbc
   private:
     // Update op_cmd_
     bool _UpdateCommand(const Vector3d &pos_des, const Vector3d &vel_des,
-                        const Vector3d &acc_des) { return true; }
+                        const Vector3d &acc_des);
     // Update Jt_
-    bool _UpdateTaskJacobian() { return true; }
+    bool _UpdateTaskJacobian();
     // Update JtDotQdot_
-    bool _UpdateTaskJDotQdot() { return true; }
+    bool _UpdateTaskJDotQdot();
     // Additional Update (defined in child classes)
-    bool _AdditionalUpdate() { return true; }
+    bool _AdditionalUpdate();
   };
 
 }
