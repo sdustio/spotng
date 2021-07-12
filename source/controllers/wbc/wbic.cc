@@ -82,7 +82,7 @@ namespace sdrobot::ctrl::wbc
     Sv_ = MatrixXd::Zero(6, num_qdot_);
 
     Sa_.block(0, 6, num_act_joint_, num_act_joint_).setIdentity();
-    Sv_.block(0, 0, 6, 6).setIdentity();
+    Sv_.block<6, 6>(0, 0).setIdentity();
 
     _eye = MatrixXd::Identity(num_qdot_, num_qdot_);
   }

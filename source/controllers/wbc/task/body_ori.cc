@@ -72,7 +72,7 @@ namespace sdrobot::ctrl::wbc
   bool TaskBodyOri::_UpdateTaskJacobian()
   {
     auto rot = dynamics::QuatToRotMat(_robot_sys->GetState().body_orientation);
-    Jt_.block(0, 0, 3, 3) = rot.transpose();
+    Jt_.block<3, 3>(0, 0) = rot.transpose();
     return true;
   }
 
