@@ -12,11 +12,13 @@ namespace sdrobot::ctrl
   class JPosInit
   {
   public:
-    JPosInit();
+    JPosInit(double dt);
     bool IsInitialized(LegPtr &ctrl);
 
   private:
     void UpdateInitial(const LegPtr &ctrl);
+
+    double dt_;
 
     double end_time_;
     double curr_time_ = 0.0;

@@ -42,7 +42,7 @@ namespace sdrobot::robot
 
     // init ctrls
     ctrl_leg_ = std::make_shared<ctrl::Leg>();
-    ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>();
+    ctrl_jpos_init_ = std::make_shared<ctrl::JPosInit>(ctrlparams::kCtrlsec);
     ctrl_fsm_ = std::make_shared<ctrl::Fsm>(ctrl_leg_, quadruped_, ctrl_state_cmd_, est_ret_);
 
     // run main ctrl periodically

@@ -1,27 +1,26 @@
 #include "sdrobot/controllers/jpos_init.h"
-#include "sdrobot/robot/runner.h"
 
 namespace sdrobot::ctrl
 {
-  using robot::ctrlparams::kCtrlsec;
-
-  JPosInit::JPosInit() : end_time_(kEndTime), ini_jpos_{},
-                         target_jpos_{
-                             -0.6, -1.0, 2.7,
-                             0.6, -1.0, 2.7,
-                             -0.6, -1.0, 2.7,
-                             0.6, -1.0, 2.7},
-                         mid_jpos_{
-                             -1.8, 0., 2.7,
-                             1.8, 0., 2.7,
-                             -1.7, 0.5, 0.5,
-                             1.7, 0.5, 0.5}
+  JPosInit::JPosInit(double dt) : dt_(dt),
+                                  end_time_(kEndTime),
+                                  ini_jpos_{},
+                                  target_jpos_{
+                                      -0.6, -1.0, 2.7,
+                                      0.6, -1.0, 2.7,
+                                      -0.6, -1.0, 2.7,
+                                      0.6, -1.0, 2.7},
+                                  mid_jpos_{
+                                      -1.8, 0., 2.7,
+                                      1.8, 0., 2.7,
+                                      -1.7, 0.5, 0.5,
+                                      1.7, 0.5, 0.5}
   {
   }
 
   bool JPosInit::IsInitialized(LegPtr &ctrl)
   {
-    curr_time_ += kCtrlsec;
+    curr_time_ += dt_;
     if (first_visit_)
     {
       UpdateInitial(ctrl);
