@@ -4,7 +4,6 @@
 #include "controllers/fsm/state/locomotion.h"
 #include "controllers/mpc/cmpc.h"
 
-
 namespace sdrobot::ctrl::fsm
 {
 
@@ -41,14 +40,14 @@ namespace sdrobot::ctrl::fsm
     return TransitionData{true};
   }
 
-  State StateLocomotion::CheckTransition(const StateCmdPtr &cmd)
+  State StateLocomotion::CheckTransition()
   {
     if (locomotionSafe())
     {
-      return state_trans_[cmd->GetMode()];
+      return state_trans_[state_cmd_->GetMode()];
     }
-    auto _c = cmd;
-    _c->SetMode(robot::Mode::RecoveryStand);
+    auto cmd = state_cmd_;
+    cmd->SetMode(robot::Mode::RecoveryStand);
     return State::RecoveryStand;
   }
 

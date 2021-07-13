@@ -46,7 +46,7 @@ namespace sdrobot::ctrl
       virtual bool Run() = 0;
 
       // Manages state specific transitions
-      virtual State CheckTransition(const StateCmdPtr &cmd) = 0;
+      virtual State CheckTransition() = 0;
 
       // Runs the transition behaviors and returns true when done transitioning
       virtual TransitionData Transition(const State next) = 0;

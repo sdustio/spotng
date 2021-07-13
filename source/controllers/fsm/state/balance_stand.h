@@ -13,9 +13,9 @@ namespace sdrobot::ctrl::fsm
     void OnExit() override;
     bool Run() override;
 
-    State CheckTransition(const StateCmdPtr &cmd) override
+    State CheckTransition() override
     {
-      return state_trans_[cmd->GetMode()];
+      return state_trans_[state_cmd_->GetMode()];
     }
     TransitionData Transition(const State next) override;
 
