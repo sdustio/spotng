@@ -6,16 +6,6 @@ namespace sdrobot::dynamics
 {
 
   /*!
- * Convert radians to degrees 转化弧度到度数
- */
-  double RadToDeg(double rad);
-
-  /*!
- * Convert degrees to radians
- */
-  double DegToRad(double deg);
-
-  /*!
  * Compute rotation matrix for coordinate transformation. Note that
  * CoordinateRot(CoordinateAxis:X, .1) * v will rotate v by -.1 radians -
  * this transforms into a frame rotated by .1 radians!.
