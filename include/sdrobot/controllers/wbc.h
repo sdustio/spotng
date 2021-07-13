@@ -117,7 +117,6 @@ namespace sdrobot::ctrl
       virtual bool _UpdateUf() = 0;
       virtual bool _UpdateInequalityVector() = 0;
 
-      size_t dim_contact_;
       size_t idx_Fz_;
       MatrixXd Uf_;
       VectorXd ieq_vec_;
@@ -127,6 +126,7 @@ namespace sdrobot::ctrl
       MatrixXd Jc_;
       VectorXd JcDotQdot_;
 
+      size_t dim_contact_;
       bool b_set_contact_ = false;
     };
 

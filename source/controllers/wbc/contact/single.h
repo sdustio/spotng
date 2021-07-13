@@ -16,7 +16,9 @@ namespace sdrobot::ctrl::wbc
     bool _UpdateInequalityVector() override;
 
     const dynamics::FBModelPtr robot_sys_;
+    double _max_Fz = 1500.;
     size_t _contact_pt;
+    size_t _dim_U = 6;
   };
 
 }

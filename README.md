@@ -4,6 +4,8 @@
 3.不可以 delete 智能指针
 
 TODO
+- feature
+  - 自动档
 - del useless(or just for sim) code
 - 优化性能
   - dynamic vector/matrix -> fixed vector/matrix
