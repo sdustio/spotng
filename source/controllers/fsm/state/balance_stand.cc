@@ -13,10 +13,6 @@ namespace sdrobot::ctrl::fsm
                                          {robot::Mode::BalanceStand, State::BalanceStand}},
                                      body_weight_(robot::ModelAttrs::body_mass * 9.81)
   {
-    //TODO  check
-    // Initialize GRF to 0s
-    // this->footFeedForwardForces = Mat34<T>::Zero();
-
     wbc_ = std::make_shared<Wbc>(quad_->BuildModel(), 1000.);
   }
 

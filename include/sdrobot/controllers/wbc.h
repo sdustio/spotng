@@ -247,7 +247,7 @@ namespace sdrobot::ctrl
   class Wbc
   {
   public:
-    Wbc(const dynamics::FBModelPtr &model, double weight);
+    Wbc(const dynamics::FBModelPtr &model, double weight = 0.1);
     void Run(const WbcData &, const est::StateEstPtr &, LegPtr &);
 
   private:

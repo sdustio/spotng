@@ -35,6 +35,7 @@ namespace sdrobot::ctrl
     {
     public:
       StateCtrl(const LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est);
+
       // Behavior to be carried out when entering a state
       virtual void OnEnter() = 0;
 

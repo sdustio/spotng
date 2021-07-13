@@ -45,6 +45,10 @@ namespace sdrobot::ctrl
     explicit StateCmd(double dt) : dt_(dt) { state_des_ = Vector12d::Zero(); }
 
     bool Update(double mv_x, double mv_y, double tr, double pa, robot::Mode m);
+    bool SetMode(robot::Mode mode) {
+      cmd_mode_ = mode;
+      return true;
+      }
 
     bool CmdtoStateData();
     const Vector12d &GetStateDes() const { return state_des_; }
