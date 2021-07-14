@@ -29,9 +29,6 @@ namespace sdrobot::ctrl::fsm
 
     bool locomotionSafe();
 
-    // Impedance control for the stance legs during locomotion
-    void StanceLegImpedanceControl(size_t leg);
-
     std::unordered_map<robot::Mode, State> state_trans_;
 
     MpcPtr cMPCOld;

@@ -67,7 +67,7 @@ namespace sdrobot::ctrl
       if (opmode_ == fsm::OperatingMode::Normal)
       {
         // Check the current state for any transition 检查任何转换的当前状态
-        next_state_ = current_state_ctrl_->CheckTransition(state_cmd_);
+        next_state_ = current_state_ctrl_->CheckTransition();
 
         // Detect a commanded transition 探测指令转换
         if (next_state_ != current_state_ctrl_->GetState())

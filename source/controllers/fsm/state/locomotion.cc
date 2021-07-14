@@ -23,10 +23,19 @@ namespace sdrobot::ctrl::fsm
     _wbc_ctrl = std::make_shared<Wbc>(quad_->BuildModel());
   }
 
-  void StateLocomotion::OnEnter() {}
+  void StateLocomotion::OnEnter()
+  {
+    cMPCOld->Init();
+  }
+
   void StateLocomotion::OnExit() {}
+
   bool StateLocomotion::Run()
   {
+    // TODO Gait
+
+    // Call the locomotion control logic for this iteration
+    LocomotionControlStep();
     return true;
   }
 
@@ -52,7 +61,53 @@ namespace sdrobot::ctrl::fsm
   }
 
   // Parses contact specific controls to the leg controller
-  void StateLocomotion::LocomotionControlStep() {}
+  void StateLocomotion::LocomotionControlStep()
+  {
+    // StateEstimate<T> stateEstimate = this->_data->_stateEstimator->getResult();
+
+    // Contact state logic
+    // estimateContact();
+
+    cMPCOld->Run();
+
+    std::array<Vector3d, 4> pDes_backup;
+    std::array<Vector3d, 4> vDes_backup;
+    std::array<Matrix3d, 4> Kp_backup;
+    std::array<Matrix3d, 4> Kd_backup;
+
+    for (size_t leg(0); leg < 4; ++leg)
+    {
+      pDes_backup[leg] = leg_ctrl_->GetCmdsForUpdate()[leg].p_des;
+      vDes_backup[leg] = leg_ctrl_->GetCmdsForUpdate()[leg].v_des;
+      Kp_backup[leg] = leg_ctrl_->GetCmdsForUpdate()[leg].kp_cartesian;
+      Kd_backup[leg] = leg_ctrl_->GetCmdsForUpdate()[leg].kd_cartesian;
+    }
+
+    _wbc_data.pBody_des = cMPCOld->GetData().pBody_des;
+    _wbc_data.vBody_des = cMPCOld->GetData().vBody_des;
+    _wbc_data.aBody_des = cMPCOld->GetData().aBody_des;
+
+    _wbc_data.pBody_RPY_des = cMPCOld->GetData().pBody_RPY_des;
+    _wbc_data.vBody_Ori_des = cMPCOld->GetData().vBody_Ori_des;
+
+    for (size_t i(0); i < 4; ++i)
+    {
+      _wbc_data.pFoot_des[i] = cMPCOld->GetData().pFoot_des[i];
+      _wbc_data.vFoot_des[i] = cMPCOld->GetData().vFoot_des[i];
+      _wbc_data.aFoot_des[i] = cMPCOld->GetData().aFoot_des[i];
+      _wbc_data.Fr_des[i] = cMPCOld->GetData().Fr_des[i];
+    }
+    _wbc_data.contact_state = cMPCOld->GetData().contact_state;
+    _wbc_ctrl->Run(_wbc_data, state_est_, leg_ctrl_);
+
+    for (size_t leg(0); leg < 4; ++leg)
+    {
+      //leg_ctrl_->GetCmdsForUpdate()[leg].pDes = pDes_backup[leg];
+      leg_ctrl_->GetCmdsForUpdate()[leg].v_des = vDes_backup[leg];
+      //leg_ctrl_->GetCmdsForUpdate()[leg].kpCartesian = Kp_backup[leg];
+      leg_ctrl_->GetCmdsForUpdate()[leg].kd_cartesian = Kd_backup[leg];
+    }
+  }
 
   bool StateLocomotion::locomotionSafe()
   {
@@ -100,8 +155,5 @@ namespace sdrobot::ctrl::fsm
 
     return true;
   }
-
-  // Impedance control for the stance legs during locomotion
-  void StateLocomotion::StanceLegImpedanceControl(size_t leg) {}
 
 } // namespace sdrobot::ctrl::fsm
