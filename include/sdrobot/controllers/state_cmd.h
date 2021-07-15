@@ -42,7 +42,7 @@ namespace sdrobot::ctrl
   {
 
   public:
-    explicit StateCmd(double dt) : dt_(dt) { state_des_ = Vector12d::Zero(); }
+    explicit StateCmd(double dt) : dt_(dt) { state_des_ = Vector12::Zero(); }
 
     bool Update(double mv_x, double mv_y, double tr, double pa, robot::Mode m);
     bool SetMode(robot::Mode mode) {
@@ -51,7 +51,7 @@ namespace sdrobot::ctrl
       }
 
     bool CmdtoStateData();
-    const Vector12d &GetStateDes() const { return state_des_; }
+    const Vector12 &GetStateDes() const { return state_des_; }
     robot::Mode GetMode() const { return cmd_mode_; }
 
   private:
@@ -64,7 +64,7 @@ namespace sdrobot::ctrl
     robot::Mode cmd_mode_;
 
     // Dynamics matrix for discrete time approximation
-    Vector12d state_des_;
+    Vector12 state_des_;
     double dt_;
   };
 

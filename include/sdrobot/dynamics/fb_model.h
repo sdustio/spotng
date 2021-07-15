@@ -34,10 +34,10 @@ namespace sdrobot::dynamics
   struct FBModelState
   {
     Quat body_orientation;
-    Vector3d body_position;
+    Vector3 body_position;
     SpatialVec body_velocity; // body coordinates
-    VectorXd q;
-    VectorXd qd;
+    VectorX q;
+    VectorX qd;
   };
 
   /*!
@@ -46,9 +46,9 @@ namespace sdrobot::dynamics
   */
   struct FBModelStateDerivative
   {
-    Vector3d body_position_d;
+    Vector3 body_position_d;
     SpatialVec body_velocity_d;
-    VectorXd qdd;
+    VectorX qdd;
   };
 
   /*!
@@ -77,7 +77,7 @@ namespace sdrobot::dynamics
     * @param com  Center of mass of the floating body
     * @param I    Rotational inertia of the floating body
     */
-    void AddBase(double mass, const Vector3d &com, const Matrix3d &I);
+    void AddBase(double mass, const Vector3 &com, const Matrix3 &I);
 
     /*!
     * Add a ground contact point to a model
@@ -86,14 +86,14 @@ namespace sdrobot::dynamics
     * @param isFoot True if foot or not.
     * @return The ID of the ground contact point
     */
-    size_t AddGroundContactPoint(size_t body_id, const Vector3d &location,
+    size_t AddGroundContactPoint(size_t body_id, const Vector3 &location,
                                  bool is_foot = false);
 
     /*!
     * Add the bounding points of a box to the contact model. Assumes the box is
     * centered around the origin of the body coordinate system and is axis aligned.
     */
-    void AddGroundContactBoxPoints(size_t body_id, const Vector3d &dims);
+    void AddGroundContactBoxPoints(size_t body_id, const Vector3 &dims);
 
     /*!
     * Add a body
@@ -111,7 +111,7 @@ namespace sdrobot::dynamics
     size_t AddBody(const SpatialInertia &inertia,
                    const SpatialInertia &rotor_inertia, double gear_ratio, size_t parent,
                    JointType joint_type, CoordinateAxis joint_axis,
-                   const Matrix6d &Xtree, const Matrix6d &Xrot);
+                   const Matrix6 &Xtree, const Matrix6 &Xrot);
 
     /*!
     * Add a body
@@ -129,7 +129,7 @@ namespace sdrobot::dynamics
     size_t AddBody(const MassProperties &inertia,
                    const MassProperties &rotor_inertia, double gear_ratio, size_t parent,
                    JointType joint_type, CoordinateAxis joint_axis,
-                   const Matrix6d &Xtree, const Matrix6d &Xrot);
+                   const Matrix6 &Xtree, const Matrix6 &Xrot);
     void Check();
 
     /*!
@@ -174,7 +174,7 @@ namespace sdrobot::dynamics
     /*!
     * Set the gravity
     */
-    void SetGravity(Vector3d &g) { gravity_ = g; }
+    void SetGravity(Vector3 &g) { gravity_ = g; }
 
     /*!
     * Set the flag to enable computing contact info for a given contact point
@@ -194,7 +194,7 @@ namespace sdrobot::dynamics
     *             force_ics_at_contact = [0 0 1]^T
     * @return the 1x1 inverse contact inertia J H^{-1} J^T
     */
-    MatrixXd InvContactInertia(const size_t gc_index,
+    MatrixX InvContactInertia(const size_t gc_index,
                                const SpatialVecXd &force_directions);
 
     /*!
@@ -205,7 +205,7 @@ namespace sdrobot::dynamics
     * @params dstate - Output paramter of resulting accelerations
     * @return the 1x1 inverse contact inertia J H^{-1} J^T
     */
-    double InvContactInertia(const size_t gc_index, const Vector3d &force_ics_at_contact);
+    double InvContactInertia(const size_t gc_index, const Vector3 &force_ics_at_contact);
 
     /*!
     * Populate member variables when bodies are added
@@ -244,23 +244,23 @@ namespace sdrobot::dynamics
       acc_uptodate_ = false;
     }
 
-    Vector3d GetPosition(const size_t link_idx, const Vector3d &local_pos);
-    Vector3d GetPosition(const size_t link_idx);
+    Vector3 GetPosition(const size_t link_idx, const Vector3 &local_pos);
+    Vector3 GetPosition(const size_t link_idx);
 
-    Matrix3d GetOrientation(const size_t link_idx);
-    Vector3d GetLinearVelocity(const size_t link_idx, const Vector3d &posize_t);
-    Vector3d GetLinearVelocity(const size_t link_idx);
+    Matrix3 GetOrientation(const size_t link_idx);
+    Vector3 GetLinearVelocity(const size_t link_idx, const Vector3 &posize_t);
+    Vector3 GetLinearVelocity(const size_t link_idx);
 
-    Vector3d GetLinearAcceleration(const size_t link_idx, const Vector3d &posize_t);
-    Vector3d GetLinearAcceleration(const size_t link_idx);
+    Vector3 GetLinearAcceleration(const size_t link_idx, const Vector3 &posize_t);
+    Vector3 GetLinearAcceleration(const size_t link_idx);
 
-    Vector3d GetAngularVelocity(const size_t link_idx);
-    Vector3d GetAngularAcceleration(const size_t link_idx);
+    Vector3 GetAngularVelocity(const size_t link_idx);
+    Vector3 GetAngularAcceleration(const size_t link_idx);
 
     const std::vector<CartesianVecXd> &GetJc() { return Jc_; }
-    const std::vector<Vector3d> &GetJcdqd() { return Jcdqd_; }
-    const std::vector<Vector3d> &GetGcPos() { return gc_p_; }
-    const std::vector<Vector3d> &GetGcVel() { return gc_v_; }
+    const std::vector<Vector3> &GetJcdqd() { return Jcdqd_; }
+    const std::vector<Vector3> &GetGcPos() { return gc_p_; }
+    const std::vector<Vector3> &GetGcVel() { return gc_v_; }
 
     /*!
     * Forward kinematics of all bodies.  Computes Xup_ (from up the tree) and Xa_
@@ -295,19 +295,19 @@ namespace sdrobot::dynamics
     * Computes the generalized gravitational force (G) in the inverse dynamics
     * @return G (n_dof_ x 1 vector)
     */
-    const VectorXd &GeneralizedGravityForce();
+    const VectorX &GeneralizedGravityForce();
 
     /*!
     * Computes the generalized coriolis forces (Cqd) in the inverse dynamics
     * @return Cqd (n_dof_ x 1 vector)
     */
-    const VectorXd &GeneralizedCoriolisForce();
+    const VectorX &GeneralizedCoriolisForce();
 
     /*!
     * Computes the Mass Matrix (H) in the inverse dynamics formulation
     * @return H (n_dof_ x n_dof_ matrix)
     */
-    const MatrixXd &GeneralizedMassMatrix();
+    const MatrixX &GeneralizedMassMatrix();
 
     /*!
     * Computes the inverse dynamics of the system
@@ -315,25 +315,25 @@ namespace sdrobot::dynamics
     * give the external wrengh on the base, with the remaining giving the
     * joint torques
     */
-    VectorXd InverseDynamics(const FBModelStateDerivative &dstate);
+    VectorX InverseDynamics(const FBModelStateDerivative &dstate);
 
-    void RunABA(const VectorXd &tau, FBModelStateDerivative &dstate);
+    void RunABA(const VectorX &tau, FBModelStateDerivative &dstate);
 
     /*!
     * Get the mass matrix for the system
     得到系统的质量矩阵
     */
-    const MatrixXd &GetMassMatrix() const { return H_; }
+    const MatrixX &GetMassMatrix() const { return H_; }
 
     /*!
     * Get the gravity term (generalized forces)得到重力项(广义力）
     */
-    const VectorXd &GetGravityForce() const { return G_; }
+    const VectorX &GetGravityForce() const { return G_; }
 
     /*!
     * Get the coriolis term (generalized forces) 得到科里奥利项(广义力)
     */
-    const VectorXd &GetCoriolisForce() const { return Cqd_; }
+    const VectorX &GetCoriolisForce() const { return Cqd_; }
 
     /*!
     * Support function for the ABA
@@ -366,23 +366,23 @@ namespace sdrobot::dynamics
 
   private:
     size_t n_dof_ = 0;
-    Vector3d gravity_;
+    Vector3 gravity_;
     std::vector<size_t> parents_;
     std::vector<double> gear_ratios_;
     std::vector<double> d_, u_;
 
     std::vector<JointType> joint_types_;
     std::vector<CoordinateAxis> joint_axes_;
-    std::vector<Matrix6d> Xtree_, Xrot_;
+    std::vector<Matrix6> Xtree_, Xrot_;
     std::vector<SpatialInertia> Ibody_, Irot_;
     std::vector<std::string> body_names_;
 
     size_t n_ground_contact_ = 0;
     std::vector<size_t> gc_parent_;
-    std::vector<Vector3d> gc_location_;
+    std::vector<Vector3> gc_location_;
     std::vector<size_t> gc_foot_indices_;
-    std::vector<Vector3d> gc_p_;
-    std::vector<Vector3d> gc_v_;
+    std::vector<Vector3> gc_p_;
+    std::vector<Vector3> gc_v_;
 
     std::vector<bool> compute_contact_info_;
 
@@ -397,16 +397,16 @@ namespace sdrobot::dynamics
     std::vector<SpatialVec> external_forces_;
 
     std::vector<SpatialInertia> IC_;
-    std::vector<Matrix6d> Xup_, Xa_, Xuprot_, IA_, ChiUp_;
+    std::vector<Matrix6> Xup_, Xa_, Xuprot_, IA_, ChiUp_;
 
-    MatrixXd H_, C_;
-    VectorXd Cqd_, G_;
+    MatrixX H_, C_;
+    VectorX Cqd_, G_;
 
     std::vector<SpatialVecXd> J_;
     std::vector<SpatialVec> Jdqd_;
 
     std::vector<CartesianVecXd> Jc_;
-    std::vector<Vector3d> Jcdqd_;
+    std::vector<Vector3> Jcdqd_;
 
     bool kinematics_uptodate_ = false;
     bool bias_acc_uptodate_ = false;
@@ -418,9 +418,9 @@ namespace sdrobot::dynamics
     bool force_propagators_uptodate_ = false;
     bool qdd_effects_uptodate_ = false;
 
-    MatrixXd qdd_from_base_acc_;
-    MatrixXd qdd_from_subqdd_;
-    Eigen::ColPivHouseholderQR<Matrix6d> invIA5_;
+    MatrixX qdd_from_base_acc_;
+    MatrixX qdd_from_subqdd_;
+    Eigen::ColPivHouseholderQR<Matrix6> invIA5_;
   };
 
   using FBModelPtr = std::shared_ptr<FBModel>;

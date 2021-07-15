@@ -17,7 +17,7 @@ namespace sdrobot::est
     * Set the estimated contact by copying the exptected contact state into the
     * estimated contact state
     */
-    bool Run(StateData &ret, const Vector4d &contact_phase);
+    bool Run(StateData &ret, const Vector4 &contact_phase);
   };
 
   using ContactPtr = std::shared_ptr<Contact>;

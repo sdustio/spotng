@@ -7,16 +7,16 @@ namespace sdrobot::dynamics
    * Construct spatial inertia from mass, center of mass, and 3x3 rotational 从质量、质心和3 * 3的转动惯性来构造空间惯量
    * inertia
    */
-  SpatialInertia BuildSpatialInertia(double mass, const Vector3d &com, const InertiaMat &inertia)
+  SpatialInertia BuildSpatialInertia(double mass, const Vector3 &com, const InertiaMat &inertia)
   {
     SpatialInertia si;
-    Matrix3d cSkew = VecToSkewMat(com); //质心向量转反对称矩阵
+    Matrix3 cSkew = VecToSkewMat(com); //质心向量转反对称矩阵
 
     si.topLeftCorner<3, 3>() =
         inertia + mass * cSkew * cSkew.transpose();
     si.topRightCorner<3, 3>() = mass * cSkew;
     si.bottomLeftCorner<3, 3>() = mass * cSkew.transpose();
-    si.bottomRightCorner<3, 3>() = mass * Matrix3d::Identity();
+    si.bottomRightCorner<3, 3>() = mass * Matrix3::Identity();
     return si;
   }
 
@@ -32,10 +32,10 @@ namespace sdrobot::dynamics
     si(2, 0) = a(8);
     si(2, 1) = a(7);
     si(2, 2) = a(6);
-    Matrix3d cSkew = VecToSkewMat(Vector3d(a(1), a(2), a(3)));
+    Matrix3 cSkew = VecToSkewMat(Vector3(a(1), a(2), a(3)));
     si.topRightCorner<3, 3>() = cSkew;
     si.bottomLeftCorner<3, 3>() = cSkew.transpose();
-    si.bottomRightCorner<3, 3>() = a(0) * Matrix3d::Identity();
+    si.bottomRightCorner<3, 3>() = a(0) * Matrix3::Identity();
     return si;
   }
 
@@ -46,7 +46,7 @@ namespace sdrobot::dynamics
   MassProperties SpatialInertiaToMassProperties(const SpatialInertia &si)
   {
     MassProperties m;
-    Vector3d h = MatToSkewVec(si.topRightCorner<3, 3>());
+    Vector3 h = MatToSkewVec(si.topRightCorner<3, 3>());
     m << si(5, 5), h(0), h(1), h(2), si(0, 0), si(1, 1),
         si(2, 2), si(2, 1), si(2, 0), si(1, 0);
     return m;
@@ -60,10 +60,10 @@ namespace sdrobot::dynamics
   /*!
    * Get center of mass location 得到质心的位置
    */
-  Vector3d COMFromSpatialInertia(const SpatialInertia &si)
+  Vector3 COMFromSpatialInertia(const SpatialInertia &si)
   {
     double m = MassFromSpatialInertia(si);
-    Matrix3d mcSkew = si.topRightCorner<3, 3>();
+    Matrix3 mcSkew = si.topRightCorner<3, 3>();
     return MatToSkewVec(mcSkew) / m;
   }
 
@@ -73,7 +73,7 @@ namespace sdrobot::dynamics
   InertiaMat SpatialInertiaToInertiaMat(const SpatialInertia &si)
   {
     double m = MassFromSpatialInertia(si);
-    Matrix3d mcSkew = si.topRightCorner<3, 3>();
+    Matrix3 mcSkew = si.topRightCorner<3, 3>();
     return si.topLeftCorner<3, 3>() -
            mcSkew * mcSkew.transpose() / m;
   }
@@ -89,13 +89,13 @@ namespace sdrobot::dynamics
   {
     SpatialInertia si;
     double m = P(3, 3);
-    Vector3d h = P.topRightCorner<3, 1>();
-    Matrix3d E = P.topLeftCorner<3, 3>();
-    Matrix3d Ibar = E.trace() * Matrix3d::Identity() - E;
+    Vector3 h = P.topRightCorner<3, 1>();
+    Matrix3 E = P.topLeftCorner<3, 3>();
+    Matrix3 Ibar = E.trace() * Matrix3::Identity() - E;
     si.topLeftCorner<3, 3>() = Ibar;
     si.topRightCorner<3, 3>() = VecToSkewMat(h);
     si.bottomLeftCorner<3, 3>() = VecToSkewMat(h).transpose();
-    si.bottomRightCorner<3, 3>() = m * Matrix3d::Identity();
+    si.bottomRightCorner<3, 3>() = m * Matrix3::Identity();
     return si;
   }
 
@@ -107,12 +107,12 @@ namespace sdrobot::dynamics
    */
   PseudoInertiaMat SpatialInertiaToPseudoInertiaMat(const SpatialInertia &si)
   {
-    Vector3d h = MatToSkewVec(si.topRightCorner<3, 3>());
-    Matrix3d Ibar = si.topLeftCorner<3, 3>();
+    Vector3 h = MatToSkewVec(si.topRightCorner<3, 3>());
+    Matrix3 Ibar = si.topLeftCorner<3, 3>();
     double m = si(5, 5);
     PseudoInertiaMat P;
     P.topLeftCorner<3, 3>() =
-        0.5 * Ibar.trace() * Matrix3d::Identity() - Ibar;
+        0.5 * Ibar.trace() * Matrix3::Identity() - Ibar;
     P.topRightCorner<3, 1>() = h;
     P.bottomLeftCorner<1, 3>() = h.transpose();
     P(3, 3) = m;
@@ -125,7 +125,7 @@ namespace sdrobot::dynamics
   SpatialInertia SpatialInertiaFlipAlongAxis(const SpatialInertia &si, CoordinateAxis axis)
   {
     PseudoInertiaMat P = SpatialInertiaToPseudoInertiaMat(si);
-    Matrix4d X = Matrix4d::Identity();
+    Matrix4 X = Matrix4::Identity();
     if (axis == CoordinateAxis::X)
       X(0, 0) = -1;
     else if (axis == CoordinateAxis::Y)

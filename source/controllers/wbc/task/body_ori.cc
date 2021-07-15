@@ -6,11 +6,11 @@ namespace sdrobot::ctrl::wbc
 {
   TaskBodyOri::TaskBodyOri(const dynamics::FBModelPtr &model) : Task(3, model)
   {
-    Jt_ = MatrixXd::Zero(dim_task_, robot::ModelAttrs::dim_config);
+    Jt_ = MatrixX::Zero(dim_task_, robot::ModelAttrs::dim_config);
     Jt_.block<3, 3>(0, 0).setIdentity();
-    JtDotQdot_ = VectorXd::Zero(dim_task_);
+    JtDotQdot_ = VectorX::Zero(dim_task_);
 
-    _Kp_kin = VectorXd::Constant(dim_task_, 1.);
+    _Kp_kin = VectorX::Constant(dim_task_, 1.);
     for (size_t i = 0; i < 3; i++)
     {
       _Kp[i] = robot::DynamicsAttrs::kp_ori[i];
@@ -18,8 +18,8 @@ namespace sdrobot::ctrl::wbc
     }
   }
 
-  bool TaskBodyOri::_UpdateCommand(const Vector3d &pos_des, const Vector3d &vel_des,
-                                   const Vector3d &acc_des)
+  bool TaskBodyOri::_UpdateCommand(const Vector3 &pos_des, const Vector3 &vel_des,
+                                   const Vector3 &acc_des)
   {
     auto ori_cmd = dynamics::RPYToQuat(pos_des);
     const auto &link_ori = _robot_sys->GetState().body_orientation;
@@ -40,7 +40,7 @@ namespace sdrobot::ctrl::wbc
     // Configuration space: Local
     // Operational Space: Global
     auto rot = dynamics::QuatToRotMat(link_ori);
-    Vector3d vel_err = rot.transpose() * (vel_des_ - curr_vel.head(3));
+    Vector3 vel_err = rot.transpose() * (vel_des_ - curr_vel.head(3));
 
     for (int m = 0; m < 3; m++)
     {

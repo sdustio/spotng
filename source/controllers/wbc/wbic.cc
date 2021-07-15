@@ -6,10 +6,10 @@
 namespace sdrobot::ctrl::wbc
 {
 
-  double solve_quadprog(Eigen::MatrixXd &_G, Eigen::VectorXd &_g0,
-                        const Eigen::MatrixXd &_CE, const Eigen::VectorXd &_ce0,
-                        const Eigen::MatrixXd &_CI, const Eigen::VectorXd &_ci0,
-                        Eigen::VectorXd &_x)
+  double solve_quadprog(MatrixX &_G, VectorX &_g0,
+                        const MatrixX &_CE, const VectorX &_ce0,
+                        const MatrixX &_CI, const VectorX &_ci0,
+                        VectorX &_x)
   {
     quadprogpp::Matrix<double> G, CE, CI;
     quadprogpp::Vector<double> g0, ce0, ci0, x;
@@ -74,21 +74,21 @@ namespace sdrobot::ctrl::wbc
   }
 
   Wbic::Wbic(size_t num_qdot, double weight) : num_act_joint_(num_qdot - 6), num_qdot_(num_qdot),
-                                               _W_floating(VectorXd::Constant(6, weight)),
-                                               _W_rf(VectorXd::Constant(12, 1.))
+                                               _W_floating(VectorX::Constant(6, weight)),
+                                               _W_rf(VectorX::Constant(12, 1.))
 
   {
-    Sa_ = MatrixXd::Zero(num_act_joint_, num_qdot_);
-    Sv_ = MatrixXd::Zero(6, num_qdot_);
+    Sa_ = MatrixX::Zero(num_act_joint_, num_qdot_);
+    Sv_ = MatrixX::Zero(6, num_qdot_);
 
     Sa_.block(0, 6, num_act_joint_, num_act_joint_).setIdentity();
     Sv_.block<6, 6>(0, 0).setIdentity();
 
-    _eye = MatrixXd::Identity(num_qdot_, num_qdot_);
+    _eye = MatrixX::Identity(num_qdot_, num_qdot_);
   }
 
-  void Wbic::UpdateSetting(const MatrixXd &A, const MatrixXd &Ainv,
-                           const VectorXd &cori, const VectorXd &grav)
+  void Wbic::UpdateSetting(const MatrixX &A, const MatrixX &Ainv,
+                           const VectorX &cori, const VectorX &grav)
   {
     A_ = A;
     Ainv_ = Ainv;
@@ -97,7 +97,7 @@ namespace sdrobot::ctrl::wbc
     b_updatesetting_ = true;
   }
 
-  void Wbic::MakeTorque(VectorXd &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list)
+  void Wbic::MakeTorque(VectorX &cmd, const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list)
   {
     if (!b_updatesetting_)
     {
@@ -108,9 +108,9 @@ namespace sdrobot::ctrl::wbc
     _SetOptimizationSize(contact_list);
     _SetCost();
 
-    VectorXd qddot_pre;
-    MatrixXd JcBar;
-    MatrixXd Npre;
+    VectorX qddot_pre;
+    MatrixX JcBar;
+    MatrixX Npre;
 
     if (_dim_rf > 0)
     {
@@ -125,14 +125,14 @@ namespace sdrobot::ctrl::wbc
     }
     else
     {
-      qddot_pre = VectorXd::Zero(num_qdot_);
+      qddot_pre = VectorX::Zero(num_qdot_);
       Npre = _eye;
     }
 
     // Task
     TaskPtr task;
-    MatrixXd Jt, JtBar, JtPre;
-    VectorXd JtDotQdot, xddot;
+    MatrixX Jt, JtBar, JtPre;
+    VectorX JtDotQdot, xddot;
 
     for (auto &task : task_list)
     {
@@ -162,34 +162,34 @@ namespace sdrobot::ctrl::wbc
     {
       if (fabs(qddot_pre[i]) > 99999.)
       {
-        qddot_pre = VectorXd::Zero(num_qdot_);
+        qddot_pre = VectorX::Zero(num_qdot_);
       }
     }
 
     _GetSolution(qddot_pre, cmd);
 
-    _opt_result = VectorXd(_dim_opt);
+    _opt_result = VectorX(_dim_opt);
     for (size_t i(0); i < _dim_opt; ++i)
     {
       _opt_result[i] = z[i];
     }
   }
 
-  void Wbic::_WeightedInverse(const MatrixXd &J, const MatrixXd &Winv, MatrixXd &Jinv, double threshold)
+  void Wbic::_WeightedInverse(const MatrixX &J, const MatrixX &Winv, MatrixX &Jinv, double threshold)
   {
-    MatrixXd lambda(J * Winv * J.transpose());
-    MatrixXd lambda_inv;
+    MatrixX lambda(J * Winv * J.transpose());
+    MatrixX lambda_inv;
     dynamics::PseudoInverse(lambda, threshold, lambda_inv);
     Jinv = Winv * J.transpose() * lambda_inv;
   }
 
   void Wbic::_ContactBuilding(const std::vector<ContactPtr> &contact_list)
   {
-    MatrixXd Uf;
-    VectorXd Uf_ieq_vec;
+    MatrixX Uf;
+    VectorX Uf_ieq_vec;
     // Initial
-    MatrixXd Jc;
-    VectorXd JcDotQdot;
+    MatrixX Jc;
+    VectorX JcDotQdot;
     size_t dim_accumul_rf, dim_accumul_uf;
 
     Jc = contact_list[0]->getContactJacobian();
@@ -238,7 +238,7 @@ namespace sdrobot::ctrl::wbc
     }
   }
 
-  void Wbic::_SetEqualityConstraint(const VectorXd &qddot)
+  void Wbic::_SetEqualityConstraint(const VectorX &qddot)
   {
 
     if (_dim_rf > 0)
@@ -280,29 +280,29 @@ namespace sdrobot::ctrl::wbc
     _dim_eq_cstr = _dim_floating;
 
     // Matrix Setting
-    G = MatrixXd::Zero(_dim_opt, _dim_opt);
-    g0 = VectorXd::Zero(_dim_opt);
+    G = MatrixX::Zero(_dim_opt, _dim_opt);
+    g0 = VectorX::Zero(_dim_opt);
 
     // Eigen Matrix Setting
-    _dyn_CE = MatrixXd::Zero(_dim_eq_cstr, _dim_opt);
-    _dyn_ce0 = VectorXd(_dim_eq_cstr);
+    _dyn_CE = MatrixX::Zero(_dim_eq_cstr, _dim_opt);
+    _dyn_ce0 = VectorX(_dim_eq_cstr);
     if (_dim_rf > 0)
     {
-      _dyn_CI = MatrixXd::Zero(_dim_Uf, _dim_opt);
-      _dyn_ci0 = VectorXd::Zero(_dim_Uf);
+      _dyn_CI = MatrixX::Zero(_dim_Uf, _dim_opt);
+      _dyn_ci0 = VectorX::Zero(_dim_Uf);
 
-      _Jc = MatrixXd(_dim_rf, num_qdot_);
-      _JcDotQdot = VectorXd(_dim_rf);
-      _Fr_des = VectorXd(_dim_rf);
+      _Jc = MatrixX(_dim_rf, num_qdot_);
+      _JcDotQdot = VectorX(_dim_rf);
+      _Fr_des = VectorX(_dim_rf);
 
-      _Uf = MatrixXd(_dim_Uf, _dim_rf);
+      _Uf = MatrixX(_dim_Uf, _dim_rf);
       _Uf.setZero();
-      _Uf_ieq_vec = VectorXd(_dim_Uf);
+      _Uf_ieq_vec = VectorX(_dim_Uf);
     }
     else
     {
-      _dyn_CI = MatrixXd::Zero(1, _dim_opt);
-      _dyn_ci0 = VectorXd::Zero(1);
+      _dyn_CI = MatrixX::Zero(1, _dim_opt);
+      _dyn_ci0 = VectorX::Zero(1);
     }
   }
 
@@ -321,13 +321,13 @@ namespace sdrobot::ctrl::wbc
     }
   }
 
-  void Wbic::_GetSolution(const VectorXd &qddot, VectorXd &cmd)
+  void Wbic::_GetSolution(const VectorX &qddot, VectorX &cmd)
   {
 
-    VectorXd tot_tau;
+    VectorX tot_tau;
     if (_dim_rf > 0)
     {
-      _Fr = VectorXd(_dim_rf);
+      _Fr = VectorX(_dim_rf);
       // get Reaction forces
       for (size_t i(0); i < _dim_rf; ++i)
         _Fr[i] = z[i + _dim_floating] + _Fr_des[i];

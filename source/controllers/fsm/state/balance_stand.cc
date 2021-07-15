@@ -33,7 +33,7 @@ namespace sdrobot::ctrl::fsm
   bool StateBalanceStand::Run()
   {
     // TODO check contact
-    // Vector4d contactState(0.5, 0.5, 0.5, 0.5);
+    // Vector4 contactState(0.5, 0.5, 0.5, 0.5);
     // this->_data->_stateEstimator->setContactPhase(contactState);
     Step();
     return true;

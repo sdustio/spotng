@@ -20,9 +20,9 @@ namespace sdrobot::dynamics
  * Compute the spatial motion cross product matrix.
  * Prefer MotionCrossProduct when possible.
  */
-  Matrix6d MotionCrossMatrix(const Vector6d &v)
+  Matrix6 MotionCrossMatrix(const Vector6 &v)
   {
-    Matrix6d m;
+    Matrix6 m;
     m << 0, -v(2), v(1), 0, 0, 0, v(2), 0, -v(0), 0, 0, 0, -v(1), v(0), 0, 0, 0,
         0,
 
@@ -35,9 +35,9 @@ namespace sdrobot::dynamics
  * Compute spatial force cross product matrix.
  * Prefer ForceCrossProduct when possible
  */
-  Matrix6d ForceCrossMatrix(const Vector6d &v)
+  Matrix6 ForceCrossMatrix(const Vector6 &v)
   {
-    Matrix6d f;
+    Matrix6 f;
     f << 0, -v(2), v(1), 0, -v(5), v(4), v(2), 0, -v(0), v(5), 0, -v(3), -v(1),
         v(0), 0, -v(4), v(3), 0, 0, 0, 0, 0, -v(2), v(1), 0, 0, 0, v(2), 0, -v(0),
         0, 0, 0, -v(1), v(0), 0;
@@ -48,7 +48,7 @@ namespace sdrobot::dynamics
  * Compute spatial motion cross product.  Faster than the matrix multiplication
  * version
  */
-  SpatialVec MotionCrossProduct(const Vector6d &a, const Vector6d &b)
+  SpatialVec MotionCrossProduct(const Vector6 &a, const Vector6 &b)
   {
     SpatialVec mv;
     mv << a(1) * b(2) - a(2) * b(1), a(2) * b(0) - a(0) * b(2),
@@ -63,7 +63,7 @@ namespace sdrobot::dynamics
  * Compute spatial force cross product.  Faster than the matrix multiplication
  * version
  */
-  SpatialVec ForceCrossProduct(const Vector6d &a, const Vector6d &b)
+  SpatialVec ForceCrossProduct(const Vector6 &a, const Vector6 &b)
   {
     SpatialVec mv;
     mv << b(2) * a(1) - b(1) * a(2) - b(4) * a(5) + b(5) * a(4),
@@ -77,11 +77,11 @@ namespace sdrobot::dynamics
   /*!
  * Convert a spatial transform to a homogeneous coordinate transformation
  */
-  Matrix4d SpatialXformToHomogeneous(const SpatialXform &X)
+  Matrix4 SpatialXformToHomogeneous(const SpatialXform &X)
   {
-    Matrix4d H = Matrix4d::Zero();
+    Matrix4 H = Matrix4::Zero();
     RotMat R = X.topLeftCorner<3, 3>();
-    Matrix3d skewR = X.bottomLeftCorner<3, 3>();
+    Matrix3 skewR = X.bottomLeftCorner<3, 3>();
     H.topLeftCorner<3, 3>() = R;
     H.topRightCorner<3, 1>() = MatToSkewVec(skewR * R.transpose());
     H(3, 3) = 1;
@@ -91,10 +91,10 @@ namespace sdrobot::dynamics
   /*!
  * Convert a homogeneous coordinate transformation to a spatial one
  */
-  SpatialXform HomogeneousToSpatialXform(const Matrix4d &H)
+  SpatialXform HomogeneousToSpatialXform(const Matrix4 &H)
   {
-    Matrix3d R = H.topLeftCorner<3, 3>();
-    Vector3d translate = H.topRightCorner<3, 1>();
+    Matrix3 R = H.topLeftCorner<3, 3>();
+    Vector3 translate = H.topRightCorner<3, 1>();
     SpatialXform X = SpatialXform::Zero();
     X.topLeftCorner<3, 3>() = R;
     X.bottomLeftCorner<3, 3>() = VecToSkewMat(translate) * R;
@@ -105,7 +105,7 @@ namespace sdrobot::dynamics
   /*!
  * Create spatial coordinate transformation from rotation and translation
  */
-  SpatialXform CreateSpatialXform(const RotMat &R, const Vector3d &r)
+  SpatialXform CreateSpatialXform(const RotMat &R, const Vector3 &r)
   {
     SpatialXform X = SpatialXform::Zero();
     X.topLeftCorner<3, 3>() = R;
@@ -126,10 +126,10 @@ namespace sdrobot::dynamics
   /*!
  * Get translation vector from spatial transformation
  */
-  Vector3d TranslationFromSpatialXform(const SpatialXform &X)
+  Vector3 TranslationFromSpatialXform(const SpatialXform &X)
   {
     RotMat R = RotationFromSpatialXform(X);
-    Vector3d r =
+    Vector3 r =
         -MatToSkewVec(R.transpose() * X.bottomLeftCorner<3, 3>());
     return r;
   }
@@ -140,7 +140,7 @@ namespace sdrobot::dynamics
   SpatialXform InvertSpatialXform(const SpatialXform &X)
   {
     RotMat R = RotationFromSpatialXform(X);
-    Vector3d r =
+    Vector3 r =
         -MatToSkewVec(R.transpose() * X.bottomLeftCorner<3, 3>());
     SpatialXform Xinv = CreateSpatialXform(R.transpose(), -R * r);
     return Xinv;
@@ -151,7 +151,7 @@ namespace sdrobot::dynamics
  */
   SpatialVec JointMotionSubspace(JointType joint, CoordinateAxis axis)
   {
-    Vector3d v(0, 0, 0);
+    Vector3 v(0, 0, 0);
     SpatialVec phi = SpatialVec::Zero();
     if (axis == CoordinateAxis::X)
       v(0) = 1;
@@ -173,16 +173,16 @@ namespace sdrobot::dynamics
   /*!
  * Compute joint transformation
  */
-  Matrix6d JointXform(JointType joint, CoordinateAxis axis, double q)
+  Matrix6 JointXform(JointType joint, CoordinateAxis axis, double q)
   {
-    Matrix6d X = Matrix6d::Zero();
+    Matrix6 X = Matrix6::Zero();
     if (joint == JointType::Revolute)
     {
       X = SpatialRotation(axis, q);
     }
     else if (joint == JointType::Prismatic)
     {
-      Vector3d v(0, 0, 0);
+      Vector3 v(0, 0, 0);
       if (axis == CoordinateAxis::X)
         v(0) = q;
       else if (axis == CoordinateAxis::Y)
@@ -204,10 +204,10 @@ namespace sdrobot::dynamics
  * @param mass Mass of the box
  * @param dims Dimensions of the box
  */
-  Matrix3d RotInertiaOfBox(double mass, const Vector3d &dims)
+  Matrix3 RotInertiaOfBox(double mass, const Vector3 &dims)
   {
-    Matrix3d I =
-        Matrix3d::Identity() * dims.norm() * dims.norm();
+    Matrix3 I =
+        Matrix3::Identity() * dims.norm() * dims.norm();
     for (size_t i = 0; i < 3; i++)
       I(i, i) -= dims(i) * dims(i);
     I = I * mass / 12;
@@ -218,20 +218,20 @@ namespace sdrobot::dynamics
  * Convert from spatial velocity to linear velocity.
  * Uses spatial velocity at the given point.
  */
-  Vector3d SpatialToLinearVelocity(const SpatialVec &v, const Vector3d &x)
+  Vector3 SpatialToLinearVelocity(const SpatialVec &v, const Vector3 &x)
   {
-    Vector3d vsAng = v.topLeftCorner<3, 1>();
-    Vector3d vsLin = v.bottomLeftCorner<3, 1>();
-    Vector3d vLinear = vsLin + vsAng.cross(x);
+    Vector3 vsAng = v.topLeftCorner<3, 1>();
+    Vector3 vsLin = v.bottomLeftCorner<3, 1>();
+    Vector3 vLinear = vsLin + vsAng.cross(x);
     return vLinear;
   }
 
   /*!
  * Convert from spatial velocity to angular velocity.
  */
-  Vector3d SpatialToAngularVelocity(const SpatialVec &v)
+  Vector3 SpatialToAngularVelocity(const SpatialVec &v)
   {
-    Vector3d vsAng = v.topLeftCorner<3, 1>();
+    Vector3 vsAng = v.topLeftCorner<3, 1>();
     return vsAng;
   }
 
@@ -239,9 +239,9 @@ namespace sdrobot::dynamics
  * Compute the classical lienear accleeration of a frame given its spatial
  * acceleration and velocity
  */
-  Vector3d SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v)
+  Vector3 SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v)
   {
-    Vector3d acc;
+    Vector3 acc;
     // classical accleration = spatial linear acc + omega x v
     acc = a.tail<3>() + v.head<3>().cross(v.tail<3>());
     return acc;
@@ -251,24 +251,24 @@ namespace sdrobot::dynamics
  * Compute the classical lienear acceleration of a frame given its spatial
  * acceleration and velocity
  */
-  Vector3d SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v, const Vector3d &x)
+  Vector3 SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v, const Vector3 &x)
   {
-    Vector3d alin_x = SpatialToLinearVelocity(a, x);
-    Vector3d vlin_x = SpatialToLinearVelocity(v, x);
+    Vector3 alin_x = SpatialToLinearVelocity(a, x);
+    Vector3 vlin_x = SpatialToLinearVelocity(v, x);
 
     // classical accleration = spatial linear acc + omega x v
-    Vector3d acc = alin_x + v.head<3>().cross(vlin_x);
+    Vector3 acc = alin_x + v.head<3>().cross(vlin_x);
     return acc;
   }
 
   /*!
  * Apply spatial transformation to a point.
  */
-  Vector3d SpatialXformPoint(const SpatialXform &X, const Vector3d &p)
+  Vector3 SpatialXformPoint(const SpatialXform &X, const Vector3 &p)
   {
-    Matrix3d R = RotationFromSpatialXform(X);
-    Vector3d r = TranslationFromSpatialXform(X);
-    Vector3d Xp = R * (p - r);
+    Matrix3 R = RotationFromSpatialXform(X);
+    Vector3 r = TranslationFromSpatialXform(X);
+    Vector3 Xp = R * (p - r);
     return Xp;
   }
 
@@ -277,7 +277,7 @@ namespace sdrobot::dynamics
  * @param f : force
  * @param p : point
  */
-  SpatialVec ForceToSpatialForce(const Vector3d &f, const Vector3d &p)
+  SpatialVec ForceToSpatialForce(const Vector3 &f, const Vector3 &p)
   {
     SpatialVec fs;
     fs.topLeftCorner<3, 1>() = p.cross(f);

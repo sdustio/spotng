@@ -36,9 +36,9 @@ namespace sdrobot::ctrl::fsm
 
     void SetJPosInterPts(
         const int curr_iter, int max_iter, size_t leg,
-        const Vector3d &ini, const Vector3d &fin);
+        const Vector3 &ini, const Vector3 &fin);
 
-    void JointPDControl(size_t leg, const Vector3d &qDes, const Vector3d &qdDes);
+    void JointPDControl(size_t leg, const Vector3 &qDes, const Vector3 &qdDes);
 
     std::unordered_map<robot::Mode, State> state_trans_;
     std::unordered_map<Flag, void (StateRecoveryStand::*)(const int)> flag_dispatch_;
@@ -48,12 +48,12 @@ namespace sdrobot::ctrl::fsm
     Flag flag_ = Flag::FoldLegs;
 
     // JPos
-    Vector3d fold_jpos_[4];
-    Vector3d stand_jpos_[4];
-    Vector3d rolling_jpos_[4];
-    Vector3d initial_jpos_[4];
+    Vector3 fold_jpos_[4];
+    Vector3 stand_jpos_[4];
+    Vector3 rolling_jpos_[4];
+    Vector3 initial_jpos_[4];
 
-    Vector3d f_ff_;
+    Vector3 f_ff_;
 
     const int fold_ramp_iter_ = 1000;
     const int fold_settle_iter_ = 1000;
@@ -69,10 +69,10 @@ namespace sdrobot::ctrl::fsm
     //  const int rollover_settle_iter_ = 300;
 
     // Create the cartesian P gain matrix
-    Matrix3d kp_mat_;
+    Matrix3 kp_mat_;
 
     // Create the cartesian D gain matrix
-    Matrix3d kd_mat_;
+    Matrix3 kd_mat_;
   };
 
 } // namespace sdrobot::ctrl::fsm

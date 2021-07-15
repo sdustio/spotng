@@ -14,13 +14,13 @@ namespace sdrobot::robot
     rotorRotationalInertiaZ << 33, 0, 0, 0, 33, 0, 0, 0, 63;
     rotorRotationalInertiaZ = 1e-6 * rotorRotationalInertiaZ;
 
-    Matrix3d RY = dynamics::CoordinateRot(dynamics::CoordinateAxis::Y, M_PI / 2);
-    Matrix3d RX = dynamics::CoordinateRot(dynamics::CoordinateAxis::X, M_PI / 2);
+    Matrix3 RY = dynamics::CoordinateRot(dynamics::CoordinateAxis::Y, M_PI / 2);
+    Matrix3 RX = dynamics::CoordinateRot(dynamics::CoordinateAxis::X, M_PI / 2);
     InertiaMat rotorRotationalInertiaX =
         RY * rotorRotationalInertiaZ * RY.transpose();
     InertiaMat rotorRotationalInertiaY =
         RX * rotorRotationalInertiaZ * RX.transpose();
-    Vector3d rotorCOM(0, 0, 0);
+    Vector3 rotorCOM(0, 0, 0);
     abad_rotor_spatial_inertia_ = BuildSpatialInertia(0.055, rotorCOM, rotorRotationalInertiaX);
     knee_rotor_spatial_inertia_ = hip_rotor_spatial_inertia_ = BuildSpatialInertia(0.055, rotorCOM, rotorRotationalInertiaY);
 
@@ -28,37 +28,37 @@ namespace sdrobot::robot
     InertiaMat abadRotationalInertia;
     abadRotationalInertia << 381, 58, 0.45, 58, 560, 0.95, 0.45, 0.95, 444;
     abadRotationalInertia = abadRotationalInertia * 1e-6;
-    Vector3d abadCOM(0, 0.036, 0); // LEFT
+    Vector3 abadCOM(0, 0.036, 0); // LEFT
     abad_spatial_inertia_ = BuildSpatialInertia(0.54, abadCOM, abadRotationalInertia);
 
-    Matrix3d hipRotationalInertia;
+    Matrix3 hipRotationalInertia;
     hipRotationalInertia << 1983, 245, 13, 245, 2103, 1.5, 13, 1.5, 408;
     hipRotationalInertia = hipRotationalInertia * 1e-6;
-    Vector3d hipCOM(0, 0.016, -0.02);
+    Vector3 hipCOM(0, 0.016, -0.02);
     hip_spatial_inertia_ = BuildSpatialInertia(0.634, hipCOM, hipRotationalInertia);
 
-    Matrix3d kneeRotationalInertia, kneeRotationalInertiaRotated;
+    Matrix3 kneeRotationalInertia, kneeRotationalInertiaRotated;
     kneeRotationalInertiaRotated << 6, 0, 0, 0, 248, 0, 0, 0, 245;
     kneeRotationalInertiaRotated = kneeRotationalInertiaRotated * 1e-6;
     kneeRotationalInertia = RY * kneeRotationalInertiaRotated * RY.transpose();
-    Vector3d kneeCOM(0, 0, -0.061);
+    Vector3 kneeCOM(0, 0, -0.061);
     knee_spatial_inertia_ = BuildSpatialInertia(0.064, kneeCOM, kneeRotationalInertia);
 
-    Matrix3d bodyRotationalInertia;
+    Matrix3 bodyRotationalInertia;
     bodyRotationalInertia << 11253, 0, 0, 0, 36203, 0, 0, 0, 42673;
     bodyRotationalInertia = bodyRotationalInertia * 1e-6;
-    Vector3d bodyCOM(0, 0, 0);
+    Vector3 bodyCOM(0, 0, 0);
     body_spatial_inertia_ = BuildSpatialInertia(ModelAttrs::body_mass, bodyCOM,
                                                    bodyRotationalInertia);
 
     // locations
-    abad_rotor_location_ = Vector3d(0.125, 0.049, 0);
+    abad_rotor_location_ = Vector3(0.125, 0.049, 0);
     abad_location_ =
-        Vector3d(ModelAttrs::body_length, ModelAttrs::body_width, 0) * 0.5;
-    hip_location_ = Vector3d(0, ModelAttrs::abad_link_length, 0);
-    hip_rotor_location_ = Vector3d(0, 0.04, 0);
-    knee_location_ = Vector3d(0, 0, -ModelAttrs::hip_link_length);
-    knee_rotor_location_ = Vector3d(0, 0, 0);
+        Vector3(ModelAttrs::body_length, ModelAttrs::body_width, 0) * 0.5;
+    hip_location_ = Vector3(0, ModelAttrs::abad_link_length, 0);
+    hip_rotor_location_ = Vector3(0, 0.04, 0);
+    knee_location_ = Vector3(0, 0, -ModelAttrs::hip_link_length);
+    knee_rotor_location_ = Vector3(0, 0, 0);
   }
 
   const dynamics::FBModelPtr& Quadruped::BuildModel()
@@ -71,9 +71,9 @@ namespace sdrobot::robot
     model_ = std::make_shared<dynamics::FBModel>();
     // we assume the cheetah's body (not including rotors) can be modeled as a uniformly distributed box.
     //我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
-    Vector3d bodyDims(ModelAttrs::body_length, ModelAttrs::body_width, ModelAttrs::body_height);
+    Vector3 bodyDims(ModelAttrs::body_length, ModelAttrs::body_width, ModelAttrs::body_height);
 
-    // model_->addBase(_bodyMass, Vector3d(0,0,0), RotInertiaOfBox(_bodyMass,
+    // model_->addBase(_bodyMass, Vector3(0,0,0), RotInertiaOfBox(_bodyMass,
     // bodyDims));
     model_->AddBase(body_spatial_inertia_);
     // add contact for the cheetah's body
@@ -83,7 +83,7 @@ namespace sdrobot::robot
     size_t body_id = base_id;
     int side_sign = -1;
 
-    Matrix3d I3 = Matrix3d::Identity();
+    Matrix3 I3 = Matrix3::Identity();
 
     // loop over 4 legs
     for (size_t leg_id = 0; leg_id < robot::ModelAttrs::num_leg; leg_id++)
@@ -92,10 +92,10 @@ namespace sdrobot::robot
       //  int addBody(const SpatialInertia& inertia, const SpatialInertia&
       //  rotorInertia, double gearRatio,
       //              int parent, JointType jointType, CoordinateAxis jointAxis,
-      //              const Matrix6d& Xtree, const Matrix6d& Xrot);
+      //              const Matrix6& Xtree, const Matrix6& Xrot);
       body_id++;
-      Matrix6d xtree_abad = CreateSpatialXform(I3, leg::SideSign::WithLegSigns(abad_location_, leg_id));
-      Matrix6d xtree_abad_rotor =
+      Matrix6 xtree_abad = CreateSpatialXform(I3, leg::SideSign::WithLegSigns(abad_location_, leg_id));
+      Matrix6 xtree_abad_rotor =
           CreateSpatialXform(I3, leg::SideSign::WithLegSigns(abad_rotor_location_, leg_id));
 
       if (side_sign < 0)
@@ -115,10 +115,10 @@ namespace sdrobot::robot
 
       // Hip Joint
       body_id++;
-      Matrix6d xtree_hip =
+      Matrix6 xtree_hip =
           CreateSpatialXform(CoordinateRot(CoordinateAxis::Z, M_PI),
                        leg::SideSign::WithLegSigns(hip_location_, leg_id));
-      Matrix6d xtree_hip_rotor =
+      Matrix6 xtree_hip_rotor =
           CreateSpatialXform(CoordinateRot(CoordinateAxis::Z, M_PI),
                        leg::SideSign::WithLegSigns(hip_rotor_location_, leg_id));
 
@@ -139,12 +139,12 @@ namespace sdrobot::robot
       }
 
       // add knee ground contact point
-      model_->AddGroundContactPoint(body_id, Vector3d(0, 0, -ModelAttrs::hip_link_length));
+      model_->AddGroundContactPoint(body_id, Vector3(0, 0, -ModelAttrs::hip_link_length));
 
       // Knee Joint
       body_id++;
-      Matrix6d xtree_knee = CreateSpatialXform(I3, knee_location_);
-      Matrix6d xtree_knee_rotor = CreateSpatialXform(I3, knee_rotor_location_);
+      Matrix6 xtree_knee = CreateSpatialXform(I3, knee_location_);
+      Matrix6 xtree_knee_rotor = CreateSpatialXform(I3, knee_rotor_location_);
       if (side_sign < 0)
       {
         model_->AddBody(
@@ -154,7 +154,7 @@ namespace sdrobot::robot
             CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
         model_->AddGroundContactPoint(
-            body_id, Vector3d(0, ModelAttrs::knee_link_y_offset, -ModelAttrs::knee_link_length), true);
+            body_id, Vector3(0, ModelAttrs::knee_link_y_offset, -ModelAttrs::knee_link_length), true);
       }
       else
       {
@@ -164,16 +164,16 @@ namespace sdrobot::robot
             body_id - 1, JointType::Revolute, CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
         model_->AddGroundContactPoint(
-            body_id, Vector3d(0, -ModelAttrs::knee_link_y_offset, -ModelAttrs::knee_link_length), true);
+            body_id, Vector3(0, -ModelAttrs::knee_link_y_offset, -ModelAttrs::knee_link_length), true);
       }
 
       // add foot
-      //model_->addGroundContactPoint(body_id, Vector3d(0, 0, -_kneeLinkLength), true);
+      //model_->addGroundContactPoint(body_id, Vector3(0, 0, -_kneeLinkLength), true);
 
       side_sign *= -1;
     }
 
-    Vector3d g(0, 0, -9.81);
+    Vector3 g(0, 0, -9.81);
     model_->SetGravity(g);
 
     return model_;

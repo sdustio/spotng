@@ -70,7 +70,7 @@ namespace sdrobot::ctrl
 
     jpos_trj_.SetParam(ini, fin, mid, end_time_);
 
-    Matrix3d kp, kd;
+    Matrix3 kp, kd;
     kp << 5, 0, 0, 0, 5, 0, 0, 0, 5;
     kd << 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1;
 

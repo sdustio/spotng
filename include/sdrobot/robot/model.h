@@ -27,13 +27,13 @@ namespace sdrobot::robot
     struct Cmd
     {
       Cmd() { Zero(); }
-      Vector3d tau_feed_forward, force_feed_forward, q_des, qd_des, p_des, v_des;
-      Matrix3d kp_cartesian, kd_cartesian, kp_joint, kd_joint;
+      Vector3 tau_feed_forward, force_feed_forward, q_des, qd_des, p_des, v_des;
+      Matrix3 kp_cartesian, kd_cartesian, kp_joint, kd_joint;
 
       void Zero()
       {
-        tau_feed_forward = force_feed_forward = q_des = qd_des = p_des = v_des = Vector3d::Zero();
-        kp_cartesian = kd_cartesian = kp_joint, kd_joint = Matrix3d::Zero();
+        tau_feed_forward = force_feed_forward = q_des = qd_des = p_des = v_des = Vector3::Zero();
+        kp_cartesian = kd_cartesian = kp_joint, kd_joint = Matrix3::Zero();
       }
     };
 
@@ -44,14 +44,14 @@ namespace sdrobot::robot
     struct Data
     {
       Data() { Zero(); }
-      Vector3d q, qd, p, v;  //关节角度 关节角速度 足端位置 足端速度
-      Matrix3d J;            //雅可比
-      Vector3d tau_estimate; //估计力矩反馈
+      Vector3 q, qd, p, v;  //关节角度 关节角速度 足端位置 足端速度
+      Matrix3 J;            //雅可比
+      Vector3 tau_estimate; //估计力矩反馈
       void Zero()
       {
-        q = qd = p = v = Vector3d::Zero();
-        J = Matrix3d::Zero();
-        tau_estimate = Vector3d::Zero();
+        q = qd = p = v = Vector3::Zero();
+        J = Matrix3::Zero();
+        tau_estimate = Vector3::Zero();
       }
     };
 
@@ -71,18 +71,18 @@ namespace sdrobot::robot
       /*!
       * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
       */
-      static Vector3d WithLegSigns(const Vector3d &v, size_t leg_id)
+      static Vector3 WithLegSigns(const Vector3 &v, size_t leg_id)
       {
         switch (leg_id)
         {
         case Idx::fr:
-          return Vector3d(v[0], -v[1], v[2]);
+          return Vector3(v[0], -v[1], v[2]);
         case Idx::fl:
-          return Vector3d(v[0], v[1], v[2]);
+          return Vector3(v[0], v[1], v[2]);
         case Idx::hr:
-          return Vector3d(-v[0], -v[1], v[2]);
+          return Vector3(-v[0], -v[1], v[2]);
         case Idx::hl:
-          return Vector3d(-v[0], v[1], v[2]);
+          return Vector3(-v[0], v[1], v[2]);
         default:
           throw std::runtime_error("Invalid leg id!");
         }
@@ -171,18 +171,18 @@ namespace sdrobot::robot
     * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
     * @param leg : the leg index
     */
-    Vector3d GetHipLocation(size_t leg) const
+    Vector3 GetHipLocation(size_t leg) const
     {
-      Vector3d pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
+      Vector3 pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
                     (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
                     abad_location_(2));
       return pHip;
     }
 
   private:
-    Vector3d abad_location_, abad_rotor_location_;
-    Vector3d hip_location_, hip_rotor_location_;
-    Vector3d knee_location_, knee_rotor_location_;
+    Vector3 abad_location_, abad_rotor_location_;
+    Vector3 hip_location_, hip_rotor_location_;
+    Vector3 knee_location_, knee_rotor_location_;
     dynamics::SpatialInertia abad_spatial_inertia_, hip_spatial_inertia_, knee_spatial_inertia_;
     dynamics::SpatialInertia abad_rotor_spatial_inertia_, hip_rotor_spatial_inertia_, knee_rotor_spatial_inertia_;
     dynamics::SpatialInertia body_spatial_inertia_;

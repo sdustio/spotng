@@ -12,7 +12,7 @@ namespace sdrobot::ctrl::mpc
     bool omniMode = false;
 
     const auto &seResult = est->GetData();
-    // TODO check! data._stateEstimator->setRemoterVelocityResult(Vector3d(_x_vel_des, _y_vel_des, _yaw_turn_rate));
+    // TODO check! data._stateEstimator->setRemoterVelocityResult(Vector3(_x_vel_des, _y_vel_des, _yaw_turn_rate));
 
     /*
     // Check if transition to standing
@@ -85,11 +85,11 @@ namespace sdrobot::ctrl::mpc
       _body_height = 0.31;
 
     // integrate position setpoint
-    Vector3d v_des_robot(_x_vel_des, _y_vel_des, 0);
+    Vector3 v_des_robot(_x_vel_des, _y_vel_des, 0);
 
-    Vector3d v_des_world =
+    Vector3 v_des_world =
         omniMode ? v_des_robot : seResult.rBody.transpose() * v_des_robot;
-    Vector3d v_robot = seResult.vWorld;
+    Vector3 v_robot = seResult.vWorld;
 
     //pretty_print(v_des_world, std::cout, "v des world");
 
@@ -117,7 +117,7 @@ namespace sdrobot::ctrl::mpc
 
     if (gait != &standing)
     {
-      world_position_desired += dt * Vector3d(v_des_world[0], v_des_world[1], 0);
+      world_position_desired += dt * Vector3(v_des_world[0], v_des_world[1], 0);
     }
 
     // some first time initialization
@@ -162,10 +162,10 @@ namespace sdrobot::ctrl::mpc
       //footSwingTrajectories[i].setHeight(.05);
 
       footSwingTrajectories[i].setHeight(step_height); //.125);
-                                                       //    Vector3d offset(0.05, side_sign[i] * .062, 0);
+                                                       //    Vector3 offset(0.05, side_sign[i] * .062, 0);
 
-      Vector3d offset(0, side_sign[i] * .072, 0);
-      //     Vector3d offset(0, side_sign[i] * .075, 0);
+      Vector3 offset(0, side_sign[i] * .072, 0);
+      //     Vector3 offset(0, side_sign[i] * .075, 0);
 
       if (i < 2)
         offset[0] = 0; //0.03;
@@ -217,19 +217,19 @@ namespace sdrobot::ctrl::mpc
       //              offset[1]=0.05;
       //      }
 
-      Vector3d pRobotFrame = (data._quadruped->getHipLocation(i) + offset);
+      Vector3 pRobotFrame = (data._quadruped->getHipLocation(i) + offset);
 
       pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain;
       float stance_time = gait->getCurrentStanceTime(dtMPC, i);
-      Vector3d pYawCorrected =
+      Vector3 pYawCorrected =
           coordinateRotation(CoordinateAxis::Z, -_yaw_turn_rate * stance_time / 2) * pRobotFrame;
 
-      Vector3d des_vel;
+      Vector3 des_vel;
       des_vel[0] = _x_vel_des;
       des_vel[1] = _y_vel_des;
       des_vel[2] = 0.0;
 
-      Vector3d Pf = seResult.position + seResult.rBody.transpose() * (pYawCorrected + des_vel * swingTimeRemaining[i]);
+      Vector3 Pf = seResult.position + seResult.rBody.transpose() * (pYawCorrected + des_vel * swingTimeRemaining[i]);
 
       //+ seResult.vWorld * swingTimeRemaining[i];
 
@@ -237,7 +237,7 @@ namespace sdrobot::ctrl::mpc
       //    float p_rel_max = 0.3f;
 
       // Using the estimated velocity is correct
-      //Vector3d des_vel_world = seResult.rBody.transpose() * des_vel;
+      //Vector3 des_vel_world = seResult.rBody.transpose() * des_vel;
       float pfx_rel = seResult.vWorld[0] * (.5 + _parameters->cmpc_bonus_swing) * stance_time +
                       .1f * (seResult.vWorld[0] - v_des_world[0]) +
                       (0.5f * seResult.position[2] / 9.81f) * (seResult.vWorld[1] * _yaw_turn_rate);
@@ -274,14 +274,14 @@ namespace sdrobot::ctrl::mpc
         0, 0, 14;
     Kd_stance = Kd;
     // gait
-    Vector4d contactStates = gait->getContactState();
+    Vector4 contactStates = gait->getContactState();
     //  std::cout<<"contactStates:"<<contactStates<<std::endl;
-    Vector4d swingStates = gait->getSwingState();
+    Vector4 swingStates = gait->getSwingState();
     int *mpcTable = gait->getMpcTable();
     updateMPCIfNeeded(mpcTable, data, omniMode);
 
     //  StateEstimator* se = hw_i->state_estimator;
-    Vector4d se_contactState(0, 0, 0, 0);
+    Vector4 se_contactState(0, 0, 0, 0);
 
 
     for (int foot = 0; foot < 4; foot++)
@@ -302,10 +302,10 @@ namespace sdrobot::ctrl::mpc
         //                                          hw_i->leg_controller->leg_datas[foot].qd, 0); // velocity dependent friction compensation todo removed
         //hw_i->leg_controller->leg_datas[foot].qd, fsm->main_control_settings.variable[2]);
 
-        Vector3d pDesFootWorld = footSwingTrajectories[foot].getPosition();
-        Vector3d vDesFootWorld = footSwingTrajectories[foot].getVelocity();
-        Vector3d pDesLeg = seResult.rBody * (pDesFootWorld - seResult.position) - data._quadruped->getHipLocation(foot);
-        Vector3d vDesLeg = seResult.rBody * (vDesFootWorld - seResult.vWorld);
+        Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
+        Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
+        Vector3 pDesLeg = seResult.rBody * (pDesFootWorld - seResult.position) - data._quadruped->getHipLocation(foot);
+        Vector3 vDesLeg = seResult.rBody * (vDesFootWorld - seResult.vWorld);
 
         // Update for WBC
         pFoot_des[foot] = pDesFootWorld;
@@ -326,10 +326,10 @@ namespace sdrobot::ctrl::mpc
         firstSwing[foot] = true;
 
 
-        Vector3d pDesFootWorld = footSwingTrajectories[foot].getPosition();
-        Vector3d vDesFootWorld = footSwingTrajectories[foot].getVelocity();
-        Vector3d pDesLeg = seResult.rBody * (pDesFootWorld - seResult.position) - data._quadruped->getHipLocation(foot);
-        Vector3d vDesLeg = seResult.rBody * (vDesFootWorld - seResult.vWorld);
+        Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
+        Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
+        Vector3 pDesLeg = seResult.rBody * (pDesFootWorld - seResult.position) - data._quadruped->getHipLocation(foot);
+        Vector3 vDesLeg = seResult.rBody * (vDesFootWorld - seResult.vWorld);
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
 
         if (!data.userParameters->use_wbc)

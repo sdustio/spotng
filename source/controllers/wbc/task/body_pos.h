@@ -11,8 +11,8 @@ namespace sdrobot::ctrl::wbc
 
   private:
     // Update op_cmd_
-    bool _UpdateCommand(const Vector3d &pos_des, const Vector3d &vel_des,
-                        const Vector3d &acc_des);
+    bool _UpdateCommand(const Vector3 &pos_des, const Vector3 &vel_des,
+                        const Vector3 &acc_des);
     // Update Jt_
     bool _UpdateTaskJacobian();
     // Update JtDotQdot_

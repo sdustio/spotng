@@ -14,20 +14,20 @@ namespace sdrobot::ctrl
 
   struct MpcData
   {
-    Vector3d pBody_des;
-    Vector3d vBody_des;
-    Vector3d aBody_des;
+    Vector3 pBody_des;
+    Vector3 vBody_des;
+    Vector3 aBody_des;
 
-    Vector3d pBody_RPY_des;
-    Vector3d vBody_Ori_des;
+    Vector3 pBody_RPY_des;
+    Vector3 vBody_Ori_des;
 
-    std::array<Vector3d, 4> pFoot_des;
-    std::array<Vector3d, 4> vFoot_des;
-    std::array<Vector3d, 4> aFoot_des;
+    std::array<Vector3, 4> pFoot_des;
+    std::array<Vector3, 4> vFoot_des;
+    std::array<Vector3, 4> aFoot_des;
 
-    Vector3d Fr_des[4];
+    Vector3 Fr_des[4];
 
-    Vector4d contact_state;
+    Vector4 contact_state;
   };
 
   class Mpc

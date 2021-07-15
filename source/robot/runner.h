@@ -69,7 +69,7 @@ namespace sdrobot::robot
     est::ContactPtr est_contact_;
     est::PosVelPtr est_pos_vel_;
 
-    Vector4d contact_phase_;
+    Vector4 contact_phase_;
     IMUData imu_data_;
   };
 

@@ -19,7 +19,7 @@ namespace sdrobot::ctrl::fsm
     cMPCOld = std::make_shared<mpc::CMpc>(robot::ctrlparams::kCtrlsec, 30 / (1000. * robot::ctrlparams::kCtrlsec));
 
     // Initialize GRF and footstep locations to 0s
-    footstepLocations = Matrix3x4d::Zero();
+    footstepLocations = Matrix3x4::Zero();
     _wbc_ctrl = std::make_shared<Wbc>(quad_->BuildModel());
   }
 
@@ -70,10 +70,10 @@ namespace sdrobot::ctrl::fsm
 
     cMPCOld->Run(leg_ctrl_, quad_, state_cmd_, state_est_);
 
-    std::array<Vector3d, 4> pDes_backup;
-    std::array<Vector3d, 4> vDes_backup;
-    std::array<Matrix3d, 4> Kp_backup;
-    std::array<Matrix3d, 4> Kd_backup;
+    std::array<Vector3, 4> pDes_backup;
+    std::array<Vector3, 4> vDes_backup;
+    std::array<Matrix3, 4> Kp_backup;
+    std::array<Matrix3, 4> Kd_backup;
 
     for (size_t leg(0); leg < 4; ++leg)
     {

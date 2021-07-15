@@ -21,8 +21,8 @@ namespace sdrobot::dynamics
     return deg * M_PI / 180.0;
   }
 
-  void PseudoInverse(MatrixXd const &matrix, double sigmaThreshold,
-                     MatrixXd &invMatrix)
+  void PseudoInverse(MatrixX const &matrix, double sigmaThreshold,
+                     MatrixX &invMatrix)
   {
 
   if ((1 == matrix.rows()) && (1 == matrix.cols())) {
@@ -35,12 +35,12 @@ namespace sdrobot::dynamics
     return;
   }
 
-  Eigen::JacobiSVD<MatrixXd> svd(matrix,
+  Eigen::JacobiSVD<MatrixX> svd(matrix,
                                 Eigen::ComputeThinU | Eigen::ComputeThinV);
   // not sure if we need to svd.sort()... probably not
   int const nrows(svd.singularValues().rows());
-  MatrixXd invS;
-  invS = MatrixXd::Zero(nrows, nrows);
+  MatrixX invS;
+  invS = MatrixX::Zero(nrows, nrows);
   for (int ii(0); ii < nrows; ++ii) {
     if (svd.singularValues().coeff(ii) > sigmaThreshold) {
       invS.coeffRef(ii, ii) = 1.0 / svd.singularValues().coeff(ii);

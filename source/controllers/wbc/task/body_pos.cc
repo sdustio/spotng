@@ -6,11 +6,11 @@ namespace sdrobot::ctrl::wbc
 {
   TaskBodyPos::TaskBodyPos(const dynamics::FBModelPtr &model) : Task(3, model)
   {
-    Jt_ = MatrixXd::Zero(dim_task_, robot::ModelAttrs::dim_config);
+    Jt_ = MatrixX::Zero(dim_task_, robot::ModelAttrs::dim_config);
     Jt_.block<3, 3>(0, 3).setIdentity();
-    JtDotQdot_ = VectorXd::Zero(dim_task_);
+    JtDotQdot_ = VectorX::Zero(dim_task_);
 
-    _Kp_kin = VectorXd::Constant(dim_task_, 1.);
+    _Kp_kin = VectorX::Constant(dim_task_, 1.);
     for (size_t i = 0; i < 3; i++)
     {
       _Kp[i] = robot::DynamicsAttrs::kp_body[i];
@@ -19,8 +19,8 @@ namespace sdrobot::ctrl::wbc
   }
 
   // Update op_cmd_
-  bool TaskBodyPos::_UpdateCommand(const Vector3d &pos_des, const Vector3d &vel_des,
-                                   const Vector3d &acc_des)
+  bool TaskBodyPos::_UpdateCommand(const Vector3 &pos_des, const Vector3 &vel_des,
+                                   const Vector3 &acc_des)
   {
     const auto &link_pos = _robot_sys->GetState().body_position;
     auto rot = dynamics::QuatToRotMat(_robot_sys->GetState().body_orientation);

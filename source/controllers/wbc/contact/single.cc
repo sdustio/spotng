@@ -6,9 +6,9 @@ namespace sdrobot::ctrl::wbc
     ContactSingle::ContactSingle(
         const dynamics::FBModelPtr &model, size_t contact_pt) : Contact(3), robot_sys_(model), _contact_pt(contact_pt)
     {
-        Jc_ = MatrixXd(dim_contact_, robot::ModelAttrs::dim_config);
-        JcDotQdot_ = VectorXd::Zero(dim_contact_);
-        Uf_ = MatrixXd::Zero(_dim_U, dim_contact_);
+        Jc_ = MatrixX(dim_contact_, robot::ModelAttrs::dim_config);
+        JcDotQdot_ = VectorX::Zero(dim_contact_);
+        Uf_ = MatrixX::Zero(_dim_U, dim_contact_);
 
         double mu(0.4);
 
@@ -48,7 +48,7 @@ namespace sdrobot::ctrl::wbc
 
     bool ContactSingle::_UpdateInequalityVector()
     {
-        ieq_vec_ = VectorXd::Zero(_dim_U);
+        ieq_vec_ = VectorX::Zero(_dim_U);
         ieq_vec_[5] = -_max_Fz;
         return true;
     }

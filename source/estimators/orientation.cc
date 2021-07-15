@@ -11,7 +11,7 @@ namespace sdrobot::est
     //初值
     if (b_first_visit_)
     {
-      Vector3d rpy_ini = dynamics::QuatToRPY(ret.orientation); //四元数转欧拉角
+      Vector3 rpy_ini = dynamics::QuatToRPY(ret.orientation); //四元数转欧拉角
       rpy_ini[0] = 0;                                          //roll  pitch 设零
       rpy_ini[1] = 0;
       ori_ini_inv_ = dynamics::RPYToQuat(-rpy_ini); //初始四元数的逆

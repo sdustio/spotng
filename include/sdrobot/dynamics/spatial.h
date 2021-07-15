@@ -14,40 +14,40 @@ namespace sdrobot::dynamics
  * Compute the spatial motion cross product matrix.
  * Prefer MotionCrossProduct when possible.
  */
-  Matrix6d MotionCrossMatrix(const Vector6d &v);
+  Matrix6 MotionCrossMatrix(const Vector6 &v);
 
   /*!
  * Compute spatial force cross product matrix.
  * Prefer ForceCrossProduct when possible
  */
-  Matrix6d ForceCrossMatrix(const Vector6d &v);
+  Matrix6 ForceCrossMatrix(const Vector6 &v);
 
   /*!
  * Compute spatial motion cross product.  Faster than the matrix multiplication
  * version
  */
-  SpatialVec MotionCrossProduct(const Vector6d &a, const Vector6d &b);
+  SpatialVec MotionCrossProduct(const Vector6 &a, const Vector6 &b);
 
   /*!
  * Compute spatial force cross product.  Faster than the matrix multiplication
  * version
  */
-  SpatialVec ForceCrossProduct(const Vector6d &a, const Vector6d &b);
+  SpatialVec ForceCrossProduct(const Vector6 &a, const Vector6 &b);
 
   /*!
  * Convert a spatial transform to a homogeneous coordinate transformation
  */
-  Matrix4d SpatialXformToHomogeneous(const SpatialXform &X);
+  Matrix4 SpatialXformToHomogeneous(const SpatialXform &X);
 
   /*!
  * Convert a homogeneous coordinate transformation to a spatial one
  */
-  SpatialXform HomogeneousToSpatialXform(const Matrix4d &H);
+  SpatialXform HomogeneousToSpatialXform(const Matrix4 &H);
 
   /*!
  * Create spatial coordinate transformation from rotation and translation
  */
-  SpatialXform CreateSpatialXform(const RotMat &R, const Vector3d &r);
+  SpatialXform CreateSpatialXform(const RotMat &R, const Vector3 &r);
 
   /*!
  * Get rotation matrix from spatial transformation
@@ -57,7 +57,7 @@ namespace sdrobot::dynamics
   /*!
  * Get translation vector from spatial transformation
  */
-  Vector3d TranslationFromSpatialXform(const SpatialXform &X);
+  Vector3 TranslationFromSpatialXform(const SpatialXform &X);
 
   /*!
  * Invert a spatial transformation (much faster than matrix inverse)
@@ -72,48 +72,48 @@ namespace sdrobot::dynamics
   /*!
  * Compute joint transformation
  */
-  Matrix6d JointXform(JointType joint, CoordinateAxis axis, double q);
+  Matrix6 JointXform(JointType joint, CoordinateAxis axis, double q);
 
   /*!
  * Construct the rotational inertia of a uniform density box with a given mass.
  * @param mass Mass of the box
  * @param dims Dimensions of the box
  */
-  Matrix3d RotInertiaOfBox(double mass, const Vector3d &dims);
+  Matrix3 RotInertiaOfBox(double mass, const Vector3 &dims);
 
   /*!
  * Convert from spatial velocity to linear velocity.
  * Uses spatial velocity at the given point.
  */
-  Vector3d SpatialToLinearVelocity(const SpatialVec &v, const Vector3d &x);
+  Vector3 SpatialToLinearVelocity(const SpatialVec &v, const Vector3 &x);
 
   /*!
  * Convert from spatial velocity to angular velocity.
  */
-  Vector3d SpatialToAngularVelocity(const SpatialVec &v);
+  Vector3 SpatialToAngularVelocity(const SpatialVec &v);
 
   /*!
  * Compute the classical lienear accleeration of a frame given its spatial
  * acceleration and velocity
  */
-  Vector3d SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v);
+  Vector3 SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v);
 
   /*!
  * Compute the classical lienear acceleration of a frame given its spatial
  * acceleration and velocity
  */
-  Vector3d SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v, const Vector3d &x);
+  Vector3 SpatialToLinearAcceleration(const SpatialVec &a, const SpatialVec &v, const Vector3 &x);
 
   /*!
  * Apply spatial transformation to a point.
  */
-  Vector3d SpatialXformPoint(const SpatialXform &X, const Vector3d &p);
+  Vector3 SpatialXformPoint(const SpatialXform &X, const Vector3 &p);
 
   /*!
  * Convert a force at a point to a spatial force
  * @param f : force
  * @param p : point
  */
-  SpatialVec ForceToSpatialForce(const Vector3d &f, const Vector3d &p);
+  SpatialVec ForceToSpatialForce(const Vector3 &f, const Vector3 &p);
 
 }

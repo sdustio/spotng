@@ -70,9 +70,9 @@ namespace sdrobot::robot
       */
   struct IMUData
   {
-    Vector3d acc;
-    Vector3d gyro;
-    Vector4d quat;
+    Vector3 acc;
+    Vector3 gyro;
+    Vector4 quat;
     // todo is there status for the vectornav?
   };
 

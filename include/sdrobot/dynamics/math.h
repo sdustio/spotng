@@ -29,6 +29,6 @@ namespace sdrobot::dynamics
   * @param sigmaThreshold : threshold for singular values being zero
   * @param invMatrix : output matrix
   */
-  void PseudoInverse(MatrixXd const &matrix, double sigmaThreshold,
-                     MatrixXd &invMatrix);
+  void PseudoInverse(MatrixX const &matrix, double sigmaThreshold,
+                     MatrixX &invMatrix);
 }

@@ -33,7 +33,7 @@ namespace sdrobot::ctrl::fsm
     WbcPtr wbc_;
     WbcData wbc_data_;
 
-    Vector3d ini_body_pos_;
+    Vector3 ini_body_pos_;
     double body_weight_;
   };
 

@@ -8,7 +8,7 @@ namespace sdrobot::dynamics
    * Construct spatial inertia from mass, center of mass, and 3x3 rotational 从质量、质心和3 * 3的转动惯性来构造空间惯量
    * inertia
    */
-  SpatialInertia BuildSpatialInertia(double mass, const Vector3d &com, const InertiaMat &inertia);
+  SpatialInertia BuildSpatialInertia(double mass, const Vector3 &com, const InertiaMat &inertia);
 
   SpatialInertia MassPropertiesToSpatialInertia(const MassProperties &a);
 
@@ -26,7 +26,7 @@ namespace sdrobot::dynamics
   /*!
    * Get center of mass location 得到质心的位置
    */
-  Vector3d COMFromSpatialInertia(const SpatialInertia &si);
+  Vector3 COMFromSpatialInertia(const SpatialInertia &si);
 
   /*!
    * Get 3x3 rotational inertia 得到3 * 3的转动惯量

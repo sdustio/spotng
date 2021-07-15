@@ -123,7 +123,7 @@ namespace sdrobot::ctrl::fsm
     }
 
     // TODO check contact
-    // Vector4d se_contactState(0.5, 0.5, 0.5, 0.5);
+    // Vector4 se_contactState(0.5, 0.5, 0.5, 0.5);
     // this->_data->_stateEstimator->setContactPhase(se_contactState);
   }
 
@@ -171,7 +171,7 @@ namespace sdrobot::ctrl::fsm
 
   void StateRecoveryStand::SetJPosInterPts(
       const int curr_iter, int max_iter, size_t leg,
-      const Vector3d &ini, const Vector3d &fin)
+      const Vector3 &ini, const Vector3 &fin)
   {
     double a = 0.;
     double b = 1.;
@@ -184,13 +184,13 @@ namespace sdrobot::ctrl::fsm
     }
 
     // compute setpoints
-    Vector3d inter_pos = a * ini + b * fin;
+    Vector3 inter_pos = a * ini + b * fin;
 
     // do control
-    JointPDControl(leg, inter_pos, Vector3d::Zero());
+    JointPDControl(leg, inter_pos, Vector3::Zero());
   }
 
-  void StateRecoveryStand::JointPDControl(size_t leg, const Vector3d &qDes, const Vector3d &qdDes)
+  void StateRecoveryStand::JointPDControl(size_t leg, const Vector3 &qDes, const Vector3 &qdDes)
   {
     leg_ctrl_->GetCmdsForUpdate()[leg].kp_joint = kp_mat_;
     leg_ctrl_->GetCmdsForUpdate()[leg].kd_joint = kd_mat_;

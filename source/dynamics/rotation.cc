@@ -40,7 +40,7 @@ namespace sdrobot::dynamics
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
-  RotMat RPYToRotMat(const Vector3d &v)
+  RotMat RPYToRotMat(const Vector3 &v)
   {
     RotMat m = CoordinateRot(CoordinateAxis::X, v[0]) *
                CoordinateRot(CoordinateAxis::Y, v[1]) *
@@ -51,9 +51,9 @@ namespace sdrobot::dynamics
   /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
  */
-  Matrix3d VecToSkewMat(const Vector3d &v)
+  Matrix3 VecToSkewMat(const Vector3 &v)
   {
-    Matrix3d m;
+    Matrix3 m;
     m << 0, -v[2], v[1], v[2], 0, -v[0], -v[1], v[0], 0;
     return m;
   }
@@ -61,9 +61,9 @@ namespace sdrobot::dynamics
   /*!
  * Put the skew-symmetric component of 3x3 matrix m into a 3x1 vector 反对称阵转向量
  */
-  Vector3d MatToSkewVec(const Matrix3d &m)
+  Vector3 MatToSkewVec(const Matrix3 &m)
   {
-    return 0.5 * Vector3d(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0),
+    return 0.5 * Vector3(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0),
                           (m(1, 0) - m(0, 1)));
   }
 
@@ -139,9 +139,9 @@ namespace sdrobot::dynamics
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-  Vector3d QuatToRPY(const Quat &q)
+  Vector3 QuatToRPY(const Quat &q)
   {
-    Vector3d rpy;
+    Vector3 rpy;
     double as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
     rpy(2) =
         std::atan2(2 * (q[1] * q[2] + q[0] * q[3]),
@@ -153,17 +153,17 @@ namespace sdrobot::dynamics
     return rpy;
   }
 
-  Quat RPYToQuat(const Vector3d &rpy)
+  Quat RPYToQuat(const Vector3 &rpy)
   {
     RotMat R = RPYToRotMat(rpy);
     Quat q = RotMatToQuat(R);
     return q;
   }
 
-  Vector3d RotMatToRPY(const RotMat &R)
+  Vector3 RotMatToRPY(const RotMat &R)
   {
     Quat q = RotMatToQuat(R);
-    Vector3d rpy = QuatToRPY(q);
+    Vector3 rpy = QuatToRPY(q);
     return rpy;
   }
   /*!
@@ -173,11 +173,11 @@ namespace sdrobot::dynamics
  * @param omega
  * @return
  */
-  Quat QuatDerivative(const Quat &q, const Vector3d &omega)
+  Quat QuatDerivative(const Quat &q, const Vector3 &omega)
   {
     auto quaternionDerivativeStabilization = 0.1;
     // first case in rqd
-    Matrix4d Q;
+    Matrix4 Q;
     Q << q[0], -q[1], -q[2], -q[3], q[1], q[0], -q[3], q[2], q[2], q[3], q[0],
         -q[1], q[3], -q[2], q[1], q[0];
 
@@ -195,11 +195,11 @@ namespace sdrobot::dynamics
   {
     double r1 = q1[0];
     double r2 = q2[0];
-    Vector3d v1(q1[1], q1[2], q1[3]);
-    Vector3d v2(q2[1], q2[2], q2[3]);
+    Vector3 v1(q1[1], q1[2], q1[3]);
+    Vector3 v2(q2[1], q2[2], q2[3]);
 
     double r = r1 * r2 - v1.dot(v2);
-    Vector3d v = r1 * v2 + r2 * v1 + v1.cross(v2);
+    Vector3 v = r1 * v2 + r2 * v1 + v1.cross(v2);
     Quat q(r, v[0], v[1], v[2]);
     return q;
   }
@@ -211,9 +211,9 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  Quat QuatIntegrate(const Quat &quat, const Vector3d &omega, double dt)
+  Quat QuatIntegrate(const Quat &quat, const Vector3 &omega, double dt)
   {
-    Vector3d axis;
+    Vector3 axis;
     double ang = omega.norm();
     if (ang > 0)
     {
@@ -221,11 +221,11 @@ namespace sdrobot::dynamics
     }
     else
     {
-      axis = Vector3d(1, 0, 0);
+      axis = Vector3(1, 0, 0);
     }
 
     ang *= dt;
-    Vector3d ee = std::sin(ang / 2) * axis;
+    Vector3 ee = std::sin(ang / 2) * axis;
     Quat quatD(std::cos(ang / 2), ee[0], ee[1], ee[2]);
 
     Quat quatNew = QuatProduct(quatD, quat);
@@ -240,9 +240,9 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  Quat QuatIntegrateImplicit(const Quat &quat, const Vector3d &omega, double dt)
+  Quat QuatIntegrateImplicit(const Quat &quat, const Vector3 &omega, double dt)
   {
-    Vector3d axis;
+    Vector3 axis;
     double ang = omega.norm();
     if (ang > 0)
     {
@@ -250,11 +250,11 @@ namespace sdrobot::dynamics
     }
     else
     {
-      axis = Vector3d(1, 0, 0);
+      axis = Vector3(1, 0, 0);
     }
 
     ang *= dt;
-    Vector3d ee = std::sin(ang / 2) * axis;
+    Vector3 ee = std::sin(ang / 2) * axis;
     Quat quatD(std::cos(ang / 2), ee[0], ee[1], ee[2]);
 
     Quat quatNew = QuatProduct(quat, quatD);
@@ -265,9 +265,9 @@ namespace sdrobot::dynamics
   /*!
  * Convert a quaternion to so3.
  */
-  Vector3d QuatToSO3(const Quat &q)
+  Vector3 QuatToSO3(const Quat &q)
   {
-    Vector3d so3;
+    Vector3 so3;
     double theta = 2. * std::acos(q[0]);
     so3[0] = theta * q[1] / std::sin(theta / 2.);
     so3[1] = theta * q[2] / std::sin(theta / 2.);
@@ -275,7 +275,7 @@ namespace sdrobot::dynamics
     return so3;
   }
 
-  Quat SO3ToQuat(Vector3d &so3)
+  Quat SO3ToQuat(Vector3 &so3)
   {
     Quat quat;
 

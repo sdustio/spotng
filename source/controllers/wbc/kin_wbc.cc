@@ -6,20 +6,20 @@ namespace sdrobot::ctrl::wbc
 
   KinWbc::KinWbc(size_t num_qdot)
       : num_qdot_(num_qdot), num_act_joint_(num_qdot - 6),
-        I_mtx(MatrixXd::Identity(num_qdot, num_qdot))
+        I_mtx(MatrixX::Identity(num_qdot, num_qdot))
   {
   }
 
-  bool KinWbc::FindConfiguration(const VectorXd &curr_config,
+  bool KinWbc::FindConfiguration(const VectorX &curr_config,
                                  const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list,
-                                 VectorXd &jpos_cmd, VectorXd &jvel_cmd)
+                                 VectorX &jpos_cmd, VectorX &jvel_cmd)
   {
     // Contact Jacobian Setup
-    MatrixXd Nc(num_qdot_, num_qdot_);
+    MatrixX Nc(num_qdot_, num_qdot_);
     Nc.setIdentity();
     if (contact_list.size() > 0)
     {
-      MatrixXd Jc, Jc_i;
+      MatrixX Jc, Jc_i;
       Jc = contact_list[0]->getContactJacobian();
       size_t num_rows = Jc.rows();
 
@@ -37,8 +37,8 @@ namespace sdrobot::ctrl::wbc
     }
 
     // First Task
-    VectorXd delta_q, qdot;
-    MatrixXd Jt, JtPre, JtPre_pinv, N_nx, N_pre;
+    VectorX delta_q, qdot;
+    MatrixX Jt, JtPre, JtPre_pinv, N_nx, N_pre;
 
     TaskPtr task = task_list[0];
     Jt = task->getTaskJacobian();
@@ -48,8 +48,8 @@ namespace sdrobot::ctrl::wbc
     delta_q = JtPre_pinv * (task->getPosError());
     qdot = JtPre_pinv * (task->getDesVel());
 
-    VectorXd prev_delta_q = delta_q;
-    VectorXd prev_qdot = qdot;
+    VectorX prev_delta_q = delta_q;
+    VectorX prev_qdot = qdot;
 
     _BuildProjectionMatrix(JtPre, N_nx);
     N_pre = Nc * N_nx;
@@ -80,14 +80,14 @@ namespace sdrobot::ctrl::wbc
     return true;
   }
 
-  void KinWbc::_BuildProjectionMatrix(const MatrixXd &J, MatrixXd &N)
+  void KinWbc::_BuildProjectionMatrix(const MatrixX &J, MatrixX &N)
   {
-    MatrixXd J_pinv;
+    MatrixX J_pinv;
     _PseudoInverse(J, J_pinv);
     N = I_mtx - J_pinv * J;
   }
 
-  void KinWbc::_PseudoInverse(const MatrixXd &J, MatrixXd &Jinv)
+  void KinWbc::_PseudoInverse(const MatrixX &J, MatrixX &Jinv)
   {
     dynamics::PseudoInverse(J, threshold_, Jinv);
   }

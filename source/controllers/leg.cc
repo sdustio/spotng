@@ -29,10 +29,10 @@ namespace sdrobot::ctrl
     for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // tauFF 获得从控制器来的力矩
-      Vector3d leg_torque = cmds_[leg].tau_feed_forward;
+      Vector3 leg_torque = cmds_[leg].tau_feed_forward;
 
       // forceFF 获得从控制器来的力矩
-      Vector3d foot_force = cmds_[leg].force_feed_forward;
+      Vector3 foot_force = cmds_[leg].force_feed_forward;
 
       // cartesian PD 直角坐标下pd
       foot_force +=

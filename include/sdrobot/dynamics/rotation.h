@@ -18,17 +18,17 @@ namespace sdrobot::dynamics
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
-  RotMat RPYToRotMat(const Vector3d &v);
+  RotMat RPYToRotMat(const Vector3 &v);
 
   /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
  */
-  Matrix3d VecToSkewMat(const Vector3d &v);
+  Matrix3 VecToSkewMat(const Vector3 &v);
 
   /*!
  * Put the skew-symmetric component of 3x3 matrix m into a 3x1 vector 反对称阵转向量
  */
-  Vector3d MatToSkewVec(const Matrix3d &m);
+  Vector3 MatToSkewVec(const Matrix3 &m);
 
   /*!
  * Convert a coordinate transformation matrix to an orientation quaternion. 将坐标变换矩阵转换为方向四元数
@@ -48,11 +48,11 @@ namespace sdrobot::dynamics
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-  Vector3d QuatToRPY(const Quat &q);
+  Vector3 QuatToRPY(const Quat &q);
 
-  Quat RPYToQuat(const Vector3d &rpy);
+  Quat RPYToQuat(const Vector3 &rpy);
 
-  Vector3d RotMatToRPY(const RotMat &R);
+  Vector3 RotMatToRPY(const RotMat &R);
   /*!
  * Quaternion derivative calculation, like rqd(q, omega) in MATLAB. 四元数导数的计算
  * the omega is expressed in body frame 角速度在身体框架中表示
@@ -60,7 +60,7 @@ namespace sdrobot::dynamics
  * @param omega
  * @return
  */
-  Quat QuatDerivative(const Quat &q, const Vector3d &omega);
+  Quat QuatDerivative(const Quat &q, const Vector3 &omega);
 
   /*!
  * Take the product of two quaternions 取两个四元数的乘积
@@ -74,7 +74,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  Quat QuatIntegrate(const Quat &quat, const Vector3d &omega, double dt);
+  Quat QuatIntegrate(const Quat &quat, const Vector3 &omega, double dt);
 
   /*!
  * Compute new quaternion given:
@@ -83,13 +83,13 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  Quat QuatIntegrateImplicit(const Quat &quat, const Vector3d &omega, double dt);
+  Quat QuatIntegrateImplicit(const Quat &quat, const Vector3 &omega, double dt);
 
   /*!
  * Convert a quaternion to so3.
  */
-  Vector3d QuatToSO3(const Quat &q);
+  Vector3 QuatToSO3(const Quat &q);
 
-  Quat SO3ToQuat(Vector3d &so3);
+  Quat SO3ToQuat(Vector3 &so3);
 
 } // namespace sdrobot::kinematics

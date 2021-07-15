@@ -137,7 +137,7 @@ namespace sdrobot::ctrl
     _body_ori_task->UpdateTask(
         input.pBody_RPY_des,
         input.vBody_Ori_des,
-        Vector3d::Zero());
+        Vector3::Zero());
     _body_pos_task->UpdateTask(
         input.pBody_des,
         input.vBody_des,
