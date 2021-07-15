@@ -18,9 +18,9 @@ namespace sdrobot::ctrl
     state_des_(StateIdx::vel_x) = Deadband(cmd_mv_x_, CmdLimits::min_vel_x, CmdLimits::max_vel_x);
     state_des_(StateIdx::vel_y) = Deadband(cmd_mv_y_, CmdLimits::min_vel_y, CmdLimits::max_vel_y);
     state_des_(StateIdx::vel_z) = 0.0;
-    state_des_(StateIdx::pos_x) = dt_ * state_des_(StateIdx::vel_x);
-    state_des_(StateIdx::pos_y) = dt_ * state_des_(StateIdx::vel_y);
-    state_des_(StateIdx::pos_z) = 0.0;
+    state_des_(StateIdx::pos_x) = dt_ * state_des_(StateIdx::vel_x); //delta x
+    state_des_(StateIdx::pos_y) = dt_ * state_des_(StateIdx::vel_y); //delta y
+    state_des_(StateIdx::pos_z) = 0.0;                               //delta z
     state_des_(StateIdx::rate_r) = 0.0;
     state_des_(StateIdx::rate_p) = 0.0;
     state_des_(StateIdx::rate_y) = Deadband(cmd_tr_, CmdLimits::min_rate_y, CmdLimits::max_rate_y);

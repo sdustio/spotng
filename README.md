@@ -6,6 +6,7 @@
 TODO
 - feature
   - 自动档
+  - Init状态问题
 - del useless(or just for sim) code
 - 优化性能
   - dynamic vector/matrix -> fixed vector/matrix
