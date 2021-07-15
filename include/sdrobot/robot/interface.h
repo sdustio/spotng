@@ -13,7 +13,16 @@ namespace sdrobot::robot
     Init,
     RecoveryStand,
     Locomotion,
-    BalanceStand,
+    BalanceStand
+  };
+
+  enum class Gait : uint8_t{
+    Trot,
+    SlowTrot,
+    FlyingTrot,
+    Walk,
+    Bound,
+    Pronk
   };
 
   struct SPICmd

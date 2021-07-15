@@ -68,7 +68,7 @@ namespace sdrobot::ctrl::fsm
     // Contact state logic
     // estimateContact();
 
-    cMPCOld->Run();
+    cMPCOld->Run(leg_ctrl_, quad_, state_cmd_, state_est_);
 
     std::array<Vector3d, 4> pDes_backup;
     std::array<Vector3d, 4> vDes_backup;

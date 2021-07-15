@@ -10,7 +10,7 @@ namespace sdrobot::ctrl::mpc
   public:
     CMpc(double _dt, int _iterations_between_mpc);
     bool Init() override { return true; }
-    bool Run() override { return true; }
+    bool Run(LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
     const MpcData &GetData() override { return data_; }
 
   private:
