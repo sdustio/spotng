@@ -19,8 +19,7 @@ namespace sdrobot::ctrl::mpc
   public:
     CMpc(double _dt, int _iterations_between_mpc);
     bool Init() override;
-    bool Run(LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
-    const MpcData &GetData() override { return data_; }
+    bool Run(WbcData &data, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
 
   private:
     void recompute_timing(int iterations_per_mpc);
@@ -44,7 +43,6 @@ namespace sdrobot::ctrl::mpc
     Vector3 rpy_comp;
     std::array<Vector3, 4> pFoot;
 
-    MpcData data_;
     std::array<double, 6> stand_traj;
 
     Gait current_gait_;

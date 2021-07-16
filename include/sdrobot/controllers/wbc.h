@@ -241,6 +241,7 @@ namespace sdrobot::ctrl
     std::array<Vector3, 4> pFoot_des;
     std::array<Vector3, 4> vFoot_des;
     std::array<Vector3, 4> aFoot_des;
+
     std::array<Vector3, 4> Fr_des;
 
     Vector4 contact_state;

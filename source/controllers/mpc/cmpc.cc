@@ -12,7 +12,7 @@ namespace sdrobot::ctrl::mpc
     firstSwing.fill(true);
   }
 
-  bool CMpc::Run(LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
+  bool CMpc::Run(WbcData &data_, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
   {
     _body_height = 0.3 + cmd->GetHeightVariation();
 

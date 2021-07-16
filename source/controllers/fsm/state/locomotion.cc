@@ -66,12 +66,12 @@ namespace sdrobot::ctrl::fsm
     // Contact state logic
     // estimateContact();
 
-    cMPCOld->Run(leg_ctrl_, quad_, state_cmd_, state_est_);
+    cMPCOld->Run(_wbc_data, leg_ctrl_, quad_, state_cmd_, state_est_);
 
-    std::array<Vector3, 4> pDes_backup;
-    std::array<Vector3, 4> vDes_backup;
-    std::array<Matrix3, 4> Kp_backup;
-    std::array<Matrix3, 4> Kd_backup;
+    Vector3 pDes_backup[4];
+    Vector3 vDes_backup[4];
+    Matrix3 Kp_backup[4];
+    Matrix3 Kd_backup[4];
 
     auto & leg_cmd = leg_ctrl_->GetCmdsForUpdate();
 
@@ -83,23 +83,6 @@ namespace sdrobot::ctrl::fsm
       Kd_backup[leg] = leg_cmd[leg].kd_cartesian;
     }
 
-    const auto & cmpc_data = cMPCOld->GetData();
-
-    _wbc_data.pBody_des = cmpc_data.pBody_des;
-    _wbc_data.vBody_des = cmpc_data.vBody_des;
-    _wbc_data.aBody_des = cmpc_data.aBody_des;
-
-    _wbc_data.pBody_RPY_des = cmpc_data.pBody_RPY_des;
-    _wbc_data.vBody_Ori_des = cmpc_data.vBody_Ori_des;
-
-    for (size_t i(0); i < 4; ++i)
-    {
-      _wbc_data.pFoot_des[i] = cmpc_data.pFoot_des[i];
-      _wbc_data.vFoot_des[i] = cmpc_data.vFoot_des[i];
-      _wbc_data.aFoot_des[i] = cmpc_data.aFoot_des[i];
-      _wbc_data.Fr_des[i] = cmpc_data.Fr_des[i];
-    }
-    _wbc_data.contact_state = cmpc_data.contact_state;
     _wbc_ctrl->Run(_wbc_data, state_cmd_, state_est_, leg_ctrl_);
 
     for (size_t leg(0); leg < 4; ++leg)
