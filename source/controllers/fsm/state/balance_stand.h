@@ -34,6 +34,7 @@ namespace sdrobot::ctrl::fsm
     WbcData wbc_data_;
 
     Vector3 ini_body_pos_;
+    Vector3 _ini_body_ori_rpy;
     double body_weight_;
   };
 

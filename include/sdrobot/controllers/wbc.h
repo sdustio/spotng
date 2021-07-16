@@ -7,6 +7,8 @@
 #include "sdrobot/estimators/state_est.h"
 #include "sdrobot/dynamics/fb_model.h"
 #include "sdrobot/controllers/leg.h"
+#include "sdrobot/controllers/state_cmd.h"
+
 
 namespace sdrobot::ctrl
 {
@@ -248,12 +250,12 @@ namespace sdrobot::ctrl
   {
   public:
     Wbc(const dynamics::FBModelPtr &model, double weight = 0.1);
-    void Run(const WbcData &, const est::StateEstPtr &, LegPtr &);
+    void Run(const WbcData &, const StateCmdPtr &, const est::StateEstPtr &, LegPtr &);
 
   private:
     void _UpdateModel(const est::StateData &, const robot::leg::Datas &);
     void _ComputeWBC();
-    void _UpdateLegCMD(LegPtr &);
+    void _UpdateLegCMD(LegPtr &, const StateCmdPtr &);
     void _ContactTaskUpdate(const WbcData &);
     void _CleanUp();
 

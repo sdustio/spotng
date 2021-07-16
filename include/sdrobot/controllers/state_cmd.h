@@ -38,6 +38,16 @@ namespace sdrobot::ctrl
     constexpr static double filter = 0.1;
   };
 
+  enum class Gait : uint8_t{
+    Auto,
+    Trot,
+    SlowTrot,
+    FlyingTrot,
+    Walk,
+    Bound,
+    Pronk
+  };
+
   class StateCmd
   {
 
@@ -45,23 +55,36 @@ namespace sdrobot::ctrl
     explicit StateCmd(double dt) : dt_(dt) { state_des_ = Vector12::Zero(); }
 
     bool Update(double mv_x, double mv_y, double tr, double pa, robot::Mode m);
-    bool SetMode(robot::Mode mode) {
-      cmd_mode_ = mode;
-      return true;
-      }
 
     bool CmdtoStateData();
+
     const Vector12 &GetStateDes() const { return state_des_; }
+
+    bool SetMode(robot::Mode mode)
+    {
+      cmd_mode_ = mode;
+      return true;
+    }
+
     robot::Mode GetMode() const { return cmd_mode_; }
+
+    Gait GetGait() const {return cmd_gait_;}
+
+    double GetStepHeight() const {return cmd_step_height_;}
+
+    double GetHeightVariation() const {return cmd_height_variation_;}
 
   private:
     double Deadband(double v, double minVal, double maxVal);
 
-    double cmd_mv_x_;
-    double cmd_mv_y_;
-    double cmd_tr_;
-    double cmd_pa_;
+    double cmd_move_x_;
+    double cmd_move_y_;
+    double cmd_turn_rate_;
+    double cmd_pitch_angle_;
+    double cmd_step_height_ = 0.1; //step height
+    double cmd_height_variation_;
     robot::Mode cmd_mode_;
+    Gait cmd_gait_ = Gait::Trot;
 
     // Dynamics matrix for discrete time approximation
     Vector12 state_des_;

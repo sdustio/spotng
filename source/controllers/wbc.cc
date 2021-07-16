@@ -38,7 +38,7 @@ namespace sdrobot::ctrl
     _full_config.setZero();
   }
 
-  void Wbc::Run(const WbcData &input, const est::StateEstPtr &est, LegPtr &cleg)
+  void Wbc::Run(const WbcData &input, const StateCmdPtr &state_cmd, const est::StateEstPtr &est, LegPtr &cleg)
   {
 
     // Update Model
@@ -49,7 +49,7 @@ namespace sdrobot::ctrl
 
     // WBC Computation
     _ComputeWBC();
-    _UpdateLegCMD(cleg);
+    _UpdateLegCMD(cleg, state_cmd);
   }
 
   void Wbc::_UpdateModel(const est::StateData &estdata, const robot::leg::Datas &legdata)
@@ -89,7 +89,7 @@ namespace sdrobot::ctrl
     _wbic.MakeTorque(_tau_ff, _task_list, _contact_list);
   }
 
-  void Wbc::_UpdateLegCMD(LegPtr &cleg)
+  void Wbc::_UpdateLegCMD(LegPtr &cleg, const StateCmdPtr &state_cmd)
   {
     auto &cmds = cleg->GetCmdsForUpdate();
 
@@ -105,12 +105,13 @@ namespace sdrobot::ctrl
         cmds[leg].kp_joint(jidx, jidx) = _Kp_joint[jidx];
         cmds[leg].kd_joint(jidx, jidx) = _Kd_joint[jidx];
 
-        /*TODO locomotion
-        if (data.userParameters->cmpc_gait == 1 || data.userParameters->cmpc_gait == 2) // bound and pronk gaits
+        auto gait = state_cmd->GetGait();
+
+        if (gait== Gait::Bound || gait == Gait::Pronk)
         {
           cmds[leg].tau_feed_forward[jidx] *= 0.8;
         }
-        */
+
       }
     }
 

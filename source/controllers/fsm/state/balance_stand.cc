@@ -18,13 +18,17 @@ namespace sdrobot::ctrl::fsm
 
   void StateBalanceStand::OnEnter()
   {
-    ini_body_pos_ = state_est_->GetData().position;
+    const auto & estdata = state_est_->GetData();
+
+    ini_body_pos_ = estdata.position;
 
     if (ini_body_pos_[2] < 0.2)
     {
       ini_body_pos_[2] = 0.25;
     }
     //   ini_body_pos_[2]=0.26;
+
+    _ini_body_ori_rpy = estdata.rpy;
   }
 
   void StateBalanceStand::OnExit()
@@ -55,6 +59,7 @@ namespace sdrobot::ctrl::fsm
     wbc_data_.vBody_des.setZero();
     wbc_data_.aBody_des.setZero();
 
+    wbc_data_.pBody_RPY_des = _ini_body_ori_rpy;
     auto &des = state_cmd_->GetStateDes();
     wbc_data_.pBody_RPY_des[0] = des(StateIdx::angle_r);
     wbc_data_.pBody_RPY_des[1] = des(StateIdx::angle_p);
@@ -75,7 +80,7 @@ namespace sdrobot::ctrl::fsm
       wbc_data_.contact_state[i] = true;
     }
 
-    wbc_->Run(wbc_data_, state_est_, leg_ctrl_);
+    wbc_->Run(wbc_data_, state_cmd_, state_est_, leg_ctrl_);
   }
 
 } // namespace sdrobot::ctrl::fsm

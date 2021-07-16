@@ -16,15 +16,6 @@ namespace sdrobot::robot
     BalanceStand
   };
 
-  enum class Gait : uint8_t{
-    Trot,
-    SlowTrot,
-    FlyingTrot,
-    Walk,
-    Bound,
-    Pronk
-  };
-
   struct SPICmd
   {
     std::array<double, 4> q_des_abad;
