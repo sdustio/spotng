@@ -39,7 +39,6 @@ namespace sdrobot::ctrl
   };
 
   enum class Gait : uint8_t{
-    Auto,
     Trot,
     SlowTrot,
     FlyingTrot,
@@ -71,8 +70,6 @@ namespace sdrobot::ctrl
     Gait GetGait() const {return cmd_gait_;}
 
     double GetStepHeight() const {return cmd_step_height_;}
-
-    double GetHeightVariation() const {return cmd_height_variation_;}
 
   private:
     double Deadband(double v, double minVal, double maxVal);

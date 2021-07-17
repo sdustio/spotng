@@ -17,36 +17,34 @@ namespace sdrobot::ctrl::mpc
   class CMpc : public Mpc
   {
   public:
-    CMpc(double _dt, int _iterations_between_mpc);
+    CMpc(double _dt, unsigned _iterations_between_mpc);
     bool Init() override;
     bool Run(WbcData &data, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
 
   private:
-    void recompute_timing(int iterations_per_mpc);
-    void updateMPCIfNeeded(const std::vector<int> &mpcTable);
+    void updateMPCIfNeeded(const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3& v_des_world);
+    void solveDenseMPC(const std::vector<int> &mpcTable, const est::StateEstPtr &est);
 
     double dt;
     double dtMPC;
-    int iterationsBetweenMPC;
-    int horizonLength = 10;
-    int iterationCounter = 0;
+    unsigned iterationsBetweenMPC;
+    unsigned horizonLength = 10;
+    unsigned iterationCounter = 0;
 
     std::array<FootSwingTrajectory, 4> footSwingTrajectories;
     std::array<bool, 4> firstSwing;
     Vector4 swingTimes;
     std::array<double, 4> swingTimeRemaining;
 
-    double _body_height;
-
     Vector3 world_position_desired;
     Vector3 rpy_int;
-    Vector3 rpy_comp;
     std::array<Vector3, 4> pFoot;
 
     std::array<double, 6> stand_traj;
 
     Gait current_gait_;
-    bool firstRun = false;
+    bool firstRun = true;
+    std::array<double, 12*36> trajAll;
 
     Matrix3 Kp, Kd, Kp_stance, Kd_stance;
 

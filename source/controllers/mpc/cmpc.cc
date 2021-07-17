@@ -3,18 +3,30 @@
 
 namespace sdrobot::ctrl::mpc
 {
-  CMpc::CMpc(double _dt, int _iterations_between_mpc) : dt(_dt),
-                                                        dtMPC(_dt * _iterations_between_mpc),
-                                                        iterationsBetweenMPC(_iterations_between_mpc),
-                                                        rpy_int(Vector3::Zero()),
-                                                        rpy_comp(Vector3::Zero())
+  using Eigen::Vector4i;
+
+  CMpc::CMpc(double _dt, unsigned _iterations_between_mpc) : dt(_dt),
+                                                             dtMPC(_dt * _iterations_between_mpc),
+                                                             iterationsBetweenMPC(_iterations_between_mpc),
+                                                             rpy_int(Vector3::Zero())
   {
     firstSwing.fill(true);
+    gait_map_ = {
+        {Gait::Trot, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 5, 5, 0), Vector4i(5, 5, 5, 5), "Trot")},
+        {Gait::SlowTrot, std::make_shared<OffsetDurationGait>(int(horizonLength * 1.2), Vector4i(0, 6, 6, 0), Vector4i(6, 6, 6, 6), "SlowTrot")},
+        {Gait::FlyingTrot, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 5, 5, 0), Vector4i(4, 4, 4, 4), "FlyingTrot")},
+        {Gait::Walk, std::make_shared<OffsetDurationGait>(int(horizonLength * 1.6), Vector4i(0, 8, 4, 12), Vector4i(12, 12, 12, 12), "Walk")},
+        {Gait::Bound, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(5, 5, 0, 0), Vector4i(5, 5, 5, 5), "Bound")},
+        {Gait::Pronk, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 0, 0, 0), Vector4i(4, 4, 4, 4), "Pronk")}};
+    // TODO
+    // setup_problem(dtMPC, horizonLength, 0.4, 120);
   }
 
   bool CMpc::Run(WbcData &data_, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
   {
-    _body_height = 0.3 + cmd->GetHeightVariation();
+    const auto &cmd_des = cmd->GetStateDes();
+
+    auto _body_height = 0.3 + cmd_des(StateIdx::pos_z);
 
     const auto &seResult = est->GetData();
 
@@ -23,15 +35,15 @@ namespace sdrobot::ctrl::mpc
     {
       stand_traj[0] = seResult.position[0];
       stand_traj[1] = seResult.position[1];
-      stand_traj[2] = 0.21;
+      stand_traj[2] = _body_height; // ?? 0.21;
       stand_traj[3] = 0;
       stand_traj[4] = 0;
       stand_traj[5] = seResult.rpy[2];
       world_position_desired[0] = stand_traj[0];
       world_position_desired[1] = stand_traj[1];
-      world_position_desired[2] = seResult.rpy[2]; //???
+      world_position_desired[2] = stand_traj[2]; //?? seResult.rpy[2];
 
-      for (int i = 0; i < 4; i++)
+      for (size_t i = 0; i < 4; i++)
       {
 
         footSwingTrajectories[i].setHeight(0.05);
@@ -44,11 +56,7 @@ namespace sdrobot::ctrl::mpc
     auto cmd_gait = cmd->GetGait();
     GaitSkdPtr gait_skd = gait_map_[cmd_gait];
 
-    current_gait_ = cmd_gait;
-
     gait_skd->setIterations(iterationsBetweenMPC, iterationCounter);
-
-    recompute_timing(iterationsBetweenMPC);
 
     if (_body_height < 0.02)
     {
@@ -58,40 +66,36 @@ namespace sdrobot::ctrl::mpc
     if (cmd_gait == Gait::FlyingTrot)
       _body_height = 0.31;
 
-    const auto &cmd_des = cmd->GetStateDes();
-
     // integrate position setpoint
     Vector3 v_des_robot = cmd_des.segment<3>(StateIdx::vel_x);
-
     Vector3 v_des_world = seResult.rot_body.transpose() * v_des_robot;
-    Vector3 v_robot = seResult.v_world;
+    const auto &v_world = seResult.v_world;
 
     //Integral-esque pitche and roll compensation
-    if (fabs(v_robot[0]) > .02) //avoid dividing by zero
+    if (fabs(v_world[0]) > .02) //avoid dividing by zero
     {
-      rpy_int[1] += 5 * dt * (cmd_des(StateIdx::angle_p) - seResult.rpy[1]) / v_robot[0];
+      rpy_int[1] += 5 * dt * (cmd_des(StateIdx::angle_p) - seResult.rpy[1]) / v_world[0];
     }
-    if (fabs(v_robot[1]) > 0.01)
+    if (fabs(v_world[1]) > 0.01)
     {
-      rpy_int[0] += dt * (cmd_des(StateIdx::angle_r) - seResult.rpy[0]) / v_robot[1];
+      rpy_int[0] += dt * (cmd_des(StateIdx::angle_r) - seResult.rpy[0]) / v_world[1];
     }
 
     rpy_int[0] = fminf(fmaxf(rpy_int[0], -.25), .25);
     rpy_int[1] = fminf(fmaxf(rpy_int[1], -.25), .25);
-    rpy_comp[1] = v_robot[0] * rpy_int[1];
-    rpy_comp[0] = v_robot[1] * rpy_int[0] * int(cmd_gait != Gait::Pronk); //turn off for pronking
 
-    for (int i = 0; i < 4; i++)
+    for (size_t i = 0; i < 4; i++)
     {
       pFoot[i] = seResult.position +
                  seResult.rot_body.transpose() * (quad->GetHipLocation(i) +
                                                   cleg->GetDatas()[i].p);
     }
 
-    world_position_desired += dt * Vector3(v_des_world[0], v_des_world[1], 0);
+    world_position_desired += dt * v_des_world;
+    world_position_desired[2] = _body_height;
 
     // foot placement
-    for (int l = 0; l < 4; l++)
+    for (size_t l = 0; l < 4; l++)
       swingTimes[l] = gait_skd->getCurrentSwingTime(dtMPC, l);
 
     double side_sign[4] = {-1, 1, -1, 1};
@@ -145,23 +149,23 @@ namespace sdrobot::ctrl::mpc
 
       Vector3 Pf = seResult.position + seResult.rot_body.transpose() * (pYawCorrected + v_des_robot * swingTimeRemaining[i]);
 
-      //+ seResult.v_world * swingTimeRemaining[i];
+      //+ v_world * swingTimeRemaining[i];
 
       double p_rel_max = 0.35;
       //    double p_rel_max = 0.3f;
 
       // Using the estimated velocity is correct
       //Vector3 v_des_robot_world = seResult.rot_body.transpose() * v_des_robot;
-      double pfx_rel = seResult.v_world[0] * (.5 + Params::bonus_swing) * stance_time +
-                       .1 * (seResult.v_world[0] - v_des_world[0]) +
-                       (0.5 * seResult.position[2] / 9.81) * (seResult.v_world[1] * cmd_des(StateIdx::rate_y));
+      double pfx_rel = v_world[0] * (.5 + Params::bonus_swing) * stance_time +
+                       .1 * (v_world[0] - v_des_world[0]) +
+                       (0.5 * seResult.position[2] / 9.81) * (v_world[1] * cmd_des(StateIdx::rate_y));
 
       if (fabs(pfx_rel) > p_rel_max)
         printf("!!!!!!!!!!!!!!!!out of the max step\n");
 
-      double pfy_rel = seResult.v_world[1] * .5 * stance_time * dtMPC +
-                       .09 * (seResult.v_world[1] - v_des_world[1]) +
-                       (0.5 * seResult.position[2] / 9.81) * (-seResult.v_world[0] * cmd_des(StateIdx::rate_y));
+      double pfy_rel = v_world[1] * .5 * stance_time * dtMPC +
+                       .09 * (v_world[1] - v_des_world[1]) +
+                       (0.5 * seResult.position[2] / 9.81) * (-v_world[0] * cmd_des(StateIdx::rate_y));
       pfx_rel = fminf(fmaxf(pfx_rel, -p_rel_max), p_rel_max);
       pfy_rel = fminf(fmaxf(pfy_rel, -p_rel_max), p_rel_max);
       Pf[0] += pfx_rel;
@@ -173,17 +177,18 @@ namespace sdrobot::ctrl::mpc
 
     // calc gait
     iterationCounter++;
+    //TODO iteration limited due to max int
 
     // gait
     Vector4 contactStates = gait_skd->getContactState();
     //  std::cout<<"contactStates:"<<contactStates<<std::endl;
     Vector4 swingStates = gait_skd->getSwingState();
 
-    updateMPCIfNeeded(gait_skd->getMpcTable());
+    updateMPCIfNeeded(gait_skd->getMpcTable(), cmd, est, v_des_world);
 
     //  StateEstimator* se = hw_i->state_estimator;
     Vector4 se_contactState(0, 0, 0, 0);
-    for (int foot = 0; foot < 4; foot++)
+    for (size_t foot = 0; foot < 4; foot++)
     {
       double contactState = contactStates[foot];
       double swingState = swingStates[foot];
@@ -199,8 +204,6 @@ namespace sdrobot::ctrl::mpc
 
         Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
         Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
-        Vector3 pDesLeg = seResult.rot_body * (pDesFootWorld - seResult.position) - quad->GetHipLocation(foot);
-        Vector3 vDesLeg = seResult.rot_body * (vDesFootWorld - seResult.v_world);
 
         // Update for WBC
         data_.pFoot_des[foot] = pDesFootWorld;
@@ -214,7 +217,7 @@ namespace sdrobot::ctrl::mpc
         Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
         Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
         Vector3 pDesLeg = seResult.rot_body * (pDesFootWorld - seResult.position) - quad->GetHipLocation(foot);
-        Vector3 vDesLeg = seResult.rot_body * (vDesFootWorld - seResult.v_world);
+        Vector3 vDesLeg = seResult.rot_body * (vDesFootWorld - v_world);
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
 
         // Stance foot damping
@@ -239,22 +242,22 @@ namespace sdrobot::ctrl::mpc
     // Update For WBC
     data_.pBody_des[0] = world_position_desired[0];
     data_.pBody_des[1] = world_position_desired[1];
-    data_.pBody_des[2] = _body_height;
+    data_.pBody_des[2] = world_position_desired[2];
 
     data_.vBody_des[0] = v_des_world[0];
     data_.vBody_des[1] = v_des_world[1];
-    data_.vBody_des[2] = 0.;
+    data_.vBody_des[2] = v_des_world[2];
 
     data_.aBody_des.setZero();
 
     //  pBody_RPY_des[0] = 0.;
     //  pBody_RPY_des[1] = 0.;
-    data_.pBody_RPY_des[0] = 0;                          //data._desiredStateCommand->data.stateDes(3); // pBody_RPY_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
+    data_.pBody_RPY_des[0] = cmd_des(StateIdx::angle_r); //data._desiredStateCommand->data.stateDes(3); // pBody_RPY_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
     data_.pBody_RPY_des[1] = cmd_des(StateIdx::angle_p); //pBody_RPY_des[1]*0.9+0.1*seResult.rpy[1]/2.0;//
     data_.pBody_RPY_des[2] = cmd_des(StateIdx::angle_y);
 
-    data_.vBody_Ori_des[0] = 0.;
-    data_.vBody_Ori_des[1] = 0.;
+    data_.vBody_Ori_des[0] = cmd_des(StateIdx::rate_r);
+    data_.vBody_Ori_des[1] = cmd_des(StateIdx::rate_p);
     data_.vBody_Ori_des[2] = cmd_des(StateIdx::rate_y);
 
     //contact_state = gait_skd->getContactState();
@@ -269,7 +272,75 @@ namespace sdrobot::ctrl::mpc
     return true;
   }
 
-  void CMpc::recompute_timing(int iterations_per_mpc) {}
+  void CMpc::updateMPCIfNeeded(const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
+  {
+    //iterationsBetweenMPC = 30;
+    if ((iterationCounter % iterationsBetweenMPC) != 0)
+    {
+      return;
+    }
 
-  void updateMPCIfNeeded(const std::vector<int> &mpcTable) {}
+    const auto &seResult = est->GetData();
+    const auto &cmd_des = cmd->GetStateDes();
+    const auto &pos = seResult.position;
+    const auto &v_world = seResult.v_world;
+
+    Vector3 rpy_comp = Vector3::Zero();
+    rpy_comp[1] = v_world[0] * rpy_int[1];
+    rpy_comp[0] = v_world[1] * rpy_int[0] * int(cmd->GetGait() != Gait::Pronk); //turn off for pronking
+    rpy_comp[2] = cmd_des(StateIdx::angle_y);
+
+    const double max_pos_error = .1;
+    double xStart = world_position_desired[0];
+    double yStart = world_position_desired[1];
+
+    if (xStart - pos[0] > max_pos_error)
+      xStart = pos[0] + max_pos_error;
+    if (pos[0] - xStart > max_pos_error)
+      xStart = pos[0] - max_pos_error;
+
+    if (yStart - pos[1] > max_pos_error)
+      yStart = pos[1] + max_pos_error;
+    if (pos[1] - yStart > max_pos_error)
+      yStart = pos[1] - max_pos_error;
+
+    world_position_desired[0] = xStart;
+    world_position_desired[1] = yStart;
+
+    double trajInitial[12] = {rpy_comp[0],               // 0
+                              rpy_comp[1],               // 1
+                              rpy_comp[2],               // 2
+                              world_position_desired[0], // 3
+                              world_position_desired[1], // 4
+                              world_position_desired[2], // 5
+                              cmd_des(StateIdx::rate_r), // 6
+                              cmd_des(StateIdx::rate_p), // 7
+                              cmd_des(StateIdx::rate_y), // 8
+                              v_des_world[0],            // 9
+                              v_des_world[1],            // 10
+                              v_des_world[2]};           // 11
+
+    for (size_t i = 0; i < horizonLength; i++)
+    {
+      for (size_t j = 0; j < 12; j++)
+        trajAll[12 * i + j] = trajInitial[j];
+
+      if (i == 0) // start at current position  TODO consider not doing this
+      {
+        //trajAll[3] = hw_i->state_estimator->se_pBody[0];
+        //trajAll[4] = hw_i->state_estimator->se_pBody[1];
+        trajAll[2] = seResult.rpy[2];
+      }
+      else
+      {
+        trajAll[12 * i + 3] = trajAll[12 * (i - 1) + 3] + dtMPC * v_des_world[0];
+        trajAll[12 * i + 4] = trajAll[12 * (i - 1) + 4] + dtMPC * v_des_world[1];
+        trajAll[12 * i + 2] = trajAll[12 * (i - 1) + 2] + dtMPC * cmd_des(StateIdx::rate_y);
+      }
+    }
+    solveDenseMPC(mpcTable, est);
+    //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
+  }
+
+  void CMpc::solveDenseMPC(const std::vector<int> &mpcTable, const est::StateEstPtr &est) {}
 }
