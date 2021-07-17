@@ -177,7 +177,6 @@ namespace sdrobot::ctrl::mpc
 
     // calc gait
     iterationCounter++;
-    //TODO iteration limited due to max int
 
     // gait
     Vector4 contactStates = gait_skd->getContactState();
@@ -278,6 +277,11 @@ namespace sdrobot::ctrl::mpc
     if ((iterationCounter % iterationsBetweenMPC) != 0)
     {
       return;
+    }
+
+    if ((iterationCounter / iterationsBetweenMPC) >= horizonLength)
+    {
+      iterationCounter = 0;
     }
 
     const auto &seResult = est->GetData();
