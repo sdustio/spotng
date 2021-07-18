@@ -27,8 +27,10 @@ namespace sdrobot::robot
     struct Cmd
     {
       Cmd() { Zero(); }
-      Vector3 tau_feed_forward, force_feed_forward, q_des, qd_des, p_des, v_des;
-      Matrix3 kp_cartesian, kd_cartesian, kp_joint, kd_joint;
+      Vector3 tau_feed_forward, q_des, qd_des;
+      Matrix3 kp_joint, kd_joint;
+      Vector3 force_feed_forward, p_des, v_des; //from mpc; aid coumpter above;
+      Matrix3 kp_cartesian, kd_cartesian; //from mpc; aid coumpter above;
 
       void Zero()
       {
@@ -174,8 +176,8 @@ namespace sdrobot::robot
     Vector3 GetHipLocation(size_t leg) const
     {
       Vector3 pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
-                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
-                    abad_location_(2));
+                   (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),
+                   abad_location_(2));
       return pHip;
     }
 
