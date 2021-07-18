@@ -22,7 +22,7 @@ namespace sdrobot::ctrl::mpc
     // setup_problem(dtMPC, horizonLength, 0.4, 120);
   }
 
-  bool CMpc::Run(WbcData &data_, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
+  bool CMpc::Run(WbcData &wbcdata, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
   {
     const auto &cmd_des = cmd->GetStateDes();
 
@@ -179,17 +179,13 @@ namespace sdrobot::ctrl::mpc
     iterationCounter++;
 
     // gait
-    Vector4 contactStates = gait_skd->getContactState();
-    //  std::cout<<"contactStates:"<<contactStates<<std::endl;
     Vector4 swingStates = gait_skd->getSwingState();
 
-    updateMPCIfNeeded(gait_skd->getMpcTable(), cmd, est, v_des_world);
+    updateMPCIfNeeded(wbcdata.Fr_des, gait_skd->getMpcTable(), cmd, est, v_des_world);
 
     //  StateEstimator* se = hw_i->state_estimator;
-    Vector4 se_contactState(0, 0, 0, 0);
     for (size_t foot = 0; foot < 4; foot++)
     {
-      double contactState = contactStates[foot];
       double swingState = swingStates[foot];
       if (swingState > 0) // foot is in swing
       {
@@ -205,9 +201,9 @@ namespace sdrobot::ctrl::mpc
         Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
 
         // Update for WBC
-        data_.pFoot_des[foot] = pDesFootWorld;
-        data_.vFoot_des[foot] = vDesFootWorld;
-        data_.aFoot_des[foot] = footSwingTrajectories[foot].getAcceleration();
+        wbcdata.pFoot_des[foot] = pDesFootWorld;
+        wbcdata.vFoot_des[foot] = vDesFootWorld;
+        wbcdata.aFoot_des[foot] = footSwingTrajectories[foot].getAcceleration();
       }
       else // foot is in stance
       {
@@ -223,15 +219,6 @@ namespace sdrobot::ctrl::mpc
         auto &leg_cmds = cleg->GetCmdsForUpdate();
         leg_cmds[foot].p_des = pDesLeg;
         leg_cmds[foot].v_des = vDesLeg;
-        leg_cmds[foot].kp_cartesian.setZero();
-        leg_cmds[foot].kd_cartesian << 14, 0, 0,
-            0, 14, 0,
-            0, 0, 14;
-
-        se_contactState[foot] = contactState;
-
-        // Update for WBC
-        //Fr_des[foot] = -f_ff[foot];
       }
     }
 
@@ -239,28 +226,27 @@ namespace sdrobot::ctrl::mpc
     // data._stateEstimator->setContactPhase(se_contactState);
 
     // Update For WBC
-    data_.pBody_des[0] = world_position_desired[0];
-    data_.pBody_des[1] = world_position_desired[1];
-    data_.pBody_des[2] = world_position_desired[2];
+    wbcdata.pBody_des[0] = world_position_desired[0];
+    wbcdata.pBody_des[1] = world_position_desired[1];
+    wbcdata.pBody_des[2] = world_position_desired[2];
 
-    data_.vBody_des[0] = v_des_world[0];
-    data_.vBody_des[1] = v_des_world[1];
-    data_.vBody_des[2] = v_des_world[2];
+    wbcdata.vBody_des[0] = v_des_world[0];
+    wbcdata.vBody_des[1] = v_des_world[1];
+    wbcdata.vBody_des[2] = v_des_world[2];
 
-    data_.aBody_des.setZero();
+    wbcdata.aBody_des.setZero();
 
     //  pBody_RPY_des[0] = 0.;
     //  pBody_RPY_des[1] = 0.;
-    data_.pBody_RPY_des[0] = cmd_des(StateIdx::angle_r); //data._desiredStateCommand->data.stateDes(3); // pBody_RPY_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
-    data_.pBody_RPY_des[1] = cmd_des(StateIdx::angle_p); //pBody_RPY_des[1]*0.9+0.1*seResult.rpy[1]/2.0;//
-    data_.pBody_RPY_des[2] = cmd_des(StateIdx::angle_y);
+    wbcdata.pBody_RPY_des[0] = cmd_des(StateIdx::angle_r); //data._desiredStateCommand->data.stateDes(3); // pBody_RPY_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
+    wbcdata.pBody_RPY_des[1] = cmd_des(StateIdx::angle_p); //pBody_RPY_des[1]*0.9+0.1*seResult.rpy[1]/2.0;//
+    wbcdata.pBody_RPY_des[2] = cmd_des(StateIdx::angle_y);
 
-    data_.vBody_Ori_des[0] = cmd_des(StateIdx::rate_r);
-    data_.vBody_Ori_des[1] = cmd_des(StateIdx::rate_p);
-    data_.vBody_Ori_des[2] = cmd_des(StateIdx::rate_y);
+    wbcdata.vBody_Ori_des[0] = cmd_des(StateIdx::rate_r);
+    wbcdata.vBody_Ori_des[1] = cmd_des(StateIdx::rate_p);
+    wbcdata.vBody_Ori_des[2] = cmd_des(StateIdx::rate_y);
 
-    //contact_state = gait_skd->getContactState();
-    data_.contact_state = gait_skd->getContactState();
+    wbcdata.contact_state = gait_skd->getContactState();
     // END of WBC Update
 
     return true;
@@ -271,7 +257,7 @@ namespace sdrobot::ctrl::mpc
     return true;
   }
 
-  void CMpc::updateMPCIfNeeded(const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
+  void CMpc::updateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
   {
     //iterationsBetweenMPC = 30;
     if ((iterationCounter % iterationsBetweenMPC) != 0)
@@ -342,11 +328,77 @@ namespace sdrobot::ctrl::mpc
         trajAll[12 * i + 2] = trajAll[12 * (i - 1) + 2] + dtMPC * cmd_des(StateIdx::rate_y);
       }
     }
-    solveDenseMPC(mpcTable, est);
+    solveDenseMPC(out, mpcTable, est);
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::solveDenseMPC(const std::vector<int> &mpcTable, const est::StateEstPtr &est)
+  void CMpc::solveDenseMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
   {
+    const auto &seResult = est->GetData();
+
+    double Q[12] = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
+    //double Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
+    double yaw = seResult.rpy[2];
+    double *weights = Q;
+    double alpha = 4e-5; // make setting eventually
+    //double alpha = 4e-7; // make setting eventually: DH
+    const auto &pos = seResult.position;        //p
+    const auto &v_world = seResult.v_world;     //v
+    const auto &w_world = seResult.omega_world; //w
+    const auto &ori = seResult.orientation;     //q
+
+    double r[12];
+    for (int i = 0; i < 12; i++)
+      r[i] = pFoot[i % 4][i / 4] - pos[i / 4];
+
+    //printf("current posistion: %3.f %.3f %.3f\n", p[0], p[1], p[2]);
+
+    if (alpha > 1e-4)
+    {
+      printf("Alpha was set too high (%f) adjust to 1e-5\n", alpha);
+      alpha = 1e-5;
+    }
+
+    Vector3 pxy_act(pos[0], pos[1], 0);
+    Vector3 pxy_des(world_position_desired[0], world_position_desired[1], 0);
+    //Vector3 pxy_err = pxy_act - pxy_des;
+    double pz_err = pos[2] - world_position_desired[2];
+
+    Vector3 vxy(v_world[0], v_world[1], 0);
+
+    // Timer t1;
+    dtMPC = dt * iterationsBetweenMPC;
+    setup_problem(dtMPC, horizonLength, 0.4, 150);
+    //setup_problem(dtMPC,horizonLength,0.4,650); //DH
+    update_x_drag(x_comp_integral);
+    if (vxy[0] > 0.3 || vxy[0] < -0.3)
+    {
+      x_comp_integral += Params::cmpc_x_drag * pz_err * dtMPC / vxy[0];
+    }
+
+    //printf("pz err: %.3f, pz int: %.3f\n", pz_err, x_comp_integral);
+
+    update_solver_settings(_parameters->jcqp_max_iter, _parameters->jcqp_rho,
+                           _parameters->jcqp_sigma, _parameters->jcqp_alpha, _parameters->jcqp_terminate, _parameters->use_jcqp);
+    //t1.stopPrint("Setup MPC");
+
+    // Timer t2;
+    //cout << "dtMPC: " << dtMPC << "\n";
+    update_problem_data_doubles(p, v, q, w, r, yaw, weights, trajAll, alpha, mpcTable);
+    //t2.stopPrint("Run MPC");
+    //printf("MPC Solve time %f ms\n", t2.getMs());
+
+    for (int leg = 0; leg < 4; leg++)
+    {
+      Vector3 f;
+      for (int axis = 0; axis < 3; axis++)
+        f[axis] = get_solution(leg * 3 + axis);
+
+      //printf("[%d] %7.3f %7.3f %7.3f\n", leg, f[0], f[1], f[2]);
+
+      // f_ff[leg] = -seResult.rot_body * f;
+      // Update for WBC
+      out[leg] = f;
+    }
   }
 }

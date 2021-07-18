@@ -167,12 +167,6 @@ namespace sdrobot::ctrl::wbc
     }
 
     _GetSolution(qddot_pre, cmd);
-
-    _opt_result = VectorX(_dim_opt);
-    for (size_t i(0); i < _dim_opt; ++i)
-    {
-      _opt_result[i] = z[i];
-    }
   }
 
   void Wbic::_WeightedInverse(const MatrixX &J, const MatrixX &Winv, MatrixX &Jinv, double threshold)
@@ -327,7 +321,7 @@ namespace sdrobot::ctrl::wbc
     VectorX tot_tau;
     if (_dim_rf > 0)
     {
-      _Fr = VectorX(_dim_rf);
+      VectorX _Fr(_dim_rf);
       // get Reaction forces
       for (size_t i(0); i < _dim_rf; ++i)
         _Fr[i] = z[i + _dim_floating] + _Fr_des[i];
@@ -338,7 +332,6 @@ namespace sdrobot::ctrl::wbc
     {
       tot_tau = A_ * qddot + cori_ + grav_;
     }
-    _qddot = qddot;
 
     cmd = tot_tau.tail(num_act_joint_) * 1.0;
 

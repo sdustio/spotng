@@ -19,8 +19,13 @@ namespace sdrobot::ctrl::fsm
     cMPCOld = std::make_shared<mpc::CMpc>(robot::ctrlparams::kCtrlsec, 30 / (1000. * robot::ctrlparams::kCtrlsec));
 
     // Initialize GRF and footstep locations to 0s
-    footstepLocations = Matrix3x4::Zero();
+    // footstepLocations = Matrix3x4::Zero();
     _wbc_ctrl = std::make_shared<Wbc>(quad_->BuildModel());
+
+    kp_.setZero();
+    kd_ << 14, 0, 0,
+            0, 14, 0,
+            0, 0, 14;
   }
 
   void StateLocomotion::OnEnter()
@@ -70,8 +75,6 @@ namespace sdrobot::ctrl::fsm
 
     Vector3 pDes_backup[4];
     Vector3 vDes_backup[4];
-    Matrix3 Kp_backup[4];
-    Matrix3 Kd_backup[4];
 
     auto & leg_cmd = leg_ctrl_->GetCmdsForUpdate();
 
@@ -79,8 +82,6 @@ namespace sdrobot::ctrl::fsm
     {
       pDes_backup[leg] = leg_cmd[leg].p_des;
       vDes_backup[leg] = leg_cmd[leg].v_des;
-      Kp_backup[leg] = leg_cmd[leg].kp_cartesian;
-      Kd_backup[leg] = leg_cmd[leg].kd_cartesian;
     }
 
     _wbc_ctrl->Run(_wbc_data, state_cmd_, state_est_, leg_ctrl_);
@@ -89,8 +90,8 @@ namespace sdrobot::ctrl::fsm
     {
       leg_cmd[leg].p_des = pDes_backup[leg];
       leg_cmd[leg].v_des = vDes_backup[leg];
-      leg_cmd[leg].kp_cartesian = Kp_backup[leg];
-      leg_cmd[leg].kd_cartesian = Kd_backup[leg];
+      leg_cmd[leg].kp_cartesian = kp_;
+      leg_cmd[leg].kd_cartesian = kd_;
     }
   }
 

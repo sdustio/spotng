@@ -35,7 +35,9 @@ namespace sdrobot::ctrl::fsm
     WbcPtr _wbc_ctrl;
     WbcData _wbc_data;
     // Footstep locations for next step
-    Matrix3x4 footstepLocations;
+    // Matrix3x4 footstepLocations;
+
+    Matrix3 kp_, kd_;
   };
 
 } // namespace sdrobot::ctrl::fsm

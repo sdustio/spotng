@@ -53,8 +53,6 @@ namespace sdrobot::ctrl::fsm
     Vector3 rolling_jpos_[4];
     Vector3 initial_jpos_[4];
 
-    Vector3 f_ff_;
-
     const int fold_ramp_iter_ = 1000;
     const int fold_settle_iter_ = 1000;
 

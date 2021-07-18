@@ -30,8 +30,6 @@ namespace sdrobot::ctrl::fsm
     rolling_jpos_[2] << 1.5, -1.6, 2.77;
     rolling_jpos_[3] << 1.3, -3.1, 2.77;
 
-    f_ff_ << 0., 0., -25.;
-
     kp_mat_ << 80, 0, 0, 0, 80, 0, 0, 0, 80;
     kd_mat_ << 1, 0, 0, 0, 1, 0, 0, 0, 1;
 

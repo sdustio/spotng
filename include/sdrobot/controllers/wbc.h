@@ -201,9 +201,9 @@ namespace sdrobot::ctrl
 
       // Extra data
       // Output
-      VectorX _opt_result;
-      VectorX _qddot;
-      VectorX _Fr;
+      // VectorX _opt_result;
+      // VectorX _qddot;
+      // VectorX _Fr;
 
       // Input
       VectorX _W_floating;
