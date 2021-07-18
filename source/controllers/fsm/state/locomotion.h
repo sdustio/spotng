@@ -37,7 +37,7 @@ namespace sdrobot::ctrl::fsm
     // Footstep locations for next step
     // Matrix3x4 footstepLocations;
 
-    Matrix3 kp_, kd_;
+    Matrix3 kp_stance, kd_stance;
   };
 
 } // namespace sdrobot::ctrl::fsm

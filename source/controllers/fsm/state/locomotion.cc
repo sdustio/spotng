@@ -22,8 +22,8 @@ namespace sdrobot::ctrl::fsm
     // footstepLocations = Matrix3x4::Zero();
     _wbc_ctrl = std::make_shared<Wbc>(quad_->BuildModel());
 
-    kp_.setZero();
-    kd_ << 14, 0, 0,
+    kp_stance.setZero();
+    kd_stance << 14, 0, 0,
             0, 14, 0,
             0, 0, 14;
   }
@@ -90,8 +90,8 @@ namespace sdrobot::ctrl::fsm
     {
       leg_cmd[leg].p_des = pDes_backup[leg];
       leg_cmd[leg].v_des = vDes_backup[leg];
-      leg_cmd[leg].kp_cartesian = kp_;
-      leg_cmd[leg].kd_cartesian = kd_;
+      leg_cmd[leg].kp_cartesian = kp_stance;
+      leg_cmd[leg].kd_cartesian = kd_stance;
     }
   }
 
