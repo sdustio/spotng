@@ -25,16 +25,29 @@ namespace sdrobot::ctrl::mpc
   class OffsetDurationGait : public GaitSkd
   {
   public:
-    OffsetDurationGait(unsigned nSegment, Eigen::Vector4i offset, Eigen::Vector4i durations, const std::string &name);
+    OffsetDurationGait(unsigned nSegment, Eigen::Vector4i offsets, Eigen::Vector4i durations, const std::string &name);
     Vector4 getContactState() override;
     Vector4 getSwingState() override;
     const std::vector<int> &getMpcTable() override;
-    void setIterations(unsigned iterationsBetweenMPC, unsigned currentIteration) override;
+    void setIterations(unsigned iterationsPerMPC, unsigned currentIteration) override;
     double getCurrentStanceTime(double dtMPC, size_t leg) override;
     double getCurrentSwingTime(double dtMPC, size_t leg) override;
     unsigned getCurrentGaitPhase() override;
 
   private:
+    Eigen::Array4i _offsets; // offset in mpc segments
+    Eigen::Array4i _durations; // duration of step in mpc segments
+    Eigen::Array4d _offsetsd; // offsets in phase (0 to 1)
+    Eigen::Array4d _durationsd; // durations in phase (0 to 1)
+
+    unsigned _iteration;
+    unsigned _nIterations;
+    int _stance;
+    int _swing;
+    double _phase;
+
+    std::string name_;
+
     std::vector<int> _mpc_table;
   };
 

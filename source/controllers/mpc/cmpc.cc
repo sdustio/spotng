@@ -346,5 +346,7 @@ namespace sdrobot::ctrl::mpc
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::solveDenseMPC(const std::vector<int> &mpcTable, const est::StateEstPtr &est) {}
+  void CMpc::solveDenseMPC(const std::vector<int> &mpcTable, const est::StateEstPtr &est)
+  {
+  }
 }
