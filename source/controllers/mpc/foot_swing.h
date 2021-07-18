@@ -7,7 +7,7 @@ namespace sdrobot::ctrl::mpc
   class FootSwingTrajectory
   {
   public:
-    FootSwingTrajectory(){}
+    FootSwingTrajectory();
     /*!
    * Set the starting location of the foot
    * @param p0 : the initial foot position
@@ -62,7 +62,7 @@ namespace sdrobot::ctrl::mpc
       return _a;
     }
 
-    void computeSwingTrajectoryBezier(double phase, double swingTime){}
+    void computeSwingTrajectoryBezier(double phase, double swingTime);
 
   private:
     Vector3 _p0, _pf, _p, _v, _a;

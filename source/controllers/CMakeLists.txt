@@ -18,6 +18,7 @@ list(APPEND srcs
   wbc/contact/single.cc
   mpc/cmpc.cc
   mpc/gait.cc
+  mpc/foot_swing.cc
 )
 
 list(TRANSFORM srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
