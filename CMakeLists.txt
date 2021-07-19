@@ -23,7 +23,6 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_subdirectory(vendor)
 add_subdirectory(source)
 
 # if(BUILD_TESTING)

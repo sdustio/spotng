@@ -2,6 +2,7 @@ find_package(rclcpp REQUIRED)
 find_package(sdrobot_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(QuadProgpp REQUIRED)
 
 set(SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cc
@@ -17,14 +18,14 @@ add_executable(runner
   ${SOURCES}
 )
 target_include_directories(runner
-  PRIVATE ${CMAKE_SOURCE_DIR}/include
-  PRIVATE ${CMAKE_SOURCE_DIR}/vendor
+  PUBLIC ${CMAKE_SOURCE_DIR}/include
 )
 target_link_libraries(runner
-  quadprog
+  Eigen3::Eigen QuadProgpp::quadprogpp
 )
+
 ament_target_dependencies(runner
-  rclcpp sdrobot_interfaces sensor_msgs Eigen3
+  rclcpp sdrobot_interfaces sensor_msgs
 )
 
 install(TARGETS

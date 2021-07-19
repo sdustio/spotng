@@ -3,7 +3,8 @@
     "window.title": "${rootName}${separator}${dirty}${activeEditorShort}${separator}${appName}",
     "cmake.configureOnEdit": true,
     "cmake.configureEnvironment": {
-        "sdrobot_interfaces_DIR": "${workspaceFolder}/../../install/sdrobot_interfaces/"
+        "sdrobot_interfaces_DIR": "${workspaceFolder}/../../install/sdrobot_interfaces/",
+        "QuadProgpp_DIR": "/home/yandy/opt/lib/cmake/QuadProgpp"
     },
     "editor.tabSize": 2,
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",

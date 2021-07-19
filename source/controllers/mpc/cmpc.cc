@@ -222,9 +222,6 @@ namespace sdrobot::ctrl::mpc
       }
     }
 
-    // TODO check
-    // data._stateEstimator->setContactPhase(se_contactState);
-
     // Update For WBC
     wbcdata.pBody_des[0] = world_position_desired[0];
     wbcdata.pBody_des[1] = world_position_desired[1];
@@ -336,10 +333,9 @@ namespace sdrobot::ctrl::mpc
   {
     const auto &seResult = est->GetData();
 
-    double Q[12] = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
+    double weights[12] = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
     //double Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
     double yaw = seResult.rpy[2];
-    double *weights = Q;
     double alpha = 4e-5; // make setting eventually
     //double alpha = 4e-7; // make setting eventually: DH
     const auto &pos = seResult.position;        //p
@@ -359,15 +355,11 @@ namespace sdrobot::ctrl::mpc
       alpha = 1e-5;
     }
 
-    Vector3 pxy_act(pos[0], pos[1], 0);
-    Vector3 pxy_des(world_position_desired[0], world_position_desired[1], 0);
-    //Vector3 pxy_err = pxy_act - pxy_des;
     double pz_err = pos[2] - world_position_desired[2];
 
     Vector3 vxy(v_world[0], v_world[1], 0);
 
-    // Timer t1;
-    dtMPC = dt * iterationsBetweenMPC;
+    /*
     setup_problem(dtMPC, horizonLength, 0.4, 150);
     //setup_problem(dtMPC,horizonLength,0.4,650); //DH
     update_x_drag(x_comp_integral);
@@ -384,7 +376,7 @@ namespace sdrobot::ctrl::mpc
 
     // Timer t2;
     //cout << "dtMPC: " << dtMPC << "\n";
-    update_problem_data_doubles(p, v, q, w, r, yaw, weights, trajAll, alpha, mpcTable);
+    update_problem_data(pos, v_world, ori, w_world, r, yaw, weights, trajAll, alpha, mpcTable);
     //t2.stopPrint("Run MPC");
     //printf("MPC Solve time %f ms\n", t2.getMs());
 
@@ -400,5 +392,7 @@ namespace sdrobot::ctrl::mpc
       // Update for WBC
       out[leg] = f;
     }
+    */
   }
+
 }

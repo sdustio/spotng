@@ -40,6 +40,7 @@ namespace sdrobot::ctrl::mpc
     Vector3 world_position_desired;
     Vector3 rpy_int;
     std::array<Vector3, 4> pFoot;
+    double x_comp_integral = 0;
 
     std::array<double, 6> stand_traj;
 
