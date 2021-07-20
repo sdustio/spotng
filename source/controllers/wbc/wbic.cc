@@ -1,77 +1,9 @@
-#include "QuadProgpp/QuadProg++.hh"
-
 #include "sdrobot/controllers/wbc.h"
 #include "sdrobot/dynamics/math.h"
 
+
 namespace sdrobot::ctrl::wbc
 {
-
-  double solve_quadprog(MatrixX &_G, VectorX &_g0,
-                        const MatrixX &_CE, const VectorX &_ce0,
-                        const MatrixX &_CI, const VectorX &_ci0,
-                        VectorX &_x)
-  {
-    quadprogpp::Matrix<double> G, CE, CI;
-    quadprogpp::Vector<double> g0, ce0, ci0, x;
-    int n(_x.size());
-    int m(_ce0.size());
-    int p(_ci0.size());
-
-    G.resize(n, n);
-    for (int i = 0; i < n; ++i)
-    {
-      for (int j = 0; j < n; ++j)
-      {
-        G[i][j] = _G(i, j);
-      }
-    }
-
-    g0.resize(n);
-    for (int i = 0; i < n; ++i)
-    {
-      g0[i] = _g0[i];
-    }
-
-    CE.resize(n, m);
-    for (int i = 0; i < n; ++i)
-    {
-      for (int j = 0; j < m; ++j)
-      {
-        CE[i][j] = _CE(j, i);
-      }
-    }
-
-    ce0.resize(m);
-    for (int i = 0; i < m; ++i)
-    {
-      ce0[i] = -_ce0[i];
-    }
-
-    CI.resize(n, p);
-    for (int i = 0; i < n; ++i)
-    {
-      for (int j = 0; j < p; ++j)
-      {
-        CI[i][j] = _CI(j, i);
-      }
-    }
-
-    ci0.resize(p);
-    for (int i = 0; i < p; ++i)
-    {
-      ci0[i] = -_ci0[i];
-    }
-
-    x.resize(n);
-
-    double ret(quadprogpp::solve_quadprog(G, g0, CE, ce0, CI, ci0, x));
-    for (int i = 0; i < n; ++i)
-    {
-      _x[i] = x[i];
-    }
-
-    return ret;
-  }
 
   Wbic::Wbic(size_t num_qdot, double weight) : num_act_joint_(num_qdot - 6), num_qdot_(num_qdot),
                                                _W_floating(VectorX::Constant(6, weight)),
@@ -152,11 +84,11 @@ namespace sdrobot::ctrl::wbc
 
     // Optimization
     // Timer timer;
-    solve_quadprog(G, g0, _dyn_CE, _dyn_ce0, _dyn_CI, _dyn_ci0, z);
+    _SolveQP();
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
     for (size_t i(0); i < _dim_floating; ++i)
-      qddot_pre[i] += z[i];
+      qddot_pre[i] += z_[i];
 
     for (size_t i = 0; i < robot::ModelAttrs::dim_config; i++)
     {
@@ -237,25 +169,25 @@ namespace sdrobot::ctrl::wbc
 
     if (_dim_rf > 0)
     {
-      _dyn_CE.block(0, 0, _dim_eq_cstr, _dim_floating) =
+      CE_.block(0, 0, _dim_eq_cstr, _dim_floating) =
           A_.block(0, 0, _dim_eq_cstr, _dim_floating);
-      _dyn_CE.block(0, _dim_floating, _dim_eq_cstr, _dim_rf) =
+      CE_.block(0, _dim_floating, _dim_eq_cstr, _dim_rf) =
           -Sv_ * _Jc.transpose();
-      _dyn_ce0 = -Sv_ * (A_ * qddot + cori_ + grav_ -
-                         _Jc.transpose() * _Fr_des);
+      ce0_ = -Sv_ * (A_ * qddot + cori_ + grav_ -
+                     _Jc.transpose() * _Fr_des);
     }
     else
     {
-      _dyn_CE.block(0, 0, _dim_eq_cstr, _dim_floating) =
+      CE_.block(0, 0, _dim_eq_cstr, _dim_floating) =
           A_.block(0, 0, _dim_eq_cstr, _dim_floating);
-      _dyn_ce0 = -Sv_ * (A_ * qddot + cori_ + grav_);
+      ce0_ = -Sv_ * (A_ * qddot + cori_ + grav_);
     }
   }
 
   void Wbic::_SetInEqualityConstraint()
   {
-    _dyn_CI.block(0, _dim_floating, _dim_Uf, _dim_rf) = _Uf;
-    _dyn_ci0 = _Uf_ieq_vec - _Uf * _Fr_des;
+    CI_.block(0, _dim_floating, _dim_Uf, _dim_rf) = _Uf;
+    ci0_ = _Uf_ieq_vec - _Uf * _Fr_des;
   }
 
   void Wbic::_SetOptimizationSize(const std::vector<ContactPtr> &contact_list)
@@ -274,16 +206,16 @@ namespace sdrobot::ctrl::wbc
     _dim_eq_cstr = _dim_floating;
 
     // Matrix Setting
-    G = MatrixX::Zero(_dim_opt, _dim_opt);
-    g0 = VectorX::Zero(_dim_opt);
+    G_ = MatrixX::Zero(_dim_opt, _dim_opt);
+    g0_ = VectorX::Zero(_dim_opt);
 
     // Eigen Matrix Setting
-    _dyn_CE = MatrixX::Zero(_dim_eq_cstr, _dim_opt);
-    _dyn_ce0 = VectorX(_dim_eq_cstr);
+    CE_ = MatrixX::Zero(_dim_eq_cstr, _dim_opt);
+    ce0_ = VectorX(_dim_eq_cstr);
     if (_dim_rf > 0)
     {
-      _dyn_CI = MatrixX::Zero(_dim_Uf, _dim_opt);
-      _dyn_ci0 = VectorX::Zero(_dim_Uf);
+      CI_ = MatrixX::Zero(_dim_Uf, _dim_opt);
+      ci0_ = VectorX::Zero(_dim_Uf);
 
       _Jc = MatrixX(_dim_rf, num_qdot_);
       _JcDotQdot = VectorX(_dim_rf);
@@ -295,8 +227,8 @@ namespace sdrobot::ctrl::wbc
     }
     else
     {
-      _dyn_CI = MatrixX::Zero(1, _dim_opt);
-      _dyn_ci0 = VectorX::Zero(1);
+      CI_ = MatrixX::Zero(1, _dim_opt);
+      ci0_ = VectorX::Zero(1);
     }
   }
 
@@ -306,12 +238,12 @@ namespace sdrobot::ctrl::wbc
     size_t idx_offset(0);
     for (size_t i(0); i < _dim_floating; ++i)
     {
-      G((i + idx_offset), (i + idx_offset)) = _W_floating[i];
+      G_((i + idx_offset), (i + idx_offset)) = _W_floating[i];
     }
     idx_offset += _dim_floating;
     for (size_t i(0); i < _dim_rf; ++i)
     {
-      G((i + idx_offset), (i + idx_offset)) = _W_rf[i];
+      G_((i + idx_offset), (i + idx_offset)) = _W_rf[i];
     }
   }
 
@@ -324,7 +256,7 @@ namespace sdrobot::ctrl::wbc
       VectorX _Fr(_dim_rf);
       // get Reaction forces
       for (size_t i(0); i < _dim_rf; ++i)
-        _Fr[i] = z[i + _dim_floating] + _Fr_des[i];
+        _Fr[i] = z_[i + _dim_floating] + _Fr_des[i];
       tot_tau =
           A_ * qddot + cori_ + grav_ - _Jc.transpose() * _Fr;
     }
@@ -345,6 +277,25 @@ namespace sdrobot::ctrl::wbc
         printf("  edit to %f.2f\n", cmd[i]);
       }
     }
+  }
+
+  int Wbic::_SolveQP() {
+    size_t n(z_.size());
+    size_t m(ce0_.size());
+    size_t p(ci0_.size());
+
+    qp_.reset(n, m, p);
+
+    MatrixX _G = 0.5 * G_;
+    VectorX _g0 = 0.5 * g0_;
+    MatrixX _CE = CE_.transpose();
+    MatrixX _CI = CI_.transpose();
+    VectorX &_ce0 = ce0_;
+    VectorX &_ci0 = ci0_;
+    eiquadprog::solvers::EiquadprogFast_status status = qp_.solve_quadprog(
+      _G, _g0, _CE, _ce0, _CI, _ci0, z_
+    );
+    return status;
   }
 
 }

@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 
+#include "eiquadprog/eiquadprog-fast.hpp"
+
 #include "sdrobot/estimators/state_est.h"
 #include "sdrobot/dynamics/fb_model.h"
 #include "sdrobot/controllers/leg.h"
@@ -156,6 +158,8 @@ namespace sdrobot::ctrl
       void _WeightedInverse(const MatrixX &J, const MatrixX &Winv, MatrixX &Jinv,
                             double threshold = 0.0001);
 
+      int _SolveQP();
+
       size_t num_act_joint_;
       size_t num_qdot_;
 
@@ -177,18 +181,20 @@ namespace sdrobot::ctrl
 
       size_t _dim_floating = 6;
 
-      VectorX z;
+      eiquadprog::solvers::EiquadprogFast qp_;
+
+      VectorX z_;
       // Cost
-      MatrixX G;
-      VectorX g0;
+      MatrixX G_;
+      VectorX g0_;
 
       // Equality
-      MatrixX _dyn_CE;
-      VectorX _dyn_ce0;
+      MatrixX CE_;
+      VectorX ce0_;
 
       // Inequality
-      MatrixX _dyn_CI;
-      VectorX _dyn_ci0;
+      MatrixX CI_;
+      VectorX ci0_;
 
       MatrixX _eye;
 
