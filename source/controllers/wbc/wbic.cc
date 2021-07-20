@@ -1,7 +1,6 @@
 #include "sdrobot/controllers/wbc.h"
 #include "sdrobot/dynamics/math.h"
 
-
 namespace sdrobot::ctrl::wbc
 {
 
@@ -238,12 +237,12 @@ namespace sdrobot::ctrl::wbc
     size_t idx_offset(0);
     for (size_t i(0); i < _dim_floating; ++i)
     {
-      G_((i + idx_offset), (i + idx_offset)) = _W_floating[i];
+      G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_floating[i];
     }
     idx_offset += _dim_floating;
     for (size_t i(0); i < _dim_rf; ++i)
     {
-      G_((i + idx_offset), (i + idx_offset)) = _W_rf[i];
+      G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_rf[i];
     }
   }
 
@@ -279,23 +278,34 @@ namespace sdrobot::ctrl::wbc
     }
   }
 
-  int Wbic::_SolveQP() {
+  int Wbic::_SolveQP()
+  {
     size_t n(z_.size());
     size_t m(ce0_.size());
     size_t p(ci0_.size());
 
     qp_.reset(n, m, p);
 
-    MatrixX _G = 0.5 * G_;
-    VectorX _g0 = 0.5 * g0_;
+    // use fast
+    MatrixX &_G = G_;
+    VectorX &_g0 = g0_;
     MatrixX _CE = CE_.transpose();
     MatrixX _CI = CI_.transpose();
     VectorX &_ce0 = ce0_;
     VectorX &_ci0 = ci0_;
     eiquadprog::solvers::EiquadprogFast_status status = qp_.solve_quadprog(
-      _G, _g0, _CE, _ce0, _CI, _ci0, z_
-    );
+        _G, _g0, _CE, _ce0, _CI, _ci0, z_);
     return status;
+    // use normal
+    // MatrixX _G = 2 * G_;
+    // VectorX &_g0 = g0_;
+    // MatrixX &_CE = CE_;
+    // MatrixX &_CI = CI_;
+    // VectorX &_ce0 = ce0_;
+    // VectorX &_ci0 = ci0_;
+    // VectorX activeSet(p);
+    // size_t activeSetSize;
+    // eiquadprog::solvers::solve_quadprog(_G, _g0, _CE, _ce0, _CI, _ci0, z_, activeSet, activeSetSize);
   }
 
 }
