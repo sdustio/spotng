@@ -14,10 +14,10 @@ namespace sdrobot::robot
 
     struct Idx
     {
-      constexpr static size_t fr = 0; // Front Right
-      constexpr static size_t fl = 1; // Front Left
-      constexpr static size_t hr = 2; // Hind Right
-      constexpr static size_t hl = 3; // Hind Left
+      constexpr static int fr = 0; // Front Right
+      constexpr static int fl = 1; // Front Left
+      constexpr static int hr = 2; // Hind Right
+      constexpr static int hl = 3; // Hind Left
     };
 
     /*!
@@ -65,7 +65,7 @@ namespace sdrobot::robot
       * @param leg : the leg index
       * @return The side sign (-1 for right legs, +1 for left legs)
       */
-      static double GetSideSign(size_t leg)
+      static double GetSideSign(int leg)
       {
         return side_signs_.at(leg);
       }
@@ -73,7 +73,7 @@ namespace sdrobot::robot
       /*!
       * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
       */
-      static Vector3 WithLegSigns(const Vector3 &v, size_t leg_id)
+      static Vector3 WithLegSigns(const Vector3 &v, int leg_id)
       {
         switch (leg_id)
         {
@@ -124,11 +124,11 @@ namespace sdrobot::robot
     constexpr static double joint_damping = 0.01;
     constexpr static double joint_dry_friction = 0.2;
 
-    constexpr static size_t num_act_joint = 12;
-    constexpr static size_t num_q = 19;
-    constexpr static size_t dim_config = 18;
-    constexpr static size_t num_leg = 4;
-    constexpr static size_t num_leg_joint = 3;
+    constexpr static int num_act_joint = 12;
+    constexpr static int num_q = 19;
+    constexpr static int dim_config = 18;
+    constexpr static int num_leg = 4;
+    constexpr static int num_leg_joint = 3;
   };
 
   struct DynamicsAttrs
@@ -148,15 +148,15 @@ namespace sdrobot::robot
 
   struct LinkId
   {
-    constexpr static size_t fr = 9;  // Front Right Foot
-    constexpr static size_t fl = 11; // Front Left Foot
-    constexpr static size_t hr = 13; // Hind Right Foot
-    constexpr static size_t hl = 15; // Hind Left Foot
+    constexpr static int fr = 9;  // Front Right Foot
+    constexpr static int fl = 11; // Front Left Foot
+    constexpr static int hr = 13; // Hind Right Foot
+    constexpr static int hl = 15; // Hind Left Foot
 
-    constexpr static size_t fr_abd = 2; // Front Right Abduction
-    constexpr static size_t fl_abd = 0; // Front Left Abduction
-    constexpr static size_t hr_abd = 3; // Hind Right Abduction
-    constexpr static size_t hl_abd = 1; // Hind Left Abduction
+    constexpr static int fr_abd = 2; // Front Right Abduction
+    constexpr static int fl_abd = 0; // Front Left Abduction
+    constexpr static int hr_abd = 3; // Hind Right Abduction
+    constexpr static int hl_abd = 1; // Hind Left Abduction
   };
 
   class Quadruped
@@ -173,7 +173,7 @@ namespace sdrobot::robot
     * Get location of the hip for the given leg in robot frame 在机器人框架中获取给定腿的臀部位置
     * @param leg : the leg index
     */
-    Vector3 GetHipLocation(size_t leg) const
+    Vector3 GetHipLocation(int leg) const
     {
       Vector3 pHip((leg == leg::Idx::fr || leg == leg::Idx::fl) ? abad_location_(0) : -abad_location_(0),
                    (leg == leg::Idx::fl || leg == leg::Idx::hl) ? abad_location_(1) : -abad_location_(1),

@@ -77,10 +77,10 @@ namespace sdrobot::est
         R0_.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
     R.block<4, 4>(24, 24) = R0_.block<4, 4>(24, 24) * sensor_noise_zfoot;
 
-    size_t qindex = 0;
-    size_t rindex1 = 0;
-    size_t rindex2 = 0;
-    size_t rindex3 = 0;
+    int qindex = 0;
+    int rindex1 = 0;
+    int rindex2 = 0;
+    int rindex3 = 0;
     //重力向量
     Vector3 g(0, 0, -9.81);
     Matrix3 Rbod = ret.rot_body.transpose(); //机身到世界的变换矩阵
@@ -97,9 +97,9 @@ namespace sdrobot::est
     v0 << xhat_[3], xhat_[4], xhat_[5];
 
     //构成状态变量等
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg; i++)
+    for (int i = 0; i < robot::ModelAttrs::num_leg; i++)
     {
-      size_t i1 = 3 * i;
+      int i1 = 3 * i;
       Vector3 ph = quad->GetHipLocation(i); // hip positions relative to CoM 相对于CoM的髋位置
       // hw_i->leg_controller->leg_datas[i].p;
       Vector3 p_rel = ph + datas[i].p; //足端位置在机身坐标系

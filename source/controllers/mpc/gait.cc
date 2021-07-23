@@ -7,7 +7,7 @@ namespace sdrobot::ctrl::mpc
   using Eigen::Array4i;
 
   OffsetDurationGait::OffsetDurationGait(
-      unsigned nSegment, Eigen::Vector4i offsets, Eigen::Vector4i durations,
+      int nSegment, Eigen::Vector4i offsets, Eigen::Vector4i durations,
       const std::string &name) : _offsets(offsets.array()),
                                  _durations(durations.array()),
                                  _nIterations(nSegment),
@@ -25,7 +25,7 @@ namespace sdrobot::ctrl::mpc
   {
     Array4d progress = _phase - _offsetsd;
 
-    for (size_t i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
       if (progress[i] < 0)
         progress[i] += 1.;
@@ -46,14 +46,14 @@ namespace sdrobot::ctrl::mpc
   Vector4 OffsetDurationGait::getSwingState()
   {
     Array4d swing_offset = _offsetsd + _durationsd;
-    for (size_t i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
       if (swing_offset[i] > 1)
         swing_offset[i] -= 1.;
     Array4d swing_duration = 1. - _durationsd;
 
     Array4d progress = _phase - swing_offset;
 
-    for (size_t i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
       if (progress[i] < 0)
         progress[i] += 1.f;
@@ -75,11 +75,11 @@ namespace sdrobot::ctrl::mpc
   {
 
     //printf("MPC table:\n");
-    for (unsigned i = 0; i < _nIterations; i++)
+    for (int i = 0; i < _nIterations; i++)
     {
       int iter = (i + _iteration + 1) % _nIterations;
       Array4i progress = iter - _offsets;
-      for (unsigned j = 0; j < 4; j++)
+      for (int j = 0; j < 4; j++)
       {
         if (progress[j] < 0)
           progress[j] += _nIterations;
@@ -93,15 +93,15 @@ namespace sdrobot::ctrl::mpc
     return _mpc_table;
   }
 
-  void OffsetDurationGait::setIterations(unsigned iterationsPerMPC, unsigned currentIteration)
+  void OffsetDurationGait::setIterations(int iterationsPerMPC, int currentIteration)
   {
     _iteration = (currentIteration / iterationsPerMPC) % _nIterations;
     _phase = (double)(currentIteration % (iterationsPerMPC * _nIterations)) / (double)(iterationsPerMPC * _nIterations);
   }
 
-  double OffsetDurationGait::getCurrentStanceTime(double dtMPC, [[maybe_unused]] size_t leg) { return dtMPC * _stance; }
+  double OffsetDurationGait::getCurrentStanceTime(double dtMPC, [[maybe_unused]] int leg) { return dtMPC * _stance; }
 
-  double OffsetDurationGait::getCurrentSwingTime(double dtMPC, [[maybe_unused]] size_t leg) { return dtMPC * _swing; }
+  double OffsetDurationGait::getCurrentSwingTime(double dtMPC, [[maybe_unused]] int leg) { return dtMPC * _swing; }
 
-  unsigned OffsetDurationGait::getCurrentGaitPhase() { return _iteration; }
+  int OffsetDurationGait::getCurrentGaitPhase() { return _iteration; }
 }

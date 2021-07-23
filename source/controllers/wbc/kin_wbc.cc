@@ -4,7 +4,7 @@
 namespace sdrobot::ctrl::wbc
 {
 
-  KinWbc::KinWbc(size_t num_qdot)
+  KinWbc::KinWbc(int num_qdot)
       : num_qdot_(num_qdot), num_act_joint_(num_qdot - 6),
         I_mtx(MatrixX::Identity(num_qdot, num_qdot))
   {
@@ -21,12 +21,13 @@ namespace sdrobot::ctrl::wbc
     {
       MatrixX Jc, Jc_i;
       Jc = contact_list[0]->getContactJacobian();
-      size_t num_rows = Jc.rows();
+      int num_rows = Jc.rows();
 
-      for (size_t i(1); i < contact_list.size(); ++i)
+      int csize = contact_list.size();
+      for (int i(1); i < csize; ++i)
       {
         Jc_i = contact_list[i]->getContactJacobian();
-        size_t num_new_rows = Jc_i.rows();
+        int num_new_rows = Jc_i.rows();
         Jc.conservativeResize(num_rows + num_new_rows, num_qdot_);
         Jc.block(num_rows, 0, num_new_rows, num_qdot_) = Jc_i;
         num_rows += num_new_rows;
@@ -54,7 +55,8 @@ namespace sdrobot::ctrl::wbc
     _BuildProjectionMatrix(JtPre, N_nx);
     N_pre = Nc * N_nx;
 
-    for (size_t i(1); i < task_list.size(); ++i)
+    int tsize = task_list.size();
+    for (int i(1); i < tsize; ++i)
     {
       task = task_list[i];
 
@@ -72,7 +74,7 @@ namespace sdrobot::ctrl::wbc
       prev_delta_q = delta_q;
       prev_qdot = qdot;
     }
-    for (size_t i(0); i < num_act_joint_; ++i)
+    for (int i(0); i < num_act_joint_; ++i)
     {
       jpos_cmd[i] = curr_config[i] + delta_q[i + 6];
       jvel_cmd[i] = qdot[i + 6];

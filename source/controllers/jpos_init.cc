@@ -32,9 +32,9 @@ namespace sdrobot::ctrl
       std::array<double, dynamics::bspline::kDim> jpos;
       jpos_trj_.GetCurvePoint(curr_time_, jpos);
 
-      for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+      for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
       {
-        for (size_t jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
+        for (int jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
         {
           auto &cmds = ctrl->GetCmdsForUpdate();
           cmds[leg].tau_feed_forward[jidx] = 0.;
@@ -54,16 +54,16 @@ namespace sdrobot::ctrl
     std::array<double, 3 * dynamics::bspline::kDim> fin{};
     std::array<std::array<double, dynamics::bspline::kDim>, dynamics::bspline::kNumMiddle> mid{mid_jpos_};
 
-    for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+    for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
     {
-      for (size_t jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
+      for (int jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
       {
-        size_t idx = 3 * leg + jidx;
+        int idx = 3 * leg + jidx;
         ini_jpos_[idx] = ini[idx] = ctrl->GetDatas()[leg].q[jidx];
       }
     }
 
-    for (size_t i(0); i < dynamics::bspline::kDim; ++i)
+    for (int i(0); i < dynamics::bspline::kDim; ++i)
     {
       fin[i] = target_jpos_[i];
     }

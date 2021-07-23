@@ -7,7 +7,7 @@ namespace sdrobot::ctrl::wbc
   class TaskLinkPos : public Task
   {
   public:
-    TaskLinkPos(const dynamics::FBModelPtr &model, size_t linkid, bool virtual_depend = true);
+    TaskLinkPos(const dynamics::FBModelPtr &model, int linkid, bool virtual_depend = true);
 
   private:
     // Update op_cmd_
@@ -20,7 +20,7 @@ namespace sdrobot::ctrl::wbc
     // Additional Update (defined in child classes)
     bool _AdditionalUpdate();
 
-    size_t link_idx_;
+    int link_idx_;
     bool virtual_depend_;
   };
 

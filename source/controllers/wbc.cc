@@ -58,11 +58,11 @@ namespace sdrobot::ctrl
     _state.body_orientation = estdata.orientation;
     _state.body_position = estdata.position;
 
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg_joint; i++)
+    for (int i = 0; i < robot::ModelAttrs::num_leg_joint; i++)
     {
       _state.body_velocity[i] = estdata.omega_body[i];
       _state.body_velocity[i + 3] = estdata.v_body[i];
-      for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
+      for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
       {
         _state.q[3 * leg + i] = legdata[leg].q[i];
         _state.qd[3 * leg + i] = legdata[leg].qd[i];
@@ -93,10 +93,10 @@ namespace sdrobot::ctrl
   {
     auto &cmds = cleg->GetCmdsForUpdate();
 
-    for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+    for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
     {
       cmds[leg].Zero();
-      for (size_t jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
+      for (int jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
       {
         cmds[leg].tau_feed_forward[jidx] = _tau_ff[robot::ModelAttrs::num_leg_joint * leg + jidx];
         cmds[leg].q_des[jidx] = _des_jpos[robot::ModelAttrs::num_leg_joint * leg + jidx];
@@ -116,7 +116,7 @@ namespace sdrobot::ctrl
     }
 
     // Knee joint non flip barrier
-    for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+    for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
     {
       if (cmds[leg].q_des[2] < 0.3)
       {
@@ -147,7 +147,7 @@ namespace sdrobot::ctrl
     _task_list.push_back(_body_ori_task);
     _task_list.push_back(_body_pos_task);
 
-    for (size_t leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
+    for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
     {
       if (input.contact_state[leg] > 0.)
       { // Contact

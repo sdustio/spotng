@@ -86,14 +86,14 @@ namespace sdrobot::dynamics
     * @param isFoot True if foot or not.
     * @return The ID of the ground contact point
     */
-    size_t AddGroundContactPoint(size_t body_id, const Vector3 &location,
+    int AddGroundContactPoint(int body_id, const Vector3 &location,
                                  bool is_foot = false);
 
     /*!
     * Add the bounding points of a box to the contact model. Assumes the box is
     * centered around the origin of the body coordinate system and is axis aligned.
     */
-    void AddGroundContactBoxPoints(size_t body_id, const Vector3 &dims);
+    void AddGroundContactBoxPoints(int body_id, const Vector3 &dims);
 
     /*!
     * Add a body
@@ -108,8 +108,8 @@ namespace sdrobot::dynamics
     * @param Xrot  The coordinate transformation from parent to this body's rotor
     * @return The body's ID (can be used as the parent)
     */
-    size_t AddBody(const SpatialInertia &inertia,
-                   const SpatialInertia &rotor_inertia, double gear_ratio, size_t parent,
+    int AddBody(const SpatialInertia &inertia,
+                   const SpatialInertia &rotor_inertia, double gear_ratio, int parent,
                    JointType joint_type, CoordinateAxis joint_axis,
                    const Matrix6 &Xtree, const Matrix6 &Xrot);
 
@@ -126,8 +126,8 @@ namespace sdrobot::dynamics
     * @param Xrot  The coordinate transformation from parent to this body's rotor
     * @return The body's ID (can be used as the parent)
     */
-    size_t AddBody(const MassProperties &inertia,
-                   const MassProperties &rotor_inertia, double gear_ratio, size_t parent,
+    int AddBody(const MassProperties &inertia,
+                   const MassProperties &rotor_inertia, double gear_ratio, int parent,
                    JointType joint_type, CoordinateAxis joint_axis,
                    const Matrix6 &Xtree, const Matrix6 &Xrot);
     void Check();
@@ -149,7 +149,7 @@ namespace sdrobot::dynamics
     其中，parents[i]是body i的父体
     * @return Vector of parents
     */
-    const std::vector<size_t> &GetParentVector() const { return parents_; }
+    const std::vector<int> &GetParentVector() const { return parents_; }
 
     /*!
     * Get vector of body spatial inertias
@@ -182,7 +182,7 @@ namespace sdrobot::dynamics
     * @param gc_index : index of contact point
     * @param flag : enable/disable contact calculation
     */
-    void SetContactComputeFlag(size_t gc_index, bool flag)
+    void SetContactComputeFlag(int gc_index, bool flag)
     {
       compute_contact_info_[gc_index] = flag;
     }
@@ -194,7 +194,7 @@ namespace sdrobot::dynamics
     *             force_ics_at_contact = [0 0 1]^T
     * @return the 1x1 inverse contact inertia J H^{-1} J^T
     */
-    MatrixX InvContactInertia(const size_t gc_index,
+    MatrixX InvContactInertia(const int gc_index,
                                const SpatialVecXd &force_directions);
 
     /*!
@@ -205,13 +205,13 @@ namespace sdrobot::dynamics
     * @params dstate - Output paramter of resulting accelerations
     * @return the 1x1 inverse contact inertia J H^{-1} J^T
     */
-    double InvContactInertia(const size_t gc_index, const Vector3 &force_ics_at_contact);
+    double InvContactInertia(const int gc_index, const Vector3 &force_ics_at_contact);
 
     /*!
     * Populate member variables when bodies are added
     * @param count (6 for fb, 1 for joint)
     */
-    void AddDynamicsVars(size_t count);
+    void AddDynamicsVars(int count);
 
     /*!
     * Updates the size of H, C, Cqd, G, and Js when bodies are added
@@ -244,18 +244,18 @@ namespace sdrobot::dynamics
       acc_uptodate_ = false;
     }
 
-    Vector3 GetPosition(const size_t link_idx, const Vector3 &local_pos);
-    Vector3 GetPosition(const size_t link_idx);
+    Vector3 GetPosition(const int link_idx, const Vector3 &local_pos);
+    Vector3 GetPosition(const int link_idx);
 
-    Matrix3 GetOrientation(const size_t link_idx);
-    Vector3 GetLinearVelocity(const size_t link_idx, const Vector3 &posize_t);
-    Vector3 GetLinearVelocity(const size_t link_idx);
+    Matrix3 GetOrientation(const int link_idx);
+    Vector3 GetLinearVelocity(const int link_idx, const Vector3 &point);
+    Vector3 GetLinearVelocity(const int link_idx);
 
-    Vector3 GetLinearAcceleration(const size_t link_idx, const Vector3 &posize_t);
-    Vector3 GetLinearAcceleration(const size_t link_idx);
+    Vector3 GetLinearAcceleration(const int link_idx, const Vector3 &point);
+    Vector3 GetLinearAcceleration(const int link_idx);
 
-    Vector3 GetAngularVelocity(const size_t link_idx);
-    Vector3 GetAngularAcceleration(const size_t link_idx);
+    Vector3 GetAngularVelocity(const int link_idx);
+    Vector3 GetAngularAcceleration(const int link_idx);
 
     const std::vector<CartesianVecXd> &GetJc() { return Jc_; }
     const std::vector<Vector3> &GetJcdqd() { return Jcdqd_; }
@@ -365,9 +365,9 @@ namespace sdrobot::dynamics
     void ResetExternalForces();
 
   private:
-    size_t n_dof_ = 0;
+    int n_dof_ = 0;
     Vector3 gravity_;
-    std::vector<size_t> parents_;
+    std::vector<int> parents_;
     std::vector<double> gear_ratios_;
     std::vector<double> d_, u_;
 
@@ -377,10 +377,10 @@ namespace sdrobot::dynamics
     std::vector<SpatialInertia> Ibody_, Irot_;
     std::vector<std::string> body_names_;
 
-    size_t n_ground_contact_ = 0;
-    std::vector<size_t> gc_parent_;
+    int n_ground_contact_ = 0;
+    std::vector<int> gc_parent_;
     std::vector<Vector3> gc_location_;
-    std::vector<size_t> gc_foot_indices_;
+    std::vector<int> gc_foot_indices_;
     std::vector<Vector3> gc_p_;
     std::vector<Vector3> gc_v_;
 

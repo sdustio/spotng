@@ -20,7 +20,7 @@ namespace sdrobot::ctrl
     class Task
     {
     public:
-      Task(size_t dim, const dynamics::FBModelPtr &model)
+      Task(int dim, const dynamics::FBModelPtr &model)
           : dim_task_(dim),
             _robot_sys(model),
             op_cmd_(dim),
@@ -45,11 +45,11 @@ namespace sdrobot::ctrl
       const MatrixX &getTaskJacobian() { return Jt_; }
       const VectorX &getTaskJacobianDotQdot() { return JtDotQdot_; }
 
-      void UpdateKp(size_t idx, double v) { _Kp(idx) = v; }
+      void UpdateKp(int idx, double v) { _Kp(idx) = v; }
 
       const VectorX &GetKp() { return _Kp; }
 
-      void UpdateKd(size_t idx, double v) { _Kd(idx) = v; }
+      void UpdateKd(int idx, double v) { _Kd(idx) = v; }
 
       const VectorX &GetKd() { return _Kd; }
 
@@ -69,7 +69,7 @@ namespace sdrobot::ctrl
       virtual bool _AdditionalUpdate() = 0;
 
       bool b_set_task_ = false;
-      size_t dim_task_;
+      int dim_task_;
 
       const dynamics::FBModelPtr _robot_sys;
 
@@ -89,15 +89,15 @@ namespace sdrobot::ctrl
     class Contact
     {
     public:
-      Contact(size_t dim) : dim_contact_(dim)
+      Contact(int dim) : dim_contact_(dim)
       {
         idx_Fz_ = dim - 1; // because normally (tau_x,y,z , linear_x,y,z)
         Fr_des_ = VectorX::Zero(dim);
       }
 
-      size_t getDim() const { return dim_contact_; }
-      size_t getDimRFConstraint() const { return Uf_.rows(); }
-      size_t getFzIndex() const { return idx_Fz_; }
+      int getDim() const { return dim_contact_; }
+      int getDimRFConstraint() const { return Uf_.rows(); }
+      int getFzIndex() const { return idx_Fz_; }
 
       const VectorX &getRFDesired() { return Fr_des_; }
       void setRFDesired(const VectorX &Fr_des) { Fr_des_ = Fr_des; }
@@ -121,7 +121,7 @@ namespace sdrobot::ctrl
       virtual bool _UpdateUf() = 0;
       virtual bool _UpdateInequalityVector() = 0;
 
-      size_t idx_Fz_;
+      int idx_Fz_;
       MatrixX Uf_;
       VectorX ieq_vec_;
 
@@ -130,7 +130,7 @@ namespace sdrobot::ctrl
       MatrixX Jc_;
       VectorX JcDotQdot_;
 
-      size_t dim_contact_;
+      int dim_contact_;
       bool b_set_contact_ = false;
     };
 
@@ -139,7 +139,7 @@ namespace sdrobot::ctrl
     class Wbic
     {
     public:
-      Wbic(size_t num_qdot, double weight);
+      Wbic(int num_qdot, double weight);
 
       void UpdateSetting(const MatrixX &A, const MatrixX &Ainv,
                          const VectorX &cori, const VectorX &grav);
@@ -160,8 +160,8 @@ namespace sdrobot::ctrl
 
       int _SolveQP();
 
-      size_t num_act_joint_;
-      size_t num_qdot_;
+      int num_act_joint_;
+      int num_qdot_;
 
       MatrixX Sa_; // Actuated joint
       MatrixX Sv_; // Virtual joint
@@ -173,13 +173,13 @@ namespace sdrobot::ctrl
 
       bool b_updatesetting_ = false;
 
-      size_t _dim_opt;
-      size_t _dim_eq_cstr; // equality constraints
+      int _dim_opt;
+      int _dim_eq_cstr; // equality constraints
 
-      size_t _dim_rf;
-      size_t _dim_Uf;
+      int _dim_rf;
+      int _dim_Uf;
 
-      size_t _dim_floating = 6;
+      int _dim_floating = 6;
 
       eiquadprog::solvers::EiquadprogFast qp_;
 
@@ -219,7 +219,7 @@ namespace sdrobot::ctrl
     class KinWbc
     {
     public:
-      KinWbc(size_t num_qdot);
+      KinWbc(int num_qdot);
       bool FindConfiguration(const VectorX &curr_config,
                              const std::vector<TaskPtr> &task_list, const std::vector<ContactPtr> &contact_list,
                              VectorX &jpos_cmd, VectorX &jvel_cmd);
@@ -229,8 +229,8 @@ namespace sdrobot::ctrl
       void _BuildProjectionMatrix(const MatrixX &J, MatrixX &N);
 
       double threshold_ = 0.001;
-      size_t num_qdot_;
-      size_t num_act_joint_;
+      int num_qdot_;
+      int num_act_joint_;
       MatrixX I_mtx;
     };
 

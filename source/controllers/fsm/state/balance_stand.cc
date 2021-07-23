@@ -70,7 +70,7 @@ namespace sdrobot::ctrl::fsm
 
     wbc_data_.vBody_Ori_des.setZero();
 
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+    for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       wbc_data_.pFoot_des[i].setZero();
       wbc_data_.vFoot_des[i].setZero();

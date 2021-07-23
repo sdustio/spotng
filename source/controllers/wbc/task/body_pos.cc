@@ -11,7 +11,7 @@ namespace sdrobot::ctrl::wbc
     JtDotQdot_ = VectorX::Zero(dim_task_);
 
     _Kp_kin = VectorX::Constant(dim_task_, 1.);
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       _Kp[i] = robot::DynamicsAttrs::kp_body[i];
       _Kd[i] = robot::DynamicsAttrs::kd_body[i];

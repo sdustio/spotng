@@ -18,7 +18,7 @@ namespace sdrobot::ctrl::mpc
     return near_zero(a - 1);
   }
 
-  CMpc::CMpc(double _dt, unsigned _iterations_between_mpc) : dt(_dt),
+  CMpc::CMpc(double _dt, int _iterations_between_mpc) : dt(_dt),
                                                              dtMPC(_dt * _iterations_between_mpc),
                                                              iterationsBetweenMPC(_iterations_between_mpc),
                                                              rpy_int(Vector3::Zero())
@@ -56,7 +56,7 @@ namespace sdrobot::ctrl::mpc
       world_position_desired[1] = stand_traj[1];
       world_position_desired[2] = stand_traj[2]; //?? seResult.rpy[2];
 
-      for (size_t i = 0; i < 4; i++)
+      for (int i = 0; i < 4; i++)
       {
 
         footSwingTrajectories[i].setHeight(0.05);
@@ -97,7 +97,7 @@ namespace sdrobot::ctrl::mpc
     rpy_int[0] = fminf(fmaxf(rpy_int[0], -.25), .25);
     rpy_int[1] = fminf(fmaxf(rpy_int[1], -.25), .25);
 
-    for (size_t i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
       pFoot[i] = seResult.position +
                  seResult.rot_body.transpose() * (quad->GetHipLocation(i) +
@@ -108,7 +108,7 @@ namespace sdrobot::ctrl::mpc
     world_position_desired[2] = _body_height;
 
     // foot placement
-    for (size_t l = 0; l < 4; l++)
+    for (int l = 0; l < 4; l++)
       swingTimes[l] = gait_skd->getCurrentSwingTime(dtMPC, l);
 
     double side_sign[4] = {-1, 1, -1, 1};
@@ -119,7 +119,7 @@ namespace sdrobot::ctrl::mpc
     //double v_abs = std::fabs(seResult.vBody[0]);
     double v_abs = std::fabs(v_des_robot[0]);
 
-    for (size_t i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
       if (firstSwing[i])
       {
@@ -197,7 +197,7 @@ namespace sdrobot::ctrl::mpc
     updateMPCIfNeeded(wbcdata.Fr_des, gait_skd->getMpcTable(), cmd, est, v_des_world);
 
     //  StateEstimator* se = hw_i->state_estimator;
-    for (size_t foot = 0; foot < 4; foot++)
+    for (int foot = 0; foot < 4; foot++)
     {
       double swingState = swingStates[foot];
       if (swingState > 0) // foot is in swing
@@ -320,9 +320,9 @@ namespace sdrobot::ctrl::mpc
                               v_des_world[1],            // 10
                               v_des_world[2]};           // 11
 
-    for (size_t i = 0; i < horizonLength; i++)
+    for (int i = 0; i < horizonLength; i++)
     {
-      for (size_t j = 0; j < 12; j++)
+      for (int j = 0; j < 12; j++)
         trajAll[12 * i + j] = trajInitial[j];
 
       if (i == 0) // start at current position  TODO consider not doing this
@@ -408,7 +408,7 @@ namespace sdrobot::ctrl::mpc
 
     auto rpy = dynamics::QuatToRPY(q);
     Eigen::Matrix<double, 13, 1> x_0;
-    x_0 << rpy(2), rpy(1), rpy(0), p, w, v, -9.8f;
+    x_0 << rpy(2), rpy(1), rpy(0), p, w, v, -9.8;
 
     Matrix3 I_world = R_yaw * I_body * R_yaw.transpose();
 
@@ -417,20 +417,19 @@ namespace sdrobot::ctrl::mpc
     Eigen::Matrix<double, 13, 12> B_ct_r;
 
     A_ct.setZero();
-    A_ct(3, 9) = 1.f;
+    A_ct(3, 9) = 1.;
     A_ct(11, 9) = x_drag;
-    A_ct(4, 10) = 1.f;
-    A_ct(5, 11) = 1.f;
+    A_ct(4, 10) = 1.;
+    A_ct(5, 11) = 1.;
 
-    A_ct(11, 12) = 1.f;
-    A_ct.block(0, 6, 3, 3) = R_yaw.transpose();
+    A_ct(11, 12) = 1.;
+    A_ct.block<3, 3>(0, 6) = R_yaw.transpose();
 
     B_ct_r.setZero();
-    Matrix3 I_inv = I_world.inverse();
 
     for (int b = 0; b < 4; b++)
     {
-      B_ct_r.block<3, 3>(6, b * 3) = I_inv * dynamics::VecToSkewMat(r_feet.col(b));
+      B_ct_r.block<3, 3>(6, b * 3) = I_world.inverse() * dynamics::VecToSkewMat(r_feet.col(b));
       B_ct_r.block<3, 3>(9, b * 3) = Matrix3::Identity() / m;
     }
 
@@ -455,7 +454,7 @@ namespace sdrobot::ctrl::mpc
 
     for (int r = 0; r < horizon; r++)
     {
-      A_qp.block(13 * r, 0, 13, 13) = powerMats[r + 1]; //Adt.pow(r+1);
+      A_qp.block<13, 13>(13 * r, 0) = powerMats[r + 1]; //Adt.pow(r+1);
       for (int c = 0; c < horizon; c++)
       {
         if (r >= c)
@@ -470,7 +469,7 @@ namespace sdrobot::ctrl::mpc
     Eigen::Matrix<double, 13, 1> full_weight;
     for (int i = 0; i < 12; i++)
       full_weight(i) = weights[i];
-    full_weight(12) = 0.f;
+    full_weight(12) = 0.;
     S.diagonal() = full_weight.replicate(horizon, 1);
 
     //trajectory
@@ -504,7 +503,7 @@ namespace sdrobot::ctrl::mpc
 
     for (int i = 0; i < horizon * 4; i++)
     {
-      qA.block(i * 5, i * 3, 5, 3) = f_block;
+      qA.block<5, 3>(i * 5, i * 3) = f_block;
     }
 
     qH = 2 * (B_qp.transpose() * S * B_qp + alpha * eye_12h);

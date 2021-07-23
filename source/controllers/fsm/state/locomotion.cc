@@ -78,7 +78,7 @@ namespace sdrobot::ctrl::fsm
 
     auto & leg_cmd = leg_ctrl_->GetCmdsForUpdate();
 
-    for (size_t leg(0); leg < 4; ++leg)
+    for (int leg(0); leg < 4; ++leg)
     {
       pDes_backup[leg] = leg_cmd[leg].p_des;
       vDes_backup[leg] = leg_cmd[leg].v_des;
@@ -86,7 +86,7 @@ namespace sdrobot::ctrl::fsm
 
     _wbc_ctrl->Run(_wbc_data, state_cmd_, state_est_, leg_ctrl_);
 
-    for (size_t leg(0); leg < 4; ++leg)
+    for (int leg(0); leg < 4; ++leg)
     {
       leg_cmd[leg].p_des = pDes_backup[leg];
       leg_cmd[leg].v_des = vDes_backup[leg];
@@ -114,7 +114,7 @@ namespace sdrobot::ctrl::fsm
       return false;
     }
 
-    for (size_t leg = 0; leg < 4; leg++)
+    for (int leg = 0; leg < 4; leg++)
     {
       const auto &leg_data = leg_ctrl_->GetDatas()[leg];
 

@@ -33,7 +33,6 @@ namespace sdrobot::ctrl::mpc
     double f_max;
     int horizon = 0;
     double m = 10.5;
-    bool first_run = true;
 
     Eigen::Matrix<double, Eigen::Dynamic, 13> A_qp;
     MatrixX B_qp;
@@ -51,7 +50,7 @@ namespace sdrobot::ctrl::mpc
   class CMpc : public Mpc
   {
   public:
-    CMpc(double _dt, unsigned _iterations_between_mpc);
+    CMpc(double _dt, int _iterations_between_mpc);
     bool Init() override;
     bool Run(WbcData &data, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
 
@@ -61,13 +60,13 @@ namespace sdrobot::ctrl::mpc
 
     double dt;
     double dtMPC;
-    unsigned horizonLength = 10;
-    unsigned iterationsBetweenMPC;
-    unsigned iterationCounter = 0;
+    int horizonLength = 10;
+    int iterationsBetweenMPC;
+    int iterationCounter = 0;
 
     std::array<FootSwingTrajectory, 4> footSwingTrajectories;
     std::array<bool, 4> firstSwing;
-    Vector4 swingTimes;
+    std::array<double, 4> swingTimes;
     std::array<double, 4> swingTimeRemaining;
 
     Vector3 world_position_desired;

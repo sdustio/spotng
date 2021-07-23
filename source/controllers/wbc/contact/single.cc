@@ -4,7 +4,7 @@ namespace sdrobot::ctrl::wbc
 {
 
     ContactSingle::ContactSingle(
-        const dynamics::FBModelPtr &model, size_t contact_pt) : Contact(3), robot_sys_(model), _contact_pt(contact_pt)
+        const dynamics::FBModelPtr &model, int contact_pt) : Contact(3), robot_sys_(model), _contact_pt(contact_pt)
     {
         Jc_ = MatrixX(dim_contact_, robot::ModelAttrs::dim_config);
         JcDotQdot_ = VectorX::Zero(dim_contact_);

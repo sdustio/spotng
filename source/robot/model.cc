@@ -79,14 +79,14 @@ namespace sdrobot::robot
     // add contact for the cheetah's body
     model_->AddGroundContactBoxPoints(5, bodyDims);
 
-    const size_t base_id = 5;
-    size_t body_id = base_id;
+    const int base_id = 5;
+    int body_id = base_id;
     int side_sign = -1;
 
     Matrix3 I3 = Matrix3::Identity();
 
     // loop over 4 legs
-    for (size_t leg_id = 0; leg_id < robot::ModelAttrs::num_leg; leg_id++)
+    for (int leg_id = 0; leg_id < robot::ModelAttrs::num_leg; leg_id++)
     {
       // Ab/Ad joint
       //  int addBody(const SpatialInertia& inertia, const SpatialInertia&

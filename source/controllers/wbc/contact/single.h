@@ -7,7 +7,7 @@ namespace sdrobot::ctrl::wbc
   class ContactSingle : public Contact
   {
   public:
-    ContactSingle(const dynamics::FBModelPtr& model, size_t contact_pt);
+    ContactSingle(const dynamics::FBModelPtr& model, int contact_pt);
 
   private:
     bool _UpdateJc() override;
@@ -17,8 +17,8 @@ namespace sdrobot::ctrl::wbc
 
     const dynamics::FBModelPtr robot_sys_;
     double _max_Fz = 1500.;
-    size_t _contact_pt;
-    size_t _dim_U = 6;
+    int _contact_pt;
+    int _dim_U = 6;
   };
 
 }

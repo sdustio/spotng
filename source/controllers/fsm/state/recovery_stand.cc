@@ -42,7 +42,7 @@ namespace sdrobot::ctrl::fsm
     iter_ = 0;
 
     // initial configuration, position
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+    for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       initial_jpos_[i] = this->leg_ctrl_->GetDatas()[i].q;
     }
@@ -94,7 +94,7 @@ namespace sdrobot::ctrl::fsm
 
     if (curr_iter <= floor(standup_ramp_iter_ * 0.7))
     {
-      for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; ++leg)
+      for (int leg = 0; leg < robot::ModelAttrs::num_leg; ++leg)
       {
         SetJPosInterPts(curr_iter, standup_ramp_iter_,
                         leg, initial_jpos_[leg], stand_jpos_[leg]);
@@ -105,7 +105,7 @@ namespace sdrobot::ctrl::fsm
       // If body height is too low because of some reason
       // even after the stand up motion is almost over
       // (Can happen when E-Stop is engaged in the middle of Other state)
-      for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+      for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
       {
         initial_jpos_[i] = leg_ctrl_->GetDatas()[i].q;
       }
@@ -127,7 +127,7 @@ namespace sdrobot::ctrl::fsm
 
   void StateRecoveryStand::FoldLegs(const int curr_iter)
   {
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+    for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       SetJPosInterPts(curr_iter, fold_ramp_iter_, i,
                       initial_jpos_[i], fold_jpos_[i]);
@@ -137,13 +137,13 @@ namespace sdrobot::ctrl::fsm
       if (UpsideDown())
       {
         flag_ = Flag::RollOver;
-        for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+        for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
           initial_jpos_[i] = fold_jpos_[i];
       }
       else
       {
         flag_ = Flag::StandUp;
-        for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+        for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
           initial_jpos_[i] = fold_jpos_[i];
       }
       iter_ = -1;
@@ -152,7 +152,7 @@ namespace sdrobot::ctrl::fsm
 
   void StateRecoveryStand::RollOver(const int curr_iter)
   {
-    for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+    for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
     {
       SetJPosInterPts(curr_iter, rollover_ramp_iter_, i,
                       initial_jpos_[i], rolling_jpos_[i]);
@@ -161,14 +161,14 @@ namespace sdrobot::ctrl::fsm
     if (curr_iter > rollover_ramp_iter_ + rollover_settle_iter_)
     {
       flag_ = Flag::FoldLegs;
-      for (size_t i = 0; i < robot::ModelAttrs::num_leg; ++i)
+      for (int i = 0; i < robot::ModelAttrs::num_leg; ++i)
         initial_jpos_[i] = rolling_jpos_[i];
       iter_ = -1;
     }
   }
 
   void StateRecoveryStand::SetJPosInterPts(
-      const int curr_iter, int max_iter, size_t leg,
+      const int curr_iter, int max_iter, int leg,
       const Vector3 &ini, const Vector3 &fin)
   {
     double a = 0.;
@@ -188,7 +188,7 @@ namespace sdrobot::ctrl::fsm
     JointPDControl(leg, inter_pos, Vector3::Zero());
   }
 
-  void StateRecoveryStand::JointPDControl(size_t leg, const Vector3 &qDes, const Vector3 &qdDes)
+  void StateRecoveryStand::JointPDControl(int leg, const Vector3 &qDes, const Vector3 &qdDes)
   {
     leg_ctrl_->GetCmdsForUpdate()[leg].kp_joint = kp_mat_;
     leg_ctrl_->GetCmdsForUpdate()[leg].kd_joint = kd_mat_;

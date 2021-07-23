@@ -35,10 +35,10 @@ namespace sdrobot::ctrl::fsm
     void RollOver(const int curr_iter);
 
     void SetJPosInterPts(
-        const int curr_iter, int max_iter, size_t leg,
+        const int curr_iter, int max_iter, int leg,
         const Vector3 &ini, const Vector3 &fin);
 
-    void JointPDControl(size_t leg, const Vector3 &qDes, const Vector3 &qdDes);
+    void JointPDControl(int leg, const Vector3 &qDes, const Vector3 &qdDes);
 
     std::unordered_map<robot::Mode, State> state_trans_;
     std::unordered_map<Flag, void (StateRecoveryStand::*)(const int)> flag_dispatch_;

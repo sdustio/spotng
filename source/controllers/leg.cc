@@ -4,7 +4,7 @@ namespace sdrobot::ctrl
 {
   void Leg::UpdateDatas(const robot::SPIData &data)
   {
-    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
+    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // q: 关节角
       datas_[leg].q(0) = data.q_abad[leg];
@@ -26,7 +26,7 @@ namespace sdrobot::ctrl
 
   void Leg::UpdateSPICmd(robot::SPICmd &cmd)
   {
-    for (size_t leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
+    for (int leg = 0; leg < robot::ModelAttrs::num_leg; leg++)
     {
       // tauFF 获得从控制器来的力矩
       Vector3 leg_torque = cmds_[leg].tau_feed_forward;
@@ -85,7 +85,7 @@ namespace sdrobot::ctrl
     enabled_ = false;
   }
 
-  void Leg::ComputeLegJacobianAndPosition(size_t leg)
+  void Leg::ComputeLegJacobianAndPosition(int leg)
   {
     double l1 = robot::ModelAttrs::abad_link_length;
     double l2 = robot::ModelAttrs::hip_link_length;
@@ -104,18 +104,18 @@ namespace sdrobot::ctrl
     double c23 = c2 * c3 - s2 * s3;
     double s23 = s2 * c3 + c2 * s3;
 
-    datas_.at(leg).J.operator()(0, 0) = 0;
-    datas_.at(leg).J.operator()(0, 1) = l3 * c23 + l2 * c2;
-    datas_.at(leg).J.operator()(0, 2) = l3 * c23;
-    datas_.at(leg).J.operator()(1, 0) = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * side_sign * s1;
-    datas_.at(leg).J.operator()(1, 1) = -l3 * s1 * s23 - l2 * s1 * s2;
-    datas_.at(leg).J.operator()(1, 2) = -l3 * s1 * s23;
-    datas_.at(leg).J.operator()(2, 0) = l3 * s1 * c23 + l2 * c2 * s1 + (l1 + l4) * side_sign * c1;
-    datas_.at(leg).J.operator()(2, 1) = l3 * c1 * s23 + l2 * c1 * s2;
-    datas_.at(leg).J.operator()(2, 2) = l3 * c1 * s23;
+    datas_.at(leg).J(0, 0) = 0;
+    datas_.at(leg).J(0, 1) = l3 * c23 + l2 * c2;
+    datas_.at(leg).J(0, 2) = l3 * c23;
+    datas_.at(leg).J(1, 0) = l3 * c1 * c23 + l2 * c1 * c2 - (l1 + l4) * side_sign * s1;
+    datas_.at(leg).J(1, 1) = -l3 * s1 * s23 - l2 * s1 * s2;
+    datas_.at(leg).J(1, 2) = -l3 * s1 * s23;
+    datas_.at(leg).J(2, 0) = l3 * s1 * c23 + l2 * c2 * s1 + (l1 + l4) * side_sign * c1;
+    datas_.at(leg).J(2, 1) = l3 * c1 * s23 + l2 * c1 * s2;
+    datas_.at(leg).J(2, 2) = l3 * c1 * s23;
 
-    datas_.at(leg).p.operator()(0) = l3 * s23 + l2 * s2;
-    datas_.at(leg).p.operator()(1) = (l1 + l4) * side_sign * c1 + l3 * (s1 * c23) + l2 * c2 * s1;
-    datas_.at(leg).p.operator()(2) = (l1 + l4) * side_sign * s1 - l3 * (c1 * c23) - l2 * c1 * c2;
+    datas_.at(leg).p(0) = l3 * s23 + l2 * s2;
+    datas_.at(leg).p(1) = (l1 + l4) * side_sign * c1 + l3 * (s1 * c23) + l2 * c2 * s1;
+    datas_.at(leg).p(2) = (l1 + l4) * side_sign * s1 - l3 * (c1 * c23) - l2 * c1 * c2;
   }
 }

@@ -4,7 +4,7 @@
 namespace sdrobot::ctrl::wbc
 {
 
-  Wbic::Wbic(size_t num_qdot, double weight) : num_act_joint_(num_qdot - 6), num_qdot_(num_qdot),
+  Wbic::Wbic(int num_qdot, double weight) : num_act_joint_(num_qdot - 6), num_qdot_(num_qdot),
                                                _W_floating(VectorX::Constant(6, weight)),
                                                _W_rf(VectorX::Constant(12, 1.))
 
@@ -86,10 +86,10 @@ namespace sdrobot::ctrl::wbc
     _SolveQP();
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
-    for (size_t i(0); i < _dim_floating; ++i)
+    for (int i(0); i < _dim_floating; ++i)
       qddot_pre[i] += z_[i];
 
-    for (size_t i = 0; i < robot::ModelAttrs::dim_config; i++)
+    for (int i = 0; i < robot::ModelAttrs::dim_config; i++)
     {
       if (fabs(qddot_pre[i]) > 99999.)
       {
@@ -115,7 +115,7 @@ namespace sdrobot::ctrl::wbc
     // Initial
     MatrixX Jc;
     VectorX JcDotQdot;
-    size_t dim_accumul_rf, dim_accumul_uf;
+    int dim_accumul_rf, dim_accumul_uf;
 
     Jc = contact_list[0]->getContactJacobian();
     JcDotQdot = contact_list[0]->getJcDotQdot();
@@ -131,9 +131,9 @@ namespace sdrobot::ctrl::wbc
     _Uf_ieq_vec.head(dim_accumul_uf) = Uf_ieq_vec;
     _Fr_des.head(dim_accumul_rf) = contact_list[0]->getRFDesired();
 
-    size_t dim_new_rf, dim_new_uf;
-
-    for (size_t i(1); i < contact_list.size(); ++i)
+    int dim_new_rf, dim_new_uf;
+    int csize = contact_list.size();
+    for (int i(1); i < csize; ++i)
     {
       Jc = contact_list[i]->getContactJacobian();
       JcDotQdot = contact_list[i]->getJcDotQdot();
@@ -195,7 +195,8 @@ namespace sdrobot::ctrl::wbc
     // Dimension
     _dim_rf = 0;
     _dim_Uf = 0; // Dimension of inequality constraint
-    for (size_t i(0); i < contact_list.size(); ++i)
+    int csize = contact_list.size();
+    for (int i(0); i < csize; ++i)
     {
       _dim_rf += contact_list[i]->getDim();
       _dim_Uf += contact_list[i]->getDimRFConstraint();
@@ -234,13 +235,13 @@ namespace sdrobot::ctrl::wbc
   void Wbic::_SetCost()
   {
     // Set Cost
-    size_t idx_offset(0);
-    for (size_t i(0); i < _dim_floating; ++i)
+    int idx_offset(0);
+    for (int i(0); i < _dim_floating; ++i)
     {
       G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_floating[i];
     }
     idx_offset += _dim_floating;
-    for (size_t i(0); i < _dim_rf; ++i)
+    for (int i(0); i < _dim_rf; ++i)
     {
       G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_rf[i];
     }
@@ -254,7 +255,7 @@ namespace sdrobot::ctrl::wbc
     {
       VectorX _Fr(_dim_rf);
       // get Reaction forces
-      for (size_t i(0); i < _dim_rf; ++i)
+      for (int i(0); i < _dim_rf; ++i)
         _Fr[i] = z_[i + _dim_floating] + _Fr_des[i];
       tot_tau =
           A_ * qddot + cori_ + grav_ - _Jc.transpose() * _Fr;
@@ -280,9 +281,9 @@ namespace sdrobot::ctrl::wbc
 
   int Wbic::_SolveQP()
   {
-    size_t n(z_.size());
-    size_t m(ce0_.size());
-    size_t p(ci0_.size());
+    int n(z_.size());
+    int m(ce0_.size());
+    int p(ci0_.size());
 
     qp_.reset(n, m, p);
 
@@ -304,7 +305,7 @@ namespace sdrobot::ctrl::wbc
     // VectorX &_ce0 = ce0_;
     // VectorX &_ci0 = ci0_;
     // VectorX activeSet(p);
-    // size_t activeSetSize;
+    // int activeSetSize;
     // eiquadprog::solvers::solve_quadprog(_G, _g0, _CE, _ce0, _CI, _ci0, z_, activeSet, activeSetSize);
   }
 

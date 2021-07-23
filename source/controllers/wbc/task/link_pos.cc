@@ -3,13 +3,13 @@
 namespace sdrobot::ctrl::wbc
 {
   TaskLinkPos::TaskLinkPos(
-      const dynamics::FBModelPtr &model, size_t linkid, bool virtual_depend)
+      const dynamics::FBModelPtr &model, int linkid, bool virtual_depend)
       : Task(3, model), link_idx_(linkid), virtual_depend_(virtual_depend)
   {
     Jt_ = MatrixX::Zero(dim_task_, robot::ModelAttrs::dim_config);
     JtDotQdot_ = VectorX::Zero(dim_task_);
     _Kp_kin = VectorX::Constant(dim_task_, 1.);
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       _Kp[i] = robot::DynamicsAttrs::kp_foot[i];
       _Kd[i] = robot::DynamicsAttrs::kd_foot[i];
@@ -33,7 +33,7 @@ namespace sdrobot::ctrl::wbc
     }
 
     // Op acceleration command
-    for (size_t i(0); i < dim_task_; ++i)
+    for (int i(0); i < dim_task_; ++i)
     {
       op_cmd_[i] =
           _Kp[i] * pos_err_[i] +

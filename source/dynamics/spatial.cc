@@ -208,7 +208,7 @@ namespace sdrobot::dynamics
   {
     Matrix3 I =
         Matrix3::Identity() * dims.norm() * dims.norm();
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
       I(i, i) -= dims(i) * dims(i);
     I = I * mass / 12;
     return I;
