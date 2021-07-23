@@ -19,9 +19,9 @@ namespace sdrobot::ctrl::mpc
   }
 
   CMpc::CMpc(double _dt, int _iterations_between_mpc) : dt(_dt),
-                                                             dtMPC(_dt * _iterations_between_mpc),
-                                                             iterationsBetweenMPC(_iterations_between_mpc),
-                                                             rpy_int(Vector3::Zero())
+                                                        dtMPC(_dt * _iterations_between_mpc),
+                                                        iterationsBetweenMPC(_iterations_between_mpc),
+                                                        rpy_int(Vector3::Zero())
   {
     firstSwing.fill(true);
     gait_map_ = {
@@ -267,7 +267,7 @@ namespace sdrobot::ctrl::mpc
     return true;
   }
 
-  void CMpc::UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
+  void CMpc::UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const Eigen::VectorXi &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
   {
     //iterationsBetweenMPC = 30;
     if ((iterationCounter % iterationsBetweenMPC) != 0)
@@ -342,11 +342,12 @@ namespace sdrobot::ctrl::mpc
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::SolveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
+  void CMpc::SolveMPC(std::array<Vector3, 4> &out, const Eigen::VectorXi &mpcTable, const est::StateEstPtr &est)
   {
     const auto &seResult = est->GetData();
 
-    std::array<double, 12> weights = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
+    Eigen::Matrix<double, 12, 1> weights;
+    weights << 1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2;
     //double Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
     double yaw = seResult.rpy[2];
     double alpha = 4e-5; // make setting eventually
@@ -356,7 +357,7 @@ namespace sdrobot::ctrl::mpc
     const auto &w_world = seResult.omega_world; //w
     const auto &ori = seResult.orientation;     //q
 
-    std::array<double, 12> r;
+    Eigen::Matrix<double, 12, 1> r;
     for (int i = 0; i < 12; i++)
       r[i] = pFoot[i % 4][i / 4] - pos[i / 4];
 
@@ -391,8 +392,8 @@ namespace sdrobot::ctrl::mpc
   }
 
   void QPSolver::SolveQP(double x_drag, const Vector3 &p, const Vector3 &v, const dynamics::Quat &q, const Vector3 &w,
-                         const std::array<double, 12> &r, double yaw, std::array<double, 12> &weights,
-                         const std::array<double, 12 * 36> &state_trajectory, double alpha, const std::vector<int> &gait)
+                         const Eigen::Matrix<double, 12, 1> &r, double yaw, Eigen::Matrix<double, 12, 1> &weights,
+                         const Eigen::Matrix<double, 12 * 36, 1> &state_trajectory, double alpha, const Eigen::VectorXi &gait)
   {
     Matrix3x4 r_feet;
     for (int rs = 0; rs < 3; rs++)
@@ -662,17 +663,17 @@ namespace sdrobot::ctrl::mpc
 
   void QPSolver::ResizeQPMats()
   {
-    A_qp.resize(13*horizon, Eigen::NoChange);
-    B_qp.resize(13*horizon, 12*horizon);
-    S.resize(13*horizon, 13*horizon);
-    X_d.resize(13*horizon, Eigen::NoChange);
-    qub.resize(20*horizon, Eigen::NoChange);
-    qlb.resize(20*horizon, Eigen::NoChange);
-    qA.resize(20*horizon, 12*horizon);
-    qH.resize(12*horizon, 12*horizon);
-    qg.resize(12*horizon, Eigen::NoChange);
-    eye_12h.resize(12*horizon, 12*horizon);
-    qsoln.resize(12*horizon, Eigen::NoChange);
+    A_qp.resize(13 * horizon, Eigen::NoChange);
+    B_qp.resize(13 * horizon, 12 * horizon);
+    S.resize(13 * horizon, 13 * horizon);
+    X_d.resize(13 * horizon, Eigen::NoChange);
+    qub.resize(20 * horizon, Eigen::NoChange);
+    qlb.resize(20 * horizon, Eigen::NoChange);
+    qA.resize(20 * horizon, 12 * horizon);
+    qH.resize(12 * horizon, 12 * horizon);
+    qg.resize(12 * horizon, Eigen::NoChange);
+    eye_12h.resize(12 * horizon, 12 * horizon);
+    qsoln.resize(12 * horizon, Eigen::NoChange);
 
     A_qp.setZero();
     B_qp.setZero();

@@ -11,9 +11,9 @@ namespace sdrobot::ctrl::mpc
       const std::string &name) : offsets_(offsets.array()),
                                  durations_(durations.array()),
                                  n_iterations_(nSegment),
-                                 name_(name)
+                                 name_(name),
+                                 mpc_table_(nSegment * 4)
   {
-    mpc_table_.resize(nSegment * 4);
     offsetsd_ = offsets_.cast<double>() / double(nSegment);
     durationsd_ = durations_.cast<double>() / double(nSegment);
 
@@ -71,7 +71,7 @@ namespace sdrobot::ctrl::mpc
     return progress.matrix();
   }
 
-  const std::vector<int> &OffsetDurationGait::GetMpcTable()
+  const Eigen::VectorXi &OffsetDurationGait::GetMpcTable()
   {
 
     //printf("MPC table:\n");

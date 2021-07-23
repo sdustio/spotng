@@ -23,8 +23,8 @@ namespace sdrobot::ctrl::mpc
     void Setup(double dt, int horizonLen, double mu, double f_max);
     void ResizeQPMats();
     void SolveQP(double x_drag, const Vector3 &p, const Vector3 &v, const dynamics::Quat &q, const Vector3 &w,
-                 const std::array<double, 12> &r, double yaw, std::array<double, 12> &weights,
-                 const std::array<double, 12 * 36> &state_trajectory, double alpha, const std::vector<int> &gait);
+                 const Eigen::Matrix<double, 12, 1> &r, double yaw, Eigen::Matrix<double, 12, 1> &weights,
+                 const Eigen::Matrix<double, 12 * 36, 1> &state_trajectory, double alpha, const Eigen::VectorXi &gait);
     const VectorX &GetSolution() { return qsoln; }
 
   private:
@@ -55,8 +55,8 @@ namespace sdrobot::ctrl::mpc
     bool Run(WbcData &data, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est) override;
 
   private:
-    void UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world);
-    void SolveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est);
+    void UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const Eigen::VectorXi &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world);
+    void SolveMPC(std::array<Vector3, 4> &out, const Eigen::VectorXi &mpcTable, const est::StateEstPtr &est);
 
     double dt;
     double dtMPC;
@@ -66,19 +66,19 @@ namespace sdrobot::ctrl::mpc
 
     std::array<FootSwingTrajectory, 4> footSwingTrajectories;
     std::array<bool, 4> firstSwing;
-    std::array<double, 4> swingTimes;
-    std::array<double, 4> swingTimeRemaining;
+    Vector4 swingTimes;
+    Vector4 swingTimeRemaining;
 
     Vector3 world_position_desired;
     Vector3 rpy_int;
     std::array<Vector3, 4> pFoot;
     double x_comp_integral = 0;
 
-    std::array<double, 6> stand_traj;
+    Eigen::Matrix<double, 6, 1> stand_traj;
+    Eigen::Matrix<double, 12 * 36, 1> trajAll;
 
     Gait current_gait_;
     bool firstRun = true;
-    std::array<double, 12 * 36> trajAll;
 
     Matrix3 Kp, Kd, Kp_stance, Kd_stance;
 

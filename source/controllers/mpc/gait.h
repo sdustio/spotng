@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "sdrobot/types.h"
 
@@ -13,7 +12,7 @@ namespace sdrobot::ctrl::mpc
   public:
     virtual Vector4 GetContactState() = 0;
     virtual Vector4 GetSwingState() = 0;
-    virtual const std::vector<int> &GetMpcTable() = 0;
+    virtual const Eigen::VectorXi &GetMpcTable() = 0;
     virtual void SetIterations(int iterationsBetweenMPC, int currentIteration) = 0;
     virtual double GetCurrentStanceTime(double dtMPC, int leg) = 0;
     virtual double GetCurrentSwingTime(double dtMPC, int leg) = 0;
@@ -28,7 +27,7 @@ namespace sdrobot::ctrl::mpc
     OffsetDurationGait(int nSegment, Eigen::Vector4i offsets, Eigen::Vector4i durations, const std::string &name);
     Vector4 GetContactState() override;
     Vector4 GetSwingState() override;
-    const std::vector<int> &GetMpcTable() override;
+    const Eigen::VectorXi &GetMpcTable() override;
     void SetIterations(int iterationsPerMPC, int currentIteration) override;
     double GetCurrentStanceTime(double dtMPC, int leg) override;
     double GetCurrentSwingTime(double dtMPC, int leg) override;
@@ -48,7 +47,7 @@ namespace sdrobot::ctrl::mpc
 
     std::string name_;
 
-    std::vector<int> mpc_table_;
+    Eigen::VectorXi mpc_table_;
   };
 
 } // namespace sdrobot::ctrl::mpc
