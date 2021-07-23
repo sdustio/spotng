@@ -4,7 +4,7 @@
 
 namespace sdrobot
 {
-    constexpr double kZeroEpsilon = 1.e-10;
+    constexpr double kZeroEpsilon = 1.e-12;
 
     using Vector2 = Eigen::Vector2d;
     using Vector3 = Eigen::Vector3d;

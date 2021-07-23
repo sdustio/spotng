@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "eiquadprog/eiquadprog-fast.hpp"
+#include <eiquadprog/eiquadprog-fast.hpp>
 
 #include "sdrobot/estimators/state_est.h"
 #include "sdrobot/dynamics/fb_model.h"

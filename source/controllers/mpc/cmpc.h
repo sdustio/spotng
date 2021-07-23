@@ -13,6 +13,39 @@ namespace sdrobot::ctrl::mpc
   {
     constexpr static int bonus_swing = 0;
     constexpr static int cmpc_x_drag = 3;
+    constexpr static int max_gait_segments = 36;
+    constexpr static double big_num = 5e10;
+  };
+
+  class QPSolver
+  {
+  public:
+    void Setup(double dt, int horizonLen, double mu, double f_max);
+    void ResizeQPMats();
+    void SolveQP(double x_drag, const Vector3 &p, const Vector3 &v, const dynamics::Quat &q, const Vector3 &w,
+                 const std::array<double, 12> &r, double yaw, std::array<double, 12> &weights,
+                 const std::array<double, 12 * 36> &state_trajectory, double alpha, const std::vector<int> &gait);
+    const VectorX &GetSolution() { return qsoln; }
+
+  private:
+    double dt;
+    double mu;
+    double f_max;
+    int horizon = 0;
+    double m = 10.5;
+    bool first_run = true;
+
+    Eigen::Matrix<double, Eigen::Dynamic, 13> A_qp;
+    MatrixX B_qp;
+    MatrixX S, eye_12h;
+    VectorX X_d;
+
+    MatrixX qH, qA;
+    VectorX qg, qlb, qub;
+    std::array<char, 250> var_elim = {};
+    std::array<char, 250> con_elim = {};
+
+    VectorX qsoln;
   };
 
   class CMpc : public Mpc
@@ -24,12 +57,12 @@ namespace sdrobot::ctrl::mpc
 
   private:
     void updateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world);
-    void solveDenseMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est);
+    void solveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est);
 
     double dt;
     double dtMPC;
-    unsigned iterationsBetweenMPC;
     unsigned horizonLength = 10;
+    unsigned iterationsBetweenMPC;
     unsigned iterationCounter = 0;
 
     std::array<FootSwingTrajectory, 4> footSwingTrajectories;
@@ -49,6 +82,9 @@ namespace sdrobot::ctrl::mpc
     std::array<double, 12 * 36> trajAll;
 
     Matrix3 Kp, Kd, Kp_stance, Kd_stance;
+
+    QPSolver qpsolver_;
+    // RobotState qs_;
 
     std::unordered_map<Gait, GaitSkdPtr> gait_map_;
   };

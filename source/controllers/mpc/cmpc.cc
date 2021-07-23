@@ -1,9 +1,22 @@
+#include <qpOASES.hpp>
+#include <unsupported/Eigen/MatrixFunctions>
+
 #include "sdrobot/dynamics/rotation.h"
 #include "controllers/mpc/cmpc.h"
 
 namespace sdrobot::ctrl::mpc
 {
   using Eigen::Vector4i;
+
+  bool near_zero(double a)
+  {
+    return (a < .01 && a > -.01);
+  }
+
+  bool near_one(double a)
+  {
+    return near_zero(a - 1);
+  }
 
   CMpc::CMpc(double _dt, unsigned _iterations_between_mpc) : dt(_dt),
                                                              dtMPC(_dt * _iterations_between_mpc),
@@ -325,15 +338,15 @@ namespace sdrobot::ctrl::mpc
         trajAll[12 * i + 2] = trajAll[12 * (i - 1) + 2] + dtMPC * cmd_des(StateIdx::rate_y);
       }
     }
-    solveDenseMPC(out, mpcTable, est);
+    solveMPC(out, mpcTable, est);
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::solveDenseMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
+  void CMpc::solveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
   {
     const auto &seResult = est->GetData();
 
-    double weights[12] = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
+    std::array<double, 12> weights = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
     //double Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
     double yaw = seResult.rpy[2];
     double alpha = 4e-5; // make setting eventually
@@ -343,11 +356,9 @@ namespace sdrobot::ctrl::mpc
     const auto &w_world = seResult.omega_world; //w
     const auto &ori = seResult.orientation;     //q
 
-    double r[12];
+    std::array<double, 12> r;
     for (int i = 0; i < 12; i++)
       r[i] = pFoot[i % 4][i / 4] - pos[i / 4];
-
-    //printf("current posistion: %3.f %.3f %.3f\n", p[0], p[1], p[2]);
 
     if (alpha > 1e-4)
     {
@@ -359,40 +370,322 @@ namespace sdrobot::ctrl::mpc
 
     Vector3 vxy(v_world[0], v_world[1], 0);
 
-    /*
-    setup_problem(dtMPC, horizonLength, 0.4, 150);
-    //setup_problem(dtMPC,horizonLength,0.4,650); //DH
-    update_x_drag(x_comp_integral);
+    qpsolver_.Setup(dtMPC, horizonLength, 0.4, 150);
+
     if (vxy[0] > 0.3 || vxy[0] < -0.3)
     {
       x_comp_integral += Params::cmpc_x_drag * pz_err * dtMPC / vxy[0];
     }
 
-    //printf("pz err: %.3f, pz int: %.3f\n", pz_err, x_comp_integral);
+    qpsolver_.SolveQP(x_comp_integral, pos, v_world, ori, w_world, r, yaw, weights, trajAll, alpha, mpcTable);
 
-    update_solver_settings(_parameters->jcqp_max_iter, _parameters->jcqp_rho,
-                           _parameters->jcqp_sigma, _parameters->jcqp_alpha, _parameters->jcqp_terminate, _parameters->use_jcqp);
-    //t1.stopPrint("Setup MPC");
-
-    // Timer t2;
-    //cout << "dtMPC: " << dtMPC << "\n";
-    update_problem_data(pos, v_world, ori, w_world, r, yaw, weights, trajAll, alpha, mpcTable);
-    //t2.stopPrint("Run MPC");
-    //printf("MPC Solve time %f ms\n", t2.getMs());
-
+    auto const &solu = qpsolver_.GetSolution();
     for (int leg = 0; leg < 4; leg++)
     {
       Vector3 f;
       for (int axis = 0; axis < 3; axis++)
-        f[axis] = get_solution(leg * 3 + axis);
+        f[axis] = solu(leg * 3 + axis);
 
-      //printf("[%d] %7.3f %7.3f %7.3f\n", leg, f[0], f[1], f[2]);
-
-      // f_ff[leg] = -seResult.rot_body * f;
-      // Update for WBC
       out[leg] = f;
     }
-    */
+  }
+
+  void QPSolver::SolveQP(double x_drag, const Vector3 &p, const Vector3 &v, const dynamics::Quat &q, const Vector3 &w,
+                         const std::array<double, 12> &r, double yaw, std::array<double, 12> &weights,
+                         const std::array<double, 12 * 36> &state_trajectory, double alpha, const std::vector<int> &gait)
+  {
+    Matrix3x4 r_feet;
+    for (int rs = 0; rs < 3; rs++)
+      for (int c = 0; c < 4; c++)
+        r_feet(rs, c) = r[rs * 4 + c];
+    Matrix3 I_body, R_yaw;
+    auto yc = cos(yaw);
+    auto ys = sin(yaw);
+    R_yaw << yc, -ys, 0,
+        ys, yc, 0,
+        0, 0, 1;
+    I_body.diagonal() << .07, 0.26, 0.242;
+
+    auto rpy = dynamics::QuatToRPY(q);
+    Eigen::Matrix<double, 13, 1> x_0;
+    x_0 << rpy(2), rpy(1), rpy(0), p, w, v, -9.8f;
+
+    Matrix3 I_world = R_yaw * I_body * R_yaw.transpose();
+
+    //continuous time state space matrices.
+    Eigen::Matrix<double, 13, 13> A_ct;
+    Eigen::Matrix<double, 13, 12> B_ct_r;
+
+    A_ct.setZero();
+    A_ct(3, 9) = 1.f;
+    A_ct(11, 9) = x_drag;
+    A_ct(4, 10) = 1.f;
+    A_ct(5, 11) = 1.f;
+
+    A_ct(11, 12) = 1.f;
+    A_ct.block(0, 6, 3, 3) = R_yaw.transpose();
+
+    B_ct_r.setZero();
+    Matrix3 I_inv = I_world.inverse();
+
+    for (int b = 0; b < 4; b++)
+    {
+      B_ct_r.block<3, 3>(6, b * 3) = I_inv * dynamics::VecToSkewMat(r_feet.col(b));
+      B_ct_r.block<3, 3>(9, b * 3) = Matrix3::Identity() / m;
+    }
+
+    //QP matrices
+    Eigen::Matrix<double, 13, 12> Bdt;
+    Eigen::Matrix<double, 13, 13> Adt;
+
+    Eigen::Matrix<double, 25, 25> ABc = Eigen::Matrix<double, 25, 25>::Zero();
+    ABc.block<13, 13>(0, 0) = A_ct;
+    ABc.block<13, 12>(0, 13) = B_ct_r;
+    ABc = dt * ABc;
+    Eigen::Matrix<double, 25, 25> expmm = ABc.exp();
+    Adt = expmm.block<13, 13>(0, 0);
+    Bdt = expmm.block<13, 12>(0, 13);
+
+    Eigen::Matrix<double, 13, 13> powerMats[20];
+    powerMats[0].setIdentity();
+    for (int i = 1; i < horizon + 1; i++)
+    {
+      powerMats[i] = Adt * powerMats[i - 1];
+    }
+
+    for (int r = 0; r < horizon; r++)
+    {
+      A_qp.block(13 * r, 0, 13, 13) = powerMats[r + 1]; //Adt.pow(r+1);
+      for (int c = 0; c < horizon; c++)
+      {
+        if (r >= c)
+        {
+          int a_num = r - c;
+          B_qp.block(13 * r, 12 * c, 13, 12) = powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
+        }
+      }
+    }
+
+    //weights
+    Eigen::Matrix<double, 13, 1> full_weight;
+    for (int i = 0; i < 12; i++)
+      full_weight(i) = weights[i];
+    full_weight(12) = 0.f;
+    S.diagonal() = full_weight.replicate(horizon, 1);
+
+    //trajectory
+    for (int i = 0; i < horizon; i++)
+    {
+      for (int j = 0; j < 12; j++)
+        X_d(13 * i + j, 0) = state_trajectory[12 * i + j];
+    }
+
+    int k = 0;
+    for (int i = 0; i < horizon; i++)
+    {
+      for (int j = 0; j < 4; j++)
+      {
+        qub(5 * k + 0) = Params::big_num;
+        qub(5 * k + 1) = Params::big_num;
+        qub(5 * k + 2) = Params::big_num;
+        qub(5 * k + 3) = Params::big_num;
+        qub(5 * k + 4) = gait[i * 4 + j] * f_max;
+        k++;
+      }
+    }
+
+    double rep_mu = 1. / (mu + kZeroEpsilon);
+    Eigen::Matrix<double, 5, 3> f_block;
+    f_block << rep_mu, 0, 1.,
+        -rep_mu, 0, 1.,
+        0, rep_mu, 1.,
+        0, -rep_mu, 1.,
+        0, 0, 1.;
+
+    for (int i = 0; i < horizon * 4; i++)
+    {
+      qA.block(i * 5, i * 3, 5, 3) = f_block;
+    }
+
+    qH = 2 * (B_qp.transpose() * S * B_qp + alpha * eye_12h);
+    qg = 2 * B_qp.transpose() * S * (A_qp * x_0 - X_d);
+
+    int nWSR = 100;
+    int num_constraints = 20 * horizon;
+    int num_variables = 12 * horizon;
+    int new_cons = num_constraints;
+    int new_vars = num_variables;
+
+    for (int i = 0; i < num_constraints; i++)
+      con_elim[i] = 0;
+
+    for (int i = 0; i < num_variables; i++)
+      var_elim[i] = 0;
+
+    for (int i = 0; i < num_constraints; i++)
+    {
+      if (!(near_zero(qlb[i]) && near_zero(qub[i])))
+        continue;
+      auto c_row = qA.row(i);
+
+      for (int j = 0; j < num_variables; j++)
+      {
+        if (near_one(c_row[j]))
+        {
+          new_vars -= 3;
+          new_cons -= 5;
+          int cs = (j * 5) / 3 - 3;
+          var_elim[j - 2] = 1;
+          var_elim[j - 1] = 1;
+          var_elim[j] = 1;
+          con_elim[cs] = 1;
+          con_elim[cs + 1] = 1;
+          con_elim[cs + 2] = 1;
+          con_elim[cs + 3] = 1;
+          con_elim[cs + 4] = 1;
+        }
+      }
+    }
+
+    auto var_ind = new int[new_vars];
+    auto con_ind = new int[new_cons];
+    int vc = 0;
+
+    for (int i = 0; i < num_variables; i++)
+    {
+      if (!var_elim[i])
+      {
+        if (vc >= new_vars)
+        {
+          throw("BAD ERROR 1\n");
+        }
+        var_ind[vc] = i;
+        vc++;
+      }
+    }
+    vc = 0;
+    for (int i = 0; i < num_constraints; i++)
+    {
+      if (!con_elim[i])
+      {
+        if (vc >= new_cons)
+        {
+          throw("BAD ERROR 1\n");
+        }
+        con_ind[vc] = i;
+        vc++;
+      }
+    }
+
+    auto g_red = new qpOASES::real_t[new_vars];
+    auto H_red = new qpOASES::real_t[new_vars * new_vars];
+    for (int i = 0; i < new_vars; i++)
+    {
+      int olda = var_ind[i];
+      g_red[i] = qg[olda];
+      for (int j = 0; j < new_vars; j++)
+      {
+        int oldb = var_ind[j];
+        H_red[i * new_vars + j] = qH(olda, oldb);
+      }
+    }
+
+    auto A_red = new qpOASES::real_t[new_cons * new_vars];
+    for (int con = 0; con < new_cons; con++)
+    {
+      for (int st = 0; st < new_vars; st++)
+      {
+        auto cval = qA(con_ind[con], var_ind[st]);
+        A_red[con * new_vars + st] = cval;
+      }
+    }
+
+    auto ub_red = new qpOASES::real_t[new_cons];
+    auto lb_red = new qpOASES::real_t[new_cons];
+    for (int i = 0; i < new_cons; i++)
+    {
+      int old = con_ind[i];
+      ub_red[i] = qub[old];
+      lb_red[i] = qlb[old];
+    }
+
+    qpOASES::QProblem problem_red(new_vars, new_cons);
+    qpOASES::Options op;
+    op.setToMPC();
+    op.printLevel = qpOASES::PL_NONE;
+    problem_red.setOptions(op);
+    //int_t nWSR = 50000;
+
+    problem_red.init(H_red, g_red, A_red, nullptr, nullptr, lb_red, ub_red, nWSR);
+
+    auto q_red = new qpOASES::real_t[new_vars];
+    int rval2 = problem_red.getPrimalSolution(q_red);
+    if (rval2 != qpOASES::SUCCESSFUL_RETURN)
+      printf("failed to solve!\n");
+
+    vc = 0;
+    for (int i = 0; i < num_variables; i++)
+    {
+      if (var_elim[i])
+      {
+        qsoln[i] = 0.0;
+      }
+      else
+      {
+        qsoln[i] = q_red[vc];
+        vc++;
+      }
+    }
+
+    delete[] var_ind;
+    delete[] con_ind;
+    delete[] g_red;
+    delete[] H_red;
+    delete[] A_red;
+    delete[] ub_red;
+    delete[] lb_red;
+    delete[] q_red;
+  }
+
+  void QPSolver::Setup(double dt, int horizonLen, double mu, double f_max)
+  {
+    auto changed = horizon != horizonLen;
+    horizon = horizonLen;
+    f_max = f_max;
+    mu = mu;
+    dt = dt;
+
+    if (changed)
+    {
+      ResizeQPMats();
+    }
+  }
+
+  void QPSolver::ResizeQPMats()
+  {
+    A_qp.resize(13*horizon, Eigen::NoChange);
+    B_qp.resize(13*horizon, 12*horizon);
+    S.resize(13*horizon, 13*horizon);
+    X_d.resize(13*horizon, Eigen::NoChange);
+    qub.resize(20*horizon, Eigen::NoChange);
+    qlb.resize(20*horizon, Eigen::NoChange);
+    qA.resize(20*horizon, 12*horizon);
+    qH.resize(12*horizon, 12*horizon);
+    qg.resize(12*horizon, Eigen::NoChange);
+    eye_12h.resize(12*horizon, 12*horizon);
+    qsoln.resize(12*horizon, Eigen::NoChange);
+
+    A_qp.setZero();
+    B_qp.setZero();
+    S.setZero();
+    X_d.setZero();
+    qub.setZero();
+    qlb.setZero();
+    qA.setZero();
+    qH.setZero();
+    qg.setZero();
+    eye_12h.setIdentity();
+    qsoln.setZero();
   }
 
 }
