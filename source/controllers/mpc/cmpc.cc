@@ -18,21 +18,19 @@ namespace sdrobot::ctrl::mpc
     return near_zero(a - 1);
   }
 
-  CMpc::CMpc(double _dt, int _iterations_between_mpc) : dt(_dt),
-                                                        dtMPC(_dt * _iterations_between_mpc),
-                                                        iterationsBetweenMPC(_iterations_between_mpc),
-                                                        rpy_int(Vector3::Zero())
+  CMpc::CMpc(double dt, int iterations_between_mpc) : dt_(dt),
+                                                        dt_mpc_(dt * iterations_between_mpc),
+                                                        iter_between_mpc_(iterations_between_mpc),
+                                                        rpy_int_(Vector3::Zero())
   {
-    firstSwing.fill(true);
+    first_swing_.fill(true);
     gait_map_ = {
-        {Gait::Trot, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 5, 5, 0), Vector4i(5, 5, 5, 5), "Trot")},
-        {Gait::SlowTrot, std::make_shared<OffsetDurationGait>(int(horizonLength * 1.2), Vector4i(0, 6, 6, 0), Vector4i(6, 6, 6, 6), "SlowTrot")},
-        {Gait::FlyingTrot, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 5, 5, 0), Vector4i(4, 4, 4, 4), "FlyingTrot")},
-        {Gait::Walk, std::make_shared<OffsetDurationGait>(int(horizonLength * 1.6), Vector4i(0, 8, 4, 12), Vector4i(12, 12, 12, 12), "Walk")},
-        {Gait::Bound, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(5, 5, 0, 0), Vector4i(5, 5, 5, 5), "Bound")},
-        {Gait::Pronk, std::make_shared<OffsetDurationGait>(horizonLength, Vector4i(0, 0, 0, 0), Vector4i(4, 4, 4, 4), "Pronk")}};
-    // TODO
-    // setup_problem(dtMPC, horizonLength, 0.4, 120);
+        {Gait::Trot, std::make_shared<OffsetDurationGait>(horizon_len_, Vector4i(0, 5, 5, 0), Vector4i(5, 5, 5, 5), "Trot")},
+        {Gait::SlowTrot, std::make_shared<OffsetDurationGait>(int(horizon_len_ * 1.2), Vector4i(0, 6, 6, 0), Vector4i(6, 6, 6, 6), "SlowTrot")},
+        {Gait::FlyingTrot, std::make_shared<OffsetDurationGait>(horizon_len_, Vector4i(0, 5, 5, 0), Vector4i(4, 4, 4, 4), "FlyingTrot")},
+        {Gait::Walk, std::make_shared<OffsetDurationGait>(int(horizon_len_ * 1.6), Vector4i(0, 8, 4, 12), Vector4i(12, 12, 12, 12), "Walk")},
+        {Gait::Bound, std::make_shared<OffsetDurationGait>(horizon_len_, Vector4i(5, 5, 0, 0), Vector4i(5, 5, 5, 5), "Bound")},
+        {Gait::Pronk, std::make_shared<OffsetDurationGait>(horizon_len_, Vector4i(0, 0, 0, 0), Vector4i(4, 4, 4, 4), "Pronk")}};
   }
 
   bool CMpc::Run(WbcData &wbcdata, LegPtr &cleg, const robot::QuadrupedPtr &quad, const StateCmdPtr &cmd, const est::StateEstPtr &est)
@@ -44,32 +42,32 @@ namespace sdrobot::ctrl::mpc
     const auto &seResult = est->GetData();
 
     // some first time initialization
-    if (firstRun)
+    if (first_run_)
     {
-      stand_traj[0] = seResult.position[0];
-      stand_traj[1] = seResult.position[1];
-      stand_traj[2] = _body_height; // ?? 0.21;
-      stand_traj[3] = 0;
-      stand_traj[4] = 0;
-      stand_traj[5] = seResult.rpy[2];
-      world_position_desired[0] = stand_traj[0];
-      world_position_desired[1] = stand_traj[1];
-      world_position_desired[2] = stand_traj[2]; //?? seResult.rpy[2];
+      stand_traj_[0] = seResult.position[0];
+      stand_traj_[1] = seResult.position[1];
+      stand_traj_[2] = _body_height; // ?? 0.21;
+      stand_traj_[3] = 0;
+      stand_traj_[4] = 0;
+      stand_traj_[5] = seResult.rpy[2];
+      pos_des_world_[0] = stand_traj_[0];
+      pos_des_world_[1] = stand_traj_[1];
+      pos_des_world_[2] = stand_traj_[2]; //?? seResult.rpy[2];
 
       for (int i = 0; i < 4; i++)
       {
 
-        footSwingTrajectories[i].SetHeight(0.05);
-        footSwingTrajectories[i].SetInitialPosition(pFoot[i]);
-        footSwingTrajectories[i].SetFinalPosition(pFoot[i]);
+        foot_swing_trajs_[i].SetHeight(0.05);
+        foot_swing_trajs_[i].SetInitialPosition(p_foot_[i]);
+        foot_swing_trajs_[i].SetFinalPosition(p_foot_[i]);
       }
-      firstRun = false;
+      first_run_ = false;
     }
 
     auto cmd_gait = cmd->GetGait();
     GaitSkdPtr gait_skd = gait_map_[cmd_gait];
 
-    gait_skd->SetIterations(iterationsBetweenMPC, iterationCounter);
+    gait_skd->SetIterations(iter_between_mpc_, iteration_counter_);
 
     if (_body_height < 0.02)
     {
@@ -87,29 +85,29 @@ namespace sdrobot::ctrl::mpc
     //Integral-esque pitche and roll compensation
     if (fabs(v_world[0]) > .02) //avoid dividing by zero
     {
-      rpy_int[1] += 5 * dt * (cmd_des(StateIdx::angle_p) - seResult.rpy[1]) / v_world[0];
+      rpy_int_[1] += 5 * dt_ * (cmd_des(StateIdx::angle_p) - seResult.rpy[1]) / v_world[0];
     }
     if (fabs(v_world[1]) > 0.01)
     {
-      rpy_int[0] += dt * (cmd_des(StateIdx::angle_r) - seResult.rpy[0]) / v_world[1];
+      rpy_int_[0] += dt_ * (cmd_des(StateIdx::angle_r) - seResult.rpy[0]) / v_world[1];
     }
 
-    rpy_int[0] = fminf(fmaxf(rpy_int[0], -.25), .25);
-    rpy_int[1] = fminf(fmaxf(rpy_int[1], -.25), .25);
+    rpy_int_[0] = fminf(fmaxf(rpy_int_[0], -.25), .25);
+    rpy_int_[1] = fminf(fmaxf(rpy_int_[1], -.25), .25);
 
     for (int i = 0; i < 4; i++)
     {
-      pFoot[i] = seResult.position +
+      p_foot_[i] = seResult.position +
                  seResult.rot_body.transpose() * (quad->GetHipLocation(i) +
                                                   cleg->GetDatas()[i].p);
     }
 
-    world_position_desired += dt * v_des_world;
-    world_position_desired[2] = _body_height;
+    pos_des_world_ += dt_ * v_des_world;
+    pos_des_world_[2] = _body_height;
 
     // foot placement
     for (int l = 0; l < 4; l++)
-      swingTimes[l] = gait_skd->GetCurrentSwingTime(dtMPC, l);
+      swing_times_[l] = gait_skd->GetCurrentSwingTime(dt_mpc_, l);
 
     double side_sign[4] = {-1, 1, -1, 1};
     //  double interleave_y[4] = {-0.08, 0.08, 0.02, -0.02};
@@ -121,18 +119,18 @@ namespace sdrobot::ctrl::mpc
 
     for (int i = 0; i < 4; i++)
     {
-      if (firstSwing[i])
+      if (first_swing_[i])
       {
-        swingTimeRemaining[i] = swingTimes[i];
+        swing_time_remaining_[i] = swing_times_[i];
       }
       else
       {
-        swingTimeRemaining[i] -= dt;
+        swing_time_remaining_[i] -= dt_;
       }
-      //if(firstSwing[i]) {
-      //footSwingTrajectories[i].SetHeight(.05);
+      //if(first_swing_[i]) {
+      //foot_swing_trajs_[i].SetHeight(.05);
 
-      footSwingTrajectories[i].SetHeight(cmd->GetStepHeight()); //.125);
+      foot_swing_trajs_[i].SetHeight(cmd->GetStepHeight()); //.125);
 
       //    Vector3 offset(0.05, side_sign[i] * .062, 0);
       Vector3 offset(0, side_sign[i] * .072, 0);
@@ -156,13 +154,13 @@ namespace sdrobot::ctrl::mpc
       Vector3 pRobotFrame = (quad->GetHipLocation(i) + offset);
 
       pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain;
-      double stance_time = gait_skd->GetCurrentStanceTime(dtMPC, i);
+      double stance_time = gait_skd->GetCurrentStanceTime(dt_mpc_, i);
       Vector3 pYawCorrected =
           dynamics::CoordinateRot(dynamics::CoordinateAxis::Z, -cmd_des(StateIdx::rate_y) * stance_time / 2) * pRobotFrame;
 
-      Vector3 Pf = seResult.position + seResult.rot_body.transpose() * (pYawCorrected + v_des_robot * swingTimeRemaining[i]);
+      Vector3 Pf = seResult.position + seResult.rot_body.transpose() * (pYawCorrected + v_des_robot * swing_time_remaining_[i]);
 
-      //+ v_world * swingTimeRemaining[i];
+      //+ v_world * swing_time_remaining_[i];
 
       double p_rel_max = 0.35;
       //    double p_rel_max = 0.3f;
@@ -176,7 +174,7 @@ namespace sdrobot::ctrl::mpc
       if (fabs(pfx_rel) > p_rel_max)
         printf("!!!!!!!!!!!!!!!!out of the max step\n");
 
-      double pfy_rel = v_world[1] * .5 * stance_time * dtMPC +
+      double pfy_rel = v_world[1] * .5 * stance_time * dt_mpc_ +
                        .09 * (v_world[1] - v_des_world[1]) +
                        (0.5 * seResult.position[2] / 9.81) * (-v_world[0] * cmd_des(StateIdx::rate_y));
       pfx_rel = fminf(fmaxf(pfx_rel, -p_rel_max), p_rel_max);
@@ -185,11 +183,11 @@ namespace sdrobot::ctrl::mpc
       Pf[1] += pfy_rel;
       Pf[2] = -0.01; //0;//-0.003; //
       //Pf[2] = 0.0;
-      footSwingTrajectories[i].SetFinalPosition(Pf);
+      foot_swing_trajs_[i].SetFinalPosition(Pf);
     }
 
     // calc gait
-    iterationCounter++;
+    iteration_counter_++;
 
     // gait
     Vector4 swingStates = gait_skd->GetSwingState();
@@ -202,28 +200,28 @@ namespace sdrobot::ctrl::mpc
       double swingState = swingStates[foot];
       if (swingState > 0) // foot is in swing
       {
-        if (firstSwing[foot])
+        if (first_swing_[foot])
         {
-          firstSwing[foot] = false;
-          footSwingTrajectories[foot].SetInitialPosition(pFoot[foot]);
+          first_swing_[foot] = false;
+          foot_swing_trajs_[foot].SetInitialPosition(p_foot_[foot]);
         }
 
-        footSwingTrajectories[foot].ComputeSwingTrajectoryBezier(swingState, swingTimes[foot]);
+        foot_swing_trajs_[foot].ComputeSwingTrajectoryBezier(swingState, swing_times_[foot]);
 
-        Vector3 pDesFootWorld = footSwingTrajectories[foot].GetPosition();
-        Vector3 vDesFootWorld = footSwingTrajectories[foot].GetVelocity();
+        Vector3 pDesFootWorld = foot_swing_trajs_[foot].GetPosition();
+        Vector3 vDesFootWorld = foot_swing_trajs_[foot].GetVelocity();
 
         // Update for WBC
         wbcdata.p_foot_des[foot] = pDesFootWorld;
         wbcdata.v_foot_des[foot] = vDesFootWorld;
-        wbcdata.a_foot_des[foot] = footSwingTrajectories[foot].GetAcceleration();
+        wbcdata.a_foot_des[foot] = foot_swing_trajs_[foot].GetAcceleration();
       }
       else // foot is in stance
       {
-        firstSwing[foot] = true;
+        first_swing_[foot] = true;
 
-        Vector3 pDesFootWorld = footSwingTrajectories[foot].GetPosition();
-        Vector3 vDesFootWorld = footSwingTrajectories[foot].GetVelocity();
+        Vector3 pDesFootWorld = foot_swing_trajs_[foot].GetPosition();
+        Vector3 vDesFootWorld = foot_swing_trajs_[foot].GetVelocity();
         Vector3 pDesLeg = seResult.rot_body * (pDesFootWorld - seResult.position) - quad->GetHipLocation(foot);
         Vector3 vDesLeg = seResult.rot_body * (vDesFootWorld - v_world);
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
@@ -236,9 +234,9 @@ namespace sdrobot::ctrl::mpc
     }
 
     // Update For WBC
-    wbcdata.p_body_des[0] = world_position_desired[0];
-    wbcdata.p_body_des[1] = world_position_desired[1];
-    wbcdata.p_body_des[2] = world_position_desired[2];
+    wbcdata.p_body_des[0] = pos_des_world_[0];
+    wbcdata.p_body_des[1] = pos_des_world_[1];
+    wbcdata.p_body_des[2] = pos_des_world_[2];
 
     wbcdata.v_body_des[0] = v_des_world[0];
     wbcdata.v_body_des[1] = v_des_world[1];
@@ -269,15 +267,15 @@ namespace sdrobot::ctrl::mpc
 
   void CMpc::UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const Eigen::VectorXi &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
   {
-    //iterationsBetweenMPC = 30;
-    if ((iterationCounter % iterationsBetweenMPC) != 0)
+    //iter_between_mpc_ = 30;
+    if ((iteration_counter_ % iter_between_mpc_) != 0)
     {
       return;
     }
 
-    if ((iterationCounter / iterationsBetweenMPC) >= horizonLength)
+    if ((iteration_counter_ / iter_between_mpc_) >= horizon_len_)
     {
-      iterationCounter = 0;
+      iteration_counter_ = 0;
     }
 
     const auto &seResult = est->GetData();
@@ -286,13 +284,13 @@ namespace sdrobot::ctrl::mpc
     const auto &v_world = seResult.v_world;
 
     Vector3 rpy_comp = Vector3::Zero();
-    rpy_comp[1] = v_world[0] * rpy_int[1];
-    rpy_comp[0] = v_world[1] * rpy_int[0] * int(cmd->GetGait() != Gait::Pronk); //turn off for pronking
+    rpy_comp[1] = v_world[0] * rpy_int_[1];
+    rpy_comp[0] = v_world[1] * rpy_int_[0] * int(cmd->GetGait() != Gait::Pronk); //turn off for pronking
     rpy_comp[2] = cmd_des(StateIdx::angle_y);
 
     const double max_pos_error = .1;
-    double xStart = world_position_desired[0];
-    double yStart = world_position_desired[1];
+    double xStart = pos_des_world_[0];
+    double yStart = pos_des_world_[1];
 
     if (xStart - pos[0] > max_pos_error)
       xStart = pos[0] + max_pos_error;
@@ -304,15 +302,15 @@ namespace sdrobot::ctrl::mpc
     if (pos[1] - yStart > max_pos_error)
       yStart = pos[1] - max_pos_error;
 
-    world_position_desired[0] = xStart;
-    world_position_desired[1] = yStart;
+    pos_des_world_[0] = xStart;
+    pos_des_world_[1] = yStart;
 
     double trajInitial[12] = {rpy_comp[0],               // 0
                               rpy_comp[1],               // 1
                               rpy_comp[2],               // 2
-                              world_position_desired[0], // 3
-                              world_position_desired[1], // 4
-                              world_position_desired[2], // 5
+                              pos_des_world_[0], // 3
+                              pos_des_world_[1], // 4
+                              pos_des_world_[2], // 5
                               cmd_des(StateIdx::rate_r), // 6
                               cmd_des(StateIdx::rate_p), // 7
                               cmd_des(StateIdx::rate_y), // 8
@@ -320,22 +318,22 @@ namespace sdrobot::ctrl::mpc
                               v_des_world[1],            // 10
                               v_des_world[2]};           // 11
 
-    for (int i = 0; i < horizonLength; i++)
+    for (int i = 0; i < horizon_len_; i++)
     {
       for (int j = 0; j < 12; j++)
-        trajAll[12 * i + j] = trajInitial[j];
+        traj_all_[12 * i + j] = trajInitial[j];
 
       if (i == 0) // start at current position  TODO consider not doing this
       {
-        //trajAll[3] = hw_i->state_estimator->se_pBody[0];
-        //trajAll[4] = hw_i->state_estimator->se_pBody[1];
-        trajAll[2] = seResult.rpy[2];
+        //traj_all_[3] = hw_i->state_estimator->se_pBody[0];
+        //traj_all_[4] = hw_i->state_estimator->se_pBody[1];
+        traj_all_[2] = seResult.rpy[2];
       }
       else
       {
-        trajAll[12 * i + 3] = trajAll[12 * (i - 1) + 3] + dtMPC * v_des_world[0];
-        trajAll[12 * i + 4] = trajAll[12 * (i - 1) + 4] + dtMPC * v_des_world[1];
-        trajAll[12 * i + 2] = trajAll[12 * (i - 1) + 2] + dtMPC * cmd_des(StateIdx::rate_y);
+        traj_all_[12 * i + 3] = traj_all_[12 * (i - 1) + 3] + dt_mpc_ * v_des_world[0];
+        traj_all_[12 * i + 4] = traj_all_[12 * (i - 1) + 4] + dt_mpc_ * v_des_world[1];
+        traj_all_[12 * i + 2] = traj_all_[12 * (i - 1) + 2] + dt_mpc_ * cmd_des(StateIdx::rate_y);
       }
     }
     SolveMPC(out, mpcTable, est);
@@ -359,7 +357,7 @@ namespace sdrobot::ctrl::mpc
 
     Eigen::Matrix<double, 12, 1> r;
     for (int i = 0; i < 12; i++)
-      r[i] = pFoot[i % 4][i / 4] - pos[i / 4];
+      r[i] = p_foot_[i % 4][i / 4] - pos[i / 4];
 
     if (alpha > 1e-4)
     {
@@ -367,18 +365,18 @@ namespace sdrobot::ctrl::mpc
       alpha = 1e-5;
     }
 
-    double pz_err = pos[2] - world_position_desired[2];
+    double pz_err = pos[2] - pos_des_world_[2];
 
     Vector3 vxy(v_world[0], v_world[1], 0);
 
-    qpsolver_.Setup(dtMPC, horizonLength, 0.4, 150);
+    qpsolver_.Setup(dt_mpc_, horizon_len_, 0.4, 150);
 
     if (vxy[0] > 0.3 || vxy[0] < -0.3)
     {
-      x_comp_integral += Params::cmpc_x_drag * pz_err * dtMPC / vxy[0];
+      x_comp_integral += Params::cmpc_x_drag * pz_err * dt_mpc_ / vxy[0];
     }
 
-    qpsolver_.SolveQP(x_comp_integral, pos, v_world, ori, w_world, r, yaw, weights, trajAll, alpha, mpcTable);
+    qpsolver_.SolveQP(x_comp_integral, pos, v_world, ori, w_world, r, yaw, weights, traj_all_, alpha, mpcTable);
 
     auto const &solu = qpsolver_.GetSolution();
     for (int leg = 0; leg < 4; leg++)
@@ -431,7 +429,7 @@ namespace sdrobot::ctrl::mpc
     for (int b = 0; b < 4; b++)
     {
       B_ct_r.block<3, 3>(6, b * 3) = I_world.inverse() * dynamics::VecToSkewMat(r_feet.col(b));
-      B_ct_r.block<3, 3>(9, b * 3) = Matrix3::Identity() / m;
+      B_ct_r.block<3, 3>(9, b * 3) = Matrix3::Identity() / m_;
     }
 
     //QP matrices
@@ -441,27 +439,27 @@ namespace sdrobot::ctrl::mpc
     Eigen::Matrix<double, 25, 25> ABc = Eigen::Matrix<double, 25, 25>::Zero();
     ABc.block<13, 13>(0, 0) = A_ct;
     ABc.block<13, 12>(0, 13) = B_ct_r;
-    ABc = dt * ABc;
+    ABc = dt_ * ABc;
     Eigen::Matrix<double, 25, 25> expmm = ABc.exp();
     Adt = expmm.block<13, 13>(0, 0);
     Bdt = expmm.block<13, 12>(0, 13);
 
     Eigen::Matrix<double, 13, 13> powerMats[20];
     powerMats[0].setIdentity();
-    for (int i = 1; i < horizon + 1; i++)
+    for (int i = 1; i < horizon_ + 1; i++)
     {
       powerMats[i] = Adt * powerMats[i - 1];
     }
 
-    for (int r = 0; r < horizon; r++)
+    for (int r = 0; r < horizon_; r++)
     {
-      A_qp.block<13, 13>(13 * r, 0) = powerMats[r + 1]; //Adt.pow(r+1);
-      for (int c = 0; c < horizon; c++)
+      A_qp_.block<13, 13>(13 * r, 0) = powerMats[r + 1]; //Adt.pow(r+1);
+      for (int c = 0; c < horizon_; c++)
       {
         if (r >= c)
         {
           int a_num = r - c;
-          B_qp.block(13 * r, 12 * c, 13, 12) = powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
+          B_qp_.block(13 * r, 12 * c, 13, 12) = powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
         }
       }
     }
@@ -471,30 +469,30 @@ namespace sdrobot::ctrl::mpc
     for (int i = 0; i < 12; i++)
       full_weight(i) = weights[i];
     full_weight(12) = 0.;
-    S.diagonal() = full_weight.replicate(horizon, 1);
+    S_.diagonal() = full_weight.replicate(horizon_, 1);
 
     //trajectory
-    for (int i = 0; i < horizon; i++)
+    for (int i = 0; i < horizon_; i++)
     {
       for (int j = 0; j < 12; j++)
-        X_d(13 * i + j, 0) = state_trajectory[12 * i + j];
+        X_d_(13 * i + j, 0) = state_trajectory[12 * i + j];
     }
 
     int k = 0;
-    for (int i = 0; i < horizon; i++)
+    for (int i = 0; i < horizon_; i++)
     {
       for (int j = 0; j < 4; j++)
       {
-        qub(5 * k + 0) = Params::big_num;
-        qub(5 * k + 1) = Params::big_num;
-        qub(5 * k + 2) = Params::big_num;
-        qub(5 * k + 3) = Params::big_num;
-        qub(5 * k + 4) = gait[i * 4 + j] * f_max;
+        qub_(5 * k + 0) = Params::big_num;
+        qub_(5 * k + 1) = Params::big_num;
+        qub_(5 * k + 2) = Params::big_num;
+        qub_(5 * k + 3) = Params::big_num;
+        qub_(5 * k + 4) = gait[i * 4 + j] * f_max_;
         k++;
       }
     }
 
-    double rep_mu = 1. / (mu + kZeroEpsilon);
+    double rep_mu = 1. / (mu_ + kZeroEpsilon);
     Eigen::Matrix<double, 5, 3> f_block;
     f_block << rep_mu, 0, 1.,
         -rep_mu, 0, 1.,
@@ -502,31 +500,31 @@ namespace sdrobot::ctrl::mpc
         0, -rep_mu, 1.,
         0, 0, 1.;
 
-    for (int i = 0; i < horizon * 4; i++)
+    for (int i = 0; i < horizon_ * 4; i++)
     {
-      qA.block<5, 3>(i * 5, i * 3) = f_block;
+      qA_.block<5, 3>(i * 5, i * 3) = f_block;
     }
 
-    qH = 2 * (B_qp.transpose() * S * B_qp + alpha * eye_12h);
-    qg = 2 * B_qp.transpose() * S * (A_qp * x_0 - X_d);
+    qH_ = 2 * (B_qp_.transpose() * S_ * B_qp_ + alpha * eye_12h_);
+    qg_ = 2 * B_qp_.transpose() * S_ * (A_qp_ * x_0 - X_d_);
 
     int nWSR = 100;
-    int num_constraints = 20 * horizon;
-    int num_variables = 12 * horizon;
+    int num_constraints = 20 * horizon_;
+    int num_variables = 12 * horizon_;
     int new_cons = num_constraints;
     int new_vars = num_variables;
 
     for (int i = 0; i < num_constraints; i++)
-      con_elim[i] = 0;
+      con_elim_[i] = 0;
 
     for (int i = 0; i < num_variables; i++)
-      var_elim[i] = 0;
+      var_elim_[i] = 0;
 
     for (int i = 0; i < num_constraints; i++)
     {
-      if (!(near_zero(qlb[i]) && near_zero(qub[i])))
+      if (!(near_zero(qlb_[i]) && near_zero(qub_[i])))
         continue;
-      auto c_row = qA.row(i);
+      auto c_row = qA_.row(i);
 
       for (int j = 0; j < num_variables; j++)
       {
@@ -535,14 +533,14 @@ namespace sdrobot::ctrl::mpc
           new_vars -= 3;
           new_cons -= 5;
           int cs = (j * 5) / 3 - 3;
-          var_elim[j - 2] = 1;
-          var_elim[j - 1] = 1;
-          var_elim[j] = 1;
-          con_elim[cs] = 1;
-          con_elim[cs + 1] = 1;
-          con_elim[cs + 2] = 1;
-          con_elim[cs + 3] = 1;
-          con_elim[cs + 4] = 1;
+          var_elim_[j - 2] = 1;
+          var_elim_[j - 1] = 1;
+          var_elim_[j] = 1;
+          con_elim_[cs] = 1;
+          con_elim_[cs + 1] = 1;
+          con_elim_[cs + 2] = 1;
+          con_elim_[cs + 3] = 1;
+          con_elim_[cs + 4] = 1;
         }
       }
     }
@@ -553,7 +551,7 @@ namespace sdrobot::ctrl::mpc
 
     for (int i = 0; i < num_variables; i++)
     {
-      if (!var_elim[i])
+      if (!var_elim_[i])
       {
         if (vc >= new_vars)
         {
@@ -566,7 +564,7 @@ namespace sdrobot::ctrl::mpc
     vc = 0;
     for (int i = 0; i < num_constraints; i++)
     {
-      if (!con_elim[i])
+      if (!con_elim_[i])
       {
         if (vc >= new_cons)
         {
@@ -582,11 +580,11 @@ namespace sdrobot::ctrl::mpc
     for (int i = 0; i < new_vars; i++)
     {
       int olda = var_ind[i];
-      g_red[i] = qg[olda];
+      g_red[i] = qg_[olda];
       for (int j = 0; j < new_vars; j++)
       {
         int oldb = var_ind[j];
-        H_red[i * new_vars + j] = qH(olda, oldb);
+        H_red[i * new_vars + j] = qH_(olda, oldb);
       }
     }
 
@@ -595,7 +593,7 @@ namespace sdrobot::ctrl::mpc
     {
       for (int st = 0; st < new_vars; st++)
       {
-        auto cval = qA(con_ind[con], var_ind[st]);
+        auto cval = qA_(con_ind[con], var_ind[st]);
         A_red[con * new_vars + st] = cval;
       }
     }
@@ -605,8 +603,8 @@ namespace sdrobot::ctrl::mpc
     for (int i = 0; i < new_cons; i++)
     {
       int old = con_ind[i];
-      ub_red[i] = qub[old];
-      lb_red[i] = qlb[old];
+      ub_red[i] = qub_[old];
+      lb_red[i] = qlb_[old];
     }
 
     qpOASES::QProblem problem_red(new_vars, new_cons);
@@ -626,13 +624,13 @@ namespace sdrobot::ctrl::mpc
     vc = 0;
     for (int i = 0; i < num_variables; i++)
     {
-      if (var_elim[i])
+      if (var_elim_[i])
       {
-        qsoln[i] = 0.0;
+        qsoln_[i] = 0.0;
       }
       else
       {
-        qsoln[i] = q_red[vc];
+        qsoln_[i] = q_red[vc];
         vc++;
       }
     }
@@ -649,11 +647,11 @@ namespace sdrobot::ctrl::mpc
 
   void QPSolver::Setup(double dt, int horizonLen, double mu, double f_max)
   {
-    auto changed = horizon != horizonLen;
-    horizon = horizonLen;
-    f_max = f_max;
-    mu = mu;
-    dt = dt;
+    auto changed = horizon_ != horizonLen;
+    horizon_ = horizonLen;
+    f_max_ = f_max;
+    mu_ = mu;
+    dt_ = dt;
 
     if (changed)
     {
@@ -663,29 +661,29 @@ namespace sdrobot::ctrl::mpc
 
   void QPSolver::ResizeQPMats()
   {
-    A_qp.resize(13 * horizon, Eigen::NoChange);
-    B_qp.resize(13 * horizon, 12 * horizon);
-    S.resize(13 * horizon, 13 * horizon);
-    X_d.resize(13 * horizon, Eigen::NoChange);
-    qub.resize(20 * horizon, Eigen::NoChange);
-    qlb.resize(20 * horizon, Eigen::NoChange);
-    qA.resize(20 * horizon, 12 * horizon);
-    qH.resize(12 * horizon, 12 * horizon);
-    qg.resize(12 * horizon, Eigen::NoChange);
-    eye_12h.resize(12 * horizon, 12 * horizon);
-    qsoln.resize(12 * horizon, Eigen::NoChange);
+    A_qp_.resize(13 * horizon_, Eigen::NoChange);
+    B_qp_.resize(13 * horizon_, 12 * horizon_);
+    S_.resize(13 * horizon_, 13 * horizon_);
+    X_d_.resize(13 * horizon_, Eigen::NoChange);
+    qub_.resize(20 * horizon_, Eigen::NoChange);
+    qlb_.resize(20 * horizon_, Eigen::NoChange);
+    qA_.resize(20 * horizon_, 12 * horizon_);
+    qH_.resize(12 * horizon_, 12 * horizon_);
+    qg_.resize(12 * horizon_, Eigen::NoChange);
+    eye_12h_.resize(12 * horizon_, 12 * horizon_);
+    qsoln_.resize(12 * horizon_, Eigen::NoChange);
 
-    A_qp.setZero();
-    B_qp.setZero();
-    S.setZero();
-    X_d.setZero();
-    qub.setZero();
-    qlb.setZero();
-    qA.setZero();
-    qH.setZero();
-    qg.setZero();
-    eye_12h.setIdentity();
-    qsoln.setZero();
+    A_qp_.setZero();
+    B_qp_.setZero();
+    S_.setZero();
+    X_d_.setZero();
+    qub_.setZero();
+    qlb_.setZero();
+    qA_.setZero();
+    qH_.setZero();
+    qg_.setZero();
+    eye_12h_.setIdentity();
+    qsoln_.setZero();
   }
 
 }

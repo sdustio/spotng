@@ -14,7 +14,7 @@ namespace sdrobot::ctrl::mpc
    */
     void SetInitialPosition(Vector3 p0)
     {
-      _p0 = p0;
+      p0_ = p0;
     }
 
     /*!
@@ -23,7 +23,7 @@ namespace sdrobot::ctrl::mpc
    */
     void SetFinalPosition(Vector3 pf)
     {
-      _pf = pf;
+      pf_ = pf;
     }
 
     /*!
@@ -32,7 +32,7 @@ namespace sdrobot::ctrl::mpc
    */
     void SetHeight(double h)
     {
-      _height = h;
+      height_ = h;
     }
 
     /*!
@@ -41,7 +41,7 @@ namespace sdrobot::ctrl::mpc
    */
     const Vector3 &GetPosition()
     {
-      return _p;
+      return p_;
     }
 
     /*!
@@ -50,7 +50,7 @@ namespace sdrobot::ctrl::mpc
    */
     const Vector3 &GetVelocity()
     {
-      return _v;
+      return v_;
     }
 
     /*!
@@ -59,13 +59,13 @@ namespace sdrobot::ctrl::mpc
    */
     const Vector3 &GetAcceleration()
     {
-      return _a;
+      return a_;
     }
 
     void ComputeSwingTrajectoryBezier(double phase, double swingTime);
 
   private:
-    Vector3 _p0, _pf, _p, _v, _a;
-    double _height;
+    Vector3 p0_, pf_, p_, v_, a_;
+    double height_;
   };
 }

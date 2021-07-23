@@ -5,37 +5,37 @@ namespace sdrobot::ctrl::mpc
 {
   FootSwingTrajectory::FootSwingTrajectory()
   {
-    _p0.setZero();
-    _pf.setZero();
-    _p.setZero();
-    _v.setZero();
-    _a.setZero();
-    _height = 0;
+    p0_.setZero();
+    pf_.setZero();
+    p_.setZero();
+    v_.setZero();
+    a_.setZero();
+    height_ = 0;
   }
 
   void FootSwingTrajectory::ComputeSwingTrajectoryBezier(double phase, double swingTime)
   {
-    _p = dynamics::interpolate::cubicBezier<Vector3>(_p0, _pf, phase);
-    _v = dynamics::interpolate::cubicBezierFirstDerivative<Vector3>(_p0, _pf, phase) / swingTime;
-    _a = dynamics::interpolate::cubicBezierSecondDerivative<Vector3>(_p0, _pf, phase) / (swingTime * swingTime);
+    p_ = dynamics::interpolate::cubicBezier<Vector3>(p0_, pf_, phase);
+    v_ = dynamics::interpolate::cubicBezierFirstDerivative<Vector3>(p0_, pf_, phase) / swingTime;
+    a_ = dynamics::interpolate::cubicBezierSecondDerivative<Vector3>(p0_, pf_, phase) / (swingTime * swingTime);
 
     double zp, zv, za;
 
     if (phase < 0.5)
     {
-      zp = dynamics::interpolate::cubicBezier<double>(_p0[2], _p0[2] + _height, phase * 2);
-      zv = dynamics::interpolate::cubicBezierFirstDerivative<double>(_p0[2], _p0[2] + _height, phase * 2) * 2 / swingTime;
-      za = dynamics::interpolate::cubicBezierSecondDerivative<double>(_p0[2], _p0[2] + _height, phase * 2) * 4 / (swingTime * swingTime);
+      zp = dynamics::interpolate::cubicBezier<double>(p0_[2], p0_[2] + height_, phase * 2);
+      zv = dynamics::interpolate::cubicBezierFirstDerivative<double>(p0_[2], p0_[2] + height_, phase * 2) * 2 / swingTime;
+      za = dynamics::interpolate::cubicBezierSecondDerivative<double>(p0_[2], p0_[2] + height_, phase * 2) * 4 / (swingTime * swingTime);
     }
     else
     {
-      zp = dynamics::interpolate::cubicBezier<double>(_p0[2] + _height, _pf[2], phase * 2 - 1);
-      zv = dynamics::interpolate::cubicBezierFirstDerivative<double>(_p0[2] + _height, _pf[2], phase * 2 - 1) * 2 / swingTime;
-      za = dynamics::interpolate::cubicBezierSecondDerivative<double>(_p0[2] + _height, _pf[2], phase * 2 - 1) * 4 / (swingTime * swingTime);
+      zp = dynamics::interpolate::cubicBezier<double>(p0_[2] + height_, pf_[2], phase * 2 - 1);
+      zv = dynamics::interpolate::cubicBezierFirstDerivative<double>(p0_[2] + height_, pf_[2], phase * 2 - 1) * 2 / swingTime;
+      za = dynamics::interpolate::cubicBezierSecondDerivative<double>(p0_[2] + height_, pf_[2], phase * 2 - 1) * 4 / (swingTime * swingTime);
     }
 
-    _p[2] = zp;
-    _v[2] = zv;
-    _a[2] = za;
+    p_[2] = zp;
+    v_[2] = zv;
+    a_[2] = za;
   }
 }
