@@ -22,13 +22,13 @@ namespace sdrobot::ctrl
     public:
       Task(int dim, const dynamics::FBModelPtr &model)
           : dim_task_(dim),
-            _robot_sys(model),
+            robot_sys_(model),
             op_cmd_(dim),
             pos_err_(dim),
             vel_des_(dim),
             acc_des_(dim),
-            _Kp(dim),
-            _Kd(dim) {}
+            Kp_(dim),
+            Kd_(dim) {}
 
       bool UpdateTask(const Vector3 &pos_des, const Vector3 &vel_des,
                       const Vector3 &acc_des)
@@ -41,21 +41,21 @@ namespace sdrobot::ctrl
         return true;
       }
 
-      const VectorX &getCommand() { return op_cmd_; }
-      const MatrixX &getTaskJacobian() { return Jt_; }
-      const VectorX &getTaskJacobianDotQdot() { return JtDotQdot_; }
+      const VectorX &GetCommand() { return op_cmd_; }
+      const MatrixX &GetTaskJacobian() { return Jt_; }
+      const VectorX &GetTaskJacobianDotQdot() { return JtDotQdot_; }
 
-      void UpdateKp(int idx, double v) { _Kp(idx) = v; }
+      void UpdateKp(int idx, double v) { Kp_(idx) = v; }
 
-      const VectorX &GetKp() { return _Kp; }
+      const VectorX &GetKp() { return Kp_; }
 
-      void UpdateKd(int idx, double v) { _Kd(idx) = v; }
+      void UpdateKd(int idx, double v) { Kd_(idx) = v; }
 
-      const VectorX &GetKd() { return _Kd; }
+      const VectorX &GetKd() { return Kd_; }
 
-      const VectorX &getPosError() { return pos_err_; }
-      const VectorX &getDesVel() { return vel_des_; }
-      const VectorX &getDesAcc() { return acc_des_; }
+      const VectorX &GetPosError() { return pos_err_; }
+      const VectorX &GetDesVel() { return vel_des_; }
+      const VectorX &GetDesAcc() { return acc_des_; }
 
     protected:
       // Update op_cmd_
@@ -71,7 +71,7 @@ namespace sdrobot::ctrl
       bool b_set_task_ = false;
       int dim_task_;
 
-      const dynamics::FBModelPtr _robot_sys;
+      const dynamics::FBModelPtr robot_sys_;
 
       VectorX JtDotQdot_;
       MatrixX Jt_;
@@ -80,8 +80,8 @@ namespace sdrobot::ctrl
       VectorX pos_err_;
       VectorX vel_des_, acc_des_;
 
-      VectorX _Kp_kin;
-      VectorX _Kp, _Kd;
+      VectorX Kp_kin_;
+      VectorX Kp_, Kd_;
     };
 
     using TaskPtr = std::shared_ptr<Task>;
@@ -95,12 +95,12 @@ namespace sdrobot::ctrl
         Fr_des_ = VectorX::Zero(dim);
       }
 
-      int getDim() const { return dim_contact_; }
-      int getDimRFConstraint() const { return Uf_.rows(); }
-      int getFzIndex() const { return idx_Fz_; }
+      int GetDim() const { return dim_contact_; }
+      int GetDimRFConstraint() const { return Uf_.rows(); }
+      int GetFzIndex() const { return idx_Fz_; }
 
-      const VectorX &getRFDesired() { return Fr_des_; }
-      void setRFDesired(const VectorX &Fr_des) { Fr_des_ = Fr_des; }
+      const VectorX &GetRFDesired() { return Fr_des_; }
+      void SetRFDesired(const VectorX &Fr_des) { Fr_des_ = Fr_des; }
       bool UpdateContact()
       {
         _UpdateJc();
@@ -110,10 +110,10 @@ namespace sdrobot::ctrl
         b_set_contact_ = true;
         return true;
       }
-      const MatrixX &getContactJacobian() { return Jc_; }
-      const VectorX &getJcDotQdot() { return JcDotQdot_; }
-      const MatrixX &getRFConstraintMtx() { return Uf_; }
-      const VectorX &getRFConstraintVec() { return ieq_vec_; }
+      const MatrixX &GetContactJacobian() { return Jc_; }
+      const VectorX &GetJcDotQdot() { return JcDotQdot_; }
+      const MatrixX &GetRFConstraintMtx() { return Uf_; }
+      const VectorX &GetRFConstraintVec() { return ieq_vec_; }
 
     protected:
       virtual bool _UpdateJc() = 0;
@@ -173,13 +173,13 @@ namespace sdrobot::ctrl
 
       bool b_updatesetting_ = false;
 
-      int _dim_opt;
-      int _dim_eq_cstr; // equality constraints
+      int dim_opt_;
+      int dim_eq_cstr_; // equality constraints
 
-      int _dim_rf;
-      int _dim_Uf;
+      int dim_rf_;
+      int dim_Uf_;
 
-      int _dim_floating = 6;
+      int dim_floating_ = 6;
 
       eiquadprog::solvers::EiquadprogFast qp_;
 
@@ -196,14 +196,14 @@ namespace sdrobot::ctrl
       MatrixX CI_;
       VectorX ci0_;
 
-      MatrixX _eye;
+      MatrixX eye_;
 
-      MatrixX _Uf;
-      VectorX _Uf_ieq_vec;
+      MatrixX Uf_;
+      VectorX Uf_ieq_vec_;
 
-      MatrixX _Jc;
-      VectorX _JcDotQdot;
-      VectorX _Fr_des;
+      MatrixX Jc_;
+      VectorX JcDotQdot_;
+      VectorX Fr_des_;
 
       // Extra data
       // Output
@@ -212,8 +212,8 @@ namespace sdrobot::ctrl
       // VectorX _Fr;
 
       // Input
-      VectorX _W_floating;
-      VectorX _W_rf;
+      VectorX W_floating_;
+      VectorX W_rf_;
     };
 
     class KinWbc
@@ -231,22 +231,22 @@ namespace sdrobot::ctrl
       double threshold_ = 0.001;
       int num_qdot_;
       int num_act_joint_;
-      MatrixX I_mtx;
+      MatrixX I_mtx_;
     };
 
   } // namespace wbc
 
   struct WbcData
   {
-    Vector3 pBody_des;
-    Vector3 vBody_des;
-    Vector3 aBody_des;
-    Vector3 pBody_RPY_des;
-    Vector3 vBody_Ori_des;
+    Vector3 p_body_des;
+    Vector3 v_body_des;
+    Vector3 a_body_des;
+    Vector3 p_body_rpy_des;
+    Vector3 vbody_ori_des;
 
-    std::array<Vector3, 4> pFoot_des;
-    std::array<Vector3, 4> vFoot_des;
-    std::array<Vector3, 4> aFoot_des;
+    std::array<Vector3, 4> p_foot_des;
+    std::array<Vector3, 4> v_foot_des;
+    std::array<Vector3, 4> a_foot_des;
 
     std::array<Vector3, 4> Fr_des;
 
@@ -268,36 +268,35 @@ namespace sdrobot::ctrl
 
     dynamics::FBModelPtr model_;
 
-    // TODO rename vars
-    std::vector<wbc::TaskPtr> _task_list;
-    std::vector<wbc::ContactPtr> _contact_list;
+    std::vector<wbc::TaskPtr> task_list_;
+    std::vector<wbc::ContactPtr> contact_list_;
 
-    MatrixX _A;
-    MatrixX _Ainv;
-    VectorX _grav;
-    VectorX _coriolis;
+    MatrixX A_;
+    MatrixX Ainv_;
+    VectorX grav_;
+    VectorX coriolis_;
 
-    VectorX _full_config;
+    VectorX full_config_;
 
-    VectorX _tau_ff;
-    VectorX _des_jpos;
-    VectorX _des_jvel;
+    VectorX tau_ff_;
+    VectorX des_jpos_;
+    VectorX des_jvel_;
 
-    std::array<double, robot::ModelAttrs::num_leg_joint> _Kp_joint, _Kd_joint;
+    std::array<double, robot::ModelAttrs::num_leg_joint> Kp_joint_, Kd_joint_;
 
-    wbc::TaskPtr _body_pos_task;
-    wbc::TaskPtr _body_ori_task;
+    wbc::TaskPtr body_pos_task_;
+    wbc::TaskPtr body_ori_task_;
 
-    std::array<wbc::TaskPtr, robot::ModelAttrs::num_leg> _foot_task;
-    std::array<wbc::ContactPtr, robot::ModelAttrs::num_leg> _foot_contact;
+    std::array<wbc::TaskPtr, robot::ModelAttrs::num_leg> foot_task_;
+    std::array<wbc::ContactPtr, robot::ModelAttrs::num_leg> foot_contact_;
 
-    std::array<Vector3, robot::ModelAttrs::num_leg> pre_foot_vel;
+    std::array<Vector3, robot::ModelAttrs::num_leg> pre_foot_vel_;
 
-    std::array<Vector3, robot::ModelAttrs::num_leg> _Fr_result;
-    dynamics::Quat _quat_des;
+    std::array<Vector3, robot::ModelAttrs::num_leg> Fr_result_;
+    dynamics::Quat quat_des_;
 
-    wbc::KinWbc _kin_wbc;
-    wbc::Wbic _wbic;
+    wbc::KinWbc kin_wbc_;
+    wbc::Wbic wbic_;
   };
 
   using WbcPtr = std::shared_ptr<Wbc>;

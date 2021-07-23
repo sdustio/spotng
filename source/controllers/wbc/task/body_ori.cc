@@ -10,11 +10,11 @@ namespace sdrobot::ctrl::wbc
     Jt_.block<3, 3>(0, 0).setIdentity();
     JtDotQdot_ = VectorX::Zero(dim_task_);
 
-    _Kp_kin = VectorX::Constant(dim_task_, 1.);
+    Kp_kin_ = VectorX::Constant(dim_task_, 1.);
     for (int i = 0; i < 3; i++)
     {
-      _Kp[i] = robot::DynamicsAttrs::kp_ori[i];
-      _Kd[i] = robot::DynamicsAttrs::kd_ori[i];
+      Kp_[i] = robot::DynamicsAttrs::kp_ori[i];
+      Kd_[i] = robot::DynamicsAttrs::kd_ori[i];
     }
   }
 
@@ -22,7 +22,7 @@ namespace sdrobot::ctrl::wbc
                                    const Vector3 &acc_des)
   {
     auto ori_cmd = dynamics::RPYToQuat(pos_des);
-    const auto &link_ori = _robot_sys->GetState().body_orientation;
+    const auto &link_ori = robot_sys_->GetState().body_orientation;
     dynamics::Quat link_ori_inv;
 
     link_ori_inv << link_ori[0], -link_ori[1], -link_ori[2], -link_ori[3];
@@ -35,7 +35,7 @@ namespace sdrobot::ctrl::wbc
       ori_err *= (-1.);
     }
     auto ori_err_so3 = dynamics::QuatToSO3(ori_err);
-    const auto &curr_vel = _robot_sys->GetState().body_velocity;
+    const auto &curr_vel = robot_sys_->GetState().body_velocity;
 
     // Configuration space: Local
     // Operational Space: Global
@@ -54,12 +54,12 @@ namespace sdrobot::ctrl::wbc
     // Rx, Ry, Rz
     for (int i(0); i < 3; ++i)
     {
-      pos_err_[i] = _Kp_kin[i] * ori_err_so3[i];
+      pos_err_[i] = Kp_kin_[i] * ori_err_so3[i];
       vel_des_[i] = vel_des[i];
       acc_des_[i] = acc_des[i];
 
-      op_cmd_[i] = _Kp[i] * ori_err_so3[i] +
-                   _Kd[i] * vel_err[i] + acc_des_[i];
+      op_cmd_[i] = Kp_[i] * ori_err_so3[i] +
+                   Kd_[i] * vel_err[i] + acc_des_[i];
       if (fabs(op_cmd_[i]) > 100)
       {
         // std::cout << "-------------------big problem------------------------------" << std::endl;
@@ -75,7 +75,7 @@ namespace sdrobot::ctrl::wbc
 
   bool TaskBodyOri::_UpdateTaskJacobian()
   {
-    auto rot = dynamics::QuatToRotMat(_robot_sys->GetState().body_orientation);
+    auto rot = dynamics::QuatToRotMat(robot_sys_->GetState().body_orientation);
     Jt_.block<3, 3>(0, 0) = rot.transpose();
     return true;
   }

@@ -13,7 +13,7 @@ namespace sdrobot::ctrl::mpc
     _height = 0;
   }
 
-  void FootSwingTrajectory::computeSwingTrajectoryBezier(double phase, double swingTime)
+  void FootSwingTrajectory::ComputeSwingTrajectoryBezier(double phase, double swingTime)
   {
     _p = dynamics::interpolate::cubicBezier<Vector3>(_p0, _pf, phase);
     _v = dynamics::interpolate::cubicBezierFirstDerivative<Vector3>(_p0, _pf, phase) / swingTime;

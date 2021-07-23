@@ -10,11 +10,11 @@ namespace sdrobot::ctrl::wbc
     Jt_.block<3, 3>(0, 3).setIdentity();
     JtDotQdot_ = VectorX::Zero(dim_task_);
 
-    _Kp_kin = VectorX::Constant(dim_task_, 1.);
+    Kp_kin_ = VectorX::Constant(dim_task_, 1.);
     for (int i = 0; i < 3; i++)
     {
-      _Kp[i] = robot::DynamicsAttrs::kp_body[i];
-      _Kd[i] = robot::DynamicsAttrs::kd_body[i];
+      Kp_[i] = robot::DynamicsAttrs::kp_body[i];
+      Kd_[i] = robot::DynamicsAttrs::kd_body[i];
     }
   }
 
@@ -22,20 +22,20 @@ namespace sdrobot::ctrl::wbc
   bool TaskBodyPos::_UpdateCommand(const Vector3 &pos_des, const Vector3 &vel_des,
                                    const Vector3 &acc_des)
   {
-    const auto &link_pos = _robot_sys->GetState().body_position;
-    auto rot = dynamics::QuatToRotMat(_robot_sys->GetState().body_orientation);
-    auto curr_vel = _robot_sys->GetState().body_velocity;
+    const auto &link_pos = robot_sys_->GetState().body_position;
+    auto rot = dynamics::QuatToRotMat(robot_sys_->GetState().body_orientation);
+    auto curr_vel = robot_sys_->GetState().body_velocity;
     curr_vel.tail(3) = rot.transpose() * curr_vel.tail(3);
 
     // X, Y, Z
     for (int i(0); i < 3; ++i)
     {
-      pos_err_[i] = _Kp_kin[i] * (pos_des[i] - link_pos[i]);
+      pos_err_[i] = Kp_kin_[i] * (pos_des[i] - link_pos[i]);
       vel_des_[i] = vel_des[i];
       acc_des_[i] = acc_des[i];
 
-      op_cmd_[i] = _Kp[i] * (pos_des[i] - link_pos[i]) +
-                   _Kd[i] * (vel_des_[i] - curr_vel[i + 3]) +
+      op_cmd_[i] = Kp_[i] * (pos_des[i] - link_pos[i]) +
+                   Kd_[i] * (vel_des_[i] - curr_vel[i + 3]) +
                    acc_des_[i];
     }
 
@@ -44,7 +44,7 @@ namespace sdrobot::ctrl::wbc
 
   bool TaskBodyPos::_UpdateTaskJacobian()
   {
-    auto rot = dynamics::QuatToRotMat(_robot_sys->GetState().body_orientation);
+    auto rot = dynamics::QuatToRotMat(robot_sys_->GetState().body_orientation);
     Jt_.block<3, 3>(0, 3) = rot.transpose();
     return true;
   }

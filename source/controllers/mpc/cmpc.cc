@@ -59,9 +59,9 @@ namespace sdrobot::ctrl::mpc
       for (int i = 0; i < 4; i++)
       {
 
-        footSwingTrajectories[i].setHeight(0.05);
-        footSwingTrajectories[i].setInitialPosition(pFoot[i]);
-        footSwingTrajectories[i].setFinalPosition(pFoot[i]);
+        footSwingTrajectories[i].SetHeight(0.05);
+        footSwingTrajectories[i].SetInitialPosition(pFoot[i]);
+        footSwingTrajectories[i].SetFinalPosition(pFoot[i]);
       }
       firstRun = false;
     }
@@ -69,7 +69,7 @@ namespace sdrobot::ctrl::mpc
     auto cmd_gait = cmd->GetGait();
     GaitSkdPtr gait_skd = gait_map_[cmd_gait];
 
-    gait_skd->setIterations(iterationsBetweenMPC, iterationCounter);
+    gait_skd->SetIterations(iterationsBetweenMPC, iterationCounter);
 
     if (_body_height < 0.02)
     {
@@ -109,7 +109,7 @@ namespace sdrobot::ctrl::mpc
 
     // foot placement
     for (int l = 0; l < 4; l++)
-      swingTimes[l] = gait_skd->getCurrentSwingTime(dtMPC, l);
+      swingTimes[l] = gait_skd->GetCurrentSwingTime(dtMPC, l);
 
     double side_sign[4] = {-1, 1, -1, 1};
     //  double interleave_y[4] = {-0.08, 0.08, 0.02, -0.02};
@@ -130,9 +130,9 @@ namespace sdrobot::ctrl::mpc
         swingTimeRemaining[i] -= dt;
       }
       //if(firstSwing[i]) {
-      //footSwingTrajectories[i].setHeight(.05);
+      //footSwingTrajectories[i].SetHeight(.05);
 
-      footSwingTrajectories[i].setHeight(cmd->GetStepHeight()); //.125);
+      footSwingTrajectories[i].SetHeight(cmd->GetStepHeight()); //.125);
 
       //    Vector3 offset(0.05, side_sign[i] * .062, 0);
       Vector3 offset(0, side_sign[i] * .072, 0);
@@ -156,7 +156,7 @@ namespace sdrobot::ctrl::mpc
       Vector3 pRobotFrame = (quad->GetHipLocation(i) + offset);
 
       pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain;
-      double stance_time = gait_skd->getCurrentStanceTime(dtMPC, i);
+      double stance_time = gait_skd->GetCurrentStanceTime(dtMPC, i);
       Vector3 pYawCorrected =
           dynamics::CoordinateRot(dynamics::CoordinateAxis::Z, -cmd_des(StateIdx::rate_y) * stance_time / 2) * pRobotFrame;
 
@@ -185,16 +185,16 @@ namespace sdrobot::ctrl::mpc
       Pf[1] += pfy_rel;
       Pf[2] = -0.01; //0;//-0.003; //
       //Pf[2] = 0.0;
-      footSwingTrajectories[i].setFinalPosition(Pf);
+      footSwingTrajectories[i].SetFinalPosition(Pf);
     }
 
     // calc gait
     iterationCounter++;
 
     // gait
-    Vector4 swingStates = gait_skd->getSwingState();
+    Vector4 swingStates = gait_skd->GetSwingState();
 
-    updateMPCIfNeeded(wbcdata.Fr_des, gait_skd->getMpcTable(), cmd, est, v_des_world);
+    UpdateMPCIfNeeded(wbcdata.Fr_des, gait_skd->GetMpcTable(), cmd, est, v_des_world);
 
     //  StateEstimator* se = hw_i->state_estimator;
     for (int foot = 0; foot < 4; foot++)
@@ -205,25 +205,25 @@ namespace sdrobot::ctrl::mpc
         if (firstSwing[foot])
         {
           firstSwing[foot] = false;
-          footSwingTrajectories[foot].setInitialPosition(pFoot[foot]);
+          footSwingTrajectories[foot].SetInitialPosition(pFoot[foot]);
         }
 
-        footSwingTrajectories[foot].computeSwingTrajectoryBezier(swingState, swingTimes[foot]);
+        footSwingTrajectories[foot].ComputeSwingTrajectoryBezier(swingState, swingTimes[foot]);
 
-        Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
-        Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
+        Vector3 pDesFootWorld = footSwingTrajectories[foot].GetPosition();
+        Vector3 vDesFootWorld = footSwingTrajectories[foot].GetVelocity();
 
         // Update for WBC
-        wbcdata.pFoot_des[foot] = pDesFootWorld;
-        wbcdata.vFoot_des[foot] = vDesFootWorld;
-        wbcdata.aFoot_des[foot] = footSwingTrajectories[foot].getAcceleration();
+        wbcdata.p_foot_des[foot] = pDesFootWorld;
+        wbcdata.v_foot_des[foot] = vDesFootWorld;
+        wbcdata.a_foot_des[foot] = footSwingTrajectories[foot].GetAcceleration();
       }
       else // foot is in stance
       {
         firstSwing[foot] = true;
 
-        Vector3 pDesFootWorld = footSwingTrajectories[foot].getPosition();
-        Vector3 vDesFootWorld = footSwingTrajectories[foot].getVelocity();
+        Vector3 pDesFootWorld = footSwingTrajectories[foot].GetPosition();
+        Vector3 vDesFootWorld = footSwingTrajectories[foot].GetVelocity();
         Vector3 pDesLeg = seResult.rot_body * (pDesFootWorld - seResult.position) - quad->GetHipLocation(foot);
         Vector3 vDesLeg = seResult.rot_body * (vDesFootWorld - v_world);
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
@@ -236,27 +236,27 @@ namespace sdrobot::ctrl::mpc
     }
 
     // Update For WBC
-    wbcdata.pBody_des[0] = world_position_desired[0];
-    wbcdata.pBody_des[1] = world_position_desired[1];
-    wbcdata.pBody_des[2] = world_position_desired[2];
+    wbcdata.p_body_des[0] = world_position_desired[0];
+    wbcdata.p_body_des[1] = world_position_desired[1];
+    wbcdata.p_body_des[2] = world_position_desired[2];
 
-    wbcdata.vBody_des[0] = v_des_world[0];
-    wbcdata.vBody_des[1] = v_des_world[1];
-    wbcdata.vBody_des[2] = v_des_world[2];
+    wbcdata.v_body_des[0] = v_des_world[0];
+    wbcdata.v_body_des[1] = v_des_world[1];
+    wbcdata.v_body_des[2] = v_des_world[2];
 
-    wbcdata.aBody_des.setZero();
+    wbcdata.a_body_des.setZero();
 
-    //  pBody_RPY_des[0] = 0.;
-    //  pBody_RPY_des[1] = 0.;
-    wbcdata.pBody_RPY_des[0] = cmd_des(StateIdx::angle_r); //data._desiredStateCommand->data.stateDes(3); // pBody_RPY_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
-    wbcdata.pBody_RPY_des[1] = cmd_des(StateIdx::angle_p); //pBody_RPY_des[1]*0.9+0.1*seResult.rpy[1]/2.0;//
-    wbcdata.pBody_RPY_des[2] = cmd_des(StateIdx::angle_y);
+    //  p_body_rpy_des[0] = 0.;
+    //  p_body_rpy_des[1] = 0.;
+    wbcdata.p_body_rpy_des[0] = cmd_des(StateIdx::angle_r); //data._desiredStateCommand->data.stateDes(3); // p_body_rpy_des[0]*0.9+0.1*seResult.rpy[0]/2.0;//
+    wbcdata.p_body_rpy_des[1] = cmd_des(StateIdx::angle_p); //p_body_rpy_des[1]*0.9+0.1*seResult.rpy[1]/2.0;//
+    wbcdata.p_body_rpy_des[2] = cmd_des(StateIdx::angle_y);
 
-    wbcdata.vBody_Ori_des[0] = cmd_des(StateIdx::rate_r);
-    wbcdata.vBody_Ori_des[1] = cmd_des(StateIdx::rate_p);
-    wbcdata.vBody_Ori_des[2] = cmd_des(StateIdx::rate_y);
+    wbcdata.vbody_ori_des[0] = cmd_des(StateIdx::rate_r);
+    wbcdata.vbody_ori_des[1] = cmd_des(StateIdx::rate_p);
+    wbcdata.vbody_ori_des[2] = cmd_des(StateIdx::rate_y);
 
-    wbcdata.contact_state = gait_skd->getContactState();
+    wbcdata.contact_state = gait_skd->GetContactState();
     // END of WBC Update
 
     return true;
@@ -267,7 +267,7 @@ namespace sdrobot::ctrl::mpc
     return true;
   }
 
-  void CMpc::updateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
+  void CMpc::UpdateMPCIfNeeded(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const StateCmdPtr &cmd, const est::StateEstPtr &est, const Vector3 &v_des_world)
   {
     //iterationsBetweenMPC = 30;
     if ((iterationCounter % iterationsBetweenMPC) != 0)
@@ -338,11 +338,11 @@ namespace sdrobot::ctrl::mpc
         trajAll[12 * i + 2] = trajAll[12 * (i - 1) + 2] + dtMPC * cmd_des(StateIdx::rate_y);
       }
     }
-    solveMPC(out, mpcTable, est);
+    SolveMPC(out, mpcTable, est);
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::solveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
+  void CMpc::SolveMPC(std::array<Vector3, 4> &out, const std::vector<int> &mpcTable, const est::StateEstPtr &est)
   {
     const auto &seResult = est->GetData();
 

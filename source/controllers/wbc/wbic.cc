@@ -5,8 +5,8 @@ namespace sdrobot::ctrl::wbc
 {
 
   Wbic::Wbic(int num_qdot, double weight) : num_act_joint_(num_qdot - 6), num_qdot_(num_qdot),
-                                               _W_floating(VectorX::Constant(6, weight)),
-                                               _W_rf(VectorX::Constant(12, 1.))
+                                               W_floating_(VectorX::Constant(6, weight)),
+                                               W_rf_(VectorX::Constant(12, 1.))
 
   {
     Sa_ = MatrixX::Zero(num_act_joint_, num_qdot_);
@@ -15,7 +15,7 @@ namespace sdrobot::ctrl::wbc
     Sa_.block(0, 6, num_act_joint_, num_act_joint_).setIdentity();
     Sv_.block<6, 6>(0, 0).setIdentity();
 
-    _eye = MatrixX::Identity(num_qdot_, num_qdot_);
+    eye_ = MatrixX::Identity(num_qdot_, num_qdot_);
   }
 
   void Wbic::UpdateSetting(const MatrixX &A, const MatrixX &Ainv,
@@ -43,21 +43,21 @@ namespace sdrobot::ctrl::wbc
     MatrixX JcBar;
     MatrixX Npre;
 
-    if (_dim_rf > 0)
+    if (dim_rf_ > 0)
     {
       // Contact Setting
       _ContactBuilding(contact_list);
 
       // Set inequality constraints
       _SetInEqualityConstraint();
-      _WeightedInverse(_Jc, Ainv_, JcBar);
-      qddot_pre = JcBar * (-_JcDotQdot);
-      Npre = _eye - JcBar * _Jc;
+      _WeightedInverse(Jc_, Ainv_, JcBar);
+      qddot_pre = JcBar * (-JcDotQdot_);
+      Npre = eye_ - JcBar * Jc_;
     }
     else
     {
       qddot_pre = VectorX::Zero(num_qdot_);
-      Npre = _eye;
+      Npre = eye_;
     }
 
     // Task
@@ -67,15 +67,15 @@ namespace sdrobot::ctrl::wbc
 
     for (auto &task : task_list)
     {
-      Jt = task->getTaskJacobian();
-      JtDotQdot = task->getTaskJacobianDotQdot();
-      xddot = task->getCommand();
+      Jt = task->GetTaskJacobian();
+      JtDotQdot = task->GetTaskJacobianDotQdot();
+      xddot = task->GetCommand();
 
       JtPre = Jt * Npre;
       _WeightedInverse(JtPre, Ainv_, JtBar);
 
       qddot_pre += JtBar * (xddot - JtDotQdot - Jt * qddot_pre);
-      Npre = Npre * (_eye - JtBar * JtPre);
+      Npre = Npre * (eye_ - JtBar * JtPre);
     }
 
     // Set equality constraints
@@ -86,7 +86,7 @@ namespace sdrobot::ctrl::wbc
     _SolveQP();
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
-    for (int i(0); i < _dim_floating; ++i)
+    for (int i(0); i < dim_floating_; ++i)
       qddot_pre[i] += z_[i];
 
     for (int i = 0; i < robot::ModelAttrs::dim_config; i++)
@@ -117,47 +117,47 @@ namespace sdrobot::ctrl::wbc
     VectorX JcDotQdot;
     int dim_accumul_rf, dim_accumul_uf;
 
-    Jc = contact_list[0]->getContactJacobian();
-    JcDotQdot = contact_list[0]->getJcDotQdot();
-    Uf = contact_list[0]->getRFConstraintMtx();
-    Uf_ieq_vec = contact_list[0]->getRFConstraintVec();
+    Jc = contact_list[0]->GetContactJacobian();
+    JcDotQdot = contact_list[0]->GetJcDotQdot();
+    Uf = contact_list[0]->GetRFConstraintMtx();
+    Uf_ieq_vec = contact_list[0]->GetRFConstraintVec();
 
-    dim_accumul_rf = contact_list[0]->getDim();
-    dim_accumul_uf = contact_list[0]->getDimRFConstraint();
+    dim_accumul_rf = contact_list[0]->GetDim();
+    dim_accumul_uf = contact_list[0]->GetDimRFConstraint();
 
-    _Jc.block(0, 0, dim_accumul_rf, num_qdot_) = Jc;
-    _JcDotQdot.head(dim_accumul_rf) = JcDotQdot;
-    _Uf.block(0, 0, dim_accumul_uf, dim_accumul_rf) = Uf;
-    _Uf_ieq_vec.head(dim_accumul_uf) = Uf_ieq_vec;
-    _Fr_des.head(dim_accumul_rf) = contact_list[0]->getRFDesired();
+    Jc_.block(0, 0, dim_accumul_rf, num_qdot_) = Jc;
+    JcDotQdot_.head(dim_accumul_rf) = JcDotQdot;
+    Uf_.block(0, 0, dim_accumul_uf, dim_accumul_rf) = Uf;
+    Uf_ieq_vec_.head(dim_accumul_uf) = Uf_ieq_vec;
+    Fr_des_.head(dim_accumul_rf) = contact_list[0]->GetRFDesired();
 
     int dim_new_rf, dim_new_uf;
     int csize = contact_list.size();
     for (int i(1); i < csize; ++i)
     {
-      Jc = contact_list[i]->getContactJacobian();
-      JcDotQdot = contact_list[i]->getJcDotQdot();
+      Jc = contact_list[i]->GetContactJacobian();
+      JcDotQdot = contact_list[i]->GetJcDotQdot();
 
-      dim_new_rf = contact_list[i]->getDim();
-      dim_new_uf = contact_list[i]->getDimRFConstraint();
+      dim_new_rf = contact_list[i]->GetDim();
+      dim_new_uf = contact_list[i]->GetDimRFConstraint();
 
       // Jc append
-      _Jc.block(dim_accumul_rf, 0, dim_new_rf, num_qdot_) = Jc;
+      Jc_.block(dim_accumul_rf, 0, dim_new_rf, num_qdot_) = Jc;
 
       // JcDotQdot append
-      _JcDotQdot.segment(dim_accumul_rf, dim_new_rf) = JcDotQdot;
+      JcDotQdot_.segment(dim_accumul_rf, dim_new_rf) = JcDotQdot;
 
       // Uf
-      Uf = contact_list[i]->getRFConstraintMtx();
-      _Uf.block(dim_accumul_uf, dim_accumul_rf, dim_new_uf, dim_new_rf) = Uf;
+      Uf = contact_list[i]->GetRFConstraintMtx();
+      Uf_.block(dim_accumul_uf, dim_accumul_rf, dim_new_uf, dim_new_rf) = Uf;
 
       // Uf inequality vector
-      Uf_ieq_vec = contact_list[i]->getRFConstraintVec();
-      _Uf_ieq_vec.segment(dim_accumul_uf, dim_new_uf) = Uf_ieq_vec;
+      Uf_ieq_vec = contact_list[i]->GetRFConstraintVec();
+      Uf_ieq_vec_.segment(dim_accumul_uf, dim_new_uf) = Uf_ieq_vec;
 
       // Fr desired
-      _Fr_des.segment(dim_accumul_rf, dim_new_rf) =
-          contact_list[i]->getRFDesired();
+      Fr_des_.segment(dim_accumul_rf, dim_new_rf) =
+          contact_list[i]->GetRFDesired();
       dim_accumul_rf += dim_new_rf;
       dim_accumul_uf += dim_new_uf;
     }
@@ -166,68 +166,68 @@ namespace sdrobot::ctrl::wbc
   void Wbic::_SetEqualityConstraint(const VectorX &qddot)
   {
 
-    if (_dim_rf > 0)
+    if (dim_rf_ > 0)
     {
-      CE_.block(0, 0, _dim_eq_cstr, _dim_floating) =
-          A_.block(0, 0, _dim_eq_cstr, _dim_floating);
-      CE_.block(0, _dim_floating, _dim_eq_cstr, _dim_rf) =
-          -Sv_ * _Jc.transpose();
+      CE_.block(0, 0, dim_eq_cstr_, dim_floating_) =
+          A_.block(0, 0, dim_eq_cstr_, dim_floating_);
+      CE_.block(0, dim_floating_, dim_eq_cstr_, dim_rf_) =
+          -Sv_ * Jc_.transpose();
       ce0_ = -Sv_ * (A_ * qddot + cori_ + grav_ -
-                     _Jc.transpose() * _Fr_des);
+                     Jc_.transpose() * Fr_des_);
     }
     else
     {
-      CE_.block(0, 0, _dim_eq_cstr, _dim_floating) =
-          A_.block(0, 0, _dim_eq_cstr, _dim_floating);
+      CE_.block(0, 0, dim_eq_cstr_, dim_floating_) =
+          A_.block(0, 0, dim_eq_cstr_, dim_floating_);
       ce0_ = -Sv_ * (A_ * qddot + cori_ + grav_);
     }
   }
 
   void Wbic::_SetInEqualityConstraint()
   {
-    CI_.block(0, _dim_floating, _dim_Uf, _dim_rf) = _Uf;
-    ci0_ = _Uf_ieq_vec - _Uf * _Fr_des;
+    CI_.block(0, dim_floating_, dim_Uf_, dim_rf_) = Uf_;
+    ci0_ = Uf_ieq_vec_ - Uf_ * Fr_des_;
   }
 
   void Wbic::_SetOptimizationSize(const std::vector<ContactPtr> &contact_list)
   {
 
     // Dimension
-    _dim_rf = 0;
-    _dim_Uf = 0; // Dimension of inequality constraint
+    dim_rf_ = 0;
+    dim_Uf_ = 0; // Dimension of inequality constraint
     int csize = contact_list.size();
     for (int i(0); i < csize; ++i)
     {
-      _dim_rf += contact_list[i]->getDim();
-      _dim_Uf += contact_list[i]->getDimRFConstraint();
+      dim_rf_ += contact_list[i]->GetDim();
+      dim_Uf_ += contact_list[i]->GetDimRFConstraint();
     }
 
-    _dim_opt = _dim_floating + _dim_rf;
-    _dim_eq_cstr = _dim_floating;
+    dim_opt_ = dim_floating_ + dim_rf_;
+    dim_eq_cstr_ = dim_floating_;
 
     // Matrix Setting
-    G_ = MatrixX::Zero(_dim_opt, _dim_opt);
-    g0_ = VectorX::Zero(_dim_opt);
+    G_ = MatrixX::Zero(dim_opt_, dim_opt_);
+    g0_ = VectorX::Zero(dim_opt_);
 
     // Eigen Matrix Setting
-    CE_ = MatrixX::Zero(_dim_eq_cstr, _dim_opt);
-    ce0_ = VectorX(_dim_eq_cstr);
-    if (_dim_rf > 0)
+    CE_ = MatrixX::Zero(dim_eq_cstr_, dim_opt_);
+    ce0_ = VectorX(dim_eq_cstr_);
+    if (dim_rf_ > 0)
     {
-      CI_ = MatrixX::Zero(_dim_Uf, _dim_opt);
-      ci0_ = VectorX::Zero(_dim_Uf);
+      CI_ = MatrixX::Zero(dim_Uf_, dim_opt_);
+      ci0_ = VectorX::Zero(dim_Uf_);
 
-      _Jc = MatrixX(_dim_rf, num_qdot_);
-      _JcDotQdot = VectorX(_dim_rf);
-      _Fr_des = VectorX(_dim_rf);
+      Jc_ = MatrixX(dim_rf_, num_qdot_);
+      JcDotQdot_ = VectorX(dim_rf_);
+      Fr_des_ = VectorX(dim_rf_);
 
-      _Uf = MatrixX(_dim_Uf, _dim_rf);
-      _Uf.setZero();
-      _Uf_ieq_vec = VectorX(_dim_Uf);
+      Uf_ = MatrixX(dim_Uf_, dim_rf_);
+      Uf_.setZero();
+      Uf_ieq_vec_ = VectorX(dim_Uf_);
     }
     else
     {
-      CI_ = MatrixX::Zero(1, _dim_opt);
+      CI_ = MatrixX::Zero(1, dim_opt_);
       ci0_ = VectorX::Zero(1);
     }
   }
@@ -236,14 +236,14 @@ namespace sdrobot::ctrl::wbc
   {
     // Set Cost
     int idx_offset(0);
-    for (int i(0); i < _dim_floating; ++i)
+    for (int i(0); i < dim_floating_; ++i)
     {
-      G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_floating[i];
+      G_((i + idx_offset), (i + idx_offset)) = 0.5 * W_floating_[i];
     }
-    idx_offset += _dim_floating;
-    for (int i(0); i < _dim_rf; ++i)
+    idx_offset += dim_floating_;
+    for (int i(0); i < dim_rf_; ++i)
     {
-      G_((i + idx_offset), (i + idx_offset)) = 0.5 * _W_rf[i];
+      G_((i + idx_offset), (i + idx_offset)) = 0.5 * W_rf_[i];
     }
   }
 
@@ -251,14 +251,14 @@ namespace sdrobot::ctrl::wbc
   {
 
     VectorX tot_tau;
-    if (_dim_rf > 0)
+    if (dim_rf_ > 0)
     {
-      VectorX _Fr(_dim_rf);
+      VectorX _Fr(dim_rf_);
       // get Reaction forces
-      for (int i(0); i < _dim_rf; ++i)
-        _Fr[i] = z_[i + _dim_floating] + _Fr_des[i];
+      for (int i(0); i < dim_rf_; ++i)
+        _Fr[i] = z_[i + dim_floating_] + Fr_des_[i];
       tot_tau =
-          A_ * qddot + cori_ + grav_ - _Jc.transpose() * _Fr;
+          A_ * qddot + cori_ + grav_ - Jc_.transpose() * _Fr;
     }
     else
     {

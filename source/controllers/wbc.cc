@@ -12,30 +12,30 @@ namespace sdrobot::ctrl
   Wbc::Wbc(
       const dynamics::FBModelPtr &model,
       double weight) : model_(model),
-                       _full_config(robot::ModelAttrs::num_act_joint),
-                       _tau_ff(robot::ModelAttrs::num_act_joint),
-                       _des_jpos(robot::ModelAttrs::num_act_joint),
-                       _des_jvel(robot::ModelAttrs::num_act_joint),
-                       _Kp_joint(robot::DynamicsAttrs::kp_joint),
-                       _Kd_joint(robot::DynamicsAttrs::kd_joint),
-                       _body_pos_task(std::make_shared<wbc::TaskBodyPos>(model)),
-                       _body_ori_task(std::make_shared<wbc::TaskBodyOri>(model)),
-                       _foot_task({
+                       full_config_(robot::ModelAttrs::num_act_joint),
+                       tau_ff_(robot::ModelAttrs::num_act_joint),
+                       des_jpos_(robot::ModelAttrs::num_act_joint),
+                       des_jvel_(robot::ModelAttrs::num_act_joint),
+                       Kp_joint_(robot::DynamicsAttrs::kp_joint),
+                       Kd_joint_(robot::DynamicsAttrs::kd_joint),
+                       body_pos_task_(std::make_shared<wbc::TaskBodyPos>(model)),
+                       body_ori_task_(std::make_shared<wbc::TaskBodyOri>(model)),
+                       foot_task_({
                            std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fr),
                            std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::fl),
                            std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hr),
                            std::make_shared<wbc::TaskLinkPos>(model, robot::LinkId::hl),
                        }),
-                       _foot_contact({
+                       foot_contact_({
                            std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fr),
                            std::make_shared<wbc::ContactSingle>(model, robot::LinkId::fl),
                            std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hr),
                            std::make_shared<wbc::ContactSingle>(model, robot::LinkId::hl),
                        }),
-                       _kin_wbc(robot::ModelAttrs::dim_config),
-                       _wbic(robot::ModelAttrs::dim_config, weight)
+                       kin_wbc_(robot::ModelAttrs::dim_config),
+                       wbic_(robot::ModelAttrs::dim_config, weight)
   {
-    _full_config.setZero();
+    full_config_.setZero();
   }
 
   void Wbc::Run(const WbcData &input, const StateCmdPtr &state_cmd, const est::StateEstPtr &est, LegPtr &cleg)
@@ -67,26 +67,26 @@ namespace sdrobot::ctrl
         _state.q[3 * leg + i] = legdata[leg].q[i];
         _state.qd[3 * leg + i] = legdata[leg].qd[i];
 
-        _full_config[3 * leg + i] = _state.q[3 * leg + i];
+        full_config_[3 * leg + i] = _state.q[3 * leg + i];
       }
     }
     model_->SetState(_state);
     model_->ContactJacobians();
-    _grav = model_->GeneralizedGravityForce();
-    _coriolis = model_->GeneralizedCoriolisForce();
-    _A = model_->GetMassMatrix();
-    _Ainv = _A.inverse();
+    grav_ = model_->GeneralizedGravityForce();
+    coriolis_ = model_->GeneralizedCoriolisForce();
+    A_ = model_->GetMassMatrix();
+    Ainv_ = A_.inverse();
   }
 
   void Wbc::_ComputeWBC()
   {
     // TEST
-    _kin_wbc.FindConfiguration(_full_config, _task_list, _contact_list,
-                                _des_jpos, _des_jvel);
+    kin_wbc_.FindConfiguration(full_config_, task_list_, contact_list_,
+                                des_jpos_, des_jvel_);
 
     // WBIC
-    _wbic.UpdateSetting(_A, _Ainv, _coriolis, _grav);
-    _wbic.MakeTorque(_tau_ff, _task_list, _contact_list);
+    wbic_.UpdateSetting(A_, Ainv_, coriolis_, grav_);
+    wbic_.MakeTorque(tau_ff_, task_list_, contact_list_);
   }
 
   void Wbc::_UpdateLegCMD(LegPtr &cleg, const StateCmdPtr &state_cmd)
@@ -98,12 +98,12 @@ namespace sdrobot::ctrl
       cmds[leg].Zero();
       for (int jidx(0); jidx < robot::ModelAttrs::num_leg_joint; ++jidx)
       {
-        cmds[leg].tau_feed_forward[jidx] = _tau_ff[robot::ModelAttrs::num_leg_joint * leg + jidx];
-        cmds[leg].q_des[jidx] = _des_jpos[robot::ModelAttrs::num_leg_joint * leg + jidx];
-        cmds[leg].qd_des[jidx] = _des_jvel[robot::ModelAttrs::num_leg_joint * leg + jidx];
+        cmds[leg].tau_feed_forward[jidx] = tau_ff_[robot::ModelAttrs::num_leg_joint * leg + jidx];
+        cmds[leg].q_des[jidx] = des_jpos_[robot::ModelAttrs::num_leg_joint * leg + jidx];
+        cmds[leg].qd_des[jidx] = des_jvel_[robot::ModelAttrs::num_leg_joint * leg + jidx];
 
-        cmds[leg].kp_joint(jidx, jidx) = _Kp_joint[jidx];
-        cmds[leg].kd_joint(jidx, jidx) = _Kd_joint[jidx];
+        cmds[leg].kp_joint(jidx, jidx) = Kp_joint_[jidx];
+        cmds[leg].kd_joint(jidx, jidx) = Kd_joint_[jidx];
 
         auto gait = state_cmd->GetGait();
 
@@ -135,41 +135,41 @@ namespace sdrobot::ctrl
     // Wash out the previous setup
     _CleanUp();
 
-    _body_ori_task->UpdateTask(
-        input.pBody_RPY_des,
-        input.vBody_Ori_des,
+    body_ori_task_->UpdateTask(
+        input.p_body_rpy_des,
+        input.vbody_ori_des,
         Vector3::Zero());
-    _body_pos_task->UpdateTask(
-        input.pBody_des,
-        input.vBody_des,
-        input.aBody_des);
+    body_pos_task_->UpdateTask(
+        input.p_body_des,
+        input.v_body_des,
+        input.a_body_des);
 
-    _task_list.push_back(_body_ori_task);
-    _task_list.push_back(_body_pos_task);
+    task_list_.push_back(body_ori_task_);
+    task_list_.push_back(body_pos_task_);
 
     for (int leg(0); leg < robot::ModelAttrs::num_leg; ++leg)
     {
       if (input.contact_state[leg] > 0.)
       { // Contact
-        _foot_contact[leg]->setRFDesired(input.Fr_des[leg]);
-        _foot_contact[leg]->UpdateContact();
-        _contact_list.push_back(_foot_contact[leg]);
+        foot_contact_[leg]->SetRFDesired(input.Fr_des[leg]);
+        foot_contact_[leg]->UpdateContact();
+        contact_list_.push_back(foot_contact_[leg]);
       }
       else
       { // No Contact (swing)
-        _foot_task[leg]->UpdateTask(
-            input.pFoot_des[leg],
-            input.vFoot_des[leg],
-            input.aFoot_des[leg]);
+        foot_task_[leg]->UpdateTask(
+            input.p_foot_des[leg],
+            input.v_foot_des[leg],
+            input.a_foot_des[leg]);
         //zero_vec3);
-        _task_list.push_back(_foot_task[leg]);
+        task_list_.push_back(foot_task_[leg]);
       }
     }
   }
 
   void Wbc::_CleanUp()
   {
-    _contact_list.clear();
-    _task_list.clear();
+    contact_list_.clear();
+    task_list_.clear();
   }
 }

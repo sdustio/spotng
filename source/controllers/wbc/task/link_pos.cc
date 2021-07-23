@@ -8,11 +8,11 @@ namespace sdrobot::ctrl::wbc
   {
     Jt_ = MatrixX::Zero(dim_task_, robot::ModelAttrs::dim_config);
     JtDotQdot_ = VectorX::Zero(dim_task_);
-    _Kp_kin = VectorX::Constant(dim_task_, 1.);
+    Kp_kin_ = VectorX::Constant(dim_task_, 1.);
     for (int i = 0; i < 3; i++)
     {
-      _Kp[i] = robot::DynamicsAttrs::kp_foot[i];
-      _Kd[i] = robot::DynamicsAttrs::kd_foot[i];
+      Kp_[i] = robot::DynamicsAttrs::kp_foot[i];
+      Kd_[i] = robot::DynamicsAttrs::kd_foot[i];
     }
   }
 
@@ -22,12 +22,12 @@ namespace sdrobot::ctrl::wbc
 
     Vector3 link_pos;
 
-    link_pos = _robot_sys->GetGcPos()[link_idx_];
+    link_pos = robot_sys_->GetGcPos()[link_idx_];
 
     // X, Y, Z
     for (int i(0); i < 3; ++i)
     {
-      pos_err_[i] = _Kp_kin[i] * (pos_des[i] - link_pos[i]);
+      pos_err_[i] = Kp_kin_[i] * (pos_des[i] - link_pos[i]);
       vel_des_[i] = vel_des[i];
       acc_des_[i] = acc_des[i];
     }
@@ -36,8 +36,8 @@ namespace sdrobot::ctrl::wbc
     for (int i(0); i < dim_task_; ++i)
     {
       op_cmd_[i] =
-          _Kp[i] * pos_err_[i] +
-          _Kd[i] * (vel_des_[i] - _robot_sys->GetGcVel()[link_idx_][i]) +
+          Kp_[i] * pos_err_[i] +
+          Kd_[i] * (vel_des_[i] - robot_sys_->GetGcVel()[link_idx_][i]) +
           acc_des_[i];
     }
 
@@ -47,7 +47,7 @@ namespace sdrobot::ctrl::wbc
   bool TaskLinkPos::_UpdateTaskJacobian()
   {
 
-    Jt_ = _robot_sys->GetJc()[link_idx_];
+    Jt_ = robot_sys_->GetJc()[link_idx_];
     if (!virtual_depend_)
     {
       Jt_.block(0, 0, 3, 6) = MatrixX::Zero(3, 6);
@@ -57,7 +57,7 @@ namespace sdrobot::ctrl::wbc
 
   bool TaskLinkPos::_UpdateTaskJDotQdot()
   {
-    JtDotQdot_ = _robot_sys->GetJcdqd()[link_idx_];
+    JtDotQdot_ = robot_sys_->GetJcdqd()[link_idx_];
     return true;
   }
 
