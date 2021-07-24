@@ -41,7 +41,7 @@ target_link_libraries(${PROJECT_NAME}
 
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME}
-  EXPORT_FILE_NAME "${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/Export.h"
+  EXPORT_FILE_NAME "${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}/export.h"
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -55,6 +55,8 @@ target_include_directories(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME}
   PROPERTIES
     POSITION_INDEPENDENT_CODE 1
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN 1
     SOVERSION "${PROJECT_VERSION_MAJOR}"
 )
 
