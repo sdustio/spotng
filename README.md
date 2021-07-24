@@ -5,14 +5,14 @@
 
 TODO
 - feature
-  - 自动档
-  - Init状态问题
-- del useless(or just for sim) code
-- 优化性能
-  - dynamic vector/matrix -> fixed vector/matrix
-  - qp algorithm
+  - [ ] 自动档
+  - [ ] Init状态问题
+- 优化
+  - [ ] del useless(or just for sim) code
+  - [ ] dynamic vector/matrix -> fixed vector/matrix
+  - [X] qp algorithm
 - 调整架构
-  - 核心逻辑独立成库，ros2调用独立库
-  - 核心库export 头文件接口化
-- 测试
-- 仿真
+  - [ ] 核心逻辑独立成库，ros2调用独立库
+  - [ ] 核心库 export 头文件接口化
+- [ ] 测试
+- [ ] 仿真
