@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sdrobot/export.h"
 #include "sdrobot/options.h"
 #include "sdrobot/drive.h"
 #include "sdrobot/sensor.h"
@@ -10,13 +9,16 @@ namespace sdrobot
 {
   class SDROBOT_EXPORT Robot
   {
-    public:
-    virtual ~Robot() = default;
+  public:
+    using Ptr = std::unique_ptr<Robot>;
+    using SharedPtr = std::shared_ptr<Robot>;
+
+    static Ptr Build(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+    static SharedPtr BuildShared(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+
     bool UpdateImu(sensor::ImuData const &imu);
     bool UpdateDriveCmd(drive::DriveCmd const &dcmd);
+    bool RunOnce();
   };
 
-  using RobotPtr = std::unique_ptr<Robot>;
-
-  RobotPtr SDROBOT_EXPORT BuildRobot(Options const &opts, interface::ActuatorInterfacePtr const &act_itf);
 } // namespace sdrobot

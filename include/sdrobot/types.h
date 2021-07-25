@@ -1,7 +1,10 @@
 #pragma once
 
 #include <array>
-#include <cinttypes>
+#include <cstdint>
+
+#include "sdrobot/export.h"
+
 
 namespace sdrobot
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sdrobot/export.h"
+#include "sdrobot/types.h"
 
 namespace sdrobot
 {

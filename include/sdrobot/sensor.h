@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sdrobot/export.h"
 #include "sdrobot/types.h"
 #include "sdrobot/geometry.h"
 

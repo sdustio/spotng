@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "sdrobot/export.h"
 #include "sdrobot/types.h"
 
 namespace sdrobot::interface
@@ -47,11 +46,13 @@ namespace sdrobot::interface
   class SDROBOT_EXPORT ActuatorInterface
   {
   public:
+    using SharedPtr = std::shared_ptr<ActuatorInterface>;
+    using Ptr = std::unique_ptr<ActuatorInterface>;
+
     virtual ~ActuatorInterface() = default;
     virtual bool GetActuatorData(ActuatorData &) const = 0;
     virtual bool UpdateActuatorCmd(ActuatorCmd const &) = 0;
     virtual bool Init() = 0;   // return true if ok
     virtual bool RunSPI() = 0; // return true if ok
-  }
-  using ActuatorInterfacePtr = std::shared_ptr<ActuatorInterface>;
+  };
 }

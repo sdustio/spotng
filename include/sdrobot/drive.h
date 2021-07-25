@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "sdrobot/export.h"
 #include "sdrobot/options.h"
 
 namespace sdrobot::drive
@@ -54,6 +53,9 @@ namespace sdrobot::drive
   class SDROBOT_EXPORT DriveCtrl
   {
   public:
+    using Ptr = std::unique_ptr<DriveCtrl>;
+    using SharedPtr = std::shared_ptr<DriveCtrl>;
+
     DriveCtrl(double dt, DriveMode mode);
     explicit DriveCtrl(double dt);
 
@@ -68,5 +70,4 @@ namespace sdrobot::drive
     bool GetVelRpyDes(Array3f &vel_rpy) const;
   };
 
-  using DriveCtrlPtr = std::shared_ptr<DriveCtrl>;
 }
