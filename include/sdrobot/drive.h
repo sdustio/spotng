@@ -34,40 +34,25 @@ namespace sdrobot::drive
     Gait gait;
   };
 
-  struct CmdLimits
-  {
-    constexpr static double max_angle_r = 0.4;
-    constexpr static double min_angle_r = -0.4;
-    constexpr static double max_angle_p = 0.4;
-    constexpr static double min_angle_p = -0.4;
-    constexpr static double max_vel_x = 3.0;
-    constexpr static double min_vel_x = -3.0;
-    constexpr static double max_vel_y = 2.0;
-    constexpr static double min_vel_y = -2.0;
-    constexpr static double max_rate_y = 2.5;
-    constexpr static double min_rate_y = -2.5;
-    constexpr static double deadband_region = 0.075;
-    constexpr static double filter = 0.1;
-  };
-
   class SDROBOT_EXPORT DriveCtrl
   {
   public:
     using Ptr = std::unique_ptr<DriveCtrl>;
     using SharedPtr = std::shared_ptr<DriveCtrl>;
 
-    DriveCtrl(double dt, DriveMode mode);
-    explicit DriveCtrl(double dt);
+    virtual ~DriveCtrl() = 0;
 
-    bool CmdtoDesData();
+    virtual bool CmdtoDesData() = 0;
 
-    bool GetDriveCmd(DriveCmd &cmd) const;
-    bool UpdateDriveCmd(DriveCmd const &cmd);
+    virtual bool GetDriveCmd(DriveCmd &cmd) const = 0;
+    virtual bool UpdateDriveCmd(DriveCmd const &cmd) = 0;
 
-    bool GetPosDes(Array3f &pos) const;
-    bool GetPosRpyDes(Array3f &pos_rpy) const;
-    bool GetVelDes(Array3f &vel) const;
-    bool GetVelRpyDes(Array3f &vel_rpy) const;
+    virtual bool GetDuration(double &dt) const = 0;
+
+    virtual bool GetPosDes(Array3f &pos) const = 0;
+    virtual bool GetPosRpyDes(Array3f &pos_rpy) const = 0;
+    virtual bool GetVelDes(Array3f &vel) const = 0;
+    virtual bool GetVelRpyDes(Array3f &vel_rpy) const = 0;
   };
 
 }

@@ -16,9 +16,11 @@ namespace sdrobot
     static Ptr Build(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
     static SharedPtr BuildShared(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
 
-    bool UpdateImu(sensor::ImuData const &imu);
-    bool UpdateDriveCmd(drive::DriveCmd const &dcmd);
-    bool RunOnce();
+    virtual ~Robot() = default;
+
+    virtual bool UpdateImu(sensor::ImuData const &imu) = 0;
+    virtual bool UpdateDriveCmd(drive::DriveCmd const &dcmd) = 0;
+    virtual bool RunOnce() = 0;
   };
 
 } // namespace sdrobot
