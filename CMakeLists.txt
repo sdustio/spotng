@@ -32,8 +32,8 @@ find_package(eiquadprog REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED ${sources})
 target_sources(${PROJECT_NAME} PRIVATE
-  source/geometry_impl.cc
-  source/drive_impl.cc
+  source/geometry/quaternions_impl.cc
+  source/drive/drive_ctrl_impl.cc
   source/robot_impl.cc
 )
 
