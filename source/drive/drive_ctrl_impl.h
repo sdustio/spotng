@@ -32,16 +32,15 @@ namespace sdrobot::drive
     bool UpdateDriveCmd(DriveCmd const &cmd) override;
     bool CmdtoDesData() override;
 
-    bool GetDuration(double &dt) const override;
-    bool GetStepHeight(double &height) const override;
-    bool GetState(State &state) const override;
-    bool GetGait(Gait &gait) const override;
+    double GetDuration() const override;
+    double GetStepHeight() const override;
+    State GetState() const override;
+    Gait GetGait() const override;
 
-    bool GetPosDes(Array3f &pos) const override;
-    bool GetPosRpyDes(Array3f &pos_rpy) const override;
-    bool GetVelDes(Array3f &vel) const override;
-    bool GetVelRpyDes(Array3f &vel_rpy) const override;
-
+    Array3f const &GetPosDes() const override;
+    Array3f const &GetPosRpyDes() const override;
+    Array3f const &GetVelDes() const override;
+    Array3f const &GetVelRpyDes() const override;
 
   private:
     double Deadband(double v, double minVal, double maxVal);

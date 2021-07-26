@@ -51,46 +51,38 @@ namespace sdrobot::drive
     return true;
   }
 
-  bool DriveCtrlImpl::GetDuration(double &dt) const
+  double DriveCtrlImpl::GetDuration() const
   {
-    dt = dt_;
-    return true;
+    return dt_;
   }
-  bool DriveCtrlImpl::GetStepHeight(double &height) const
+  double DriveCtrlImpl::GetStepHeight() const
   {
-    height = step_height_;
-    return true;
+    return step_height_;
   }
-  bool DriveCtrlImpl::GetState(State &state) const
+  State DriveCtrlImpl::GetState() const
   {
-    state = state_;
-    return true;
+    return state_;
   }
-  bool DriveCtrlImpl::GetGait(Gait &gait) const
+  Gait DriveCtrlImpl::GetGait() const
   {
-    gait = gait_;
-    return true;
+    return gait_;
   }
 
-  bool DriveCtrlImpl::GetPosDes(Array3f &pos) const
+  Array3f const &DriveCtrlImpl::GetPosDes() const
   {
-    pos = pos_;
-    return true;
+    return pos_;
   }
-  bool DriveCtrlImpl::GetPosRpyDes(Array3f &pos_rpy) const
+  Array3f const &DriveCtrlImpl::GetPosRpyDes() const
   {
-    pos_rpy = pos_rpy_;
-    return true;
+    return pos_rpy_;
   }
-  bool DriveCtrlImpl::GetVelDes(Array3f &vel) const
+  Array3f const &DriveCtrlImpl::GetVelDes() const
   {
-    vel = vel_;
-    return true;
+    return vel_;
   }
-  bool DriveCtrlImpl::GetVelRpyDes(Array3f &vel_rpy) const
+  Array3f const &DriveCtrlImpl::GetVelRpyDes() const
   {
-    vel_rpy = vel_rpy_;
-    return true;
+    return vel_rpy_;
   }
 
   double DriveCtrlImpl::Deadband(double v, double minVal, double maxVal)

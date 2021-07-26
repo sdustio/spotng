@@ -52,15 +52,15 @@ namespace sdrobot::drive
     virtual bool UpdateDriveCmd(DriveCmd const &cmd) = 0;
     virtual bool CmdtoDesData() = 0;
 
-    virtual bool GetDuration(double &dt) const = 0;
-    virtual bool GetStepHeight(double &height) const = 0;
-    virtual bool GetState(State &state) const = 0;
-    virtual bool GetGait(Gait &gait) const = 0;
+    virtual double GetDuration() const = 0;
+    virtual double GetStepHeight() const = 0;
+    virtual State GetState() const = 0;
+    virtual Gait GetGait() const = 0;
 
-    virtual bool GetPosDes(Array3f &pos) const = 0;
-    virtual bool GetPosRpyDes(Array3f &pos_rpy) const = 0;
-    virtual bool GetVelDes(Array3f &vel) const = 0;
-    virtual bool GetVelRpyDes(Array3f &vel_rpy) const = 0;
+    virtual Array3f const &GetPosDes() const = 0;
+    virtual Array3f const &GetPosRpyDes() const = 0;
+    virtual Array3f const &GetVelDes() const = 0;
+    virtual Array3f const &GetVelRpyDes() const = 0;
   };
 
 }

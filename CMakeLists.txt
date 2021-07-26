@@ -32,11 +32,12 @@ find_package(eiquadprog REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED ${sources})
 target_sources(${PROJECT_NAME} PRIVATE
-  source/geometry/quaternions_impl.cc
   source/drive/drive_ctrl_impl.cc
+  source/estimate/estimate_ctrl_impl.cc
+  source/estimate/orientation.cc
+  source/estimate/pos_vel.cc
   source/robot_impl.cc
 )
-
 target_link_libraries(${PROJECT_NAME}
   Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog
 )
