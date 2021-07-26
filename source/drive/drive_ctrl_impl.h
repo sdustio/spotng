@@ -18,6 +18,8 @@ namespace sdrobot::drive
     constexpr static double min_rate_y = -2.5;
     constexpr static double max_var_height = 0.2;
     constexpr static double min_var_height = -0.2;
+    constexpr static double max_step_height = 0.2;
+    constexpr static double min_step_height = 0.05;
     constexpr static double deadband_region = 0.075;
     constexpr static double filter = 0.1;
   };

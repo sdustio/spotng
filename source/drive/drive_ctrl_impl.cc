@@ -40,7 +40,8 @@ namespace sdrobot::drive
     if (cmd_.state != cmd.state)
       state_ = cmd_.state = cmd.state;
     gait_ = cmd_.gait = cmd.gait;
-    step_height_ = cmd_.step_height = cmd.step_height;
+
+    step_height_ = cmd_.step_height = Deadband(cmd.step_height, CmdLimits::min_step_height, CmdLimits::max_step_height);
 
     cmd_.variant_height = cmd.variant_height;
     cmd_.move_x = cmd_.move_x * (1.0 - CmdLimits::filter) + cmd.move_x * CmdLimits::filter;
