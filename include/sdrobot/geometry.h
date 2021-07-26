@@ -15,9 +15,9 @@ namespace sdrobot::geometry
     double x();
     double y();
     double z();
-    void SetData(Array4f const &quat);
-    void SetData(double w, double x, double y, double z);
-    Array4f const &Data() const;
+    bool UpdateData(Array4f const &quat);
+    bool UpdateData(double w, double x, double y, double z);
+    bool GetData(Array4f &data) const;
 
   private:
     Array4f data_;

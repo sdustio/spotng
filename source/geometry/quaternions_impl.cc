@@ -9,15 +9,18 @@ namespace sdrobot::geometry
   double Quaternions::x() { return data_[1]; }
   double Quaternions::y() { return data_[2]; }
   double Quaternions::z() { return data_[3]; }
-  void Quaternions::SetData(Array4f const &quat)
+  bool Quaternions::UpdateData(Array4f const &quat)
   {
     data_ = quat;
+    return true;
   }
-  void Quaternions::SetData(double w, double x, double y, double z) {
+  bool Quaternions::UpdateData(double w, double x, double y, double z) {
     data_ = {w, x, y, z};
+    return true;
   }
-  Array4f const &Quaternions::Data() const
+  bool Quaternions::GetData(Array4f &data) const
   {
-    return data_;
+    data = data_;
+    return true;
   }
 }
