@@ -37,6 +37,8 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
+  source/leg/impl.cc
+  source/leg/leg_ctrl_impl.cc
   source/dynamics/rotation.cc
   source/robot_impl.cc
 )
