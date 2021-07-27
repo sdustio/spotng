@@ -36,6 +36,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
+  source/dynamics/rotation.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}
