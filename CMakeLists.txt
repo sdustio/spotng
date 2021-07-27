@@ -33,6 +33,7 @@ find_package(eiquadprog REQUIRED)
 add_library(${PROJECT_NAME} SHARED ${sources})
 target_sources(${PROJECT_NAME} PRIVATE
   source/drive/drive_ctrl_impl.cc
+  source/math/algebra.cc
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
