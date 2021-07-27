@@ -13,27 +13,27 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(RotMat &ret, CoordinateAxis axis, double theta);
+  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis axis, double theta);
 
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
-  void RPYToRotMat(RotMat &ret, const Vector3 &v);
+  void RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v);
 
   /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
  */
-  void VecToSkewMat(Matrix3 &ret, const Vector3 &v);
+  void VecToSkewMat(Eigen::Ref<Matrix3> ret, Eigen::Ref<Vector3 const> const &v);
 
   /*!
  * Put the skew-symmetric component of 3x3 matrix m into a 3x1 vector 反对称阵转向量
  */
-  void MatToSkewVec(Vector3 &ret, const Matrix3 &m);
+  void MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m);
 
   /*!
  * Convert a coordinate transformation matrix to an orientation quaternion. 将坐标变换矩阵转换为方向四元数
  */
-  void RotMatToQuat(Quat &ret, const RotMat &r1);
+  void RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1);
 
   /*!
  * Convert a quaternion to a rotation matrix.  This matrix represents a
@@ -42,17 +42,17 @@ namespace sdrobot::dynamics
  *将四元数转换为旋转矩阵。这个矩阵表示
  *坐标转换为指定方向的具有指定方向的坐标系 通过四元数
  */
-  void QuatToRotMat(RotMat &ret, const Quat &q);
+  void QuatToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Quat const> const &q);
 
   /*!
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-  void QuatToRPY(Vector3 &ret, const Quat &q);
+  void QuatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<Quat const> const &q);
 
-  void RPYToQuat(Quat &ret, const Vector3 &rpy);
+  void RPYToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &rpy);
 
-  void RotMatToRPY(Vector3 &ret, const RotMat &R);
+  void RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R);
   /*!
  * Quaternion derivative calculation, like rqd(q, omega) in MATLAB. 四元数导数的计算
  * the omega is expressed in body frame 角速度在身体框架中表示
@@ -61,12 +61,12 @@ namespace sdrobot::dynamics
  * @param omega
  * @return
  */
-  void QuatDerivative(Quat &ret, const Quat &q, const Vector3 &omega);
+  void QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega);
 
   /*!
  * Take the product of two quaternions 取两个四元数的乘积
  */
-  void QuatProduct(Quat &ret, const Quat &q1, const Quat &q2);
+  void QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1, Eigen::Ref<Quat const> const &q2);
 
   /*!
  * Compute new quaternion given://根据角速度计算新的四元数
@@ -76,7 +76,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Quat &ret, const Quat &quat, const Vector3 &omega, double dt);
+  void QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt);
 
   /*!
  * Compute new quaternion given:
@@ -86,13 +86,13 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Quat &ret, const Quat &quat, const Vector3 &omega, double dt);
+  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt);
 
   /*!
  * Convert a quaternion to so3.
  */
-  void QuatToSO3(Vector3 &ret, const Quat &q);
+  void QuatToSO3(Eigen::Ref<Vector3> ret, Eigen::Ref<Quat const> const &q);
 
-  void SO3ToQuat(Quat &ret, Vector3 &so3);
+  void SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3);
 
 } // namespace sdrobot::kinematics

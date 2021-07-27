@@ -13,7 +13,7 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(RotMat &ret, CoordinateAxis axis, double theta)
+  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis axis, double theta)
   {
     double s = std::sin(theta);
     double c = std::cos(theta);
@@ -36,7 +36,7 @@ namespace sdrobot::dynamics
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
-  void RPYToRotMat(RotMat &ret, const Vector3 &v)
+  void RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v)
   {
     // ret = CoordinateRot(CoordinateAxis::X, v[0]) *
     //       CoordinateRot(CoordinateAxis::Y, v[1]) *
@@ -54,7 +54,7 @@ namespace sdrobot::dynamics
   /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
  */
-  void VecToSkewMat(Matrix3 &ret, const Vector3 &v)
+  void VecToSkewMat(Eigen::Ref<Matrix3> ret, Eigen::Ref<Vector3 const> const &v)
   {
     ret << 0, -v[2], v[1], v[2], 0, -v[0], -v[1], v[0], 0;
     return;
@@ -63,7 +63,7 @@ namespace sdrobot::dynamics
   /*!
  * Put the skew-symmetric component of 3x3 matrix m into a 3x1 vector 反对称阵转向量
  */
-  void MatToSkewVec(Vector3 &ret, const Matrix3 &m)
+  void MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m)
   {
     ret = 0.5 * Vector3(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0),
                         (m(1, 0) - m(0, 1)));
@@ -73,7 +73,7 @@ namespace sdrobot::dynamics
   /*!
  * Convert a coordinate transformation matrix to an orientation quaternion. 将坐标变换矩阵转换为方向四元数
  */
-  void RotMatToQuat(Quat &ret, const RotMat &r1)
+  void RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1)
   {
     RotMat r = r1.transpose();
     double tr = r.trace();
@@ -119,7 +119,7 @@ namespace sdrobot::dynamics
  *将四元数转换为旋转矩阵。这个矩阵表示
  *坐标转换为指定方向的具有指定方向的坐标系 通过四元数
  */
-  void QuatToRotMat(RotMat &ret, const Quat &q)
+  void QuatToRotMat(Eigen::Ref<RotMat> ret,  Eigen::Ref<Quat const> const &q)
   {
     double e0 = q(0);
     double e1 = q(1);
@@ -139,7 +139,7 @@ namespace sdrobot::dynamics
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-  void QuatToRPY(Vector3 &ret, const Quat &q)
+  void QuatToRPY(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
     double as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
     ret(2) =
@@ -152,7 +152,7 @@ namespace sdrobot::dynamics
     return;
   }
 
-  void RPYToQuat(Quat &ret, const Vector3 &rpy)
+  void RPYToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &rpy)
   {
     RotMat R;
     RPYToRotMat(R, rpy);
@@ -160,7 +160,7 @@ namespace sdrobot::dynamics
     return;
   }
 
-  void RotMatToRPY(Vector3 &ret, const RotMat &R)
+  void RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R)
   {
     Quat q;
     RotMatToQuat(q, R);
@@ -175,7 +175,7 @@ namespace sdrobot::dynamics
  * @param omega
  * @return
  */
-  void QuatDerivative(Quat &ret, const Quat &q, const Vector3 &omega)
+  void QuatDerivative(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega)
   {
     auto quaternionDerivativeStabilization = 0.1;
     // first case in rqd
@@ -193,7 +193,7 @@ namespace sdrobot::dynamics
   /*!
  * Take the product of two quaternions 取两个四元数的乘积
  */
-  void QuatProduct(Quat &ret, const Quat &q1, const Quat &q2)
+  void QuatProduct(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q1,  Eigen::Ref<Quat const> const &q2)
   {
     double r1 = q1[0];
     double r2 = q2[0];
@@ -214,7 +214,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Quat &ret, const Quat &quat, const Vector3 &omega, double dt)
+  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt)
   {
     Vector3 axis;
     double ang = omega.norm();
@@ -243,7 +243,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Quat &ret, const Quat &quat, const Vector3 &omega, double dt)
+  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt)
   {
     Vector3 axis;
     double ang = omega.norm();
@@ -268,7 +268,7 @@ namespace sdrobot::dynamics
   /*!
  * Convert a quaternion to so3.
  */
-  void QuatToSO3(Vector3 &ret, const Quat &q)
+  void QuatToSO3(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
     double theta = 2. * std::acos(q[0]);
     ret[0] = theta * q[1] / std::sin(theta / 2.);
@@ -277,7 +277,7 @@ namespace sdrobot::dynamics
     return;
   }
 
-  void SO3ToQuat(Quat &ret, Vector3 &so3)
+  void SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3)
   {
     double theta = sqrt(so3[0] * so3[0] + so3[1] * so3[1] + so3[2] * so3[2]);
 
