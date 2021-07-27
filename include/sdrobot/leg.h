@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "sdrobot/types.h"
+#include "sdrobot/interface.h"
 
 namespace sdrobot::leg
 {
@@ -68,4 +69,48 @@ namespace sdrobot::leg
 
   using Cmds = std::array<Cmd, 4>;
   using Datas = std::array<Data, 4>;
+
+  class SDROBOT_EXPORT LegCtrl
+  {
+  public:
+    using Ptr = std::unique_ptr<LegCtrl>;
+    using SharedPtr = std::shared_ptr<LegCtrl>;
+
+    static Ptr Build(interface::ActuatorInterface::SharedPtr const &act_itf);
+    static SharedPtr BuildShared(interface::ActuatorInterface::SharedPtr const &act_itf);
+
+    virtual ~LegCtrl() = default;
+
+    virtual const Datas &GetDatas() const = 0;
+
+    virtual Cmds &GetCmdsForUpdate() = 0;
+    virtual bool UpdateCmds(Cmds const &cmds) = 0;
+    virtual bool UpdateCmd(int leg, Cmd const &cmd) = 0;
+
+    /*!
+    * Zero all leg commands.  This should be run *before* any control code, so if
+    * the control code is confused and doesn't change the leg command, the legs
+    * won't remember the last command.
+    * 腿部控制命令清零，应运行在任何控制代码之前，否则控制代码混乱，控制命令不会改变，腿部不会记忆上次命令
+    */
+    virtual void ZeroCmd() = 0;
+
+    /*!
+    * Compute the position of the foot and its Jacobian.  This is done in the local
+    * leg coordinate system. If J/p are NULL, the calculation will be skipped.
+    */
+    virtual void ComputeLegJacobianAndPosition(int leg) = 0;
+
+    /*!
+    * Update the "leg data" from Actuator Interface
+    * 从spine卡 更新腿部信息
+    */
+    virtual void UpdateDatasFromActuatorInterface() = 0;
+
+    /*!
+    * Send the "leg command" to Actuator Interface
+    * 向控制器发送控制命令
+    */
+    virtual void SendCmdsToActuatorInterface() = 0;
+  };
 } // namespace sdrobot::leg
