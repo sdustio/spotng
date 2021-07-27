@@ -18,6 +18,4 @@ namespace sdrobot
 
   using Matrix3f = std::array<fptype, 3 * 3>;
   using Matrix4f = std::array<fptype, 4 * 4>;
-
-  constexpr double kZeroEpsilon = 1.e-12;
 }
