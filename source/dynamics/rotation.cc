@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "math/utils.h"
 #include "dynamics/rotation.h"
 
