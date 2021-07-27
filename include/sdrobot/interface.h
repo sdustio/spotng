@@ -40,7 +40,7 @@ namespace sdrobot::interface
     Array4f qd_hip = {};
     Array4f qd_knee = {};
     Array4c flags = {};
-    uint8_t driver_status;
+    std::uint8_t driver_status;
   };
 
   class SDROBOT_EXPORT ActuatorInterface
@@ -52,7 +52,7 @@ namespace sdrobot::interface
     virtual ~ActuatorInterface() = default;
     virtual ActuatorData const &GetActuatorData() const = 0;
     virtual ActuatorCmd &GetActuatorCmdForUpdate() = 0;
-    virtual bool UpdateActuatorCmd(ActuatorCmd const &) = 0;
+    virtual bool UpdateActuatorCmd(ActuatorCmd const &cmd) = 0;
     virtual bool Init() = 0;    // return true if ok
     virtual bool RunOnce() = 0; // return true if ok
   };
