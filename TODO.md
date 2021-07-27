@@ -27,3 +27,14 @@
 
 - ros2 demo
 - 开始研究仿真
+
+**更多**
+
+- feature
+  - [ ] 自动档
+  - [ ] Init状态问题
+- 优化
+  - [ ] del useless(or just for sim) code
+  - [ ] dynamic vector/matrix -> fixed vector/matrix
+- [ ] 更多测试
+- [ ] 仿真
