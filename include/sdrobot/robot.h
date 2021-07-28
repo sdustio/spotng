@@ -13,8 +13,8 @@ namespace sdrobot
     using Ptr = std::unique_ptr<Robot>;
     using SharedPtr = std::shared_ptr<Robot>;
 
-    static Ptr Build(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
-    static SharedPtr BuildShared(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+    static bool Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+    static bool Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
 
     virtual ~Robot() = default;
 

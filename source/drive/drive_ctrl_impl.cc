@@ -98,20 +98,24 @@ namespace sdrobot::drive
     }
   }
 
-  DriveCtrl::Ptr DriveCtrl::Build(double dt)
+  bool DriveCtrl::Build(DriveCtrl::Ptr &ret, double dt)
   {
-    return std::make_unique<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
+    ret = std::make_unique<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
+    return true;
   }
-  DriveCtrl::Ptr DriveCtrl::Build(DriveMode mode, double dt)
+  bool DriveCtrl::Build(DriveCtrl::Ptr &ret, DriveMode mode, double dt)
   {
-    return std::make_unique<DriveCtrlImpl>(mode, dt);
+    ret = std::make_unique<DriveCtrlImpl>(mode, dt);
+    return true;
   }
-  DriveCtrl::SharedPtr DriveCtrl::BuildShared(double dt)
+  bool DriveCtrl::Build(DriveCtrl::SharedPtr &ret, double dt)
   {
-    return std::make_shared<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
+    ret = std::make_shared<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
+    return true;
   }
-  DriveCtrl::SharedPtr DriveCtrl::BuildShared(DriveMode mode, double dt)
+  bool DriveCtrl::Build(DriveCtrl::SharedPtr &ret, DriveMode mode, double dt)
   {
-    return std::make_shared<DriveCtrlImpl>(mode, dt);
+    ret = std::make_shared<DriveCtrlImpl>(mode, dt);
+    return true;
   }
 }
