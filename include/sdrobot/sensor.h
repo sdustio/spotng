@@ -6,8 +6,8 @@ namespace sdrobot::sensor
 {
   struct SDROBOT_EXPORT ImuData
   {
-    Array3f acc = {};
-    Array3f gyro = {};
-    Array4f quat = {};
+    SdArray3f acc = {};
+    SdArray3f gyro = {};
+    SdArray4f quat = {};
   };
 }

@@ -8,38 +8,38 @@ namespace sdrobot::interface
 {
   struct SDROBOT_EXPORT ActuatorCmd
   {
-    Array4f q_des_abad = {};
-    Array4f q_des_hip = {};
-    Array4f q_des_knee = {};
+    SdArray4f q_des_abad = {};
+    SdArray4f q_des_hip = {};
+    SdArray4f q_des_knee = {};
 
-    Array4f qd_des_abad = {};
-    Array4f qd_des_hip = {};
-    Array4f qd_des_knee = {};
+    SdArray4f qd_des_abad = {};
+    SdArray4f qd_des_hip = {};
+    SdArray4f qd_des_knee = {};
 
-    Array4f kp_abad = {};
-    Array4f kp_hip = {};
-    Array4f kp_knee = {};
+    SdArray4f kp_abad = {};
+    SdArray4f kp_hip = {};
+    SdArray4f kp_knee = {};
 
-    Array4f kd_abad = {};
-    Array4f kd_hip = {};
-    Array4f kd_knee = {};
+    SdArray4f kd_abad = {};
+    SdArray4f kd_hip = {};
+    SdArray4f kd_knee = {};
 
-    Array4f tau_abad_ff = {};
-    Array4f tau_hip_ff = {};
-    Array4f tau_knee_ff = {};
+    SdArray4f tau_abad_ff = {};
+    SdArray4f tau_hip_ff = {};
+    SdArray4f tau_knee_ff = {};
 
-    Array4c flags = {};
+    SdArray4c flags = {};
   };
 
   struct SDROBOT_EXPORT ActuatorData
   {
-    Array4f q_abad = {};
-    Array4f q_hip = {};
-    Array4f q_knee = {};
-    Array4f qd_abad = {};
-    Array4f qd_hip = {};
-    Array4f qd_knee = {};
-    Array4c flags = {};
+    SdArray4f q_abad = {};
+    SdArray4f q_hip = {};
+    SdArray4f q_knee = {};
+    SdArray4f qd_abad = {};
+    SdArray4f qd_hip = {};
+    SdArray4f qd_knee = {};
+    SdArray4c flags = {};
     std::uint8_t driver_status;
   };
 

@@ -61,18 +61,11 @@ namespace sdrobot::params
 
   namespace ctrl
   {
-    constexpr int kActItfmsec = int(1.0 / 0.04); //unit: milliseconds; 0.04kHz
-    constexpr int kCtrlmsec = int(1.0 / 0.5);    //unit: milliseconds; 0.5kHz
-    constexpr double kActItfsec = kActItfmsec / 1'000;
-    constexpr double kCtrlsec = kCtrlmsec / 1'000;
-
     constexpr double kFootHeightSensorNoise = 0.001;
     constexpr double kFootProcessNoisePosition = 0.002;
     constexpr double kFootSensorNoisePosition = 0.001;
     constexpr double kFootSensorNoiseVelocity = 0.1;
     constexpr double kIMUProcessNoisePosition = 0.02;
     constexpr double kIMUProcessNoiseVelocity = 0.02;
-
-    constexpr double kJPosInitTime = 3.;
   }
 } // namespace sdrobot::params

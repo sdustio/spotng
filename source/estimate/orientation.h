@@ -21,7 +21,7 @@ namespace sdrobot::estimate
 
   private:
     bool b_first_visit_ = true;
-    Array4f ori_ini_inv_;
+    SdArray4f ori_ini_inv_;
     sensor::ImuData imu_;
   };
 

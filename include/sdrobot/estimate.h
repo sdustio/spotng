@@ -10,17 +10,17 @@ namespace sdrobot::estimate
 
   struct SDROBOT_EXPORT State
   {
-    Array4f contact = {};       //接触估计
-    Array3f pos = {};           //位置
-    Array3f pos_rpy = {};       //欧拉角
-    Array4f ori = {};           //四元数: w, x, y, z
-    Matrix3f rot_body = {};     //旋转矩阵 3x3
-    Array3f vel_body = {};      //机身坐标速度
-    Array3f vel_world = {};     //世界坐标速度
-    Array3f vel_rpy_body = {};  //机身坐标角速度
-    Array3f vel_rpy_world = {}; //世界坐标角速度
-    Array3f acc_body = {};      //机身坐标加速度
-    Array3f acc_world = {};     //世界坐标加速度
+    SdArray4f contact = {};       //接触估计
+    SdArray3f pos = {};           //位置
+    SdArray3f pos_rpy = {};       //欧拉角
+    SdArray4f ori = {};           //四元数: w, x, y, z
+    SdMatrix3f rot_body = {};     //旋转矩阵 3x3
+    SdArray3f vel_body = {};      //机身坐标速度
+    SdArray3f vel_world = {};     //世界坐标速度
+    SdArray3f vel_rpy_body = {};  //机身坐标角速度
+    SdArray3f vel_rpy_world = {}; //世界坐标角速度
+    SdArray3f acc_body = {};      //机身坐标加速度
+    SdArray3f acc_world = {};     //世界坐标加速度
   };
 
   class SDROBOT_EXPORT Estimator

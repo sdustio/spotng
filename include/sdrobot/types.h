@@ -8,14 +8,14 @@
 namespace sdrobot
 {
   using fptype = double;
-  using Array3f = std::array<fptype, 3>;
-  using Array3c = std::array<std::uint8_t, 3>;
-  using Array3i = std::array<int, 3>;
+  using SdArray3f = std::array<fptype, 3>;
+  using SdArray3c = std::array<std::uint8_t, 3>;
+  using SdArray3i = std::array<int, 3>;
 
-  using Array4f = std::array<fptype, 4>;
-  using Array4c = std::array<std::uint8_t, 4>;
-  using Array4i = std::array<int, 4>;
+  using SdArray4f = std::array<fptype, 4>;
+  using SdArray4c = std::array<std::uint8_t, 4>;
+  using SdArray4i = std::array<int, 4>;
 
-  using Matrix3f = std::array<fptype, 3 * 3>;
-  using Matrix4f = std::array<fptype, 4 * 4>;
+  using SdMatrix3f = std::array<fptype, 3 * 3>;
+  using SdMatrix4f = std::array<fptype, 4 * 4>;
 }

@@ -35,7 +35,7 @@ namespace sdrobot::leg
   {
     return side_signs.at(leg);
   }
-  void FlipWithSideSigns(Array3f &ret, const Array3f &v, int leg_id)
+  void FlipWithSideSigns(SdArray3f &ret, const SdArray3f &v, int leg_id)
   {
     switch (leg_id)
     {

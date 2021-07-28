@@ -25,7 +25,7 @@ namespace sdrobot::leg
   /*!
   * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
   */
-  void SDROBOT_EXPORT FlipWithSideSigns(Array3f &ret, const Array3f &v, int leg_id);
+  void SDROBOT_EXPORT FlipWithSideSigns(SdArray3f &ret, const SdArray3f &v, int leg_id);
 
   /*!
     * Data sent from the control algorithm to the legs.
@@ -33,20 +33,20 @@ namespace sdrobot::leg
     */
   struct SDROBOT_EXPORT Cmd
   {
-    Array3f tau_feed_forward = {};
-    Array3f q_des = {};
-    Array3f qd_des = {};
-    Matrix3f kp_joint = {};
-    Matrix3f kd_joint = {};
+    SdArray3f tau_feed_forward = {};
+    SdArray3f q_des = {};
+    SdArray3f qd_des = {};
+    SdMatrix3f kp_joint = {};
+    SdMatrix3f kd_joint = {};
 
     //from mpc; aid coumpter above;
-    Array3f force_feed_forward = {};
-    Array3f p_des = {};
-    Array3f v_des = {};
+    SdArray3f force_feed_forward = {};
+    SdArray3f p_des = {};
+    SdArray3f v_des = {};
 
     //from mpc; aid coumpter above;
-    Matrix3f kp_cartesian = {};
-    Matrix3f kd_cartesian = {};
+    SdMatrix3f kp_cartesian = {};
+    SdMatrix3f kd_cartesian = {};
 
     void Zero();
   };
@@ -57,12 +57,12 @@ namespace sdrobot::leg
     */
   struct SDROBOT_EXPORT Data
   {
-    Array3f q = {};            //关节角度
-    Array3f qd = {};           //关节角速度
-    Array3f p = {};            //足端位置
-    Array3f v = {};            //足端速度
-    Matrix3f J = {};           //雅可比
-    Array3f tau_estimate = {}; //估计力矩反馈
+    SdArray3f q = {};            //关节角度
+    SdArray3f qd = {};           //关节角速度
+    SdArray3f p = {};            //足端位置
+    SdArray3f v = {};            //足端速度
+    SdMatrix3f J = {};           //雅可比
+    SdArray3f tau_estimate = {}; //估计力矩反馈
 
     void Zero();
   };
@@ -112,6 +112,17 @@ namespace sdrobot::leg
     * 向控制器发送控制命令
     */
     virtual void SendCmdsToActuatorInterface() = 0;
+  };
+
+  class SDROBOT_EXPORT JPosInit
+  {
+  public:
+    using Ptr = std::unique_ptr<JPosInit>;
+    using SharedPtr = std::shared_ptr<JPosInit>;
+
+    virtual ~JPosInit() = default;
+
+    virtual bool IsInitialized(LegCtrl::SharedPtr &ctrl) = 0;
   };
 
 } // namespace sdrobot::leg
