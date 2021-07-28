@@ -59,7 +59,7 @@ namespace sdrobot::params
   } // namespace model
 
 
-  namespace ctrl
+  namespace noise
   {
     constexpr double kFootHeightSensorNoise = 0.001;
     constexpr double kFootProcessNoisePosition = 0.002;
