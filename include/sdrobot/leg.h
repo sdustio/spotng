@@ -113,4 +113,5 @@ namespace sdrobot::leg
     */
     virtual void SendCmdsToActuatorInterface() = 0;
   };
+
 } // namespace sdrobot::leg

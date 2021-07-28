@@ -4,7 +4,7 @@ namespace sdrobot::params
 {
   constexpr double kZeroEpsilon = 1.e-12;
 
-  namespace cmd
+  namespace drive
   {
     constexpr double kMaxAngleR = 0.4;
     constexpr double kMinAngleR = -0.4;
@@ -72,5 +72,7 @@ namespace sdrobot::params
     constexpr double kFootSensorNoiseVelocity = 0.1;
     constexpr double kIMUProcessNoisePosition = 0.02;
     constexpr double kIMUProcessNoiseVelocity = 0.02;
+
+    constexpr double kJPosInitTime = 3.;
   }
 } // namespace sdrobot::params

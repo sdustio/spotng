@@ -11,21 +11,21 @@ namespace sdrobot::drive
   bool DriveCtrlImpl::CmdtoDesData()
   {
     vel_ = {
-        Deadband(cmd_.move_x, params::cmd::kMinVelX, params::cmd::kMaxVelX),
-        Deadband(cmd_.move_y, params::cmd::kMinVelY, params::cmd::kMaxVelY),
+        Deadband(cmd_.move_x, params::drive::kMinVelX, params::drive::kMaxVelX),
+        Deadband(cmd_.move_y, params::drive::kMinVelY, params::drive::kMaxVelY),
         0};
 
     pos_ = {
         dt_ * vel_[0],
         dt_ * vel_[1],
-        Deadband(cmd_.variant_height, params::cmd::kMinVarHeight, params::cmd::kMaxVarHeight)};
+        Deadband(cmd_.variant_height, params::drive::kMinVarHeight, params::drive::kMaxVarHeight)};
 
     vel_rpy_ = {
-        0., 0, Deadband(cmd_.turn_rate, params::cmd::kMinRateY, params::cmd::kMaxRateY)};
+        0., 0, Deadband(cmd_.turn_rate, params::drive::kMinRateY, params::drive::kMaxRateY)};
 
     pos_rpy_ = {
         0.,
-        Deadband(cmd_.angle_pitch, params::cmd::kMinAngleP, params::cmd::kMaxAngleP),
+        Deadband(cmd_.angle_pitch, params::drive::kMinAngleP, params::drive::kMaxAngleP),
         dt_ * vel_rpy_[2]};
 
     // TODO Drive Mode
@@ -42,13 +42,13 @@ namespace sdrobot::drive
       state_ = cmd_.state = cmd.state;
     gait_ = cmd_.gait = cmd.gait;
 
-    step_height_ = cmd_.step_height = Deadband(cmd.step_height, params::cmd::kMinStepHeight, params::cmd::kMaxStepHeight);
+    step_height_ = cmd_.step_height = Deadband(cmd.step_height, params::drive::kMinStepHeight, params::drive::kMaxStepHeight);
 
     cmd_.variant_height = cmd.variant_height;
-    cmd_.move_x = cmd_.move_x * (1.0 - params::cmd::kFilter) + cmd.move_x * params::cmd::kFilter;
-    cmd_.move_y = cmd_.move_y * (1.0 - params::cmd::kFilter) + cmd.move_y * params::cmd::kFilter;
-    cmd_.turn_rate = cmd_.turn_rate * (1.0 - params::cmd::kFilter) + cmd.turn_rate * params::cmd::kFilter;
-    cmd_.angle_pitch = cmd_.angle_pitch * (1.0 - params::cmd::kFilter) + cmd.angle_pitch * params::cmd::kFilter;
+    cmd_.move_x = cmd_.move_x * (1.0 - params::drive::kFilter) + cmd.move_x * params::drive::kFilter;
+    cmd_.move_y = cmd_.move_y * (1.0 - params::drive::kFilter) + cmd.move_y * params::drive::kFilter;
+    cmd_.turn_rate = cmd_.turn_rate * (1.0 - params::drive::kFilter) + cmd.turn_rate * params::drive::kFilter;
+    cmd_.angle_pitch = cmd_.angle_pitch * (1.0 - params::drive::kFilter) + cmd.angle_pitch * params::drive::kFilter;
     return true;
   }
 
@@ -88,7 +88,7 @@ namespace sdrobot::drive
 
   double DriveCtrlImpl::Deadband(double v, double minVal, double maxVal)
   {
-    if (v < params::cmd::kDeadbandRegion && v > -params::cmd::kDeadbandRegion)
+    if (v < params::drive::kDeadbandRegion && v > -params::drive::kDeadbandRegion)
     {
       return 0.0;
     }
