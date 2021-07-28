@@ -202,30 +202,25 @@ namespace sdrobot::estimate
     //卡尔曼滤波
     xhat = A * xhat + B * acc; //状态预测方程
 
-    Matrix18 At = A.transpose();
-
-    Matrix18 Pm = A * P * At + Q; //不确定性预测方程
+    Matrix18 Pm = A * P * A.transpose() + Q; //不确定性预测方程
 
     //卡尔曼增益准备
-    Eigen::Matrix<double, 18, 28> Ct = C.transpose();
-
     Vector28 yModel = C * xhat; //预测的观测值
 
     Vector28 ey = y - yModel; //误差 卡尔曼增益计算准备
 
-    Matrix28 S = C * Pm * Ct + R; //卡尔曼增益计算准备
+    Matrix28 S = C * Pm * C.transpose() + R; //卡尔曼增益计算准备
 
-    // todo compute LU only once
+    // TODO compute LU only once
     Vector28 S_ey = S.lu().solve(ey); //求逆？？
 
-    xhat += Pm * Ct * S_ey; //？？
+    xhat += Pm * C.transpose() * S_ey; //？？
 
     Eigen::Matrix<double, 28, 18> S_C = S.lu().solve(C); //？?
 
-    P = (Matrix18::Identity() - Pm * Ct * S_C) * Pm; //最佳估计不确定性协方差??
+    P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm; //最佳估计不确定性协方差??
 
-    Matrix18 Pt = P.transpose(); //??
-    P = (P + Pt) / 2.;          //??
+    P = (P + P.transpose()) / 2.;          //??
 
     if (P.block<2, 2>(0, 0).determinant() > 0.000001)
     { //??
