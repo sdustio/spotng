@@ -4,7 +4,10 @@
 
 - {{RetType}} const & {{ClassName}}::Get{{Member}}() const;
 - bool {{ClassName}}::Build{{Object}}({{ObjectType &}}) \[const\];
-- bool Func({{RetType &}}, arg1...)
+- bool Func({{RetType &}}, arg1...);
+  - Trans
+  - Calc
+  - ...
 
 
 ## 指针

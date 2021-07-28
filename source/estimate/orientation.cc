@@ -9,6 +9,11 @@ namespace sdrobot::estimate
     return true;
   }
 
+  bool Orientation::Init()
+  {
+    return true;
+  }
+
   bool Orientation::RunOnce(State &ret)
   {
     //复制四元数值

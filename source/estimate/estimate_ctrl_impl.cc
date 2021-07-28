@@ -19,6 +19,16 @@ namespace sdrobot::estimate
     return iter->second;
   }
 
+  bool EstimateCtrlImpl::Init()
+  {
+    bool ret = true;
+    for (const auto &mp : est_map_)
+    {
+      ret = ret && mp.second->Init();
+    }
+    return ret;
+  }
+
   bool EstimateCtrlImpl::RunOnce()
   {
     bool ret = true;

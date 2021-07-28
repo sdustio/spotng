@@ -30,6 +30,7 @@ namespace sdrobot::estimate
     using SharedPtr = std::shared_ptr<Estimator>;
 
     virtual ~Estimator() = default;
+    virtual bool Init() = 0;
     virtual bool RunOnce(State &ret) = 0;
   };
 
@@ -46,6 +47,7 @@ namespace sdrobot::estimate
     virtual bool RemoveEstimator(std::string const &name) = 0;
     virtual bool RemoveAllEstimators() = 0;
 
+    virtual bool Init() = 0;
     virtual bool RunOnce() = 0;
 
     virtual State const &GetEstState() const = 0;
