@@ -6,15 +6,40 @@
 
 namespace sdrobot::model
 {
-  class FloatBaseModel
+  struct SDROBOT_EXPORT FloatBaseModelState
+  {
+    SdArray4f ori;
+    SdMatrix3f pos;
+    std::array<fptype, 6> vel_body; // body coordinates
+    std::array<fptype, 12> q;
+    std::array<fptype, 12> qd;
+  };
+
+  class SDROBOT_EXPORT FloatBaseModel
   {
   public:
     using Ptr = std::unique_ptr<FloatBaseModel>;
     using SharedPtr = std::shared_ptr<FloatBaseModel>;
 
     virtual ~FloatBaseModel() = default;
+
+    virtual bool UpdateState(FloatBaseModelState const &state) = 0;
+    virtual FloatBaseModelState const &GetState() const = 0;
+
+    virtual bool ComputeGeneralizedGravityForce() const = 0;
+    virtual bool ComputeGeneralizedCoriolisForce() const = 0;
+    virtual bool ComputeContactJacobians() const = 0;
+
+    virtual SdMatrixXf const &GetMassMatrix() const = 0;
+    virtual SdArrayXf const &GetGeneralizedGravityForce() const = 0;
+    virtual SdArrayXf const &GetGeneralizedCoriolisForce() const = 0;
+    virtual std::vector<SdMatrixXf> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
+    virtual std::vector<SdMatrix3f> const &GetContactJacobiansdqd() const = 0;
+    virtual std::vector<SdMatrix3f> const &GetGroundContactPos() const = 0;
+    virtual std::vector<SdMatrix3f> const &GetGroundContactVel() const = 0;
   };
-  class Quadruped
+
+  class SDROBOT_EXPORT Quadruped
   {
   public:
     using Ptr = std::unique_ptr<Quadruped>;
@@ -22,8 +47,7 @@ namespace sdrobot::model
 
     virtual ~Quadruped() = default;
 
-    virtual bool BuildFloatBaseModel(FloatBaseModel::SharedPtr &ret) = 0;
-    virtual bool UpdateFloatBaseModel(FloatBaseModel::SharedPtr const &fbm) = 0;
+    virtual bool BuildFloatBaseModel() const = 0;
     virtual FloatBaseModel::SharedPtr const &GetFloatBaseModel() const = 0;
 
     virtual bool CalcHipLocation(SdArray3f &ret, int const leg) const = 0;

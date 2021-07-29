@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <cstdint>
 
 #include "sdrobot/export.h"
@@ -18,4 +19,7 @@ namespace sdrobot
 
   using SdMatrix3f = std::array<fptype, 3 * 3>;
   using SdMatrix4f = std::array<fptype, 4 * 4>;
+
+  using SdArrayXf = std::vector<fptype>;
+  using SdMatrixXf = std::vector<fptype>;
 }
