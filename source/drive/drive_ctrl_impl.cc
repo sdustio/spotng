@@ -69,19 +69,19 @@ namespace sdrobot::drive
     return gait_;
   }
 
-  SdArray3f const &DriveCtrlImpl::GetPosDes() const
+  SdVector3f const &DriveCtrlImpl::GetPosDes() const
   {
     return pos_;
   }
-  SdArray3f const &DriveCtrlImpl::GetPosRpyDes() const
+  SdVector3f const &DriveCtrlImpl::GetPosRpyDes() const
   {
     return pos_rpy_;
   }
-  SdArray3f const &DriveCtrlImpl::GetVelDes() const
+  SdVector3f const &DriveCtrlImpl::GetVelDes() const
   {
     return vel_;
   }
-  SdArray3f const &DriveCtrlImpl::GetVelRpyDes() const
+  SdVector3f const &DriveCtrlImpl::GetVelRpyDes() const
   {
     return vel_rpy_;
   }

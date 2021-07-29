@@ -8,7 +8,7 @@ namespace sdrobot::model
 {
   struct SDROBOT_EXPORT FloatBaseModelState
   {
-    SdArray4f ori;
+    SdVector4f ori;
     SdMatrix3f pos;
     std::array<fptype, 6> vel_body; // body coordinates
     std::array<fptype, 12> q;
@@ -31,8 +31,8 @@ namespace sdrobot::model
     virtual bool ComputeContactJacobians() const = 0;
 
     virtual SdMatrixXf const &GetMassMatrix() const = 0;
-    virtual SdArrayXf const &GetGeneralizedGravityForce() const = 0;
-    virtual SdArrayXf const &GetGeneralizedCoriolisForce() const = 0;
+    virtual SdVectorXf const &GetGeneralizedGravityForce() const = 0;
+    virtual SdVectorXf const &GetGeneralizedCoriolisForce() const = 0;
     virtual std::vector<SdMatrixXf> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
     virtual std::vector<SdMatrix3f> const &GetContactJacobiansdqd() const = 0;
     virtual std::vector<SdMatrix3f> const &GetGroundContactPos() const = 0;
@@ -50,6 +50,6 @@ namespace sdrobot::model
     virtual bool BuildFloatBaseModel() const = 0;
     virtual FloatBaseModel::SharedPtr const &GetFloatBaseModel() const = 0;
 
-    virtual bool CalcHipLocation(SdArray3f &ret, int const leg) const = 0;
+    virtual bool CalcHipLocation(SdVector3f &ret, int const leg) const = 0;
   };
 } // namespace sdrobot::model

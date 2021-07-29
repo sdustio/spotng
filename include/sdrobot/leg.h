@@ -25,7 +25,7 @@ namespace sdrobot::leg
   /*!
   * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
   */
-  void SDROBOT_EXPORT FlipWithSideSigns(SdArray3f &ret, const SdArray3f &v, int leg_id);
+  void SDROBOT_EXPORT FlipWithSideSigns(SdVector3f &ret, const SdVector3f &v, int leg_id);
 
   /*!
     * Data sent from the control algorithm to the legs.
@@ -33,16 +33,16 @@ namespace sdrobot::leg
     */
   struct SDROBOT_EXPORT Cmd
   {
-    SdArray3f tau_feed_forward = {};
-    SdArray3f q_des = {};
-    SdArray3f qd_des = {};
+    SdVector3f tau_feed_forward = {};
+    SdVector3f q_des = {};
+    SdVector3f qd_des = {};
     SdMatrix3f kp_joint = {};
     SdMatrix3f kd_joint = {};
 
     //from mpc; aid coumpter above;
-    SdArray3f force_feed_forward = {};
-    SdArray3f p_des = {};
-    SdArray3f v_des = {};
+    SdVector3f force_feed_forward = {};
+    SdVector3f p_des = {};
+    SdVector3f v_des = {};
 
     //from mpc; aid coumpter above;
     SdMatrix3f kp_cartesian = {};
@@ -57,12 +57,12 @@ namespace sdrobot::leg
     */
   struct SDROBOT_EXPORT Data
   {
-    SdArray3f q = {};            //关节角度
-    SdArray3f qd = {};           //关节角速度
-    SdArray3f p = {};            //足端位置
-    SdArray3f v = {};            //足端速度
+    SdVector3f q = {};            //关节角度
+    SdVector3f qd = {};           //关节角速度
+    SdVector3f p = {};            //足端位置
+    SdVector3f v = {};            //足端速度
     SdMatrix3f J = {};           //雅可比
-    SdArray3f tau_estimate = {}; //估计力矩反馈
+    SdVector3f tau_estimate = {}; //估计力矩反馈
 
     void Zero();
   };

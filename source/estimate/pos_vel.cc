@@ -140,7 +140,7 @@ namespace sdrobot::estimate
     for (int i = 0; i < params::model::num_leg; i++)
     {
       int i1 = 3 * i;
-      SdArray3f _ph;
+      SdVector3f _ph;
       quad_->CalcHipLocation(_ph, i); // hip positions relative to CoM 相对于CoM的髋位置
       Eigen::Map<Vector3> ph(_ph.data());
 

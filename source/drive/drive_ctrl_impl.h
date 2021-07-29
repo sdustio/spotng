@@ -17,10 +17,10 @@ namespace sdrobot::drive
     State GetState() const override;
     Gait GetGait() const override;
 
-    SdArray3f const &GetPosDes() const override;
-    SdArray3f const &GetPosRpyDes() const override;
-    SdArray3f const &GetVelDes() const override;
-    SdArray3f const &GetVelRpyDes() const override;
+    SdVector3f const &GetPosDes() const override;
+    SdVector3f const &GetPosRpyDes() const override;
+    SdVector3f const &GetVelDes() const override;
+    SdVector3f const &GetVelRpyDes() const override;
 
   private:
     double Deadband(double v, double minVal, double maxVal);
@@ -32,10 +32,10 @@ namespace sdrobot::drive
     double step_height_ = 0.1;
     State state_ = State::Init;
     Gait gait_ = Gait::Trot;
-    SdArray3f pos_ = {};
-    SdArray3f pos_rpy_ = {};
-    SdArray3f vel_ = {};
-    SdArray3f vel_rpy_ = {};
+    SdVector3f pos_ = {};
+    SdVector3f pos_rpy_ = {};
+    SdVector3f vel_ = {};
+    SdVector3f vel_rpy_ = {};
   };
 
 }
