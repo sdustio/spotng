@@ -2,11 +2,6 @@
 
 namespace sdrobot::leg
 {
-  namespace
-  {
-    constexpr std::array<double, 4> side_signs{-1.0, 1.0, -1.0, 1.0};
-  }
-
   void Cmd::Zero()
   {
     tau_feed_forward.fill(0.);
@@ -29,30 +24,5 @@ namespace sdrobot::leg
     v.fill(0.);
     tau_estimate.fill(0.);
     J.fill(0.);
-  }
-
-  double GetSideSign(int leg)
-  {
-    return side_signs.at(leg);
-  }
-  void FlipWithSideSigns(SdVector3f &ret, const SdVector3f &v, int leg_id)
-  {
-    switch (leg_id)
-    {
-    case idx::fr:
-      ret = {v[0], -v[1], v[2]};
-      break;
-    case idx::fl:
-      ret = {v[0], v[1], v[2]};
-      break;
-    case idx::hr:
-      ret = {-v[0], -v[1], v[2]};
-      break;
-    case idx::hl:
-      ret = {-v[0], v[1], v[2]};
-      break;
-    default:
-      throw std::runtime_error("Invalid leg id!");
-    }
   }
 }

@@ -23,30 +23,6 @@ namespace sdrobot::model
 
     virtual ~FloatBaseModel() = default;
 
-    /*!
-    * Create the floating body
-    * @param mass Mass of the floating body
-    * @param com  Center of mass of the floating body
-    * @param I    Rotational inertia of the floating body
-    */
-    virtual bool AddBase(double const mass, SdVector3f const &com, SdMatrix3f const &I) = 0;
-
-    /*!
-    * Add a ground contact point to a model
-    * @param bodyID The ID of the body containing the contact point
-    * @param location The location (in body coordinate) of the contact point
-    * @param isFoot True if foot or not.
-    * @return The ID of the ground contact point
-    */
-    virtual int AddGroundContactPoint(int const body_id, SdVector3f const &location,
-                                 bool const is_foot = false) = 0;
-
-    /*!
-    * Add the bounding points of a box to the contact model. Assumes the box is
-    * centered around the origin of the body coordinate system and is axis aligned.
-    */
-    virtual void AddGroundContactBoxPoints(int const body_id, SdVector3f const &dims) = 0;
-
     virtual bool UpdateState(FloatBaseModelState const &state) = 0;
     virtual FloatBaseModelState const &GetState() const = 0;
     virtual bool UpdateGravity(SdVector3f const &g) = 0;

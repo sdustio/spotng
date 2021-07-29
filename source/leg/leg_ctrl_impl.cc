@@ -6,6 +6,22 @@
 
 namespace sdrobot::leg
 {
+
+  namespace
+  {
+    constexpr std::array<double, 4> side_signs{-1.0, 1.0, -1.0, 1.0};
+
+    /*!
+    * Get if the i-th leg is on the left (+) or right (-) of the robot. 判断第i条腿是在机器人的左边(+)还是右边(-)。
+    * @param leg : the leg index
+    * @return The side sign (-1 for right legs, +1 for left legs)
+    */
+    double GetSideSign(int leg)
+    {
+      return side_signs.at(leg);
+    }
+  }
+
   LegCtrlImpl::LegCtrlImpl(
       interface::ActuatorInterface::SharedPtr const &act_itf) : act_itf_(act_itf) {}
 

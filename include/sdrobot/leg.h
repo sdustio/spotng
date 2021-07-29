@@ -16,18 +16,6 @@ namespace sdrobot::leg
   }
 
   /*!
-  * Get if the i-th leg is on the left (+) or right (-) of the robot. 判断第i条腿是在机器人的左边(+)还是右边(-)。
-  * @param leg : the leg index
-  * @return The side sign (-1 for right legs, +1 for left legs)
-  */
-  double SDROBOT_EXPORT GetSideSign(int leg);
-
-  /*!
-  * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
-  */
-  void SDROBOT_EXPORT FlipWithSideSigns(SdVector3f &ret, const SdVector3f &v, int leg_id);
-
-  /*!
     * Data sent from the control algorithm to the legs.
     * 数据从控制算法发送到腿部。
     */
