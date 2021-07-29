@@ -168,12 +168,12 @@ namespace sdrobot::leg
     }
   }
 
-  bool LegCtrl::Build(LegCtrl::Ptr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
+  bool LegCtrl::Make(LegCtrl::Ptr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
   {
     ret = std::make_unique<LegCtrlImpl>(act_itf);
     return true;
   }
-  bool LegCtrl::Build(LegCtrl::SharedPtr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
+  bool LegCtrl::Make(LegCtrl::SharedPtr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
   {
     ret = std::make_shared<LegCtrlImpl>(act_itf);
     return true;

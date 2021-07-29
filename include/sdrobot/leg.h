@@ -76,8 +76,8 @@ namespace sdrobot::leg
     using Ptr = std::unique_ptr<LegCtrl>;
     using SharedPtr = std::shared_ptr<LegCtrl>;
 
-    static bool Build(Ptr &ret, interface::ActuatorInterface::SharedPtr const &act_itf);
-    static bool Build(SharedPtr &ret, interface::ActuatorInterface::SharedPtr const &act_itf);
+    static bool Make(Ptr &ret, interface::ActuatorInterface::SharedPtr const &act_itf);
+    static bool Make(SharedPtr &ret, interface::ActuatorInterface::SharedPtr const &act_itf);
 
     virtual ~LegCtrl() = default;
 

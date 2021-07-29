@@ -42,10 +42,10 @@ namespace sdrobot::drive
     using Ptr = std::unique_ptr<DriveCtrl>;
     using SharedPtr = std::shared_ptr<DriveCtrl>;
 
-    static bool Build(Ptr &ret, double dt);
-    static bool Build(Ptr &ret, DriveMode mode, double dt);
-    static bool Build(SharedPtr &ret, double dt);
-    static bool Build(SharedPtr &ret, DriveMode mode, double dt);
+    static bool Make(Ptr &ret, double dt);
+    static bool Make(Ptr &ret, DriveMode mode, double dt);
+    static bool Make(SharedPtr &ret, double dt);
+    static bool Make(SharedPtr &ret, DriveMode mode, double dt);
 
     virtual ~DriveCtrl() = 0;
 

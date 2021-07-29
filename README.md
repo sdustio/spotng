@@ -12,7 +12,8 @@ opts.ctrl_dt_sec = 0.001;
 
 sdrobot::interface::ActuatorInterface::SharedPtr act_itf;
 /*....*/
-auto robot = sdrobot::Robot::Build(robot, opts, act_itf);
+sdrobot::Robot::Ptr robot;
+sdrobot::Robot::Build(robot, opts, act_itf);
 
 sdrobot::sensor::ImuData imu_data;
 sdrobot::drive::DriveCmd drive_cmd;

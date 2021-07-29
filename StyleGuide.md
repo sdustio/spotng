@@ -2,11 +2,11 @@
 
 ## 命名
 
-- {{RetType}} const & {{ClassName}}::Get{{Member}}() const;
-- bool {{ClassName}}::Build{{Object}}({{ObjectType &}}) \[const\];
+- {{RetType}} const & {{ClassName}}::Get{{Member}}() const;  // Get instance member
+- static bool {{ClassName}}::Make{{Object}}({{ObjectType &}}) \[const\]; // Make an instance
 - bool Func({{RetType &}}, arg1...);
-  - Trans
-  - Calc
+  - Trans //inplace
+  - Calc //assign result to ref
   - ...
 
 

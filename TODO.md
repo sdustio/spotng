@@ -1,10 +1,10 @@
 **2021-07-28**
 
-- B-spline, bezier 相关知识学习
-- jpos_init
+- [x] B-spline, bezier 相关知识学习
+- [x] jpos_init
 - floating base
 - model(quadrup)
-- vel_pos est
+- [x] vel_pos est
 
 **2021-07-29**
 
