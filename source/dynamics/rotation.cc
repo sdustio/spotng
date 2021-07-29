@@ -52,25 +52,6 @@ namespace sdrobot::dynamics
   }
 
   /*!
- * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
- */
-  void VecToSkewMat(Eigen::Ref<Matrix3> ret, Eigen::Ref<Vector3 const> const &v)
-  {
-    ret << 0, -v[2], v[1], v[2], 0, -v[0], -v[1], v[0], 0;
-    return;
-  }
-
-  /*!
- * Put the skew-symmetric component of 3x3 matrix m into a 3x1 vector 反对称阵转向量
- */
-  void MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m)
-  {
-    ret = 0.5 * Vector3(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0),
-                        (m(1, 0) - m(0, 1)));
-    return;
-  }
-
-  /*!
  * Convert a coordinate transformation matrix to an orientation quaternion. 将坐标变换矩阵转换为方向四元数
  */
   void RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1)
