@@ -37,7 +37,7 @@ namespace sdrobot::dynamics
   // 10x1 Vector
   using MassProperties = Vector10;
 
-  using InertiaMat = Matrix3;
+  using InertiaMat = Matrix3; //TODO rename to RotationalInertia
 
   using PseudoInertiaMat = Matrix4;
 

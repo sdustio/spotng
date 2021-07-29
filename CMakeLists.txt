@@ -41,8 +41,8 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/leg/impl.cc
   source/leg/leg_ctrl_impl.cc
   source/leg/jpos_init_impl.cc
-  source/model/quadruped.cc
-  source/model/float_base.cc
+  source/model/quadruped_impl.cc
+  source/model/float_base_impl.cc
   source/dynamics/rotation.cc
   source/robot_impl.cc
 )

@@ -19,6 +19,7 @@ namespace sdrobot
 
   using SdMatrix3f = std::array<fptype, 3 * 3>;
   using SdMatrix4f = std::array<fptype, 4 * 4>;
+  using SdMatrix6f = std::array<fptype, 6 * 6>;
 
   using SdVectorXf = std::vector<fptype>;
   using SdMatrixXf = std::vector<fptype>;
