@@ -167,15 +167,4 @@ namespace sdrobot::leg
       cmd.flags[leg] = 1;
     }
   }
-
-  bool LegCtrl::Make(LegCtrl::Ptr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
-  {
-    ret = std::make_unique<LegCtrlImpl>(act_itf);
-    return true;
-  }
-  bool LegCtrl::Make(LegCtrl::SharedPtr &ret, interface::ActuatorInterface::SharedPtr const &act_itf)
-  {
-    ret = std::make_shared<LegCtrlImpl>(act_itf);
-    return true;
-  }
 }

@@ -8,6 +8,10 @@ namespace sdrobot::drive
   {
   }
 
+  DriveCtrlImpl::DriveCtrlImpl(double dt) : DriveCtrlImpl(DriveMode::kAutoAll, dt)
+  {
+  }
+
   bool DriveCtrlImpl::CmdtoDesData()
   {
     vel_ = {
@@ -96,26 +100,5 @@ namespace sdrobot::drive
     {
       return (v / 2) * (maxVal - minVal);
     }
-  }
-
-  bool DriveCtrl::Make(DriveCtrl::Ptr &ret, double dt)
-  {
-    ret = std::make_unique<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
-    return true;
-  }
-  bool DriveCtrl::Make(DriveCtrl::Ptr &ret, DriveMode mode, double dt)
-  {
-    ret = std::make_unique<DriveCtrlImpl>(mode, dt);
-    return true;
-  }
-  bool DriveCtrl::Make(DriveCtrl::SharedPtr &ret, double dt)
-  {
-    ret = std::make_shared<DriveCtrlImpl>(DriveMode::kAutoAll, dt);
-    return true;
-  }
-  bool DriveCtrl::Make(DriveCtrl::SharedPtr &ret, DriveMode mode, double dt)
-  {
-    ret = std::make_shared<DriveCtrlImpl>(mode, dt);
-    return true;
   }
 }

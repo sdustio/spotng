@@ -7,6 +7,7 @@ namespace sdrobot::drive
   class DriveCtrlImpl : public DriveCtrl
   {
   public:
+    explicit DriveCtrlImpl(double dt);
     DriveCtrlImpl(DriveMode mode, double dt);
 
     bool UpdateDriveCmd(DriveCmd const &cmd) override;

@@ -1,4 +1,6 @@
 #include "estimate/estimate_ctrl_impl.h"
+#include "estimate/pos_vel.h"
+#include "estimate/orientation.h"
 
 namespace sdrobot::estimate
 {
