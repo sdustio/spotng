@@ -13,7 +13,7 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis axis, double theta)
+  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, double const theta)
   {
     double s = std::sin(theta);
     double c = std::cos(theta);
@@ -195,7 +195,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt)
+  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt)
   {
     Vector3 axis;
     double ang = omega.norm();
@@ -224,7 +224,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double dt)
+  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt)
   {
     Vector3 axis;
     double ang = omega.norm();

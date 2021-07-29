@@ -44,6 +44,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/model/quadruped_impl.cc
   source/model/float_base_impl.cc
   source/dynamics/rotation.cc
+  source/dynamics/inertia.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}
