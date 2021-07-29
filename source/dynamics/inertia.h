@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sdrobot/dynamics.h"
 #include "dynamics/types.h"
 
 namespace sdrobot::dynamics
