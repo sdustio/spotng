@@ -6,8 +6,10 @@ namespace sdrobot::estimate
 {
   PosVel::PosVel(
       double dt,
+      double g,
       leg::LegCtrl::SharedPtr const &legctrl,
       model::Quadruped::SharedPtr const &quad) : dt_(dt),
+                                                 g_(g),
                                                  legctrl_(legctrl),
                                                  quad_(quad)
   {
@@ -120,7 +122,7 @@ namespace sdrobot::estimate
     int rindex2 = 0;
     int rindex3 = 0;
     //重力向量
-    Vector3 g(0, 0, -9.81);
+    Vector3 g(0, 0, -g_);
     Matrix3 Rbod = ret_rot_body.transpose(); //机身到世界的变换矩阵
     // in old code, Rbod * se_acc + g
     //输入量a 世界下
@@ -146,8 +148,8 @@ namespace sdrobot::estimate
       Vector3 p_rel = ph + datap; //足端位置在机身坐标系
 
       Eigen::Map<Vector3 const> datav(datas[i].v.data());
-      Vector3 dp_rel = datav; //足端速度在机身坐标系
-      Vector3 p_f = Rbod * p_rel;  //足端位置在世界坐标系描述 即方向 大小 没有位置
+      Vector3 dp_rel = datav;     //足端速度在机身坐标系
+      Vector3 p_f = Rbod * p_rel; //足端位置在世界坐标系描述 即方向 大小 没有位置
 
       //足端速度在世界坐标系描述 机身转动导致足端速度+足端本身速度
       Vector3 dp_f =
@@ -161,8 +163,8 @@ namespace sdrobot::estimate
 
       double trust = 1.;
       double phase = fmin(ret.contact[i], 1.); //获得接触状态估计
-                                                        //获取接触状态 在整个支撑过程百分比(从0到1)  完成后为0
-                                                        //脚i的测量协方差在摆动过程中被提高到一个很高的值，因此在这个融合过程中，摆动腿的测量值被有效地忽略了
+                                               //获取接触状态 在整个支撑过程百分比(从0到1)  完成后为0
+                                               //脚i的测量协方差在摆动过程中被提高到一个很高的值，因此在这个融合过程中，摆动腿的测量值被有效地忽略了
       //double trust_window = double(0.25);
       double trust_window = 0.2;
 
@@ -220,7 +222,7 @@ namespace sdrobot::estimate
 
     P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm; //最佳估计不确定性协方差??
 
-    P = (P + P.transpose()) / 2.;          //??
+    P = (P + P.transpose()) / 2.; //??
 
     if (P.block<2, 2>(0, 0).determinant() > 0.000001)
     { //??
