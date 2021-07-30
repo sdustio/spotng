@@ -23,7 +23,7 @@ namespace sdrobot::dynamics
   /*!
   * Build spatial coordinate transformation from rotation and translation
   */
-  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> const &R, Eigen::Ref<Vector3 const> const &r);
+  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> const &R, Eigen::Ref<Vector3 const> const &r); //CreateSpatialXform
 
   /*!
   * Calculate the spatial coordinate transform from A to B where B is rotate by

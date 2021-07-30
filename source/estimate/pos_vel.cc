@@ -223,9 +223,8 @@ namespace sdrobot::estimate
     }
     //输出状态量
     ToEigenMatrix(ret.pos) = xhat.block<3, 1>(0, 0);
-    auto vel_world = ToEigenMatrix(ret.vel_world);
-    vel_world = xhat.block<3, 1>(3, 0);
-    ToEigenMatrix(ret.vel_body) = rot_body * vel_world;
+    ToEigenMatrix(ret.vel_world) = xhat.block<3, 1>(3, 0);
+    ToEigenMatrix(ret.vel_body) = rot_body * ToConstEigenMatrix(ret.vel_world);
 
     return true;
   }
