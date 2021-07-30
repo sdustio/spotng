@@ -18,12 +18,9 @@ namespace sdrobot::estimate
 
   bool PosVel::Init()
   {
-    Eigen::Map<Vector18> xhat(xhat_.data());
-    Eigen::Map<Vector12> ps(ps_.data());
-    Eigen::Map<Vector12> vs(vs_.data());
-    xhat.setZero(); //状态估计值
-    ps.setZero();
-    vs.setZero();
+    xhat_.fill(0.);
+    ps_.fill(0.);
+    vs_.fill(0.);
     //状态转移矩阵，计算K+1时刻状态值X[k+1] 自己写出来算下就知道
     Eigen::Map<Matrix18> A(A_.data());
     A.setZero();
@@ -37,9 +34,9 @@ namespace sdrobot::estimate
     B.block<3, 3>(3, 0) = dt_ * Matrix3::Identity();
     //观测矩阵
     //观测量[p1 p2 p3 p4 v1 v2 v3 v4 z1 z2 z3 z4]（v z都在世界坐标下p在机身坐标系） p v 是向量 z是标量 pib=pb-piw vi=vb
-    MatrixX C1(3, 6);
+    Eigen::Matrix<fptype, 3, 6> C1;
     C1 << Matrix3::Identity(), Matrix3::Zero();
-    MatrixX C2(3, 6);
+    Eigen::Matrix<fptype, 3, 6> C2;
     C2 << Matrix3::Zero(), Matrix3::Identity();
     Eigen::Map<Eigen::Matrix<double, 28, 18>> C(C_.data());
     C.setZero();
@@ -96,13 +93,7 @@ namespace sdrobot::estimate
     Eigen::Map<Matrix18> Q0(Q0_.data());
     Eigen::Map<Matrix28> R0(R0_.data());
 
-    Eigen::Map<Matrix3> ret_rot_body(ret.rot_body.data());
-    Eigen::Map<Vector3> ret_acc_world(ret.acc_world.data());
-    Eigen::Map<Vector3> ret_vel_rpy_body(ret.vel_rpy_body.data());
-    Eigen::Map<Vector3> ret_pos(ret.pos.data());
-    Eigen::Map<Vector3> ret_vel_body(ret.vel_body.data());
-    Eigen::Map<Vector3> ret_vel_world(ret.vel_world.data());
-
+    auto rot_body = ToEigenMatrix(ret.rot_body);
     auto const &datas = legctrl_->GetDatas();
 
     //状态估计噪声
@@ -123,10 +114,10 @@ namespace sdrobot::estimate
     int rindex3 = 0;
     //重力向量
     Vector3 g(0, 0, -g_);
-    Matrix3 Rbod = ret_rot_body.transpose(); //机身到世界的变换矩阵
+    Matrix3 Rbod = rot_body.transpose(); //机身到世界的变换矩阵
     // in old code, Rbod * se_acc + g
     //输入量a 世界下
-    Vector3 acc = ret_acc_world + g;
+    Vector3 acc = ToEigenMatrix(ret.acc_world) + g;
 
     // std::cout << "A WORLD\n" << acc << "\n";
     Vector4 pzs = Vector4::Zero();
@@ -153,7 +144,7 @@ namespace sdrobot::estimate
 
       //足端速度在世界坐标系描述 机身转动导致足端速度+足端本身速度
       Vector3 dp_f =
-          Rbod * (ret_vel_rpy_body.cross(p_rel) + dp_rel);
+          Rbod * (ToEigenMatrix(ret.vel_rpy_body).cross(p_rel) + dp_rel);
 
       //更新四条腿用索引
       qindex = 6 + i1;
@@ -231,9 +222,10 @@ namespace sdrobot::estimate
       P.block<2, 2>(0, 0) /= 10.;
     }
     //输出状态量
-    ret_pos = xhat.block<3, 1>(0, 0);
-    ret_vel_world = xhat.block<3, 1>(3, 0);
-    ret_vel_body = ret_rot_body * ret_vel_world;
+    ToEigenMatrix(ret.pos) = xhat.block<3, 1>(0, 0);
+    auto vel_world = ToEigenMatrix(ret.vel_world);
+    vel_world = xhat.block<3, 1>(3, 0);
+    ToEigenMatrix(ret.vel_body) = rot_body * vel_world;
 
     return true;
   }

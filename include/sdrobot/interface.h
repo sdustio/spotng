@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <cstdint>
 
 #include "sdrobot/types.h"
 
@@ -28,7 +29,7 @@ namespace sdrobot::interface
     SdVector4f tau_hip_ff = {};
     SdVector4f tau_knee_ff = {};
 
-    SdVector4c flags = {};
+    std::array<std::uint8_t, 4> flags = {};
   };
 
   struct SDROBOT_EXPORT ActuatorData
@@ -36,10 +37,12 @@ namespace sdrobot::interface
     SdVector4f q_abad = {};
     SdVector4f q_hip = {};
     SdVector4f q_knee = {};
+
     SdVector4f qd_abad = {};
     SdVector4f qd_hip = {};
     SdVector4f qd_knee = {};
-    SdVector4c flags = {};
+
+    std::array<std::uint8_t, 4> flags = {};
     std::uint8_t driver_status;
   };
 

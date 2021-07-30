@@ -48,4 +48,13 @@ namespace sdrobot
     // 2x3 Matrix
     using Matrix2x3 = Eigen::Matrix<fptype, 2, 3>;
 
+    Eigen::Ref<Vector3> ToEigenMatrix(SdVector3f &v);
+    Eigen::Ref<Matrix3> ToEigenMatrix(SdMatrix3f &m);
+    Eigen::Ref<Vector4> ToEigenMatrix(SdVector4f &v);
+    Eigen::Ref<Matrix4> ToEigenMatrix(SdMatrix4f &m);
+    Eigen::Ref<Vector6> ToEigenMatrix(SdVector6f &v);
+    Eigen::Ref<Matrix6> ToEigenMatrix(SdMatrix6f &m);
+
+    Eigen::Ref<VectorX> ToEigenMatrix(SdVectorXf &v, int const row);
+    Eigen::Ref<MatrixX> ToEigenMatrix(SdMatrixXf &m, int const row, int const col);
 }

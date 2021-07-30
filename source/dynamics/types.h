@@ -41,9 +41,4 @@ namespace sdrobot::dynamics
 
   using PseudoRotationalInertia = Matrix4; //PseudoInertiaMat
 
-  // Dynamically sized matrix with spatial vector columns
-  using SpatialVecXd = Eigen::Matrix<fptype, 6, Eigen::Dynamic>;
-
-  // Dynamically sized matrix with cartesian vector columns
-  using CartesianVecXd = Eigen::Matrix<fptype, 3, Eigen::Dynamic>;
 }

@@ -74,7 +74,7 @@ namespace sdrobot::leg
     double c23 = c2 * c3 - s2 * s3;
     double s23 = s2 * c3 + c2 * s3;
 
-    Eigen::Map<Matrix3> J(datas_[leg].J.data());
+    auto J = ToEigenMatrix(datas_[leg].J);
     J(0, 0) = 0;
     J(0, 1) = l3 * c23 + l2 * c2;
     J(0, 2) = l3 * c23;
@@ -110,10 +110,7 @@ namespace sdrobot::leg
       ComputeLegJacobianAndPosition(leg);
 
       // v 足端速度
-      Eigen::Map<Vector3> v(datas_[leg].v.data());
-      Eigen::Map<Matrix3 const> J(datas_[leg].J.data());
-      Eigen::Map<Vector3 const> qd(datas_[leg].qd.data());
-      v = J * qd;
+      ToEigenMatrix(datas_[leg].v) = ToEigenMatrix(datas_[leg].J) * ToEigenMatrix(datas_[leg].qd);
     }
   }
 
@@ -132,19 +129,12 @@ namespace sdrobot::leg
       Vector3 foot_force(fff[0], fff[1], fff[2]);
 
       // cartesian PD 直角坐标下pd
-      Eigen::Map<Vector3 const> p_des(cmds_[leg].p_des.data());
-      Eigen::Map<Vector3 const> p(datas_[leg].p.data());
-      Eigen::Map<Matrix3 const> kp_cartesian(cmds_[leg].kp_cartesian.data());
-      foot_force += kp_cartesian * (p_des - p);
+      foot_force += ToEigenMatrix(cmds_[leg].kp_cartesian) * (ToEigenMatrix(cmds_[leg].p_des) - ToEigenMatrix(datas_[leg].p));
 
-      Eigen::Map<Vector3 const> v_des(cmds_[leg].v_des.data());
-      Eigen::Map<Vector3 const> v(datas_[leg].v.data());
-      Eigen::Map<Matrix3 const> kd_cartesian(cmds_[leg].kd_cartesian.data());
-      foot_force += kd_cartesian * (v_des - v);
+      foot_force += ToEigenMatrix(cmds_[leg].kd_cartesian) * (ToEigenMatrix(cmds_[leg].v_des) - ToEigenMatrix(datas_[leg].v));
 
       // Torque 足力转换成力矩
-      Eigen::Map<Matrix3 const> J(datas_[leg].J.data());
-      leg_torque += J.transpose() * foot_force;
+      leg_torque += ToEigenMatrix(datas_[leg].J).transpose() * foot_force;
 
       // set command: 命令设置 设置力矩
       cmd.tau_abad_ff[leg] = leg_torque(0);
@@ -152,33 +142,32 @@ namespace sdrobot::leg
       cmd.tau_knee_ff[leg] = leg_torque(2);
 
       // joint space pd
-      Eigen::Map<Matrix3 const> kp_joint(cmds_[leg].kp_joint.data());
+      auto kp_joint = ToEigenMatrix(cmds_[leg].kp_joint);
       cmd.kp_abad[leg] = kp_joint(0, 0);
       cmd.kp_hip[leg] = kp_joint(1, 1);
       cmd.kp_knee[leg] = kp_joint(2, 2);
 
-      Eigen::Map<Matrix3 const> kd_joint(cmds_[leg].kd_joint.data());
+      auto kd_joint = ToEigenMatrix(cmds_[leg].kd_joint);
       cmd.kd_abad[leg] = kd_joint(0, 0);
       cmd.kd_hip[leg] = kd_joint(1, 1);
       cmd.kd_knee[leg] = kd_joint(2, 2);
 
-      Eigen::Map<Vector3 const> q_des(cmds_[leg].q_des.data());
-      Eigen::Map<Vector3 const> q(datas_[leg].q.data());
+      auto q_des = ToEigenMatrix(cmds_[leg].q_des);
+      auto q = ToEigenMatrix(datas_[leg].q);
       cmd.q_des_abad[leg] = q_des[0];
       cmd.q_des_hip[leg] = q_des[1];
       cmd.q_des_knee[leg] = q_des[2];
 
-      Eigen::Map<Vector3 const> qd_des(cmds_[leg].qd_des.data());
-      Eigen::Map<Vector3 const> qd(datas_[leg].qd.data());
+      auto qd_des = ToEigenMatrix(cmds_[leg].qd_des);
+      auto qd = ToEigenMatrix(datas_[leg].qd);
       cmd.qd_des_abad[leg] = qd_des[0];
       cmd.qd_des_hip[leg] = qd_des[1];
       cmd.qd_des_knee[leg] = qd_des[2];
 
       // estimate torque
-      Eigen::Map<Vector3> tau_estimate(datas_[leg].tau_estimate.data());
-      tau_estimate = leg_torque +
-                     kp_joint * (q_des - q) +
-                     kd_joint * (qd_des - qd);
+      ToEigenMatrix(datas_[leg].tau_estimate) = leg_torque +
+                                                kp_joint * (q_des - q) +
+                                                kd_joint * (qd_des - qd);
 
       cmd.flags[leg] = 1;
     }

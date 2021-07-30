@@ -86,8 +86,8 @@ namespace sdrobot::model
     * @param Xrot  The coordinate transformation from parent to this body's rotor
     * @return The body's ID (can be used as the parent)
     */
-    int AddBody(MassProperties const &inertia,
-                MassProperties const &rotor_inertia, double const gear_ratio, int const parent,
+    int AddBody(dynamics::MassProperties const &inertia,
+                dynamics::MassProperties const &rotor_inertia, double const gear_ratio, int const parent,
                 dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
                 Matrix6 const &Xtree, Matrix6 const &Xrot);
   };

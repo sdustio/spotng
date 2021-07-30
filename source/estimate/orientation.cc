@@ -19,8 +19,8 @@ namespace sdrobot::estimate
     //复制四元数值
     ret.ori = imu_.quat;
 
-    Eigen::Map<Vector4> ori(ret.ori.data());
-    Eigen::Map<Vector4> ori_ini_inv(ori_ini_inv_.data());
+    auto ori = ToEigenMatrix(ret.ori);
+    auto ori_ini_inv = ToEigenMatrix(ori_ini_inv_);
 
     if (b_first_visit_)
     {
@@ -34,23 +34,18 @@ namespace sdrobot::estimate
 
     dynamics::QuatProduct(ori, ori_ini_inv, ori); //两四元数相乘
 
-    Eigen::Map<Vector3> ros_rpy(ret.pos_rpy.data());
-    dynamics::QuatToRPY(ros_rpy, ori); //转欧拉角
+    dynamics::QuatToRPY(ToEigenMatrix(ret.pos_rpy), ori); //转欧拉角
 
-    Eigen::Map<dynamics::RotMat> rot_body(ret.rot_body.data());
+    auto rot_body = ToEigenMatrix(ret.rot_body);
+
     dynamics::QuatToRotMat(rot_body, ori); //转旋转矩阵
-
     ret.vel_rpy_body = imu_.gyro; //得机体坐标角速度
 
-    Eigen::Map<Vector3> vel_rpy_body(ret.vel_rpy_body.data());
-    Eigen::Map<Vector3> vel_rpy_world(ret.vel_rpy_world.data());
-    vel_rpy_world = rot_body.transpose() * vel_rpy_body; //得世界坐标下角速度
+    ToEigenMatrix(ret.vel_rpy_world) = rot_body.transpose() * ToEigenMatrix(ret.vel_rpy_body); //得世界坐标下角速度
 
     ret.acc_body = imu_.acc; //得机体坐标加速度
 
-    Eigen::Map<Vector3> acc_body(ret.acc_body.data());
-    Eigen::Map<Vector3> acc_world(ret.acc_world.data());
-    acc_world = rot_body.transpose() * acc_body; //得世界坐标加速度
+    ToEigenMatrix(ret.acc_world) = rot_body.transpose() * ToEigenMatrix(ret.acc_body); //得世界坐标加速度
     return true;
   }
 }
