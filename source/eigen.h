@@ -57,4 +57,15 @@ namespace sdrobot
 
     Eigen::Ref<VectorX> ToEigenMatrix(SdVectorXf &v, int const row);
     Eigen::Ref<MatrixX> ToEigenMatrix(SdMatrixXf &m, int const row, int const col);
+
+
+    Eigen::Ref<Vector3 const> ToConstEigenMatrix(SdVector3f const &v);
+    Eigen::Ref<Matrix3 const> ToConstEigenMatrix(SdMatrix3f const &m);
+    Eigen::Ref<Vector4 const> ToConstEigenMatrix(SdVector4f const &v);
+    Eigen::Ref<Matrix4 const> ToConstEigenMatrix(SdMatrix4f const &m);
+    Eigen::Ref<Vector6 const> ToConstEigenMatrix(SdVector6f const &v);
+    Eigen::Ref<Matrix6 const> ToConstEigenMatrix(SdMatrix6f const &m);
+
+    Eigen::Ref<VectorX const> ToConstEigenMatrix(SdVectorXf const &v, int const row);
+    Eigen::Ref<MatrixX const> ToConstEigenMatrix(SdMatrixXf const &m, int const row, int const col);
 }

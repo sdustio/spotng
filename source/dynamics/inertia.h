@@ -4,11 +4,32 @@
 
 namespace sdrobot::dynamics
 {
+  /* Build or Convert Inertias*/
+
+  /*!
+  * Construct the rotational inertia of a uniform density box with a given mass.
+  * @param ret
+  * @param mass Mass of the box
+  * @param dims Dimensions of the box
+  */
+  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, double const mass, Eigen::Ref<Vector3 const> const &dims);
+
   /*!
    * Construct spatial inertia from mass, center of mass, and 3x3 rotational inertia
    * 从质量、质心和3 * 3的转动惯性来构造空间惯量
    */
   bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, double const mass, Eigen::Ref<Vector3 const> const &com, Eigen::Ref<RotationalInertia const> const &inertia);
+
+  /*!
+  * Build spatial coordinate transformation from rotation and translation
+  */
+  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> const &R, Eigen::Ref<Vector3 const> const &r);
+
+  /*!
+  * Calculate the spatial coordinate transform from A to B where B is rotate by
+  * theta about axis.
+  */
+  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, double const theta); //TODO BuildSpatialXform
 
   /*!
    * Construct spatial inertia from pseudo-inertia. This is described in
@@ -28,20 +49,131 @@ namespace sdrobot::dynamics
   bool SpatialInertiaToPseudoRotationalInertia(Eigen::Ref<PseudoRotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si);
 
   /*!
+   * Convert mass property vector to spatial inertia
+   将质量特性矢量转化为空间惯性
+   */
+  bool MassPropertiesToSpatialInertia(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<MassProperties const> const &a);
+
+  /*!
+   * Convert spatial inertia to mass property vector
+   将空间惯性转化为质量特性矢量
+   */
+  bool SpatialInertiaToMassProperties(Eigen::Ref<MassProperties> ret, Eigen::Ref<SpatialInertia const> const &si);
+
+  /*!
+   * Get 3x3 rotational inertia 得到3 * 3的转动惯量
+   */
+  bool SpatialInertiaToRotationalInertia(Eigen::Ref<RotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si);
+
+  /*!
+   * Get mass 得到质量
+   */
+  bool MassFromSpatialInertia(double &ret, Eigen::Ref<SpatialInertia const> const &si);
+
+  /*!
+   * Get center of mass location 得到质心的位置
+   */
+  bool COMFromSpatialInertia(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialInertia const> const &si);
+
+  /*!
+  * Convert a spatial transform to a homogeneous coordinate transformation
+  */
+  bool SpatialXformToHomogeneous(Eigen::Ref<Matrix4> ret, Eigen::Ref<SpatialXform const> const &X);
+
+  /*!
+  * Convert a homogeneous coordinate transformation to a spatial one
+  */
+  bool HomogeneousToSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<Matrix4 const> const &H);
+
+  /*!
+  * Get rotation matrix from spatial transformation
+  */
+  bool RotationFromSpatialXform(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X); // TODO SpatialXformToRotMat
+
+  /*!
+  * Get translation vector from spatial transformation
+  */
+  bool TranslationFromSpatialXform(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X); //TODO SpatialXformToTranslation
+
+  /*!
+  * Invert a spatial transformation (much faster than matrix inverse)
+  */
+  bool InvertSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<SpatialXform const> const &X);
+
+  /*!
+ * Compute joint motion subspace vector
+ */
+  bool JointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis); //TODO BuildJointMotionSubspace
+
+  /*!
+ * Compute joint transformation
+ */
+  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, double const q); //TODO BuildJointXform
+
+  /*!
+ * Convert from spatial velocity to linear velocity.
+ * Uses spatial velocity at the given point.
+ */
+  bool SpatialToLinearVelocity(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &v, Eigen::Ref<Vector3 const> const &x);
+
+  /*!
+ * Convert from spatial velocity to angular velocity.
+ */
+  bool SpatialToAngularVelocity(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &v);
+
+  /*!
+ * Compute the classical lienear accleeration of a frame given its spatial
+ * acceleration and velocity
+ */
+  bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &a, Eigen::Ref<SpatialVec const> const &v);
+
+  /*!
+ * Compute the classical lienear acceleration of a frame given its spatial
+ * acceleration and velocity
+ */
+  bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &a, Eigen::Ref<SpatialVec const> const &v, Eigen::Ref<Vector3 const> const &x);
+
+  /*!
+ * Apply spatial transformation to a point.
+ */
+  bool SpatialXformPoint(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X, Eigen::Ref<Vector3 const> const &p);
+
+  /*!
+ * Convert a force at a point to a spatial force
+ * @param f : force
+ * @param p : point
+ */
+  bool ForceToSpatialForce(Eigen::Ref<SpatialVec> ret, Eigen::Ref<Vector3 const> const &f, Eigen::Ref<Vector3 const> const &p);
+
+  /* Operations and Calculates */
+
+  /*!
   * Flip inertia matrix around an axis.  This isn't efficient, but it works!
   */
   bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<SpatialInertia const> const &si, CoordinateAxis const axis);
 
   /*!
-  * Build spatial coordinate transformation from rotation and translation
-  */
-  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> const &R, Eigen::Ref<Vector3 const> const &r);
+ * Compute the spatial motion cross product matrix.
+ * Prefer MotionCrossProduct when possible.
+ */
+  bool MotionCrossMatrix(Eigen::Ref<Matrix6> ret, Eigen::Ref<SpatialVec const> const &v);
 
   /*!
-  * Construct the rotational inertia of a uniform density box with a given mass.
-  * @param ret
-  * @param mass Mass of the box
-  * @param dims Dimensions of the box
-  */
-  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, double const mass, Eigen::Ref<Vector3 const> const &dims);
+ * Compute spatial force cross product matrix.
+ * Prefer ForceCrossProduct when possible
+ */
+  bool ForceCrossMatrix(Eigen::Ref<Matrix6> ret, Eigen::Ref<SpatialVec const> const &v);
+
+  /*!
+ * Compute spatial motion cross product.  Faster than the matrix multiplication
+ * version
+ */
+  bool MotionCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<SpatialVec const> const &a, Eigen::Ref<SpatialVec const> const &b);
+
+  /*!
+ * Compute spatial force cross product.  Faster than the matrix multiplication
+ * version
+ */
+  bool ForceCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<SpatialVec const> const &a, Eigen::Ref<SpatialVec const> const &b);
+
 }

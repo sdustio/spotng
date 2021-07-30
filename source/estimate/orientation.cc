@@ -41,11 +41,11 @@ namespace sdrobot::estimate
     dynamics::QuatToRotMat(rot_body, ori); //转旋转矩阵
     ret.vel_rpy_body = imu_.gyro; //得机体坐标角速度
 
-    ToEigenMatrix(ret.vel_rpy_world) = rot_body.transpose() * ToEigenMatrix(ret.vel_rpy_body); //得世界坐标下角速度
+    ToEigenMatrix(ret.vel_rpy_world) = rot_body.transpose() * ToConstEigenMatrix(ret.vel_rpy_body); //得世界坐标下角速度
 
     ret.acc_body = imu_.acc; //得机体坐标加速度
 
-    ToEigenMatrix(ret.acc_world) = rot_body.transpose() * ToEigenMatrix(ret.acc_body); //得世界坐标加速度
+    ToEigenMatrix(ret.acc_world) = rot_body.transpose() * ToConstEigenMatrix(ret.acc_body); //得世界坐标加速度
     return true;
   }
 }

@@ -9,21 +9,20 @@ namespace sdrobot::model
   {
   public:
     bool UpdateState(FloatBaseModelState const &state) override;
-    FloatBaseModelState const &GetState() const override;
+    FloatBaseModelState const &GetState() const override { return state_; }
     bool UpdateGravity(SdVector3f const &g) override;
-    SdVector3f const &GetGravity() const override;
 
-    bool ComputeGeneralizedGravityForce() const override;
-    bool ComputeGeneralizedCoriolisForce() const override;
-    bool ComputeContactJacobians() const override;
+    bool ComputeGeneralizedGravityForce() override;
+    bool ComputeGeneralizedCoriolisForce() override;
+    bool ComputeContactJacobians() override;
 
-    SdMatrixXf const &GetMassMatrix() const override;
-    SdVectorXf const &GetGeneralizedGravityForce() const override;
-    SdVectorXf const &GetGeneralizedCoriolisForce() const override;
-    std::vector<SdMatrixXf> const &GetContactJacobians() const override; //vector of matrix 3 x X
-    std::vector<SdMatrix3f> const &GetContactJacobiansdqd() const override;
-    std::vector<SdMatrix3f> const &GetGroundContactPos() const override;
-    std::vector<SdMatrix3f> const &GetGroundContactVel() const override;
+    SdMatrixXf const &GetMassMatrix() const override { return H_; }
+    SdVectorXf const &GetGeneralizedGravityForce() const override { return G_; }
+    SdVectorXf const &GetGeneralizedCoriolisForce() const override { return Cqd_; }
+    std::vector<SdMatrixXf> const &GetContactJacobians() const override { return Jc_; }
+    std::vector<SdVector3f> const &GetContactJacobiansdqd() const override { return Jcdqd_; }
+    std::vector<SdVector3f> const &GetGroundContactPos() const override { return gc_p_; }
+    std::vector<SdVector3f> const &GetGroundContactVel() const override { return gc_v_; }
 
     /*!
     * Create the floating body
@@ -90,5 +89,33 @@ namespace sdrobot::model
                 dynamics::MassProperties const &rotor_inertia, double const gear_ratio, int const parent,
                 dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
                 Matrix6 const &Xtree, Matrix6 const &Xrot);
+
+  private:
+    bool CompositeInertias();
+    bool BiasAccelerations();
+    void ResetCalculationFlags();
+
+    int n_dof_ = 0;
+    SdVector3f gravity_;
+
+    std::vector<int> parents_;
+
+    FloatBaseModelState state_;
+
+    std::vector<SdMatrix6f> Ibody_, Irot_;
+
+    std::vector<SdVector3f> gc_p_;
+    std::vector<SdVector3f> gc_v_;
+
+    std::vector<SdVector6f> v_, vrot_, S_, Srot_, ag_, agrot_, avp_, avprot_, fvp_, fvprot_;
+
+    std::vector<SdMatrix6f> IC_;
+    std::vector<SdMatrix6f> Xup_, Xuprot_;
+
+    SdMatrixXf H_;
+    SdVectorXf Cqd_, G_;
+
+    std::vector<SdMatrixXf> Jc_; //vector of matrix 3 x X
+    std::vector<SdVector3f> Jcdqd_;
   };
 }

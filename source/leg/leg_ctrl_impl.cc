@@ -110,7 +110,7 @@ namespace sdrobot::leg
       ComputeLegJacobianAndPosition(leg);
 
       // v 足端速度
-      ToEigenMatrix(datas_[leg].v) = ToEigenMatrix(datas_[leg].J) * ToEigenMatrix(datas_[leg].qd);
+      ToEigenMatrix(datas_[leg].v) = ToConstEigenMatrix(datas_[leg].J) * ToConstEigenMatrix(datas_[leg].qd);
     }
   }
 
@@ -129,12 +129,12 @@ namespace sdrobot::leg
       Vector3 foot_force(fff[0], fff[1], fff[2]);
 
       // cartesian PD 直角坐标下pd
-      foot_force += ToEigenMatrix(cmds_[leg].kp_cartesian) * (ToEigenMatrix(cmds_[leg].p_des) - ToEigenMatrix(datas_[leg].p));
+      foot_force += ToConstEigenMatrix(cmds_[leg].kp_cartesian) * (ToConstEigenMatrix(cmds_[leg].p_des) - ToConstEigenMatrix(datas_[leg].p));
 
-      foot_force += ToEigenMatrix(cmds_[leg].kd_cartesian) * (ToEigenMatrix(cmds_[leg].v_des) - ToEigenMatrix(datas_[leg].v));
+      foot_force += ToConstEigenMatrix(cmds_[leg].kd_cartesian) * (ToConstEigenMatrix(cmds_[leg].v_des) - ToConstEigenMatrix(datas_[leg].v));
 
       // Torque 足力转换成力矩
-      leg_torque += ToEigenMatrix(datas_[leg].J).transpose() * foot_force;
+      leg_torque += ToConstEigenMatrix(datas_[leg].J).transpose() * foot_force;
 
       // set command: 命令设置 设置力矩
       cmd.tau_abad_ff[leg] = leg_torque(0);
@@ -142,24 +142,24 @@ namespace sdrobot::leg
       cmd.tau_knee_ff[leg] = leg_torque(2);
 
       // joint space pd
-      auto kp_joint = ToEigenMatrix(cmds_[leg].kp_joint);
+      auto kp_joint = ToConstEigenMatrix(cmds_[leg].kp_joint);
       cmd.kp_abad[leg] = kp_joint(0, 0);
       cmd.kp_hip[leg] = kp_joint(1, 1);
       cmd.kp_knee[leg] = kp_joint(2, 2);
 
-      auto kd_joint = ToEigenMatrix(cmds_[leg].kd_joint);
+      auto kd_joint = ToConstEigenMatrix(cmds_[leg].kd_joint);
       cmd.kd_abad[leg] = kd_joint(0, 0);
       cmd.kd_hip[leg] = kd_joint(1, 1);
       cmd.kd_knee[leg] = kd_joint(2, 2);
 
-      auto q_des = ToEigenMatrix(cmds_[leg].q_des);
-      auto q = ToEigenMatrix(datas_[leg].q);
+      auto q_des = ToConstEigenMatrix(cmds_[leg].q_des);
+      auto q = ToConstEigenMatrix(datas_[leg].q);
       cmd.q_des_abad[leg] = q_des[0];
       cmd.q_des_hip[leg] = q_des[1];
       cmd.q_des_knee[leg] = q_des[2];
 
-      auto qd_des = ToEigenMatrix(cmds_[leg].qd_des);
-      auto qd = ToEigenMatrix(datas_[leg].qd);
+      auto qd_des = ToConstEigenMatrix(cmds_[leg].qd_des);
+      auto qd = ToConstEigenMatrix(datas_[leg].qd);
       cmd.qd_des_abad[leg] = qd_des[0];
       cmd.qd_des_hip[leg] = qd_des[1];
       cmd.qd_des_knee[leg] = qd_des[2];
