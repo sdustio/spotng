@@ -93,6 +93,7 @@ namespace sdrobot::model
   private:
     bool CompositeInertias();
     bool BiasAccelerations();
+    bool ForwardKinematics();
     void ResetCalculationFlags();
 
     int n_dof_ = 0;
@@ -104,13 +105,17 @@ namespace sdrobot::model
 
     std::vector<SdMatrix6f> Ibody_, Irot_;
 
+    int n_ground_contact_ = 0;
+    std::vector<int> gc_parent_;
+    std::vector<SdVector3f> gc_location_;
     std::vector<SdVector3f> gc_p_;
     std::vector<SdVector3f> gc_v_;
+    std::vector<bool> compute_contact_info_;
 
     std::vector<SdVector6f> v_, vrot_, S_, Srot_, ag_, agrot_, avp_, avprot_, fvp_, fvprot_;
 
     std::vector<SdMatrix6f> IC_;
-    std::vector<SdMatrix6f> Xup_, Xuprot_;
+    std::vector<SdMatrix6f> Xup_, Xuprot_, Xa_;
 
     SdMatrixXf H_;
     SdVectorXf Cqd_, G_;

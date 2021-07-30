@@ -81,7 +81,49 @@ namespace sdrobot::model
     return true;
   }
 
-  bool FloatBaseModelImpl::ComputeContactJacobians() {}
+  bool FloatBaseModelImpl::ComputeContactJacobians() {
+    ForwardKinematics();
+    BiasAccelerations();
+
+    for (int k = 0; k < n_ground_contact_; k++)
+    {
+      auto Jc_k = ToEigenMatrix(Jc_[k], 3, n_dof_);
+      auto Jcdqd_k = ToEigenMatrix(Jcdqd_[k]);
+      Jc_k.setZero();
+      Jcdqd_k.setZero();
+
+      // Skip it if we don't care about it
+      if (!compute_contact_info_[k])
+        continue;
+
+      int i = gc_parent_[k];
+
+      // Rotation to absolute coords
+      Matrix3 Rai = ToConstEigenMatrix(Xa_[i]).block<3, 3>(0, 0).transpose();
+      Matrix6 Xc;
+      dynamics::BuildSpatialXform(Xc, Rai, ToConstEigenMatrix(gc_location_[k]));
+
+      // Bias acceleration
+      dynamics::SpatialVec ac = Xc * ToConstEigenMatrix(avp_[i]);
+      dynamics::SpatialVec vc = Xc * ToConstEigenMatrix(v_[i]);
+
+      // Correct to classical
+      dynamics::SpatialToLinearAcceleration(Jcdqd_k, ac, vc);
+
+      // rows for linear velcoity in the world
+      Eigen::Matrix3Xd Xout = Xc.bottomRows<3>();
+
+      // from tips to base
+      while (i > 5)
+      {
+        Jc_k.col(i) = Xout * ToConstEigenMatrix(S_[i]);
+        Xout = Xout * ToConstEigenMatrix(Xup_[i]);
+        i = parents_[i];
+      }
+      Jc_k.leftCols<6>() = Xout;
+    }
+    return true;
+  }
 
   bool FloatBaseModelImpl::AddBase(Eigen::Ref<dynamics::SpatialInertia const> const &inertia) {}
   bool FloatBaseModelImpl::AddBase(double const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I) {}
