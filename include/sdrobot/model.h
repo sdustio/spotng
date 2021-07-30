@@ -9,8 +9,8 @@ namespace sdrobot::model
   struct SDROBOT_EXPORT FloatBaseModelState
   {
     SdVector4f ori;
-    SdMatrix3f pos;
-    std::array<fptype, 6> vel_body; // body coordinates
+    SdVector3f pos;
+    SdVector6f vel_body; // body coordinates
     std::array<fptype, 12> q;
     std::array<fptype, 12> qd;
   };

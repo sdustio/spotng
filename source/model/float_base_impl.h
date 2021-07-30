@@ -98,11 +98,13 @@ namespace sdrobot::model
 
     int n_dof_ = 0;
     SdVector3f gravity_;
-
-    std::vector<int> parents_;
-
     FloatBaseModelState state_;
 
+    std::vector<int> parents_;
+    std::vector<double> gear_ratios_;
+    std::vector<dynamics::JointType> joint_types_;
+    std::vector<dynamics::CoordinateAxis> joint_axes_;
+    std::vector<SdMatrix6f> Xtree_, Xrot_;
     std::vector<SdMatrix6f> Ibody_, Irot_;
 
     int n_ground_contact_ = 0;
@@ -112,7 +114,8 @@ namespace sdrobot::model
     std::vector<SdVector3f> gc_v_;
     std::vector<bool> compute_contact_info_;
 
-    std::vector<SdVector6f> v_, vrot_, S_, Srot_, ag_, agrot_, avp_, avprot_, fvp_, fvprot_;
+    std::vector<SdVector6f> v_, vrot_, S_, Srot_, ag_, agrot_, avp_, avprot_, fvp_, fvprot_,
+        c_, crot_;
 
     std::vector<SdMatrix6f> IC_;
     std::vector<SdMatrix6f> Xup_, Xuprot_, Xa_;
@@ -122,5 +125,15 @@ namespace sdrobot::model
 
     std::vector<SdMatrixXf> Jc_; //vector of matrix 3 x X
     std::vector<SdVector3f> Jcdqd_;
+
+    bool kinematics_uptodate_ = false;
+    bool bias_acc_uptodate_ = false;
+    bool acc_uptodate_ = false;
+
+    bool composite_inertias_uptodate_ = false;
+
+    bool articulated_bodies_uptodate_ = false;
+    bool force_propagators_uptodate_ = false;
+    bool qdd_effects_uptodate_ = false;
   };
 }
