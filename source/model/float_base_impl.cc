@@ -6,19 +6,19 @@ namespace sdrobot::model
 {
   namespace
   {
-    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, 1>> ToEigen_(FloatBaseModel::GeneralizedForceType &v)
+    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, 1>> ToEigenTp_(FloatBaseModel::GeneralizedForceType &v)
     {
       Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, 1>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> ToEigen_(FloatBaseModel::MassMatrixType &v)
+    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> ToEigenTp_(FloatBaseModel::MassMatrixType &v)
     {
       Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fptype, 3, params::model::dim_config>> ToEigen_(FloatBaseModel::ContactJacobiansType &v)
+    Eigen::Ref<Eigen::Matrix<fptype, 3, params::model::dim_config>> ToEigenTp_(FloatBaseModel::ContactJacobiansType &v)
     {
       Eigen::Map<Eigen::Matrix<fptype, 3, params::model::dim_config>> egv(v.data());
       return egv;
@@ -43,30 +43,30 @@ namespace sdrobot::model
     CompositeInertias();
     H_.fill(0.);
 
-    auto H = ToEigen_(H_);
+    auto H = ToEigenTp_(H_);
 
     // Top left corner is the locked inertia of the whole system
-    H.topLeftCorner<6, 6>() = ToConstEigenMatrix(IC_[5]);
+    H.topLeftCorner<6, 6>() = ToConstEigenTp(IC_[5]);
 
     for (int j = 6; j < params::model::dim_config; j++)
     {
       // f = spatial force required for a unit qdd_j
-      dynamics::SpatialVec f = ToConstEigenMatrix(IC_[j]) * ToConstEigenMatrix(S_[j]);
-      dynamics::SpatialVec frot = ToConstEigenMatrix(Irot_[j]) * ToConstEigenMatrix(Srot_[j]);
+      dynamics::SpatialVec f = ToConstEigenTp(IC_[j]) * ToConstEigenTp(S_[j]);
+      dynamics::SpatialVec frot = ToConstEigenTp(Irot_[j]) * ToConstEigenTp(Srot_[j]);
 
-      H(j, j) = ToConstEigenMatrix(S_[j]).dot(f) + ToConstEigenMatrix(Srot_[j]).dot(frot);
+      H(j, j) = ToConstEigenTp(S_[j]).dot(f) + ToConstEigenTp(Srot_[j]).dot(frot);
 
       // Propagate down the tree
-      f = ToConstEigenMatrix(Xup_[j]).transpose() * f + ToConstEigenMatrix(Xuprot_[j]).transpose() * frot;
+      f = ToConstEigenTp(Xup_[j]).transpose() * f + ToConstEigenTp(Xuprot_[j]).transpose() * frot;
       int i = parents_[j];
       while (i > 5)
       {
         // in here f is expressed in frame {i}
-        H(i, j) = ToConstEigenMatrix(S_[i]).dot(f);
+        H(i, j) = ToConstEigenTp(S_[i]).dot(f);
         H(j, i) = H(i, j);
 
         // Propagate down the tree
-        f = ToConstEigenMatrix(Xup_[i]).transpose() * f;
+        f = ToConstEigenTp(Xup_[i]).transpose() * f;
         i = parents_[i];
       }
 
@@ -85,19 +85,19 @@ namespace sdrobot::model
     dynamics::SpatialVec aGravity;
 
     aGravity << 0, 0, 0, gravity_[0], gravity_[1], gravity_[2];
-    ToEigenMatrix(ag_[5]) = ToConstEigenMatrix(Xup_[5]) * aGravity;
+    ToEigenTp(ag_[5]) = ToConstEigenTp(Xup_[5]) * aGravity;
 
     // Gravity comp force is the same as force required to accelerate
     // oppostite gravity
-    ToEigen_(G_).topRows<6>() = -ToConstEigenMatrix(IC_[5]) * ToConstEigenMatrix(ag_[5]);
+    ToEigenTp_(G_).topRows<6>() = -ToConstEigenTp(IC_[5]) * ToConstEigenTp(ag_[5]);
     for (int i = 6; i < params::model::dim_config; i++)
     {
-      ToEigenMatrix(ag_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(ag_[parents_[i]]);
-      ToEigenMatrix(agrot_[i]) = ToConstEigenMatrix(Xuprot_[i]) * ToConstEigenMatrix(ag_[parents_[i]]);
+      ToEigenTp(ag_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(ag_[parents_[i]]);
+      ToEigenTp(agrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(ag_[parents_[i]]);
 
       // body and rotor
-      G_[i] = -ToConstEigenMatrix(S_[i]).dot(ToConstEigenMatrix(IC_[i]) * ToConstEigenMatrix(ag_[i])) -
-              ToConstEigenMatrix(Srot_[i]).dot(ToConstEigenMatrix(Irot_[i]) * ToConstEigenMatrix(agrot_[i]));
+      G_[i] = -ToConstEigenTp(S_[i]).dot(ToConstEigenTp(IC_[i]) * ToConstEigenTp(ag_[i])) -
+              ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(Irot_[i]) * ToConstEigenTp(agrot_[i]));
     }
     return true;
   }
@@ -109,37 +109,37 @@ namespace sdrobot::model
     dynamics::SpatialVec tmpsv;
 
     // Floating base force
-    Matrix6 Ifb = ToConstEigenMatrix(Ibody_[5]);
-    dynamics::ForceCrossProduct(tmpsv, ToConstEigenMatrix(v_[5]), Ifb * ToConstEigenMatrix(v_[5]));
-    ToEigenMatrix(fvp_[5]) = Ifb * ToConstEigenMatrix(avp_[5]) + tmpsv;
+    Matrix6 Ifb = ToConstEigenTp(Ibody_[5]);
+    dynamics::ForceCrossProduct(tmpsv, ToConstEigenTp(v_[5]), Ifb * ToConstEigenTp(v_[5]));
+    ToEigenTp(fvp_[5]) = Ifb * ToConstEigenTp(avp_[5]) + tmpsv;
 
     for (int i = 6; i < params::model::dim_config; i++)
     {
       // Force on body i
-      auto Ii = ToConstEigenMatrix(Ibody_[i]);
-      auto vi = ToConstEigenMatrix(v_[i]);
+      auto Ii = ToConstEigenTp(Ibody_[i]);
+      auto vi = ToConstEigenTp(v_[i]);
       dynamics::ForceCrossProduct(tmpsv, vi, Ii * vi);
-      ToEigenMatrix(fvp_[i]) = Ii * ToConstEigenMatrix(avp_[i]) + tmpsv;
+      ToEigenTp(fvp_[i]) = Ii * ToConstEigenTp(avp_[i]) + tmpsv;
 
       // Force on rotor i
-      auto Ir = ToConstEigenMatrix(Irot_[i]);
-      auto vr = ToConstEigenMatrix(vrot_[i]);
+      auto Ir = ToConstEigenTp(Irot_[i]);
+      auto vr = ToConstEigenTp(vrot_[i]);
       dynamics::ForceCrossProduct(tmpsv, vr, Ir * vr);
-      ToEigenMatrix(fvprot_[i]) = Ir * ToConstEigenMatrix(avprot_[i]) + tmpsv;
+      ToEigenTp(fvprot_[i]) = Ir * ToConstEigenTp(avprot_[i]) + tmpsv;
     }
 
     for (int i = params::model::dim_config - 1; i > 5; i--)
     {
       // Extract force along the joints
-      Cqd_[i] = ToConstEigenMatrix(S_[i]).dot(ToConstEigenMatrix(fvp_[i])) + ToConstEigenMatrix(Srot_[i]).dot(ToConstEigenMatrix(fvprot_[i]));
+      Cqd_[i] = ToConstEigenTp(S_[i]).dot(ToConstEigenTp(fvp_[i])) + ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(fvprot_[i]));
 
       // Propage force down the tree
-      ToEigenMatrix(fvp_[parents_[i]]) += ToConstEigenMatrix(Xup_[i]).transpose() * ToConstEigenMatrix(fvp_[i]);
-      ToEigenMatrix(fvp_[parents_[i]]) += ToConstEigenMatrix(Xuprot_[i]).transpose() * ToConstEigenMatrix(fvprot_[i]);
+      ToEigenTp(fvp_[parents_[i]]) += ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(fvp_[i]);
+      ToEigenTp(fvp_[parents_[i]]) += ToConstEigenTp(Xuprot_[i]).transpose() * ToConstEigenTp(fvprot_[i]);
     }
 
     // Force on floating base
-    ToEigen_(Cqd_).topRows<6>() = ToConstEigenMatrix(fvp_[5]);
+    ToEigenTp_(Cqd_).topRows<6>() = ToConstEigenTp(fvp_[5]);
     return true;
   }
 
@@ -150,8 +150,8 @@ namespace sdrobot::model
 
     for (int k = 0; k < n_ground_contact_; k++)
     {
-      auto Jc_k = ToEigen_(Jc_[k]);
-      auto Jcdqd_k = ToEigenMatrix(Jcdqd_[k]);
+      auto Jc_k = ToEigenTp_(Jc_[k]);
+      auto Jcdqd_k = ToEigenTp(Jcdqd_[k]);
       Jc_k.setZero();
       Jcdqd_k.setZero();
 
@@ -162,13 +162,13 @@ namespace sdrobot::model
       int i = gc_parent_[k];
 
       // Rotation to absolute coords
-      Matrix3 Rai = ToConstEigenMatrix(Xa_[i]).block<3, 3>(0, 0).transpose();
+      Matrix3 Rai = ToConstEigenTp(Xa_[i]).block<3, 3>(0, 0).transpose();
       Matrix6 Xc;
-      dynamics::BuildSpatialXform(Xc, Rai, ToConstEigenMatrix(gc_location_[k]));
+      dynamics::BuildSpatialXform(Xc, Rai, ToConstEigenTp(gc_location_[k]));
 
       // Bias acceleration
-      dynamics::SpatialVec ac = Xc * ToConstEigenMatrix(avp_[i]);
-      dynamics::SpatialVec vc = Xc * ToConstEigenMatrix(v_[i]);
+      dynamics::SpatialVec ac = Xc * ToConstEigenTp(avp_[i]);
+      dynamics::SpatialVec vc = Xc * ToConstEigenTp(v_[i]);
 
       // Correct to classical
       dynamics::SpatialToLinearAcceleration(Jcdqd_k, ac, vc);
@@ -179,8 +179,8 @@ namespace sdrobot::model
       // from tips to base
       while (i > 5)
       {
-        Jc_k.col(i) = Xout * ToConstEigenMatrix(S_[i]);
-        Xout = Xout * ToConstEigenMatrix(Xup_[i]);
+        Jc_k.col(i) = Xout * ToConstEigenTp(S_[i]);
+        Xout = Xout * ToConstEigenTp(Xup_[i]);
         i = parents_[i];
       }
       Jc_k.leftCols<6>() = Xout;
@@ -196,7 +196,7 @@ namespace sdrobot::model
     }
 
     SdMatrix6f eye6;
-    ToEigenMatrix(eye6) = Matrix6::Identity();
+    ToEigenTp(eye6) = Matrix6::Identity();
 
     SdMatrix6f zero6 = {};
     // the floating base has 6 DOFs
@@ -216,7 +216,7 @@ namespace sdrobot::model
     }
 
     joint_types_[5] = dynamics::JointType::FloatingBase;
-    ToEigenMatrix(Ibody_[5]) = inertia;
+    ToEigenTp(Ibody_[5]) = inertia;
     gear_ratios_[5] = 1;
     body_names_[5] = "Floating Base";
 
@@ -297,10 +297,10 @@ namespace sdrobot::model
     joint_types_.push_back(joint_type);
     joint_axes_.push_back(joint_axis);
     SdMatrix6f xt, xr, inr, rinr;
-    ToEigenMatrix(xt) = Xtree;
-    ToEigenMatrix(xr) = Xrot;
-    ToEigenMatrix(inr) = inertia;
-    ToEigenMatrix(rinr) = rotor_inertia;
+    ToEigenTp(xt) = Xtree;
+    ToEigenTp(xr) = Xrot;
+    ToEigenTp(inr) = inertia;
+    ToEigenTp(rinr) = rotor_inertia;
     Xtree_.push_back(xt);
     Xrot_.push_back(xr);
     Ibody_.push_back(inr);
@@ -322,7 +322,7 @@ namespace sdrobot::model
     }
 
     SdMatrix6f eye6;
-    ToEigenMatrix(eye6).setIdentity();
+    ToEigenTp(eye6).setIdentity();
 
     SdVector6f zero6 = {};
     SdMatrix6f zeroInertia = {};
@@ -396,8 +396,8 @@ namespace sdrobot::model
     for (int i = params::model::dim_config - 1; i > 5; i--)
     {
       // Propagate inertia down the tree
-      ToEigenMatrix(IC_[parents_[i]]) += ToConstEigenMatrix(Xup_[i]).transpose() * ToConstEigenMatrix(IC_[i]) * ToConstEigenMatrix(Xup_[i]);
-      ToEigenMatrix(IC_[parents_[i]]) += ToConstEigenMatrix(Xuprot_[i]).transpose() * ToConstEigenMatrix(Irot_[i]) * ToConstEigenMatrix(Xuprot_[i]);
+      ToEigenTp(IC_[parents_[i]]) += ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(IC_[i]) * ToConstEigenTp(Xup_[i]);
+      ToEigenTp(IC_[parents_[i]]) += ToConstEigenTp(Xuprot_[i]).transpose() * ToConstEigenTp(Irot_[i]) * ToConstEigenTp(Xuprot_[i]);
     }
     composite_inertias_uptodate_ = true;
     return true;
@@ -409,14 +409,14 @@ namespace sdrobot::model
       return false;
     ForwardKinematics();
     // velocity product acceelration of base
-    ToEigenMatrix(avp_[5]) << 0, 0, 0, 0, 0, 0;
+    ToEigenTp(avp_[5]) << 0, 0, 0, 0, 0, 0;
 
     // from base to tips
     for (int i = 6; i < params::model::dim_config; i++)
     {
       // Outward kinamtic propagtion
-      ToEigenMatrix(avp_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(avp_[parents_[i]]) + ToConstEigenMatrix(c_[i]);
-      ToEigenMatrix(avprot_[i]) = ToConstEigenMatrix(Xuprot_[i]) * ToConstEigenMatrix(avp_[parents_[i]]) + ToConstEigenMatrix(crot_[i]);
+      ToEigenTp(avp_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(avp_[parents_[i]]) + ToConstEigenTp(c_[i]);
+      ToEigenTp(avprot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(avp_[parents_[i]]) + ToConstEigenTp(crot_[i]);
     }
     bias_acc_uptodate_ = true;
 
@@ -430,8 +430,8 @@ namespace sdrobot::model
 
     // calculate joint transformations
     dynamics::RotMat rot;
-    dynamics::QuatToRotMat(rot, ToConstEigenMatrix(state_.ori));
-    dynamics::BuildSpatialXform(ToEigenMatrix(Xup_[5]), rot, ToConstEigenMatrix(state_.pos));
+    dynamics::QuatToRotMat(rot, ToConstEigenTp(state_.ori));
+    dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), rot, ToConstEigenTp(state_.pos));
     v_[5] = state_.vel_body;
 
     for (int i = 6; i < params::model::dim_config; i++)
@@ -439,23 +439,23 @@ namespace sdrobot::model
       // joint xform
       Matrix6 XJ;
       dynamics::JointXform(XJ, joint_types_[i], joint_axes_[i], state_.q[i - 6]);
-      ToEigenMatrix(Xup_[i]) = XJ * ToConstEigenMatrix(Xtree_[i]);
-      dynamics::JointMotionSubspace(ToEigenMatrix(S_[i]), joint_types_[i], joint_axes_[i]);
-      dynamics::SpatialVec vJ = ToConstEigenMatrix(S_[i]) * state_.qd[i - 6];
+      ToEigenTp(Xup_[i]) = XJ * ToConstEigenTp(Xtree_[i]);
+      dynamics::JointMotionSubspace(ToEigenTp(S_[i]), joint_types_[i], joint_axes_[i]);
+      dynamics::SpatialVec vJ = ToConstEigenTp(S_[i]) * state_.qd[i - 6];
       // total velocity of body i
-      ToEigenMatrix(v_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(v_[parents_[i]]) + vJ;
+      ToEigenTp(v_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJ;
 
       // Same for rotors
       Matrix6 XJrot;
       JointXform(XJrot, joint_types_[i], joint_axes_[i], state_.q[i - 6] * gear_ratios_[i]);
-      ToEigenMatrix(Srot_[i]) = ToConstEigenMatrix(S_[i]) * gear_ratios_[i];
-      dynamics::SpatialVec vJrot = ToConstEigenMatrix(Srot_[i]) * state_.qd[i - 6];
-      ToEigenMatrix(Xuprot_[i]) = XJrot * ToConstEigenMatrix(Xrot_[i]);
-      ToEigenMatrix(vrot_[i]) = ToConstEigenMatrix(Xuprot_[i]) * ToConstEigenMatrix(v_[parents_[i]]) + vJrot;
+      ToEigenTp(Srot_[i]) = ToConstEigenTp(S_[i]) * gear_ratios_[i];
+      dynamics::SpatialVec vJrot = ToConstEigenTp(Srot_[i]) * state_.qd[i - 6];
+      ToEigenTp(Xuprot_[i]) = XJrot * ToConstEigenTp(Xrot_[i]);
+      ToEigenTp(vrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJrot;
 
       // Coriolis accelerations
-      dynamics::MotionCrossProduct(ToEigenMatrix(c_[i]), ToConstEigenMatrix(v_[i]), vJ);
-      dynamics::MotionCrossProduct(ToEigenMatrix(crot_[i]), ToConstEigenMatrix(vrot_[i]), vJrot);
+      dynamics::MotionCrossProduct(ToEigenTp(c_[i]), ToConstEigenTp(v_[i]), vJ);
+      dynamics::MotionCrossProduct(ToEigenTp(crot_[i]), ToConstEigenTp(vrot_[i]), vJrot);
     }
 
     // calculate from absolute transformations
@@ -467,7 +467,7 @@ namespace sdrobot::model
       }
       else
       {
-        ToEigenMatrix(Xa_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(Xa_[parents_[i]]);
+        ToEigenTp(Xa_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(Xa_[parents_[i]]);
       }
     }
 
@@ -480,12 +480,12 @@ namespace sdrobot::model
         continue;
       int i = gc_parent_[j];
       Matrix6 Xai;
-      dynamics::InvertSpatialXform(Xai, ToConstEigenMatrix(Xa_[i])); // from link to absolute
-      dynamics::SpatialVec vSpatial = Xai * ToConstEigenMatrix(v_[i]);
+      dynamics::InvertSpatialXform(Xai, ToConstEigenTp(Xa_[i])); // from link to absolute
+      dynamics::SpatialVec vSpatial = Xai * ToConstEigenTp(v_[i]);
 
       // foot position in world
-      dynamics::SpatialXformPoint(ToEigenMatrix(gc_p_[j]), Xai, ToConstEigenMatrix(gc_location_[j]));
-      dynamics::SpatialToLinearVelocity(ToEigenMatrix(gc_v_[j]), vSpatial, ToConstEigenMatrix(gc_p_[j]));
+      dynamics::SpatialXformPoint(ToEigenTp(gc_p_[j]), Xai, ToConstEigenTp(gc_location_[j]));
+      dynamics::SpatialToLinearVelocity(ToEigenTp(gc_v_[j]), vSpatial, ToConstEigenTp(gc_p_[j]));
     }
     kinematics_uptodate_ = true;
     return true;
