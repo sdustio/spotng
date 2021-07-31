@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "leg/leg_ctrl_impl.h"
-#include "params.h"
+#include "sdrobot/params.h"
 #include "eigen.h"
 
 namespace sdrobot::leg

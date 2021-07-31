@@ -1,7 +1,7 @@
 #include "model/quadruped_impl.h"
 
 #include "sdrobot/leg.h"
-#include "params.h"
+#include "sdrobot/params.h"
 #include "model/float_base_impl.h"
 #include "dynamics/rotation.h"
 #include "dynamics/inertia.h"

@@ -2,7 +2,8 @@
 
 #include <memory>
 
-#include "types.h"
+#include "sdrobot/types.h"
+#include "sdrobot/params.h"
 
 namespace sdrobot::model
 {
@@ -21,20 +22,25 @@ namespace sdrobot::model
     using Ptr = std::unique_ptr<FloatBaseModel>;
     using SharedPtr = std::shared_ptr<FloatBaseModel>;
 
+    using GeneralizedForceType = std::array<fptype, params::model::dim_config>;
+    using MassMatrixType = std::array<fptype, params::model::dim_config * params::model::dim_config>;
+    using ContactJacobiansType = std::array<fptype, 3 * params::model::dim_config>;
+
     virtual ~FloatBaseModel() = default;
 
     virtual bool UpdateState(FloatBaseModelState const &state) = 0;
     virtual FloatBaseModelState const &GetState() const = 0;
     virtual bool UpdateGravity(SdVector3f const &g) = 0;
 
+    virtual bool ComputeGeneralizedMassMatrix() = 0;
     virtual bool ComputeGeneralizedGravityForce() = 0;
     virtual bool ComputeGeneralizedCoriolisForce() = 0;
     virtual bool ComputeContactJacobians() = 0;
 
-    virtual SdMatrixXf const &GetMassMatrix() const = 0;
-    virtual SdVectorXf const &GetGeneralizedGravityForce() const = 0;
-    virtual SdVectorXf const &GetGeneralizedCoriolisForce() const = 0;
-    virtual std::vector<SdMatrixXf> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
+    virtual MassMatrixType const &GetMassMatrix() const = 0;
+    virtual GeneralizedForceType const &GetGeneralizedGravityForce() const = 0;
+    virtual GeneralizedForceType const &GetGeneralizedCoriolisForce() const = 0;
+    virtual std::vector<ContactJacobiansType> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
     virtual std::vector<SdVector3f> const &GetContactJacobiansdqd() const = 0;
     virtual std::vector<SdVector3f> const &GetGroundContactPos() const = 0;
     virtual std::vector<SdVector3f> const &GetGroundContactVel() const = 0;

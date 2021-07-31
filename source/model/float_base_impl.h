@@ -12,14 +12,15 @@ namespace sdrobot::model
     FloatBaseModelState const &GetState() const override { return state_; }
     bool UpdateGravity(SdVector3f const &g) override;
 
+    bool ComputeGeneralizedMassMatrix() override;
     bool ComputeGeneralizedGravityForce() override;
     bool ComputeGeneralizedCoriolisForce() override;
     bool ComputeContactJacobians() override;
 
-    SdMatrixXf const &GetMassMatrix() const override { return H_; }
-    SdVectorXf const &GetGeneralizedGravityForce() const override { return G_; }
-    SdVectorXf const &GetGeneralizedCoriolisForce() const override { return Cqd_; }
-    std::vector<SdMatrixXf> const &GetContactJacobians() const override { return Jc_; }
+    MassMatrixType const &GetMassMatrix() const override { return H_; }
+    GeneralizedForceType const &GetGeneralizedGravityForce() const override { return G_; }
+    GeneralizedForceType const &GetGeneralizedCoriolisForce() const override { return Cqd_; }
+    std::vector<ContactJacobiansType> const &GetContactJacobians() const override { return Jc_; }
     std::vector<SdVector3f> const &GetContactJacobiansdqd() const override { return Jcdqd_; }
     std::vector<SdVector3f> const &GetGroundContactPos() const override { return gc_p_; }
     std::vector<SdVector3f> const &GetGroundContactVel() const override { return gc_v_; }
@@ -67,36 +68,24 @@ namespace sdrobot::model
     * @param Xrot  The coordinate transformation from parent to this body's rotor
     * @return The body's ID (can be used as the parent)
     */
-    int AddBody(dynamics::SpatialInertia const &inertia,
-                dynamics::SpatialInertia const &rotor_inertia, double const gear_ratio, int const parent,
+    int AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
+                Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, double const gear_ratio, int const parent,
                 dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
-                Matrix6 const &Xtree, Matrix6 const &Xrot);
-
-    /*!
-    * Add a body
-    * @param inertia The inertia of the body
-    * @param rotor_inertia The inertia of the rotor the body is connected to
-    * @param gear_ratio The gear ratio between the body and the rotor
-    * @param parent The parent body, which is also assumed to be the body the rotor
-    * is connected to
-    * @param joint_type The type of joint (prismatic or revolute)
-    * @param joint_axis The joint axis (X,Y,Z), in the parent's frame
-    * @param Xtree  The coordinate transformation from parent to this body
-    * @param Xrot  The coordinate transformation from parent to this body's rotor
-    * @return The body's ID (can be used as the parent)
-    */
-    int AddBody(dynamics::MassProperties const &inertia,
-                dynamics::MassProperties const &rotor_inertia, double const gear_ratio, int const parent,
-                dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
-                Matrix6 const &Xtree, Matrix6 const &Xrot);
+                Eigen::Ref<Matrix6 const> const &Xtree, Eigen::Ref<Matrix6 const> const &Xrot);
 
   private:
+    /*!
+    * Populate member variables when bodies are added
+    * @param count (6 for fb, 1 for joint)
+    */
+    void AddDynamicsVars(int count);
+
     bool CompositeInertias();
     bool BiasAccelerations();
     bool ForwardKinematics();
     void ResetCalculationFlags();
 
-    int n_dof_ = 0;
+    int curr_n_dof_ = 0;
     SdVector3f gravity_;
     FloatBaseModelState state_;
 
@@ -106,9 +95,11 @@ namespace sdrobot::model
     std::vector<dynamics::CoordinateAxis> joint_axes_;
     std::vector<SdMatrix6f> Xtree_, Xrot_;
     std::vector<SdMatrix6f> Ibody_, Irot_;
+    std::vector<std::string> body_names_;
 
     int n_ground_contact_ = 0;
     std::vector<int> gc_parent_;
+    std::vector<int> gc_foot_indices_;
     std::vector<SdVector3f> gc_location_;
     std::vector<SdVector3f> gc_p_;
     std::vector<SdVector3f> gc_v_;
@@ -120,10 +111,10 @@ namespace sdrobot::model
     std::vector<SdMatrix6f> IC_;
     std::vector<SdMatrix6f> Xup_, Xuprot_, Xa_;
 
-    SdMatrixXf H_;
-    SdVectorXf Cqd_, G_;
+    MassMatrixType H_;
+    GeneralizedForceType Cqd_, G_;
 
-    std::vector<SdMatrixXf> Jc_; //vector of matrix 3 x X
+    std::vector<ContactJacobiansType> Jc_;
     std::vector<SdVector3f> Jcdqd_;
 
     bool kinematics_uptodate_ = false;

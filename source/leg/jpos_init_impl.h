@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sdrobot/leg.h"
-#include "params.h"
+#include "sdrobot/params.h"
 
 namespace sdrobot::leg
 {

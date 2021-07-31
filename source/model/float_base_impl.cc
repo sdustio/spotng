@@ -4,15 +4,76 @@
 
 namespace sdrobot::model
 {
+  namespace
+  {
+    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, 1>> ToEigen_(FloatBaseModel::GeneralizedForceType &v)
+    {
+      Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, 1>> egv(v.data());
+      return egv;
+    }
+
+    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> ToEigen_(FloatBaseModel::MassMatrixType &v)
+    {
+      Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> egv(v.data());
+      return egv;
+    }
+
+    Eigen::Ref<Eigen::Matrix<fptype, 3, params::model::dim_config>> ToEigen_(FloatBaseModel::ContactJacobiansType &v)
+    {
+      Eigen::Map<Eigen::Matrix<fptype, 3, params::model::dim_config>> egv(v.data());
+      return egv;
+    }
+  }
+
   bool FloatBaseModelImpl::UpdateState(FloatBaseModelState const &state)
   {
     state_ = state;
     ResetCalculationFlags();
+    return true;
   }
 
   bool FloatBaseModelImpl::UpdateGravity(SdVector3f const &g)
   {
     gravity_ = g;
+    return true;
+  }
+
+  bool FloatBaseModelImpl::ComputeGeneralizedMassMatrix()
+  {
+    CompositeInertias();
+    H_.fill(0.);
+
+    auto H = ToEigen_(H_);
+
+    // Top left corner is the locked inertia of the whole system
+    H.topLeftCorner<6, 6>() = ToConstEigenMatrix(IC_[5]);
+
+    for (int j = 6; j < params::model::dim_config; j++)
+    {
+      // f = spatial force required for a unit qdd_j
+      dynamics::SpatialVec f = ToConstEigenMatrix(IC_[j]) * ToConstEigenMatrix(S_[j]);
+      dynamics::SpatialVec frot = ToConstEigenMatrix(Irot_[j]) * ToConstEigenMatrix(Srot_[j]);
+
+      H(j, j) = ToConstEigenMatrix(S_[j]).dot(f) + ToConstEigenMatrix(Srot_[j]).dot(frot);
+
+      // Propagate down the tree
+      f = ToConstEigenMatrix(Xup_[j]).transpose() * f + ToConstEigenMatrix(Xuprot_[j]).transpose() * frot;
+      int i = parents_[j];
+      while (i > 5)
+      {
+        // in here f is expressed in frame {i}
+        H(i, j) = ToConstEigenMatrix(S_[i]).dot(f);
+        H(j, i) = H(i, j);
+
+        // Propagate down the tree
+        f = ToConstEigenMatrix(Xup_[i]).transpose() * f;
+        i = parents_[i];
+      }
+
+      // Force on floating base
+      H.block<6, 1>(0, j) = f;
+      H.block<1, 6>(j, 0) = f.adjoint();
+    }
     return true;
   }
 
@@ -28,8 +89,8 @@ namespace sdrobot::model
 
     // Gravity comp force is the same as force required to accelerate
     // oppostite gravity
-    ToEigenMatrix(G_, n_dof_).topRows<6>() = -ToConstEigenMatrix(IC_[5]) * ToConstEigenMatrix(ag_[5]);
-    for (int i = 6; i < n_dof_; i++)
+    ToEigen_(G_).topRows<6>() = -ToConstEigenMatrix(IC_[5]) * ToConstEigenMatrix(ag_[5]);
+    for (int i = 6; i < params::model::dim_config; i++)
     {
       ToEigenMatrix(ag_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(ag_[parents_[i]]);
       ToEigenMatrix(agrot_[i]) = ToConstEigenMatrix(Xuprot_[i]) * ToConstEigenMatrix(ag_[parents_[i]]);
@@ -52,7 +113,7 @@ namespace sdrobot::model
     dynamics::ForceCrossProduct(tmpsv, ToConstEigenMatrix(v_[5]), Ifb * ToConstEigenMatrix(v_[5]));
     ToEigenMatrix(fvp_[5]) = Ifb * ToConstEigenMatrix(avp_[5]) + tmpsv;
 
-    for (int i = 6; i < n_dof_; i++)
+    for (int i = 6; i < params::model::dim_config; i++)
     {
       // Force on body i
       auto Ii = ToConstEigenMatrix(Ibody_[i]);
@@ -67,7 +128,7 @@ namespace sdrobot::model
       ToEigenMatrix(fvprot_[i]) = Ir * ToConstEigenMatrix(avprot_[i]) + tmpsv;
     }
 
-    for (int i = n_dof_ - 1; i > 5; i--)
+    for (int i = params::model::dim_config - 1; i > 5; i--)
     {
       // Extract force along the joints
       Cqd_[i] = ToConstEigenMatrix(S_[i]).dot(ToConstEigenMatrix(fvp_[i])) + ToConstEigenMatrix(Srot_[i]).dot(ToConstEigenMatrix(fvprot_[i]));
@@ -78,7 +139,7 @@ namespace sdrobot::model
     }
 
     // Force on floating base
-    ToEigenMatrix(Cqd_, n_dof_).topRows<6>() = ToConstEigenMatrix(fvp_[5]);
+    ToEigen_(Cqd_).topRows<6>() = ToConstEigenMatrix(fvp_[5]);
     return true;
   }
 
@@ -89,7 +150,7 @@ namespace sdrobot::model
 
     for (int k = 0; k < n_ground_contact_; k++)
     {
-      auto Jc_k = ToEigenMatrix(Jc_[k], 3, n_dof_);
+      auto Jc_k = ToEigen_(Jc_[k]);
       auto Jcdqd_k = ToEigenMatrix(Jcdqd_[k]);
       Jc_k.setZero();
       Jcdqd_k.setZero();
@@ -129,30 +190,181 @@ namespace sdrobot::model
 
   bool FloatBaseModelImpl::AddBase(Eigen::Ref<dynamics::SpatialInertia const> const &inertia)
   {
+    if (curr_n_dof_)
+    {
+      throw std::runtime_error("Cannot add base multiple times!\n");
+    }
+
+    SdMatrix6f eye6;
+    ToEigenMatrix(eye6) = Matrix6::Identity();
+
+    SdMatrix6f zero6 = {};
+    // the floating base has 6 DOFs
+
+    curr_n_dof_ = 6;
+    for (int i = 0; i < curr_n_dof_; i++)
+    {
+      parents_.push_back(0);
+      gear_ratios_.push_back(0);
+      joint_types_.push_back(dynamics::JointType::Nothing); // doesn't actually matter
+      joint_axes_.push_back(dynamics::CoordinateAxis::X);   // doesn't actually matter
+      Xtree_.push_back(eye6);
+      Ibody_.push_back(zero6);
+      Xrot_.push_back(eye6);
+      Irot_.push_back(zero6);
+      body_names_.push_back("N/A");
+    }
+
+    joint_types_[5] = dynamics::JointType::FloatingBase;
+    ToEigenMatrix(Ibody_[5]) = inertia;
+    gear_ratios_[5] = 1;
+    body_names_[5] = "Floating Base";
+
+    AddDynamicsVars(6);
+    return true;
   }
 
   bool FloatBaseModelImpl::AddBase(double const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I)
   {
+    Matrix6 IS;
+    dynamics::BuildSpatialInertia(IS, mass, com, I);
+    return AddBase(IS);
   }
+
   int FloatBaseModelImpl::AddGroundContactPoint(int const body_id, Eigen::Ref<Vector3 const> const &location,
                                                 bool const is_foot)
   {
+    if (body_id >= curr_n_dof_)
+    {
+      throw std::runtime_error(
+          "AddGroundContactPoint got invalid body_id: " + std::to_string(body_id) +
+          " current nDofs: " + std::to_string(curr_n_dof_) + "\n");
+    }
+
+    // std::cout << "pt-add: " << location.transpose() << "\n";
+    gc_parent_.push_back(body_id);
+    gc_location_.push_back(SdVector3f({location[0], location[1], location[2]}));
+
+    SdVector3f zero3 = {};
+
+    gc_p_.push_back(zero3);
+    gc_v_.push_back(zero3);
+
+    ContactJacobiansType J = {};
+
+    Jc_.push_back(J);
+    Jcdqd_.push_back(zero3);
+    //compute_contact_info_.push_back(false);
+    compute_contact_info_.push_back(true);
+
+    // add foot to foot list
+    if (is_foot)
+    {
+      gc_foot_indices_.push_back(n_ground_contact_);
+      compute_contact_info_[n_ground_contact_] = true;
+    }
+
+    return n_ground_contact_++;
   }
 
   void FloatBaseModelImpl::AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims)
   {
+    AddGroundContactPoint(body_id, Vector3(dims[0], dims[1], dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(-dims[0], dims[1], dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(dims[0], -dims[1], dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(-dims[0], -dims[1], dims[2]) / 2);
+
+    AddGroundContactPoint(body_id, Vector3(dims[0], dims[1], -dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(-dims[0], dims[1], -dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(dims[0], -dims[1], -dims[2]) / 2);
+    AddGroundContactPoint(body_id, Vector3(-dims[0], -dims[1], -dims[2]) / 2);
   }
-  int FloatBaseModelImpl::AddBody(dynamics::SpatialInertia const &inertia,
-                                  dynamics::SpatialInertia const &rotor_inertia, double const gear_ratio, int const parent,
+
+  int FloatBaseModelImpl::AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
+                                  Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, double const gear_ratio, int const parent,
                                   dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
-                                  Matrix6 const &Xtree, Matrix6 const &Xrot)
+                                  Eigen::Ref<Matrix6 const> const &Xtree, Eigen::Ref<Matrix6 const> const &Xrot)
   {
+    if (parent >= curr_n_dof_)
+    {
+      throw std::runtime_error(
+          "AddBody got invalid parent: " + std::to_string(parent) +
+          " nDofs: " + std::to_string(curr_n_dof_) + "\n");
+    }
+
+    parents_.push_back(parent);
+    gear_ratios_.push_back(gear_ratio);
+    joint_types_.push_back(joint_type);
+    joint_axes_.push_back(joint_axis);
+    SdMatrix6f xt, xr, inr, rinr;
+    ToEigenMatrix(xt) = Xtree;
+    ToEigenMatrix(xr) = Xrot;
+    ToEigenMatrix(inr) = inertia;
+    ToEigenMatrix(rinr) = rotor_inertia;
+    Xtree_.push_back(xt);
+    Xrot_.push_back(xr);
+    Ibody_.push_back(inr);
+    Irot_.push_back(rinr);
+    curr_n_dof_++;
+
+    AddDynamicsVars(1);
+
+    return curr_n_dof_;
   }
-  int FloatBaseModelImpl::AddBody(dynamics::MassProperties const &inertia,
-                                  dynamics::MassProperties const &rotor_inertia, double const gear_ratio, int const parent,
-                                  dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
-                                  Matrix6 const &Xtree, Matrix6 const &Xrot)
+
+  void FloatBaseModelImpl::AddDynamicsVars(int count)
   {
+    if (count != 1 && count != 6)
+    {
+      throw std::runtime_error(
+          "AddDynamicsVars must be called with count=1 (joint) or count=6 "
+          "(base).\n");
+    }
+
+    SdMatrix6f eye6;
+    ToEigenMatrix(eye6).setIdentity();
+
+    SdVector6f zero6 = {};
+    SdMatrix6f zeroInertia = {};
+
+    for (int i = 0; i < count; i++)
+    {
+      v_.push_back(zero6);
+      vrot_.push_back(zero6);
+      // a_.push_back(zero6);
+      // arot_.push_back(zero6);
+      avp_.push_back(zero6);
+      avprot_.push_back(zero6);
+      c_.push_back(zero6);
+      crot_.push_back(zero6);
+      S_.push_back(zero6);
+      Srot_.push_back(zero6);
+      // f_.push_back(zero6);
+      // frot_.push_back(zero6);
+      fvp_.push_back(zero6);
+      fvprot_.push_back(zero6);
+      ag_.push_back(zero6);
+      agrot_.push_back(zero6);
+      IC_.push_back(zeroInertia);
+      Xup_.push_back(eye6);
+      Xuprot_.push_back(eye6);
+      Xa_.push_back(eye6);
+
+      // ChiUp_.push_back(eye6);
+      // d_.push_back(0.);
+      // u_.push_back(0.);
+      // IA_.push_back(eye6);
+
+      // U_.push_back(zero6);
+      // Urot_.push_back(zero6);
+      // Utot_.push_back(zero6);
+      // pA_.push_back(zero6);
+      // pArot_.push_back(zero6);
+      // external_forces_.push_back(zero6);
+    }
+
+    // J_.push_back(SpatialVecXd::Zero(6, curr_n_dof_));
+    // Jdqd_.push_back(SpatialVec::Zero());
   }
 
   void FloatBaseModelImpl::ResetCalculationFlags()
@@ -175,13 +387,13 @@ namespace sdrobot::model
 
     ForwardKinematics();
     // initialize
-    for (int i = 5; i < n_dof_; i++)
+    for (int i = 5; i < params::model::dim_config; i++)
     {
       IC_[i] = Ibody_[i];
     }
 
     // backward loop
-    for (int i = n_dof_ - 1; i > 5; i--)
+    for (int i = params::model::dim_config - 1; i > 5; i--)
     {
       // Propagate inertia down the tree
       ToEigenMatrix(IC_[parents_[i]]) += ToConstEigenMatrix(Xup_[i]).transpose() * ToConstEigenMatrix(IC_[i]) * ToConstEigenMatrix(Xup_[i]);
@@ -200,7 +412,7 @@ namespace sdrobot::model
     ToEigenMatrix(avp_[5]) << 0, 0, 0, 0, 0, 0;
 
     // from base to tips
-    for (int i = 6; i < n_dof_; i++)
+    for (int i = 6; i < params::model::dim_config; i++)
     {
       // Outward kinamtic propagtion
       ToEigenMatrix(avp_[i]) = ToConstEigenMatrix(Xup_[i]) * ToConstEigenMatrix(avp_[parents_[i]]) + ToConstEigenMatrix(c_[i]);
@@ -222,7 +434,7 @@ namespace sdrobot::model
     dynamics::BuildSpatialXform(ToEigenMatrix(Xup_[5]), rot, ToConstEigenMatrix(state_.pos));
     v_[5] = state_.vel_body;
 
-    for (int i = 6; i < n_dof_; i++)
+    for (int i = 6; i < params::model::dim_config; i++)
     {
       // joint xform
       Matrix6 XJ;
@@ -247,7 +459,7 @@ namespace sdrobot::model
     }
 
     // calculate from absolute transformations
-    for (int i = 5; i < n_dof_; i++)
+    for (int i = 5; i < params::model::dim_config; i++)
     {
       if (parents_[i] == 0)
       {

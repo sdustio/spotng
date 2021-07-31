@@ -52,7 +52,7 @@ namespace sdrobot::params
 
     constexpr int num_act_joint = 12;
     constexpr int num_q = 19;
-    constexpr int dim_config = 18;
+    constexpr int dim_config = 18; //TODO num_dof
     constexpr int num_leg = 4;
     constexpr int num_leg_joint = 3;
 
