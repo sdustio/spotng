@@ -7,7 +7,6 @@
 #include "sdrobot/leg.h"
 #include "sdrobot/model.h"
 
-
 namespace sdrobot::fsm
 {
   /**
@@ -43,7 +42,7 @@ namespace sdrobot::fsm
     virtual void OnExit() = 0;
 
     // Run the normal behavior for the state
-    virtual bool Run() = 0;
+    virtual bool RunOnce() = 0;
 
     // Manages state specific transitions
     virtual State CheckTransition() = 0;
@@ -65,15 +64,24 @@ namespace sdrobot::fsm
   class SDROBOT_EXPORT FiniteStateMachine
   {
   public:
+    using Ptr = std::unique_ptr<FiniteStateMachine>;
+    using SharedPtr = std::shared_ptr<FiniteStateMachine>;
+
+    virtual ~FiniteStateMachine() = default;
+
+    virtual bool Init(
+        leg::LegCtrl::SharedPtr const &legctrl,
+        model::Quadruped::SharedPtr const &quad,
+        drive::DriveCtrl::SharedPtr const &drivectrl,
+        estimate::EstimateCtrl::SharedPtr const &estctrl) = 0;
+
+    virtual StateCtrl::SharedPtr GetStateCtrl(State state) = 0;
+
     /**
      * Called each control loop iteration. Decides if the robot is safe to
      * run controls and checks the current state for any transitions. Runs
      * the regular state behavior if all is normal.
      */
     virtual bool RunOnce() = 0;
-    virtual bool UpdateLegCtrl(leg::LegCtrl::SharedPtr const &legctrl) = 0;
-    virtual bool UpdateQuadruped(model::Quadruped::SharedPtr const &quad) = 0;
-    virtual bool UpdateDriveCtrl(drive::DriveCtrl::SharedPtr const &drivectrl) = 0;
-    virtual bool UpdateEstimateCtrl(estimate::EstimateCtrl::SharedPtr const &estctrl) = 0;
   };
 }
