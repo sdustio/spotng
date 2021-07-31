@@ -1,7 +1,10 @@
 #pragma once
 
 #include <unordered_map>
+
 #include "sdrobot/fsm.h"
+#include "fsm/safety_checker.h"
+
 
 namespace sdrobot::fsm
 {
@@ -32,5 +35,14 @@ namespace sdrobot::fsm
     model::Quadruped::SharedPtr mquat_;
     drive::DriveCtrl::SharedPtr drictrl_;
     estimate::EstimateCtrl::SharedPtr estctrl_;
+
+    StateCtrl::SharedPtr current_state_ctrl_;
+    StateCtrl::SharedPtr next_state_ctrl_;
+
+    State next_state_;
+    OperatingMode opmode_;
+
+    SafetyChecker safety_checker_;
+    TransitionData transition_data_;
   };
 }

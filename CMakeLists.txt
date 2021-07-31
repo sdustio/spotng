@@ -47,6 +47,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/leg/leg_ctrl_impl.cc
   source/leg/jpos_init_impl.cc
   source/fsm/impl.cc
+  source/fsm/safety_checker.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}
