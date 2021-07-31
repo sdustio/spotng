@@ -2,8 +2,8 @@
 
 - [x] B-spline, bezier 相关知识学习
 - [x] jpos_init
-- floating base
-- model(quadrup)
+- [x] floating base
+- [x] model(quadrup)
 - [x] vel_pos est
 
 **2021-07-29**

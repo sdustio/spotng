@@ -32,20 +32,21 @@ find_package(eiquadprog REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED ${sources})
 target_sources(${PROJECT_NAME} PRIVATE
-  source/drive/drive_ctrl_impl.cc
+  source/eigen.cc
   source/math/algebra.cc
   source/math/interpolate.cc
+  source/dynamics/rotation.cc
+  source/dynamics/inertia.cc
+  source/model/quadruped_impl.cc
+  source/model/float_base_impl.cc
+  source/drive/drive_ctrl_impl.cc
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
   source/leg/impl.cc
   source/leg/leg_ctrl_impl.cc
   source/leg/jpos_init_impl.cc
-  source/model/quadruped_impl.cc
-  source/model/float_base_impl.cc
-  source/dynamics/rotation.cc
-  source/dynamics/inertia.cc
-  source/eigen.cc
+  source/fsm/impl.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}

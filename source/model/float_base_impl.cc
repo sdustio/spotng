@@ -261,7 +261,7 @@ namespace sdrobot::model
     if (is_foot)
     {
       gc_foot_indices_.push_back(n_ground_contact_);
-      compute_contact_info_[n_ground_contact_] = true;
+      // compute_contact_info_[n_ground_contact_] = true;
     }
 
     return n_ground_contact_++;
