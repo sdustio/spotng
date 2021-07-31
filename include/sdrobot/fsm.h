@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "sdrobot/drive.h"
 #include "sdrobot/estimate.h"
 #include "sdrobot/leg.h"
