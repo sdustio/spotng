@@ -33,15 +33,6 @@ namespace sdrobot
     // 6x6 Matrix
     using Matrix6 = Eigen::Matrix<fpt_t, 6, 6>;
 
-    // 12x12 Matrix
-    using Matrix12 = Eigen::Matrix<fpt_t, 12, 12>;
-
-    // 18x18 Matrix
-    using Matrix18 = Eigen::Matrix<fpt_t, 18, 18>;
-
-    // 28x28 Matrix
-    using Matrix28 = Eigen::Matrix<fpt_t, 28, 28>;
-
     // 3x4 Matrix
     using Matrix3x4 = Eigen::Matrix<fpt_t, 3, 4>;
 

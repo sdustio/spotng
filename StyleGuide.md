@@ -18,3 +18,10 @@
 ## Eigen
 
 - 类成员不使用 Eigen对象
+- size(row * col) > 36，使用 dynamic matrix
+- 声明(定义) dynamic matrix：
+```cpp
+// Prefer
+MatrixXd m = Matrix<double, 18, 18>::Identity();
+MatrixXd m = Matrix<double, 18, 18>::Zero();
+```
