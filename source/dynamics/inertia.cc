@@ -4,7 +4,7 @@
 
 namespace sdrobot::dynamics
 {
-  bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fptype const mass, Eigen::Ref<Vector3 const> const &com, Eigen::Ref<RotationalInertia const> const &inertia)
+  bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &com, Eigen::Ref<RotationalInertia const> const &inertia)
   {
     Matrix3 cSkew;
     math::VecToSkewMat(cSkew, com); //质心向量转反对称矩阵
@@ -17,7 +17,7 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fptype const theta)
+  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta)
   {
     RotMat R;
     CoordinateRot(R, axis, theta);
@@ -49,7 +49,7 @@ namespace sdrobot::dynamics
     Vector3 h;
     math::MatToSkewVec(h, si.topRightCorner<3, 3>());
     Matrix3 Ibar = si.topLeftCorner<3, 3>();
-    fptype m = si(5, 5);
+    fpt_t m = si(5, 5);
     ret.topLeftCorner<3, 3>() =
         0.5 * Ibar.trace() * Matrix3::Identity() - Ibar;
     ret.topRightCorner<3, 1>() = h;
@@ -60,7 +60,7 @@ namespace sdrobot::dynamics
 
   bool PseudoRotationalInertiaToSpatialInertia(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<PseudoRotationalInertia const> const &P)
   {
-    fptype m = P(3, 3);
+    fpt_t m = P(3, 3);
     Matrix3 Ibar = P.topLeftCorner<3, 3>().trace() * Matrix3::Identity() - P.topLeftCorner<3, 3>();
     ret.topLeftCorner<3, 3>() = Ibar;
     math::VecToSkewMat(ret.topRightCorner<3, 3>(), P.topRightCorner<3, 1>());
@@ -80,7 +80,7 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fptype const mass, Eigen::Ref<Vector3 const> const &dims)
+  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &dims)
   {
 
     ret = Matrix3::Identity() * dims.norm() * dims.norm();
@@ -120,7 +120,7 @@ namespace sdrobot::dynamics
 
   bool SpatialInertiaToRotationalInertia(Eigen::Ref<RotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si)
   {
-    fptype m;
+    fpt_t m;
     MassFromSpatialInertia(m, si);
     Matrix3 mcSkew = si.topRightCorner<3, 3>();
     ret = si.topLeftCorner<3, 3>() -
@@ -128,7 +128,7 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool MassFromSpatialInertia(fptype &ret, Eigen::Ref<SpatialInertia const> const &si)
+  bool MassFromSpatialInertia(fpt_t &ret, Eigen::Ref<SpatialInertia const> const &si)
   {
     ret = si(5, 5);
     return true;
@@ -136,7 +136,7 @@ namespace sdrobot::dynamics
 
   bool COMFromSpatialInertia(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialInertia const> const &si)
   {
-    fptype m;
+    fpt_t m;
     MassFromSpatialInertia(m, si);
     Matrix3 mcSkew = si.topRightCorner<3, 3>();
     math::MatToSkewVec(ret, mcSkew);
@@ -214,7 +214,7 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fptype const q)
+  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q)
   {
     ret.setZero();
     if (joint == JointType::Revolute)

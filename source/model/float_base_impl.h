@@ -37,7 +37,7 @@ namespace sdrobot::model
     * @param com  Center of mass of the floating body
     * @param I    Rotational inertia of the floating body
     */
-    bool AddBase(fptype const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I);
+    bool AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I);
 
     /*!
     * Add a ground contact point to a model
@@ -69,7 +69,7 @@ namespace sdrobot::model
     * @return The body's ID (can be used as the parent)
     */
     int AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
-                Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fptype const gear_ratio, int const parent,
+                Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fpt_t const gear_ratio, int const parent,
                 dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
                 Eigen::Ref<Matrix6 const> const &Xtree, Eigen::Ref<Matrix6 const> const &Xrot);
 
@@ -90,7 +90,7 @@ namespace sdrobot::model
     FloatBaseModelState state_;
 
     std::vector<int> parents_;
-    std::vector<fptype> gear_ratios_;
+    std::vector<fpt_t> gear_ratios_;
     std::vector<dynamics::JointType> joint_types_;
     std::vector<dynamics::CoordinateAxis> joint_axes_;
     std::vector<SdMatrix6f> Xtree_, Xrot_;

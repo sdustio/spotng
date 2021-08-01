@@ -7,14 +7,14 @@ namespace sdrobot::drive
   class DriveCtrlImpl : public DriveCtrl
   {
   public:
-    explicit DriveCtrlImpl(fptype dt);
-    DriveCtrlImpl(DriveMode mode, fptype dt);
+    explicit DriveCtrlImpl(fpt_t dt);
+    DriveCtrlImpl(DriveMode mode, fpt_t dt);
 
     bool UpdateDriveCmd(DriveCmd const &cmd) override;
     bool CmdtoDesData() override;
 
-    fptype GetDuration() const override;
-    fptype GetStepHeight() const override;
+    fpt_t GetDuration() const override;
+    fpt_t GetStepHeight() const override;
     State GetState() const override;
     Gait GetGait() const override;
 
@@ -24,13 +24,13 @@ namespace sdrobot::drive
     SdVector3f const &GetVelRpyDes() const override;
 
   private:
-    fptype Deadband(fptype v, fptype minVal, fptype maxVal);
+    fpt_t Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal);
 
     DriveMode mode_;
-    fptype dt_;
+    fpt_t dt_;
     DriveCmd cmd_;
 
-    fptype step_height_ = 0.1;
+    fpt_t step_height_ = 0.1;
     State state_ = State::Init;
     Gait gait_ = Gait::Trot;
     SdVector3f pos_ = {};

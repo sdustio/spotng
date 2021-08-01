@@ -25,7 +25,7 @@ namespace sdrobot::math
     return;
   }
 
-  void PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fptype sigma_threshold)
+  void PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold)
   {
 
     if ((1 == inmat.rows()) && (1 == inmat.cols()))

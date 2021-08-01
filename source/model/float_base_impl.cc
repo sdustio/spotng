@@ -6,21 +6,21 @@ namespace sdrobot::model
 {
   namespace
   {
-    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, 1>> ToEigenTp_(FloatBaseModel::GeneralizedForceType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> ToEigenTp_(FloatBaseModel::GeneralizedForceType &v)
     {
-      Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, 1>> egv(v.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> ToEigenTp_(FloatBaseModel::MassMatrixType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> ToEigenTp_(FloatBaseModel::MassMatrixType &v)
     {
-      Eigen::Map<Eigen::Matrix<fptype, params::model::dim_config, params::model::dim_config>> egv(v.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fptype, 3, params::model::dim_config>> ToEigenTp_(FloatBaseModel::ContactJacobiansType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> ToEigenTp_(FloatBaseModel::ContactJacobiansType &v)
     {
-      Eigen::Map<Eigen::Matrix<fptype, 3, params::model::dim_config>> egv(v.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> egv(v.data());
       return egv;
     }
   }
@@ -224,7 +224,7 @@ namespace sdrobot::model
     return true;
   }
 
-  bool FloatBaseModelImpl::AddBase(fptype const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I)
+  bool FloatBaseModelImpl::AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I)
   {
     Matrix6 IS;
     dynamics::BuildSpatialInertia(IS, mass, com, I);
@@ -281,7 +281,7 @@ namespace sdrobot::model
   }
 
   int FloatBaseModelImpl::AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
-                                  Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fptype const gear_ratio, int const parent,
+                                  Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fpt_t const gear_ratio, int const parent,
                                   dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
                                   Eigen::Ref<Matrix6 const> const &Xtree, Eigen::Ref<Matrix6 const> const &Xrot)
   {

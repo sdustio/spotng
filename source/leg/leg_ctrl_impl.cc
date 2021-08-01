@@ -9,14 +9,14 @@ namespace sdrobot::leg
 
   namespace
   {
-    constexpr std::array<fptype, 4> side_signs{-1.0, 1.0, -1.0, 1.0};
+    constexpr std::array<fpt_t, 4> side_signs{-1.0, 1.0, -1.0, 1.0};
 
     /*!
     * Get if the i-th leg is on the left (+) or right (-) of the robot. 判断第i条腿是在机器人的左边(+)还是右边(-)。
     * @param leg : the leg index
     * @return The side sign (-1 for right legs, +1 for left legs)
     */
-    fptype GetSideSign(int leg)
+    fpt_t GetSideSign(int leg)
     {
       return side_signs.at(leg);
     }
@@ -56,23 +56,23 @@ namespace sdrobot::leg
 
   void LegCtrlImpl::ComputeLegJacobianAndPosition(int leg)
   {
-    fptype l1 = params::model::abad_link_length;
-    fptype l2 = params::model::hip_link_length;
-    fptype l3 = params::model::knee_link_length;
-    fptype l4 = params::model::knee_link_y_offset;
-    fptype side_sign = GetSideSign(leg); //also check bounds
+    fpt_t l1 = params::model::abad_link_length;
+    fpt_t l2 = params::model::hip_link_length;
+    fpt_t l3 = params::model::knee_link_length;
+    fpt_t l4 = params::model::knee_link_y_offset;
+    fpt_t side_sign = GetSideSign(leg); //also check bounds
 
     auto const &q = datas_[leg].q;
-    fptype s1 = std::sin(q[0]);
-    fptype s2 = std::sin(q[1]);
-    fptype s3 = std::sin(q[2]);
+    fpt_t s1 = std::sin(q[0]);
+    fpt_t s2 = std::sin(q[1]);
+    fpt_t s3 = std::sin(q[2]);
 
-    fptype c1 = std::cos(q[0]);
-    fptype c2 = std::cos(q[1]);
-    fptype c3 = std::cos(q[2]);
+    fpt_t c1 = std::cos(q[0]);
+    fpt_t c2 = std::cos(q[1]);
+    fpt_t c3 = std::cos(q[2]);
 
-    fptype c23 = c2 * c3 - s2 * s3;
-    fptype s23 = s2 * c3 + c2 * s3;
+    fpt_t c23 = c2 * c3 - s2 * s3;
+    fpt_t s23 = s2 * c3 + c2 * s3;
 
     auto J = ToEigenTp(datas_[leg].J);
     J(0, 0) = 0;

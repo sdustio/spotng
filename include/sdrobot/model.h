@@ -12,8 +12,8 @@ namespace sdrobot::model
     SdVector4f ori;
     SdVector3f pos;
     SdVector6f vel_body; // body coordinates
-    std::array<fptype, 12> q;
-    std::array<fptype, 12> qd;
+    std::array<fpt_t, 12> q;
+    std::array<fpt_t, 12> qd;
   };
 
   class SDROBOT_EXPORT FloatBaseModel
@@ -22,9 +22,9 @@ namespace sdrobot::model
     using Ptr = std::unique_ptr<FloatBaseModel>;
     using SharedPtr = std::shared_ptr<FloatBaseModel>;
 
-    using GeneralizedForceType = std::array<fptype, params::model::dim_config>;
-    using MassMatrixType = std::array<fptype, params::model::dim_config * params::model::dim_config>;
-    using ContactJacobiansType = std::array<fptype, 3 * params::model::dim_config>;
+    using GeneralizedForceType = std::array<fpt_t, params::model::dim_config>;
+    using MassMatrixType = std::array<fpt_t, params::model::dim_config * params::model::dim_config>;
+    using ContactJacobiansType = std::array<fpt_t, 3 * params::model::dim_config>;
 
     virtual ~FloatBaseModel() = default;
 
@@ -54,7 +54,7 @@ namespace sdrobot::model
 
     virtual ~Quadruped() = default;
 
-    virtual bool ComputeFloatBaseModel(fptype g) = 0; // gravity
+    virtual bool ComputeFloatBaseModel(fpt_t g) = 0; // gravity
     virtual FloatBaseModel::SharedPtr const &GetFloatBaseModel() const = 0;
 
     virtual bool CalcHipLocation(SdVector3f &ret, int const leg) const = 0;

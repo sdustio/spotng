@@ -21,5 +21,5 @@ namespace sdrobot::math
   * @param inmat : input matrix
   * @param sigmaThreshold : threshold for singular values being zero
   */
-  void PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fptype sigma_threshold);
+  void PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold);
 }

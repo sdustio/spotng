@@ -3,7 +3,7 @@
 
 namespace sdrobot::math
 {
-  bool interpolate_linear(fptype &ret, fptype const y0, fptype const yf, fptype const t)
+  bool interpolate_linear(fpt_t &ret, fpt_t const y0, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -15,7 +15,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX> ret,
       Eigen::Ref<VectorX const> const &y0,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -23,7 +23,7 @@ namespace sdrobot::math
     return true;
   }
 
-  bool interpolate_quadratic_bezier(fptype &ret, fptype const y0, fptype const y1, fptype const yf, fptype const t)
+  bool interpolate_quadratic_bezier(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -36,7 +36,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y0,
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -44,7 +44,7 @@ namespace sdrobot::math
     return true;
   }
 
-  bool interpolate_quadratic_bezier_derivative(fptype &ret, fptype const y0, fptype const y1, fptype const yf, fptype const t)
+  bool interpolate_quadratic_bezier_derivative(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -57,14 +57,14 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y0,
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
     ret = 2 * (1 - t) * (y1 - y0) + 2 * t * (yf - y1);
     return true;
   }
-  bool interpolate_quadratic_bezier_second_derivative(fptype &ret, fptype const y0, fptype const y1, fptype const yf, fptype const t)
+  bool interpolate_quadratic_bezier_second_derivative(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -77,7 +77,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y0,
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -85,7 +85,7 @@ namespace sdrobot::math
     return true;
   }
 
-  bool interpolate_cubic_bezier(fptype &ret, fptype const y0, fptype const y1, fptype const y2, fptype const yf, fptype const t)
+  bool interpolate_cubic_bezier(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const y2, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -99,7 +99,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &y2,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -107,7 +107,7 @@ namespace sdrobot::math
     return true;
   }
 
-  bool interpolate_cubic_bezier_derivative(fptype &ret, fptype const y0, fptype const y1, fptype const y2, fptype const yf, fptype const t)
+  bool interpolate_cubic_bezier_derivative(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const y2, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -121,7 +121,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &y2,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -129,7 +129,7 @@ namespace sdrobot::math
     return true;
   }
 
-  bool interpolate_cubic_bezier_second_derivative(fptype &ret, fptype const y0, fptype const y1, fptype const y2, fptype const yf, fptype const t)
+  bool interpolate_cubic_bezier_second_derivative(fpt_t &ret, fpt_t const y0, fpt_t const y1, fpt_t const y2, fpt_t const yf, fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;
@@ -143,7 +143,7 @@ namespace sdrobot::math
       Eigen::Ref<VectorX const> const &y1,
       Eigen::Ref<VectorX const> const &y2,
       Eigen::Ref<VectorX const> const &yf,
-      fptype const t)
+      fpt_t const t)
   {
     if (t < 0. || t > 1.)
       return false;

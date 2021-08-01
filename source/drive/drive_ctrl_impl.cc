@@ -3,12 +3,12 @@
 
 namespace sdrobot::drive
 {
-  DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fptype dt) : mode_(mode),
+  DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode),
                                                             dt_(dt)
   {
   }
 
-  DriveCtrlImpl::DriveCtrlImpl(fptype dt) : DriveCtrlImpl(DriveMode::kAutoAll, dt)
+  DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(DriveMode::kAutoAll, dt)
   {
   }
 
@@ -56,11 +56,11 @@ namespace sdrobot::drive
     return true;
   }
 
-  fptype DriveCtrlImpl::GetDuration() const
+  fpt_t DriveCtrlImpl::GetDuration() const
   {
     return dt_;
   }
-  fptype DriveCtrlImpl::GetStepHeight() const
+  fpt_t DriveCtrlImpl::GetStepHeight() const
   {
     return step_height_;
   }
@@ -90,7 +90,7 @@ namespace sdrobot::drive
     return vel_rpy_;
   }
 
-  fptype DriveCtrlImpl::Deadband(fptype v, fptype minVal, fptype maxVal)
+  fpt_t DriveCtrlImpl::Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal)
   {
     if (v < params::drive::kDeadbandRegion && v > -params::drive::kDeadbandRegion)
     {
