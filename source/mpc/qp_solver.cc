@@ -1,4 +1,3 @@
-#include <qpOASES.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include "mpc/qp_solver.h"
@@ -176,12 +175,6 @@ namespace sdrobot::mpc
     int new_vars = num_variables;
 
     for (int i = 0; i < num_constraints; i++)
-      con_elim_[i] = 0;
-
-    for (int i = 0; i < num_variables; i++)
-      var_elim_[i] = 0;
-
-    for (int i = 0; i < num_constraints; i++)
     {
       if (!(near_zero(qlb_[i]) && near_zero(qub_[i])))
         continue;
@@ -206,8 +199,6 @@ namespace sdrobot::mpc
       }
     }
 
-    auto var_ind = new int[new_vars];
-    auto con_ind = new int[new_cons];
     int vc = 0;
 
     for (int i = 0; i < num_variables; i++)
@@ -218,7 +209,7 @@ namespace sdrobot::mpc
         {
           throw("BAD ERROR 1\n");
         }
-        var_ind[vc] = i;
+        var_ind_[vc] = i;
         vc++;
       }
     }
@@ -231,41 +222,36 @@ namespace sdrobot::mpc
         {
           throw("BAD ERROR 1\n");
         }
-        con_ind[vc] = i;
+        con_ind_[vc] = i;
         vc++;
       }
     }
 
-    auto g_red = new qpOASES::real_t[new_vars];
-    auto H_red = new qpOASES::real_t[new_vars * new_vars];
     for (int i = 0; i < new_vars; i++)
     {
-      int olda = var_ind[i];
-      g_red[i] = qg_[olda];
+      int olda = var_ind_[i];
+      g_red_[i] = qg_[olda];
       for (int j = 0; j < new_vars; j++)
       {
-        int oldb = var_ind[j];
-        H_red[i * new_vars + j] = qH(olda, oldb);
+        int oldb = var_ind_[j];
+        H_red_[i * new_vars + j] = qH(olda, oldb);
       }
     }
 
-    auto A_red = new qpOASES::real_t[new_cons * new_vars];
     for (int con = 0; con < new_cons; con++)
     {
       for (int st = 0; st < new_vars; st++)
       {
-        auto cval = qA(con_ind[con], var_ind[st]);
-        A_red[con * new_vars + st] = cval;
+        auto cval = qA(con_ind_[con], var_ind_[st]);
+        A_red_[con * new_vars + st] = cval;
       }
     }
 
-    auto ub_red = new qpOASES::real_t[new_cons];
-    auto lb_red = new qpOASES::real_t[new_cons];
     for (int i = 0; i < new_cons; i++)
     {
-      int old = con_ind[i];
-      ub_red[i] = qub_[old];
-      lb_red[i] = qlb_[old];
+      int old = con_ind_[i];
+      ub_red_[i] = qub_[old];
+      lb_red_[i] = qlb_[old];
     }
 
     qpOASES::QProblem problem_red(new_vars, new_cons);
@@ -275,10 +261,9 @@ namespace sdrobot::mpc
     problem_red.setOptions(op);
     //int_t nWSR = 50000;
 
-    problem_red.init(H_red, g_red, A_red, nullptr, nullptr, lb_red, ub_red, nWSR);
+    problem_red.init(H_red_.data(), g_red_.data(), A_red_.data(), nullptr, nullptr, lb_red_.data(), ub_red_.data(), nWSR);
 
-    auto q_red = new qpOASES::real_t[new_vars];
-    int rval2 = problem_red.getPrimalSolution(q_red);
+    int rval2 = problem_red.getPrimalSolution(q_red_.data());
     if (rval2 != qpOASES::SUCCESSFUL_RETURN)
       printf("failed to solve!\n");
 
@@ -291,19 +276,11 @@ namespace sdrobot::mpc
       }
       else
       {
-        qsoln_[i] = q_red[vc];
+        qsoln_[i] = q_red_[vc];
         vc++;
       }
     }
 
-    delete[] var_ind;
-    delete[] con_ind;
-    delete[] g_red;
-    delete[] H_red;
-    delete[] A_red;
-    delete[] ub_red;
-    delete[] lb_red;
-    delete[] q_red;
   }
 
   void QPSolver::Setup(fpt_t dt, fpt_t mu, fpt_t f_max)
@@ -321,12 +298,24 @@ namespace sdrobot::mpc
     B_qp_.fill(0.);
     S_.fill(0.);
     X_d_.fill(0.);
+
     qub_.fill(0.);
     qlb_.fill(0.);
     qA_.fill(0.);
     qH_.fill(0.);
     qg_.fill(0.);
     qsoln_.fill(0.);
+    var_elim_.fill(0.);
+    con_elim_.fill(0.);
+
+    H_red_.fill(0.);
+    A_red_.fill(0.);
+    ub_red_.fill(0.);
+    lb_red_.fill(0.);
+    g_red_.fill(0.);
+    q_red_.fill(0.);
+    var_ind_.fill(0.);
+    con_ind_.fill(0.);
   }
 
   QPSolver::QPSolver()
