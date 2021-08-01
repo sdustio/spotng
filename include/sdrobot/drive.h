@@ -26,12 +26,12 @@ namespace sdrobot::drive
 
   struct SDROBOT_EXPORT DriveCmd
   {
-    double move_x;
-    double move_y;
-    double turn_rate;
-    double angle_pitch;
-    double variant_height;
-    double step_height;
+    fptype move_x;
+    fptype move_y;
+    fptype turn_rate;
+    fptype angle_pitch;
+    fptype variant_height;
+    fptype step_height;
     State state;
     Gait gait;
   };
@@ -47,8 +47,8 @@ namespace sdrobot::drive
     virtual bool UpdateDriveCmd(DriveCmd const &cmd) = 0;
     virtual bool CmdtoDesData() = 0;
 
-    virtual double GetDuration() const = 0;
-    virtual double GetStepHeight() const = 0;
+    virtual fptype GetDuration() const = 0;
+    virtual fptype GetStepHeight() const = 0;
     virtual State GetState() const = 0;
     virtual Gait GetGait() const = 0;
 

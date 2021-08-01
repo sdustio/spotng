@@ -224,7 +224,7 @@ namespace sdrobot::model
     return true;
   }
 
-  bool FloatBaseModelImpl::AddBase(double const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I)
+  bool FloatBaseModelImpl::AddBase(fptype const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I)
   {
     Matrix6 IS;
     dynamics::BuildSpatialInertia(IS, mass, com, I);
@@ -281,7 +281,7 @@ namespace sdrobot::model
   }
 
   int FloatBaseModelImpl::AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
-                                  Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, double const gear_ratio, int const parent,
+                                  Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fptype const gear_ratio, int const parent,
                                   dynamics::JointType const joint_type, dynamics::CoordinateAxis const joint_axis,
                                   Eigen::Ref<Matrix6 const> const &Xtree, Eigen::Ref<Matrix6 const> const &Xrot)
   {

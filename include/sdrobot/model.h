@@ -54,7 +54,7 @@ namespace sdrobot::model
 
     virtual ~Quadruped() = default;
 
-    virtual bool ComputeFloatBaseModel(double g) = 0; // gravity
+    virtual bool ComputeFloatBaseModel(fptype g) = 0; // gravity
     virtual FloatBaseModel::SharedPtr const &GetFloatBaseModel() const = 0;
 
     virtual bool CalcHipLocation(SdVector3f &ret, int const leg) const = 0;

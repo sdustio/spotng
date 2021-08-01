@@ -3,7 +3,7 @@
 
 namespace sdrobot::leg
 {
-  JPosInitImpl::JPosInitImpl(double dt, double time_end) : dt_(dt),
+  JPosInitImpl::JPosInitImpl(fptype dt, fptype time_end) : dt_(dt),
                                                            end_time_(time_end)
   {
 
@@ -35,7 +35,7 @@ namespace sdrobot::leg
       Eigen::Map<Eigen::Matrix<fptype, params::model::num_act_joint, 1>> y0(ini_jpos_.data());
       Eigen::Map<Eigen::Matrix<fptype, params::model::num_act_joint, 1>> y1(mid_jpos_.data());
       Eigen::Map<Eigen::Matrix<fptype, params::model::num_act_joint, 1>> yf(target_jpos_.data());
-      double t = curr_time_ / end_time_;
+      fptype t = curr_time_ / end_time_;
 
       math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);
 

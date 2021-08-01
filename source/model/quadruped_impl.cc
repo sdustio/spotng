@@ -37,7 +37,7 @@ namespace sdrobot::model
 
   }
 
-  bool QuadrupedImpl::ComputeFloatBaseModel(double g)
+  bool QuadrupedImpl::ComputeFloatBaseModel(fptype g)
   {
     if (model_)
       return false;
@@ -127,7 +127,7 @@ namespace sdrobot::model
     {
       // Ab/Ad joint
       //  int addBody(const SpatialInertia& inertia, const SpatialInertia&
-      //  rotorInertia, double gearRatio,
+      //  rotorInertia, fptype gearRatio,
       //              int parent, JointType jointType, CoordinateAxis jointAxis,
       //              const Matrix6& Xtree, const Matrix6& Xrot);
       body_id++;
@@ -191,7 +191,7 @@ namespace sdrobot::model
       Matrix6 xtree_knee_rotor;
       dynamics::BuildSpatialXform(xtree_knee_rotor, I3, knee_rotor_location);
 
-      double signed_knee_link_y_offset = params::model::knee_link_y_offset;
+      fptype signed_knee_link_y_offset = params::model::knee_link_y_offset;
       if (side_sign < 0)
       {
         dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, knee_spatial_inertia, dynamics::CoordinateAxis::Y);
@@ -233,7 +233,7 @@ namespace sdrobot::model
 
   bool QuadrupedImpl::CalcHipLocation(SdVector3f &ret, int const leg) const
   {
-    double hip_location[3] = {params::model::body_length * 0.5, params::model::body_width * 0.5, 0};
+    fptype hip_location[3] = {params::model::body_length * 0.5, params::model::body_width * 0.5, 0};
     ret = {
         (leg == leg::idx::fr || leg == leg::idx::fl) ? hip_location[0] : -hip_location[0],
         (leg == leg::idx::fl || leg == leg::idx::hl) ? hip_location[1] : -hip_location[1],

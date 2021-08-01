@@ -13,7 +13,7 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, double const theta);
+  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fptype const theta);
 
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
@@ -66,7 +66,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt);
+  void QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fptype const dt);
 
   /*!
  * Compute new quaternion given:
@@ -76,7 +76,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt);
+  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fptype const dt);
 
   /*!
  * Convert a quaternion to so3.

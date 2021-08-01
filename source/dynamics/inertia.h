@@ -12,13 +12,13 @@ namespace sdrobot::dynamics
   * @param mass Mass of the box
   * @param dims Dimensions of the box
   */
-  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, double const mass, Eigen::Ref<Vector3 const> const &dims);
+  bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fptype const mass, Eigen::Ref<Vector3 const> const &dims);
 
   /*!
    * Construct spatial inertia from mass, center of mass, and 3x3 rotational inertia
    * 从质量、质心和3 * 3的转动惯性来构造空间惯量
    */
-  bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, double const mass, Eigen::Ref<Vector3 const> const &com, Eigen::Ref<RotationalInertia const> const &inertia);
+  bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fptype const mass, Eigen::Ref<Vector3 const> const &com, Eigen::Ref<RotationalInertia const> const &inertia);
 
   /*!
   * Build spatial coordinate transformation from rotation and translation
@@ -29,7 +29,7 @@ namespace sdrobot::dynamics
   * Calculate the spatial coordinate transform from A to B where B is rotate by
   * theta about axis.
   */
-  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, double const theta); //TODO BuildSpatialXform
+  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fptype const theta); //TODO BuildSpatialXform
 
   /*!
    * Construct spatial inertia from pseudo-inertia. This is described in
@@ -68,7 +68,7 @@ namespace sdrobot::dynamics
   /*!
    * Get mass 得到质量
    */
-  bool MassFromSpatialInertia(double &ret, Eigen::Ref<SpatialInertia const> const &si);
+  bool MassFromSpatialInertia(fptype &ret, Eigen::Ref<SpatialInertia const> const &si);
 
   /*!
    * Get center of mass location 得到质心的位置
@@ -108,7 +108,7 @@ namespace sdrobot::dynamics
   /*!
  * Compute joint transformation
  */
-  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, double const q); //TODO BuildJointXform
+  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fptype const q); //TODO BuildJointXform
 
   /*!
  * Convert from spatial velocity to linear velocity.

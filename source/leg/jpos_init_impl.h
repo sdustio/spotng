@@ -8,20 +8,20 @@ namespace sdrobot::leg
   class JPosInitImpl : public JPosInit
   {
   public:
-    JPosInitImpl(double dt, double end_time);
+    JPosInitImpl(fptype dt, fptype end_time);
     bool IsInitialized(LegCtrl::SharedPtr &legctrl) override;
 
   private:
     void UpdateInitial(const LegCtrl::SharedPtr &legctrl);
 
-    double dt_;
-    double end_time_;
-    double curr_time_ = 0.0;
+    fptype dt_;
+    fptype end_time_;
+    fptype curr_time_ = 0.0;
     bool first_visit_ = true;
 
-    std::array<double, params::model::num_act_joint> ini_jpos_;
-    std::array<double, params::model::num_act_joint> target_jpos_;
-    std::array<double, params::model::num_act_joint> mid_jpos_;
+    std::array<fptype, params::model::num_act_joint> ini_jpos_;
+    std::array<fptype, params::model::num_act_joint> target_jpos_;
+    std::array<fptype, params::model::num_act_joint> mid_jpos_;
 
   };
 }

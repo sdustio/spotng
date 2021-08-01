@@ -13,10 +13,10 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, double const theta)
+  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fptype const theta)
   {
-    double s = std::sin(theta);
-    double c = std::cos(theta);
+    fptype s = std::sin(theta);
+    fptype c = std::cos(theta);
 
     if (axis == CoordinateAxis::X)
     {
@@ -57,10 +57,10 @@ namespace sdrobot::dynamics
   void RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1)
   {
     RotMat r = r1.transpose();
-    double tr = r.trace();
+    fptype tr = r.trace();
     if (tr > 0.0)
     {
-      double S = sqrt(tr + 1.0) * 2.0;
+      fptype S = sqrt(tr + 1.0) * 2.0;
       ret(0) = 0.25 * S;
       ret(1) = (r(2, 1) - r(1, 2)) / S;
       ret(2) = (r(0, 2) - r(2, 0)) / S;
@@ -68,7 +68,7 @@ namespace sdrobot::dynamics
     }
     else if ((r(0, 0) > r(1, 1)) && (r(0, 0) > r(2, 2)))
     {
-      double S = sqrt(1.0 + r(0, 0) - r(1, 1) - r(2, 2)) * 2.0;
+      fptype S = sqrt(1.0 + r(0, 0) - r(1, 1) - r(2, 2)) * 2.0;
       ret(0) = (r(2, 1) - r(1, 2)) / S;
       ret(1) = 0.25 * S;
       ret(2) = (r(0, 1) + r(1, 0)) / S;
@@ -76,7 +76,7 @@ namespace sdrobot::dynamics
     }
     else if (r(1, 1) > r(2, 2))
     {
-      double S = sqrt(1.0 + r(1, 1) - r(0, 0) - r(2, 2)) * 2.0;
+      fptype S = sqrt(1.0 + r(1, 1) - r(0, 0) - r(2, 2)) * 2.0;
       ret(0) = (r(0, 2) - r(2, 0)) / S;
       ret(1) = (r(0, 1) + r(1, 0)) / S;
       ret(2) = 0.25 * S;
@@ -84,7 +84,7 @@ namespace sdrobot::dynamics
     }
     else
     {
-      double S = sqrt(1.0 + r(2, 2) - r(0, 0) - r(1, 1)) * 2.0;
+      fptype S = sqrt(1.0 + r(2, 2) - r(0, 0) - r(1, 1)) * 2.0;
       ret(0) = (r(1, 0) - r(0, 1)) / S;
       ret(1) = (r(0, 2) + r(2, 0)) / S;
       ret(2) = (r(1, 2) + r(2, 1)) / S;
@@ -102,10 +102,10 @@ namespace sdrobot::dynamics
  */
   void QuatToRotMat(Eigen::Ref<RotMat> ret,  Eigen::Ref<Quat const> const &q)
   {
-    double e0 = q(0);
-    double e1 = q(1);
-    double e2 = q(2);
-    double e3 = q(3);
+    fptype e0 = q(0);
+    fptype e1 = q(1);
+    fptype e2 = q(2);
+    fptype e3 = q(3);
 
     ret << 1 - 2 * (e2 * e2 + e3 * e3), 2 * (e1 * e2 - e0 * e3),
         2 * (e1 * e3 + e0 * e2), 2 * (e1 * e2 + e0 * e3),
@@ -122,7 +122,7 @@ namespace sdrobot::dynamics
  */
   void QuatToRPY(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
-    double as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
+    fptype as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
     ret(2) =
         std::atan2(2 * (q[1] * q[2] + q[0] * q[3]),
                    math::Square(q[0]) + math::Square(q[1]) - math::Square(q[2]) - math::Square(q[3]));
@@ -176,12 +176,12 @@ namespace sdrobot::dynamics
  */
   void QuatProduct(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q1,  Eigen::Ref<Quat const> const &q2)
   {
-    double r1 = q1[0];
-    double r2 = q2[0];
+    fptype r1 = q1[0];
+    fptype r2 = q2[0];
     Vector3 v1(q1[1], q1[2], q1[3]);
     Vector3 v2(q2[1], q2[2], q2[3]);
 
-    double r = r1 * r2 - v1.dot(v2);
+    fptype r = r1 * r2 - v1.dot(v2);
     Vector3 v = r1 * v2 + r2 * v1 + v1.cross(v2);
     ret << r, v[0], v[1], v[2];
     return;
@@ -195,10 +195,10 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt)
+  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fptype const dt)
   {
     Vector3 axis;
-    double ang = omega.norm();
+    fptype ang = omega.norm();
     if (ang > 0)
     {
       axis = omega / ang;
@@ -224,10 +224,10 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, double const dt)
+  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fptype const dt)
   {
     Vector3 axis;
-    double ang = omega.norm();
+    fptype ang = omega.norm();
     if (ang > 0)
     {
       axis = omega / ang;
@@ -251,7 +251,7 @@ namespace sdrobot::dynamics
  */
   void QuatToSO3(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
-    double theta = 2. * std::acos(q[0]);
+    fptype theta = 2. * std::acos(q[0]);
     ret[0] = theta * q[1] / std::sin(theta / 2.);
     ret[1] = theta * q[2] / std::sin(theta / 2.);
     ret[2] = theta * q[3] / std::sin(theta / 2.);
@@ -260,7 +260,7 @@ namespace sdrobot::dynamics
 
   void SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3)
   {
-    double theta = sqrt(so3[0] * so3[0] + so3[1] * so3[1] + so3[2] * so3[2]);
+    fptype theta = sqrt(so3[0] * so3[0] + so3[1] * so3[1] + so3[2] * so3[2]);
 
     if (fabs(theta) < 1.e-6)
     {

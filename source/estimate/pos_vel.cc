@@ -5,8 +5,8 @@
 namespace sdrobot::estimate
 {
   PosVel::PosVel(
-      double dt,
-      double g,
+      fptype dt,
+      fptype g,
       leg::LegCtrl::SharedPtr const &legctrl,
       model::Quadruped::SharedPtr const &quad) : dt_(dt),
                                                  g_(g),
@@ -29,7 +29,7 @@ namespace sdrobot::estimate
     A.block<3, 3>(3, 3) = Matrix3::Identity();
     A.block<12, 12>(6, 6) = Matrix12::Identity();
     //输入矩阵
-    Eigen::Map<Eigen::Matrix<double, 18, 3>> B(B_.data());
+    Eigen::Map<Eigen::Matrix<fptype, 18, 3>> B(B_.data());
     B.setZero();
     B.block<3, 3>(3, 0) = dt_ * Matrix3::Identity();
     //观测矩阵
@@ -38,7 +38,7 @@ namespace sdrobot::estimate
     C1 << Matrix3::Identity(), Matrix3::Zero();
     Eigen::Matrix<fptype, 3, 6> C2;
     C2 << Matrix3::Zero(), Matrix3::Identity();
-    Eigen::Map<Eigen::Matrix<double, 28, 18>> C(C_.data());
+    Eigen::Map<Eigen::Matrix<fptype, 28, 18>> C(C_.data());
     C.setZero();
     C.block<3, 6>(0, 0) = C1;
     C.block<3, 6>(3, 0) = C1;
@@ -76,19 +76,19 @@ namespace sdrobot::estimate
   bool PosVel::RunOnce(State &ret)
   {
 
-    double process_noise_pimu = params::noise::kIMUProcessNoisePosition;
-    double process_noise_vimu = params::noise::kIMUProcessNoiseVelocity;
-    double process_noise_pfoot = params::noise::kFootProcessNoisePosition;
-    double sensor_noise_pimu_rel_foot = params::noise::kFootSensorNoisePosition;
-    double sensor_noise_vimu_rel_foot = params::noise::kFootSensorNoiseVelocity;
-    double sensor_noise_zfoot = params::noise::kFootHeightSensorNoise;
+    fptype process_noise_pimu = params::noise::kIMUProcessNoisePosition;
+    fptype process_noise_vimu = params::noise::kIMUProcessNoiseVelocity;
+    fptype process_noise_pfoot = params::noise::kFootProcessNoisePosition;
+    fptype sensor_noise_pimu_rel_foot = params::noise::kFootSensorNoisePosition;
+    fptype sensor_noise_vimu_rel_foot = params::noise::kFootSensorNoiseVelocity;
+    fptype sensor_noise_zfoot = params::noise::kFootHeightSensorNoise;
 
     Eigen::Map<Vector18> xhat(xhat_.data());
     Eigen::Map<Vector12> ps(ps_.data());
     Eigen::Map<Vector12> vs(vs_.data());
     Eigen::Map<Matrix18> A(A_.data());
-    Eigen::Map<Eigen::Matrix<double, 18, 3>> B(B_.data());
-    Eigen::Map<Eigen::Matrix<double, 28, 18>> C(C_.data());
+    Eigen::Map<Eigen::Matrix<fptype, 18, 3>> B(B_.data());
+    Eigen::Map<Eigen::Matrix<fptype, 28, 18>> C(C_.data());
     Eigen::Map<Matrix18> P(P_.data());
     Eigen::Map<Matrix18> Q0(Q0_.data());
     Eigen::Map<Matrix28> R0(R0_.data());
@@ -152,12 +152,12 @@ namespace sdrobot::estimate
       rindex2 = 12 + i1; //V
       rindex3 = 24 + i;  //Z
 
-      double trust = 1.;
-      double phase = fmin(ret.contact[i], 1.); //获得接触状态估计
+      fptype trust = 1.;
+      fptype phase = fmin(ret.contact[i], 1.); //获得接触状态估计
                                                //获取接触状态 在整个支撑过程百分比(从0到1)  完成后为0
                                                //脚i的测量协方差在摆动过程中被提高到一个很高的值，因此在这个融合过程中，摆动腿的测量值被有效地忽略了
-      //double trust_window = double(0.25);
-      double trust_window = 0.2;
+      //fptype trust_window = fptype(0.25);
+      fptype trust_window = 0.2;
 
       //在开始和结束支撑相窗口范围 当前相位在窗口范围的百分比
       //trust 一般为1
@@ -169,8 +169,8 @@ namespace sdrobot::estimate
       {
         trust = (1. - phase) / trust_window;
       }
-      //double high_suspect_number(1000);
-      double high_suspect_number = 100.;
+      //fptype high_suspect_number(1000);
+      fptype high_suspect_number = 100.;
 
       // printf("Trust %d: %.3f\n", i, trust);
       //摆动腿和支撑腿刚触地，即将离地时状态，测量噪声协方差增大
@@ -209,7 +209,7 @@ namespace sdrobot::estimate
 
     xhat += Pm * C.transpose() * S_ey; //？？
 
-    Eigen::Matrix<double, 28, 18> S_C = S.lu().solve(C); //？?
+    Eigen::Matrix<fptype, 28, 18> S_C = S.lu().solve(C); //？?
 
     P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm; //最佳估计不确定性协方差??
 

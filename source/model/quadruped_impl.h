@@ -7,7 +7,7 @@ namespace sdrobot::model
 class QuadrupedImpl : public Quadruped
   {
   public:
-    bool ComputeFloatBaseModel(double g) override;
+    bool ComputeFloatBaseModel(fptype g) override;
     FloatBaseModel::SharedPtr const &GetFloatBaseModel() const override;
 
     bool CalcHipLocation(SdVector3f &ret, int const leg) const override;
