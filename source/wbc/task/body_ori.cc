@@ -6,17 +6,10 @@ namespace sdrobot::wbc
 {
   TaskBodyOri::TaskBodyOri(
       model::FloatBaseModel::SharedPtr const &model,
-      SdVector3f const &kp, SdVector3f const &kd) : Task(model)
+      SdVector3f const &kp, SdVector3f const &kd) : Task(model, kp, kd)
   {
-    Jt_.fill(0.);
     Eigen::Map<Jt_t> Jt(Jt_.data());
     Jt.block<3, 3>(0, 0).setIdentity();
-
-    JtDotQdot_.fill(0.);
-
-    Kp_kin_.fill(1.);
-    Kp_ = kp;
-    Kd_ = kd;
   }
 
   bool TaskBodyOri::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des,

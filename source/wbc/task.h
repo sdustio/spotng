@@ -10,7 +10,14 @@ namespace sdrobot::wbc
   public:
     using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
 
-    Task(model::FloatBaseModel::SharedPtr const &model) : robot_sys_(model) {}
+    Task(model::FloatBaseModel::SharedPtr const &model,
+         SdVector3f const &kp,
+         SdVector3f const &kd) : robot_sys_(model), Kp_(kp), Kd_(kd)
+    {
+      Jt_.fill(0.);
+      JtDotQdot_.fill(0.);
+      Kp_kin_.fill(1.);
+    }
 
     bool UpdateTask(SdVector3f const &pos_des, SdVector3f const &vel_des,
                     SdVector3f const &acc_des)
@@ -53,5 +60,7 @@ namespace sdrobot::wbc
     SdVector3f pos_err_;
     SdVector3f vel_des_;
     SdVector3f acc_des_;
+
+    SdVector3f Kp_kin_, Kp_, Kd_;
   };
 } // namespace sdrobot::wbc
