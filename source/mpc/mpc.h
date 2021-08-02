@@ -16,6 +16,8 @@ namespace sdrobot::mpc
     constexpr int cmpc_x_drag = 3;
   }
 
+  using SdVector4i = std::array<int, 4>;
+
   class Mpc
   {
   public:
@@ -24,7 +26,7 @@ namespace sdrobot::mpc
 
     virtual ~Mpc() = default;
     virtual bool Init() = 0;
-    virtual bool Run(wbc::InData &data,
+    virtual bool Run(wbc::InData &wbcdata,
                      leg::LegCtrl::SharedPtr &legctrl,
                      model::Quadruped::SharedPtr const &quad,
                      drive::DriveCtrl::SharedPtr const &drivectrl,

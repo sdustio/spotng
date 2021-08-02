@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include "sdrobot/types.h"
 
 namespace sdrobot::math
 {

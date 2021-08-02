@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dynamics/types.h"
+#include "sdrobot/types.h"
 
 namespace sdrobot::mpc
 {
@@ -12,34 +12,37 @@ namespace sdrobot::mpc
    * Set the starting location of the foot
    * @param p0 : the initial foot position
    */
-    void SetInitialPosition(Vector3 p0)
+    bool UpdateInitialPosition(SdVector3f const &p0)
     {
       p0_ = p0;
+      return true;
     }
 
     /*!
    * Set the desired final position of the foot
    * @param pf : the final foot posiiton
    */
-    void SetFinalPosition(Vector3 pf)
+    bool UpdateFinalPosition(SdVector3f const &pf)
     {
       pf_ = pf;
+      return true;
     }
 
     /*!
    * Set the maximum height of the swing
    * @param h : the maximum height of the swing, achieved halfway through the swing
    */
-    void SetHeight(double h)
+    bool UpdateHeight(fpt_t h)
     {
       height_ = h;
+      return true;
     }
 
     /*!
    * Get the foot position at the current point along the swing
    * @return : the foot position
    */
-    const Vector3 &GetPosition()
+    SdVector3f const &GetPosition()
     {
       return p_;
     }
@@ -48,7 +51,7 @@ namespace sdrobot::mpc
    * Get the foot velocity at the current point along the swing
    * @return : the foot velocity
    */
-    const Vector3 &GetVelocity()
+    SdVector3f const &GetVelocity()
     {
       return v_;
     }
@@ -57,15 +60,15 @@ namespace sdrobot::mpc
    * Get the foot acceleration at the current point along the swing
    * @return : the foot acceleration
    */
-    const Vector3 &GetAcceleration()
+    SdVector3f const &GetAcceleration()
     {
       return a_;
     }
 
-    void ComputeSwingTrajectoryBezier(double phase, double swingTime);
+    bool ComputeSwingTrajectoryBezier(fpt_t const phase, fpt_t const swingTime);
 
   private:
-    Vector3 p0_, pf_, p_, v_, a_;
-    double height_;
+    SdVector3f p0_, pf_, p_, v_, a_;
+    fpt_t height_ = 0;
   };
 }

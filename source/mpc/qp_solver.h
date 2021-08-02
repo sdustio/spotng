@@ -5,7 +5,6 @@
 #include "mpc/mpc.h"
 #include "eigen.h"
 
-
 namespace sdrobot::mpc
 {
   constexpr int num_constraints = 20 * params::horizon_len;
@@ -16,12 +15,14 @@ namespace sdrobot::mpc
   public:
     QPSolver();
     void Setup(fpt_t dt, fpt_t mu, fpt_t f_max);
+
     void ResetQPMats();
-    void SolveQP(fpt_t const x_drag,
-                 Eigen::Ref<Vector3 const> const &p, Eigen::Ref<Vector3 const> const &v,
-                 Eigen::Ref<Vector4 const> const &q, Eigen::Ref<Vector3 const> const &w,
-                 Eigen::Ref<Vector12 const> const &r, fpt_t const yaw, Eigen::Ref<Vector12 const> const &weights,
-                 std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, std::vector<int> const &gait);
+
+    void SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
+                 SdVector4f const &ori, SdVector3f const &vel_rpy, std::array<fpt_t, 12> const &rel_foot_p,
+                 fpt_t const yaw, std::array<fpt_t, 12> const &weights,
+                 std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, fpt_t g,
+                 std::vector<int> const &gait);
     std::array<fpt_t, 12 * params::horizon_len * 1> const &GetSolution() { return qsoln_; }
 
   private:
@@ -30,7 +31,7 @@ namespace sdrobot::mpc
     fpt_t f_max_;
     fpt_t m_ = 10.5;
 
-    std::array<fpt_t, params::horizon_len * 13> A_qp_;
+    std::array<fpt_t, 13 * params::horizon_len * 13> A_qp_;
     std::array<fpt_t, 13 * params::horizon_len * 12 * params::horizon_len> B_qp_;
     std::array<fpt_t, 13 * params::horizon_len * 13 * params::horizon_len> S_;
     std::array<fpt_t, 12 * params::horizon_len * 12 * params::horizon_len> eye_12h_;

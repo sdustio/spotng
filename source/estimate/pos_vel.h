@@ -9,13 +9,13 @@ namespace sdrobot::estimate
   class PosVel : public Estimator
   {
   public:
-    PosVel(fpt_t dt, fpt_t g, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &quad);
+    PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &quad);
     bool Init() override;
     bool RunOnce(State &ret) override;
 
   private:
     fpt_t dt_;
-    fpt_t g_;
+    fpt_t gravity_;
     leg::LegCtrl::SharedPtr const legctrl_;
     model::Quadruped::SharedPtr const quad_;
 

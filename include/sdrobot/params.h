@@ -1,8 +1,13 @@
 #pragma once
 
+#include "sdrobot/types.h"
+
 namespace sdrobot::params
 {
-  constexpr fpt_t kZeroEpsilon = 1.e-12;
+  namespace math
+  {
+    constexpr fpt_t kZeroEpsilon = 1.e-12;
+  }
 
   namespace drive
   {
@@ -57,7 +62,6 @@ namespace sdrobot::params
     constexpr int num_leg_joint = 3;
 
   } // namespace model
-
 
   namespace noise
   {

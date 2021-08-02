@@ -6,10 +6,10 @@ namespace sdrobot::estimate
 {
   PosVel::PosVel(
       fpt_t dt,
-      fpt_t g,
+      fpt_t gravity,
       leg::LegCtrl::SharedPtr const &legctrl,
       model::Quadruped::SharedPtr const &quad) : dt_(dt),
-                                                 g_(g),
+                                                 gravity_(gravity),
                                                  legctrl_(legctrl),
                                                  quad_(quad)
   {
@@ -63,7 +63,7 @@ namespace sdrobot::estimate
     Q0.setIdentity();
     Q0.block<3, 3>(0, 0) = (dt_ / 20.) * Matrix3::Identity();
     Q0.block<3, 3>(3, 3) =
-        (dt_ * 9.8 / 20.) * Matrix3::Identity();
+        (dt_ * gravity_ / 20.) * Matrix3::Identity();
 
     Q0.block<12, 12>(6, 6) = dt_ * Eigen::Matrix<fpt_t, 12, 12>::Identity();
 
@@ -113,7 +113,7 @@ namespace sdrobot::estimate
     int rindex2 = 0;
     int rindex3 = 0;
     //重力向量
-    Vector3 g(0, 0, -g_);
+    Vector3 g(0, 0, -gravity_);
     Matrix3 Rbod = rot_body.transpose(); //机身到世界的变换矩阵
     // in old code, Rbod * se_acc + g
     //输入量a 世界下

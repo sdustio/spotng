@@ -46,7 +46,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/leg/impl.cc
   source/leg/leg_ctrl_impl.cc
   source/leg/jpos_init_impl.cc
-  source/mpc/gait.cc
+  source/mpc/gait_skd.cc
   source/mpc/foot_swing.cc
   source/mpc/qp_solver.cc
   source/mpc/cmpc.cc
