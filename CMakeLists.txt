@@ -51,6 +51,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/mpc/qp_solver.cc
   source/mpc/cmpc.cc
   source/wbc/task/body_ori.cc
+  source/wbc/task/body_pos.cc
   source/fsm/impl.cc
   source/fsm/safety_checker.cc
   source/robot_impl.cc
