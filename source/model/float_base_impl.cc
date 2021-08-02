@@ -432,7 +432,7 @@ namespace sdrobot::model
     dynamics::RotMat rot;
     dynamics::QuatToRotMat(rot, ToConstEigenTp(state_.ori));
     dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), rot, ToConstEigenTp(state_.pos));
-    v_[5] = state_.vel_body;
+    v_[5] = state_.vel;
 
     for (int i = 6; i < params::model::dim_config; i++)
     {

@@ -4,9 +4,12 @@
 
 namespace sdrobot::wbc
 {
+
   class Task
   {
   public:
+    using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
+
     Task(model::FloatBaseModel::SharedPtr const &model) : robot_sys_(model) {}
 
     bool UpdateTask(SdVector3f const &pos_des, SdVector3f const &vel_des,

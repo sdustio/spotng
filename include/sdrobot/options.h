@@ -21,6 +21,18 @@ namespace sdrobot
 
     fpt_t jpos_init_sec = 3.;
     fpt_t gravity = 9.81; // gravity scalar
+
+    SdVector3f kp_joint = {3, 3, 3};
+    SdVector3f kd_joint = {1, 0.2, 0.2};
+
+    SdVector3f kp_body = {100, 100, 100};
+    SdVector3f kd_body = {10, 10, 20};
+
+    SdVector3f kp_foot = {500, 500, 500};
+    SdVector3f kd_foot = {60, 60, 60};
+
+    SdVector3f kp_ori = {100, 100, 100};
+    SdVector3f kd_ori = {10, 10, 10};
   };
 
 } // namespace sdrobot
