@@ -10,10 +10,10 @@ namespace sdrobot::mpc
 {
   namespace params
   {
-    constexpr int bonus_swing = 0;
-    constexpr int horizon_len = 10;
-    constexpr fpt_t big_num = 5e10;
-    constexpr int cmpc_x_drag = 3;
+    constexpr inline int const bonus_swing = 0;
+    constexpr inline int const horizon_len = 10;
+    constexpr inline fpt_t const big_num = 5e10;
+    constexpr inline int const cmpc_x_drag = 3;
   }
 
   using SdVector4i = std::array<int, 4>;

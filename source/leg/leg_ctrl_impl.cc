@@ -9,7 +9,7 @@ namespace sdrobot::leg
 
   namespace
   {
-    constexpr std::array<fpt_t, 4> side_signs{-1.0, 1.0, -1.0, 1.0};
+    std::array<fpt_t, 4> const side_signs{-1.0, 1.0, -1.0, 1.0};
 
     /*!
     * Get if the i-th leg is on the left (+) or right (-) of the robot. 判断第i条腿是在机器人的左边(+)还是右边(-)。

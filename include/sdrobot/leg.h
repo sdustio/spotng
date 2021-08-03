@@ -9,10 +9,10 @@ namespace sdrobot::leg
 {
   namespace idx
   {
-    constexpr int fr = 0; // Front Right
-    constexpr int fl = 1; // Front Left
-    constexpr int hr = 2; // Hind Right
-    constexpr int hl = 3; // Hind Left
+    constexpr inline int const fr = 0; // Front Right
+    constexpr inline int const fl = 1; // Front Left
+    constexpr inline int const hr = 2; // Hind Right
+    constexpr inline int const hl = 3; // Hind Left
   }
 
   /*!

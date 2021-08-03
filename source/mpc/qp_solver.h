@@ -7,8 +7,8 @@
 
 namespace sdrobot::mpc
 {
-  constexpr int num_constraints = 20 * params::horizon_len;
-  constexpr int num_variables = 12 * params::horizon_len;
+  constexpr inline int const num_constraints = 20 * params::horizon_len;
+  constexpr inline int const num_variables = 12 * params::horizon_len;
 
   class QPSolver
   {
