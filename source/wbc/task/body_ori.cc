@@ -10,6 +10,7 @@ namespace sdrobot::wbc
   {
     Eigen::Map<Jt_t> Jt(Jt_.data());
     Jt.block<3, 3>(0, 0).setIdentity();
+    // kp_ori, kd_ori
   }
 
   bool TaskBodyOri::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des,

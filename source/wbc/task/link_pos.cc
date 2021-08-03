@@ -8,6 +8,7 @@ namespace sdrobot::wbc
       int linkid, bool virtual_depend)
       : Task(model, kp, kd), link_idx_(linkid), virtual_depend_(virtual_depend)
   {
+    //kp_foot, kd_foot
   }
 
   bool TaskLinkPos::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des,

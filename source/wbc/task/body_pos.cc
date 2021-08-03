@@ -10,6 +10,7 @@ namespace sdrobot::wbc
   {
     Eigen::Map<Jt_t> Jt(Jt_.data());
     Jt.block<3, 3>(0, 0).setIdentity();
+    // kp_body, kd_body
   }
 
   // Update op_cmd_
