@@ -11,12 +11,12 @@ namespace sdrobot::mpc
   {
     first_swing_.fill(true);
     qpsolver_ = std::make_unique<QPSolver>();
-    gait_map_[drive::Gait::Trot] = std::make_unique<OffsetDurationGait>(params::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{5, 5, 5, 5}, "Trot");
-    gait_map_[drive::Gait::SlowTrot] = std::make_unique<OffsetDurationGait>(int(params::horizon_len * 1.2), SdVector4i{0, 6, 6, 0}, SdVector4i{6, 6, 6, 6}, "SlowTrot");
-    gait_map_[drive::Gait::FlyingTrot] = std::make_unique<OffsetDurationGait>(params::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{4, 4, 4, 4}, "FlyingTrot");
-    gait_map_[drive::Gait::Walk] = std::make_unique<OffsetDurationGait>(int(params::horizon_len * 1.6), SdVector4i{0, 8, 4, 12}, SdVector4i{12, 12, 12, 12}, "Walk");
-    gait_map_[drive::Gait::Bound] = std::make_unique<OffsetDurationGait>(params::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5}, "Bound");
-    gait_map_[drive::Gait::Pronk] = std::make_unique<OffsetDurationGait>(params::horizon_len, SdVector4i{0, 0, 0, 0}, SdVector4i{4, 4, 4, 4}, "Pronk");
+    gait_map_[drive::Gait::Trot] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{5, 5, 5, 5}, "Trot");
+    gait_map_[drive::Gait::SlowTrot] = std::make_unique<OffsetDurationGait>(int(opts::horizon_len * 1.2), SdVector4i{0, 6, 6, 0}, SdVector4i{6, 6, 6, 6}, "SlowTrot");
+    gait_map_[drive::Gait::FlyingTrot] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{4, 4, 4, 4}, "FlyingTrot");
+    gait_map_[drive::Gait::Walk] = std::make_unique<OffsetDurationGait>(int(opts::horizon_len * 1.6), SdVector4i{0, 8, 4, 12}, SdVector4i{12, 12, 12, 12}, "Walk");
+    gait_map_[drive::Gait::Bound] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5}, "Bound");
+    gait_map_[drive::Gait::Pronk] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 0, 0, 0}, SdVector4i{4, 4, 4, 4}, "Pronk");
   }
 
   bool CMpc::Run(wbc::InData &wbcdata,
@@ -166,7 +166,7 @@ namespace sdrobot::mpc
 
       // Using the estimated velocity is correct
       //Vector3 v_des_robot_world = seResult.rot_body.transpose() * vel_des_robot;
-      fpt_t pfx_rel = vel_world[0] * (.5 + params::bonus_swing) * stance_time +
+      fpt_t pfx_rel = vel_world[0] * (.5 + opts::bonus_swing) * stance_time +
                       .1 * (vel_world[0] - sd_vel_des_world[0]) +
                       (0.5 * pos[2] / 9.81) * (vel_world[1] * vel_rpy_des_robot[2]);
 
@@ -260,7 +260,7 @@ namespace sdrobot::mpc
       return;
     }
 
-    if ((iter_counter_ / iter_between_mpc_) >= params::horizon_len)
+    if ((iter_counter_ / iter_between_mpc_) >= opts::horizon_len)
     {
       iter_counter_ = 0;
     }
@@ -306,7 +306,7 @@ namespace sdrobot::mpc
                              vel_des_world[1],  // 10
                              vel_des_world[2]}; // 11
 
-    for (int i = 0; i < params::horizon_len; i++)
+    for (int i = 0; i < opts::horizon_len; i++)
     {
       for (int j = 0; j < 12; j++)
         traj_all_[12 * i + j] = trajInitial[j];
@@ -363,7 +363,7 @@ namespace sdrobot::mpc
 
     if (vxy[0] > 0.3 || vxy[0] < -0.3)
     {
-      x_comp_integral += params::cmpc_x_drag * pz_err * dt_mpc_ / vxy[0];
+      x_comp_integral += opts::cmpc_x_drag * pz_err * dt_mpc_ / vxy[0];
     }
 
     qpsolver_->SolveQP(x_comp_integral, pos, v_world, ori, w_world, r, yaw, weights, traj_all_, alpha, gravity_, mpcTable);

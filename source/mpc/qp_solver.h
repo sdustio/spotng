@@ -7,8 +7,8 @@
 
 namespace sdrobot::mpc
 {
-  constexpr inline int const num_constraints = 20 * params::horizon_len;
-  constexpr inline int const num_variables = 12 * params::horizon_len;
+  constexpr inline int const num_constraints = 20 * opts::horizon_len;
+  constexpr inline int const num_variables = 12 * opts::horizon_len;
 
   class QPSolver
   {
@@ -23,14 +23,14 @@ namespace sdrobot::mpc
                  fpt_t const yaw, std::array<fpt_t, 12> const &weights,
                  std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, fpt_t g,
                  std::vector<int> const &gait);
-    std::array<fpt_t, 12 * params::horizon_len * 1> const &GetSolution() { return qsoln_; }
+    std::array<fpt_t, 12 * opts::horizon_len * 1> const &GetSolution() { return qsoln_; }
 
   private:
-    using A_qp_t = Eigen::Matrix<fpt_t, 13 * params::horizon_len, 13>;
-    using B_qp_t = Eigen::Matrix<fpt_t, 13 * params::horizon_len, 12 * params::horizon_len>;
-    using S_t = Eigen::Matrix<fpt_t, 13 * params::horizon_len, 13 * params::horizon_len>;
-    using eye_12h_t = Eigen::Matrix<fpt_t, 12 * params::horizon_len, 12 * params::horizon_len>;
-    using X_d_t = Eigen::Matrix<fpt_t, 13 * params::horizon_len, 1>;
+    using A_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13>;
+    using B_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 12 * opts::horizon_len>;
+    using S_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13 * opts::horizon_len>;
+    using eye_12h_t = Eigen::Matrix<fpt_t, 12 * opts::horizon_len, 12 * opts::horizon_len>;
+    using X_d_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 1>;
 
     using qH_t = Eigen::Matrix<fpt_t, num_variables, num_variables>;
     using qA_t = Eigen::Matrix<fpt_t, num_constraints, num_variables>;
@@ -46,11 +46,11 @@ namespace sdrobot::mpc
     fpt_t f_max_;
     fpt_t m_ = 10.5;
 
-    std::array<fpt_t, 13 * params::horizon_len * 13> A_qp_;
-    std::array<fpt_t, 13 * params::horizon_len * 12 * params::horizon_len> B_qp_;
-    std::array<fpt_t, 13 * params::horizon_len * 13 * params::horizon_len> S_;
-    std::array<fpt_t, 12 * params::horizon_len * 12 * params::horizon_len> eye_12h_;
-    std::array<fpt_t, 13 * params::horizon_len> X_d_;
+    std::array<fpt_t, 13 * opts::horizon_len * 13> A_qp_;
+    std::array<fpt_t, 13 * opts::horizon_len * 12 * opts::horizon_len> B_qp_;
+    std::array<fpt_t, 13 * opts::horizon_len * 13 * opts::horizon_len> S_;
+    std::array<fpt_t, 12 * opts::horizon_len * 12 * opts::horizon_len> eye_12h_;
+    std::array<fpt_t, 13 * opts::horizon_len> X_d_;
 
     std::array<fpt_t, num_variables * num_variables> qH_;
     std::array<fpt_t, num_constraints * num_variables> qA_;

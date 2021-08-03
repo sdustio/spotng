@@ -91,15 +91,15 @@ namespace sdrobot::mpc
 
     MatrixX powerMats[20]; // shape: 13 x 13
     powerMats[0].setIdentity(13, 13);
-    for (int i = 1; i < params::horizon_len + 1; i++)
+    for (int i = 1; i < opts::horizon_len + 1; i++)
     {
       powerMats[i] = Adt * powerMats[i - 1];
     }
 
-    for (int r = 0; r < params::horizon_len; r++)
+    for (int r = 0; r < opts::horizon_len; r++)
     {
       A_qp.block<13, 13>(13 * r, 0) = powerMats[r + 1]; //Adt.pow(r+1);
-      for (int c = 0; c < params::horizon_len; c++)
+      for (int c = 0; c < opts::horizon_len; c++)
       {
         if (r >= c)
         {
@@ -114,24 +114,24 @@ namespace sdrobot::mpc
     for (int i = 0; i < 12; i++)
       full_weight(i) = weights[i];
     full_weight(12) = 0.;
-    S.diagonal() = full_weight.replicate(params::horizon_len, 1);
+    S.diagonal() = full_weight.replicate(opts::horizon_len, 1);
 
     //trajectory
-    for (int i = 0; i < params::horizon_len; i++)
+    for (int i = 0; i < opts::horizon_len; i++)
     {
       for (int j = 0; j < 12; j++)
         X_d(13 * i + j, 0) = state_trajectory[12 * i + j];
     }
 
     int k = 0;
-    for (int i = 0; i < params::horizon_len; i++)
+    for (int i = 0; i < opts::horizon_len; i++)
     {
       for (int j = 0; j < 4; j++)
       {
-        qub(5 * k + 0) = params::big_num;
-        qub(5 * k + 1) = params::big_num;
-        qub(5 * k + 2) = params::big_num;
-        qub(5 * k + 3) = params::big_num;
+        qub(5 * k + 0) = opts::big_num;
+        qub(5 * k + 1) = opts::big_num;
+        qub(5 * k + 2) = opts::big_num;
+        qub(5 * k + 3) = opts::big_num;
         qub(5 * k + 4) = gait[i * 4 + j] * f_max_;
         k++;
       }
@@ -145,7 +145,7 @@ namespace sdrobot::mpc
         0, -rep_mu, 1.,
         0, 0, 1.;
 
-    for (int i = 0; i < params::horizon_len * 4; i++)
+    for (int i = 0; i < opts::horizon_len * 4; i++)
     {
       qA.block<5, 3>(i * 5, i * 3) = f_block;
     }

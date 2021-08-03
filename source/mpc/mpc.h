@@ -8,7 +8,7 @@
 
 namespace sdrobot::mpc
 {
-  namespace params
+  namespace opts
   {
     constexpr inline int const bonus_swing = 0;
     constexpr inline int const horizon_len = 10;
