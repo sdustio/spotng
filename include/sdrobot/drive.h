@@ -20,8 +20,7 @@ namespace sdrobot::drive
     SlowTrot,
     FlyingTrot,
     Walk,
-    Bound,
-    Pronk
+    Bound
   };
 
   struct SDROBOT_EXPORT DriveCmd

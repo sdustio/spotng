@@ -6,19 +6,19 @@ namespace sdrobot::model
 {
   namespace
   {
-    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> ToEigenTp_(FloatBaseModel::GeneralizedForceType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> ToEigenTp_(GeneralFTp &v)
     {
       Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> ToEigenTp_(FloatBaseModel::MassMatrixType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> ToEigenTp_(MassMatTp &v)
     {
       Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> egv(v.data());
       return egv;
     }
 
-    Eigen::Ref<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> ToEigenTp_(FloatBaseModel::ContactJacobiansType &v)
+    Eigen::Ref<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> ToEigenTp_(ContactJacobTp &v)
     {
       Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> egv(v.data());
       return egv;
@@ -250,7 +250,7 @@ namespace sdrobot::model
     gc_p_.push_back(zero3);
     gc_v_.push_back(zero3);
 
-    ContactJacobiansType J = {};
+    ContactJacobTp J = {};
 
     Jc_.push_back(J);
     Jcdqd_.push_back(zero3);

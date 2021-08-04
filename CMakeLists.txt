@@ -54,6 +54,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/wbc/task/body_pos.cc
   source/wbc/task/link_pos.cc
   source/wbc/contact.cc
+  source/wbc/wbic.cc
   source/fsm/impl.cc
   source/fsm/safety_checker.cc
   source/robot_impl.cc

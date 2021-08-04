@@ -16,15 +16,15 @@ namespace sdrobot::model
     std::array<fpt_t, 12> qd;
   };
 
+  using GeneralFTp = std::array<fpt_t, params::model::dim_config>;
+  using MassMatTp = std::array<fpt_t, params::model::dim_config * params::model::dim_config>;
+  using ContactJacobTp = std::array<fpt_t, 3 * params::model::dim_config>;
+
   class SDROBOT_EXPORT FloatBaseModel
   {
   public:
     using Ptr = std::unique_ptr<FloatBaseModel>;
     using SharedPtr = std::shared_ptr<FloatBaseModel>;
-
-    using GeneralizedForceType = std::array<fpt_t, params::model::dim_config>;
-    using MassMatrixType = std::array<fpt_t, params::model::dim_config * params::model::dim_config>;
-    using ContactJacobiansType = std::array<fpt_t, 3 * params::model::dim_config>;
 
     virtual ~FloatBaseModel() = default;
 
@@ -37,10 +37,10 @@ namespace sdrobot::model
     virtual bool ComputeGeneralizedCoriolisForce() = 0;
     virtual bool ComputeContactJacobians() = 0;
 
-    virtual MassMatrixType const &GetMassMatrix() const = 0;
-    virtual GeneralizedForceType const &GetGeneralizedGravityForce() const = 0;
-    virtual GeneralizedForceType const &GetGeneralizedCoriolisForce() const = 0;
-    virtual std::vector<ContactJacobiansType> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
+    virtual MassMatTp const &GetMassMatrix() const = 0;
+    virtual GeneralFTp const &GetGeneralizedGravityForce() const = 0;
+    virtual GeneralFTp const &GetGeneralizedCoriolisForce() const = 0;
+    virtual std::vector<ContactJacobTp> const &GetContactJacobians() const = 0; //vector of matrix 3 x X
     virtual std::vector<SdVector3f> const &GetContactJacobiansdqd() const = 0;
     virtual std::vector<SdVector3f> const &GetGroundContactPos() const = 0;
     virtual std::vector<SdVector3f> const &GetGroundContactVel() const = 0;

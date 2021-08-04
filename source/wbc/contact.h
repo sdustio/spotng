@@ -11,8 +11,6 @@ namespace sdrobot::wbc
     using Ptr = std::unique_ptr<Contact>;
     using SharedPtr = std::shared_ptr<Contact>;
 
-    using Jc_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
-
     Contact(model::FloatBaseModel::SharedPtr const &model, int contact_pt);
 
     int GetDim() const { return 3; }
@@ -23,7 +21,7 @@ namespace sdrobot::wbc
 
     bool UpdateContact();
 
-    std::array<fpt_t, 3 * params::model::dim_config> const &GetContactJacobian() { return Jc_; }
+    model::ContactJacobTp const &GetContactJacobian() { return Jc_; }
     SdVector3f const &GetJcDotQdot() { return JcDotQdot_; }
     std::array<fpt_t, 6 * 3> const &GetRFConstraintMtx() { return Uf_; }
     SdVector6f const &GetRFConstraintVec() { return ieq_vec_; }

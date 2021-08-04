@@ -17,10 +17,10 @@ namespace sdrobot::model
     bool ComputeGeneralizedCoriolisForce() override;
     bool ComputeContactJacobians() override;
 
-    MassMatrixType const &GetMassMatrix() const override { return H_; }
-    GeneralizedForceType const &GetGeneralizedGravityForce() const override { return G_; }
-    GeneralizedForceType const &GetGeneralizedCoriolisForce() const override { return Cqd_; }
-    std::vector<ContactJacobiansType> const &GetContactJacobians() const override { return Jc_; }
+    MassMatTp const &GetMassMatrix() const override { return H_; }
+    GeneralFTp const &GetGeneralizedGravityForce() const override { return G_; }
+    GeneralFTp const &GetGeneralizedCoriolisForce() const override { return Cqd_; }
+    std::vector<ContactJacobTp> const &GetContactJacobians() const override { return Jc_; }
     std::vector<SdVector3f> const &GetContactJacobiansdqd() const override { return Jcdqd_; }
     std::vector<SdVector3f> const &GetGroundContactPos() const override { return gc_p_; }
     std::vector<SdVector3f> const &GetGroundContactVel() const override { return gc_v_; }
@@ -111,10 +111,10 @@ namespace sdrobot::model
     std::vector<SdMatrix6f> IC_;
     std::vector<SdMatrix6f> Xup_, Xuprot_, Xa_;
 
-    MassMatrixType H_;
-    GeneralizedForceType Cqd_, G_;
+    MassMatTp H_;
+    GeneralFTp Cqd_, G_;
 
-    std::vector<ContactJacobiansType> Jc_;
+    std::vector<ContactJacobTp> Jc_;
     std::vector<SdVector3f> Jcdqd_;
 
     bool kinematics_uptodate_ = false;

@@ -16,7 +16,6 @@ namespace sdrobot::mpc
     gait_map_[drive::Gait::FlyingTrot] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{4, 4, 4, 4}, "FlyingTrot");
     gait_map_[drive::Gait::Walk] = std::make_unique<OffsetDurationGait>(int(opts::horizon_len * 1.6), SdVector4i{0, 8, 4, 12}, SdVector4i{12, 12, 12, 12}, "Walk");
     gait_map_[drive::Gait::Bound] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5}, "Bound");
-    gait_map_[drive::Gait::Pronk] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 0, 0, 0}, SdVector4i{4, 4, 4, 4}, "Pronk");
   }
 
   bool CMpc::Run(wbc::InData &wbcdata,
@@ -271,8 +270,8 @@ namespace sdrobot::mpc
 
     SdVector3f rpy_comp = {};
     rpy_comp[1] = v_world[0] * pos_rpy_int_[1];
-    rpy_comp[0] = v_world[1] * pos_rpy_int_[0] * int(drivectrl->GetGait() != drive::Gait::Pronk); //turn off for pronking
-    rpy_comp[2] = drivectrl->GetPosRpyDes()[2];                                               // angle_y
+    rpy_comp[0] = v_world[1] * pos_rpy_int_[0];
+    rpy_comp[2] = drivectrl->GetPosRpyDes()[2]; // angle_y
 
     fpt_t const max_pos_error = .1;
     fpt_t xStart = pos_des_world_[0];
