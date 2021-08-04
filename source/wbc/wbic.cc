@@ -5,11 +5,6 @@
 
 namespace sdrobot::wbc
 {
-  using Sv_t = Eigen::Matrix<fpt_t, 6, params::model::dim_config>;
-  using eye_t = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
-  using gf_t = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
-  using torq_t = Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>;
-
   Wbic::Wbic(double weight)
   {
     W_floating_.fill(weight);
@@ -17,9 +12,6 @@ namespace sdrobot::wbc
 
     Eigen::Map<Sv_t> Sv(Sv_.data());
     Sv.block<6, 6>(0, 0).setIdentity();
-
-    Eigen::Map<eye_t> eye(eye_.data());
-    eye.setIdentity();
   }
 
   bool Wbic::UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv,
@@ -33,7 +25,7 @@ namespace sdrobot::wbc
     return true;
   }
 
-  bool Wbic::MakeTorque(TorqueTp &ret, const std::vector<Task::Ptr> &task_list, const std::vector<Contact::Ptr> &contact_list)
+  bool Wbic::MakeTorque(SdVector18f &ret, const std::vector<Task::Ptr> &task_list, const std::vector<Contact::Ptr> &contact_list)
   {
     if (!b_updatesetting_)
     {
@@ -41,9 +33,8 @@ namespace sdrobot::wbc
     }
 
     Eigen::Map<Sv_t> Sv(Sv_.data());
-    Eigen::Map<eye_t> eye(eye_.data());
-    Eigen::Map<eye_t> A(A_.data());
-    Eigen::Map<eye_t> Ainv(Ainv_.data());
+    Eigen::Map<mat18_t> A(A_.data());
+    Eigen::Map<mat18_t> Ainv(Ainv_.data());
     Eigen::Map<gf_t> cori(cori_.data());
     Eigen::Map<gf_t> grav(grav_.data());
 
@@ -90,12 +81,12 @@ namespace sdrobot::wbc
       _SetInEqualityConstraint(CI, ci0, Uf, Uf_ieq_vec, Fr_des);
       _WeightedInverse(JcBar, Jc, Ainv);
       qddot_pre = JcBar * (-JcDotQdot);
-      Npre = eye - JcBar * Jc;
+      Npre = mat18_t::Identity() - JcBar * Jc;
     }
     else
     {
       qddot_pre = VectorX::Zero(params::model::dim_config);
-      Npre = eye;
+      Npre = mat18_t::Identity();
     }
 
     // Task
@@ -112,7 +103,7 @@ namespace sdrobot::wbc
       _WeightedInverse(JtBar, JtPre, Ainv);
 
       qddot_pre += JtBar * (xddot - JtDotQdot - Jt * qddot_pre);
-      Npre = Npre * (eye - JtBar * JtPre);
+      Npre = Npre * (mat18_t::Identity() - JtBar * JtPre);
     }
 
     // Set equality constraints
@@ -171,15 +162,14 @@ namespace sdrobot::wbc
       std::vector<Contact::Ptr> const &contact_list)
   {
     int dim_accumul_rf = 0, dim_accumul_uf = 0;
-    int dim_new_rf, dim_new_uf;
 
     for (size_t i = 0; i < contact_list.size(); i++)
     {
       Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::dim_config> const> _Jc(
           contact_list[i]->GetContactJacobian().data());
 
-      dim_new_rf = contact_list[i]->GetDim();
-      dim_new_uf = contact_list[i]->GetDimRFConstraint();
+      auto dim_new_rf = contact_list[i]->GetDim();
+      auto dim_new_uf = contact_list[i]->GetDimRFConstraint();
 
       Jc.block(dim_accumul_rf, 0, dim_new_rf, params::model::dim_config) = _Jc;
       JcDotQdot.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetJcDotQdot());
@@ -204,7 +194,7 @@ namespace sdrobot::wbc
       Vector18 const &qddot)
   {
     Eigen::Map<Sv_t> Sv(Sv_.data());
-    Eigen::Map<eye_t> A(A_.data());
+    Eigen::Map<mat18_t> A(A_.data());
     Eigen::Map<gf_t> cori(cori_.data());
     Eigen::Map<gf_t> grav(grav_.data());
     if (dim_rf_ > 0)
@@ -253,13 +243,13 @@ namespace sdrobot::wbc
     return true;
   }
 
-  bool Wbic::_GetSolution(TorqueTp &ret,
+  bool Wbic::_GetSolution(SdVector18f &ret,
                           Vector18 const &qddot,
                           VectorX const &z,
                           VectorX const &Fr_des,
                           MatrixX const &Jc)
   {
-    Eigen::Map<eye_t> A(A_.data());
+    Eigen::Map<mat18_t> A(A_.data());
     Eigen::Map<gf_t> cori(cori_.data());
     Eigen::Map<gf_t> grav(grav_.data());
 

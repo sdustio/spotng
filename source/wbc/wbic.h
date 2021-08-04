@@ -1,13 +1,11 @@
 #pragma once
 
-#include "wbc/in_data.h"
+#include "wbc/wbc.h"
 #include "wbc/task.h"
 #include "wbc/contact.h"
 
 namespace sdrobot::wbc
 {
-  using TorqueTp = std::array<fpt_t, params::model::num_act_joint>;
-
   class Wbic
   {
   public:
@@ -19,7 +17,7 @@ namespace sdrobot::wbc
     bool UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv,
                        model::GeneralFTp const &cori, model::GeneralFTp const &grav);
 
-    bool MakeTorque(TorqueTp &ret, const std::vector<Task::Ptr> &task_list, const std::vector<Contact::Ptr> &contact_list);
+    bool MakeTorque(SdVector18f &ret, const std::vector<Task::Ptr> &task_list, const std::vector<Contact::Ptr> &contact_list);
 
   private:
     bool _SetQPSize(MatrixX &G,
@@ -52,7 +50,7 @@ namespace sdrobot::wbc
 
     bool _SetCost(MatrixX &G);
 
-    bool _GetSolution(TorqueTp &ret,
+    bool _GetSolution(SdVector18f &ret,
                       Vector18 const &qddot,
                       VectorX const &z,
                       VectorX const &Fr_des,
@@ -63,9 +61,12 @@ namespace sdrobot::wbc
                           MatrixX const &Winv,
                           fpt_t threshold = 0.0001);
 
-    std::array<fpt_t, 6 *params::model::dim_config> Sv_ = {}; // Virtual joint
-    std::array<fpt_t, params::model::dim_config * params::model::dim_config> eye_;
+    using Sv_t = Eigen::Matrix<fpt_t, 6, params::model::dim_config>;
+    using mat18_t = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
+    using gf_t = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
+    using torq_t = Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>;
 
+    std::array<fpt_t, 6 *params::model::dim_config> Sv_ = {}; // Virtual joint
     model::MassMatTp A_;
     model::MassMatTp Ainv_;
     model::GeneralFTp cori_;
@@ -81,6 +82,6 @@ namespace sdrobot::wbc
 
     // Input
     SdVector6f W_floating_;
-    TorqueTp W_rf_;
+    SdVector18f W_rf_;
   };
 } // namespace sdrobot::wbc

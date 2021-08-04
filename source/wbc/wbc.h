@@ -1,11 +1,16 @@
 #pragma once
 
 #include "sdrobot/types.h"
+#include "sdrobot/params.h"
 
 namespace sdrobot::wbc
 {
+  using SdVector12f = std::array<fpt_t, params::model::num_act_joint>;
+  using SdVector18f = std::array<fpt_t, params::model::dim_config>;
+
   struct InData
   {
+    // TODO rename
     SdVector3f p_body_des;
     SdVector3f v_body_des;
     SdVector3f a_body_des;

@@ -4,7 +4,7 @@
 #include "sdrobot/estimate.h"
 #include "sdrobot/leg.h"
 #include "sdrobot/model.h"
-#include "wbc/in_data.h"
+#include "wbc/wbc.h"
 
 namespace sdrobot::mpc
 {
