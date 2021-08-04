@@ -135,7 +135,7 @@ namespace sdrobot::wbc
         G, g0, CE.transpose(), ce0, CI.transpose(), ci0, z);
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
-    for (int i(0); i < dim_floating_; ++i)
+    for (int i(0); i < params::model::dim_floating; ++i)
       qddot_pre[i] += z[i];
 
     for (int i = 0; i < params::model::dim_config; i++)
@@ -209,17 +209,17 @@ namespace sdrobot::wbc
     Eigen::Map<gf_t> grav(grav_.data());
     if (dim_rf_ > 0)
     {
-      CE.block(0, 0, dim_eq_cstr_, dim_floating_) =
-          A.block(0, 0, dim_eq_cstr_, dim_floating_);
-      CE.block(0, dim_floating_, dim_eq_cstr_, dim_rf_) =
+      CE.block(0, 0, dim_eq_cstr_, params::model::dim_floating) =
+          A.block(0, 0, dim_eq_cstr_, params::model::dim_floating);
+      CE.block(0, params::model::dim_floating, dim_eq_cstr_, dim_rf_) =
           -Sv * Jc.transpose();
       ce0 = -Sv * (A * qddot + cori + grav -
                    Jc.transpose() * Fr_des);
     }
     else
     {
-      CE.block(0, 0, dim_eq_cstr_, dim_floating_) =
-          A.block(0, 0, dim_eq_cstr_, dim_floating_);
+      CE.block(0, 0, dim_eq_cstr_, params::model::dim_floating) =
+          A.block(0, 0, dim_eq_cstr_, params::model::dim_floating);
       ce0 = -Sv * (A * qddot + cori + grav);
     }
 
@@ -232,7 +232,7 @@ namespace sdrobot::wbc
       VectorX const &Uf_ieq_vec,
       VectorX const &Fr_des)
   {
-    CI.block(0, dim_floating_, dim_Uf_, dim_rf_) = Uf;
+    CI.block(0, params::model::dim_floating, dim_Uf_, dim_rf_) = Uf;
     ci0 = Uf_ieq_vec - Uf * Fr_des;
     return true;
   }
@@ -241,11 +241,11 @@ namespace sdrobot::wbc
   {
     // Set Cost
     int idx_offset = 0;
-    for (int i = 0; i < dim_floating_; ++i)
+    for (int i = 0; i < params::model::dim_floating; ++i)
     {
       G((i + idx_offset), (i + idx_offset)) = 0.5 * W_floating_[i];
     }
-    idx_offset += dim_floating_;
+    idx_offset += params::model::dim_floating;
     for (int i = 0; i < dim_rf_; ++i)
     {
       G((i + idx_offset), (i + idx_offset)) = 0.5 * W_rf_[i];
@@ -263,13 +263,13 @@ namespace sdrobot::wbc
     Eigen::Map<gf_t> cori(cori_.data());
     Eigen::Map<gf_t> grav(grav_.data());
 
-    VectorX tot_tau;
+    Vector18 tot_tau;
     if (dim_rf_ > 0)
     {
       VectorX _Fr(dim_rf_);
       // get Reaction forces
       for (int i(0); i < dim_rf_; ++i)
-        _Fr[i] = z[i + dim_floating_] + Fr_des[i];
+        _Fr[i] = z[i + params::model::dim_floating] + Fr_des[i];
       tot_tau =
           A * qddot + cori + grav - Jc.transpose() * _Fr;
     }
@@ -316,8 +316,8 @@ namespace sdrobot::wbc
       dim_Uf_ += contact_list[i]->GetDimRFConstraint();
     }
 
-    dim_opt_ = dim_floating_ + dim_rf_;
-    dim_eq_cstr_ = dim_floating_;
+    dim_opt_ = params::model::dim_floating + dim_rf_;
+    dim_eq_cstr_ = params::model::dim_floating;
 
     // Matrix Setting
     G = MatrixX::Zero(dim_opt_, dim_opt_);

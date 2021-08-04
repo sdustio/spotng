@@ -79,8 +79,6 @@ namespace sdrobot::wbc
     int dim_rf_;
     int dim_Uf_;
 
-    int dim_floating_ = 6;
-
     // Input
     SdVector6f W_floating_;
     TorqueTp W_rf_;
