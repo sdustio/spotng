@@ -50,7 +50,7 @@ namespace sdrobot::fsm
     wbc::InData wbc_data_;
 
     SdVector3f ini_body_pos_;
-    SdVector3f _ini_body_ori_rpy;
+    SdVector3f ini_body_pos_rpy_;
     double body_weight_;
   };
 }

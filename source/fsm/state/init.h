@@ -3,21 +3,13 @@
 #include <unordered_map>
 
 #include "sdrobot/fsm.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
 
 namespace sdrobot::fsm
 {
   class StateInit : public StateCtrl
   {
   public:
-    StateInit(
-        Options const &opts,
-        leg::LegCtrl::SharedPtr const &legctrl,
-        model::Quadruped::SharedPtr const &mquat,
-        drive::DriveCtrl::SharedPtr const &drictrl,
-        estimate::EstimateCtrl::SharedPtr const &estctrl);
+    StateInit(drive::DriveCtrl::SharedPtr const &drictrl);
 
     void OnEnter() override;
     void OnExit() override;

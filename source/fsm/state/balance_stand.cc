@@ -31,7 +31,7 @@ namespace sdrobot::fsm
     }
     //   ini_body_pos_[2]=0.26;
 
-    _ini_body_ori_rpy = estdata.pos_rpy;
+    ini_body_pos_rpy_ = estdata.pos_rpy;
   }
 
   void StateBalanceStand::OnExit()
@@ -58,7 +58,7 @@ namespace sdrobot::fsm
     wbc_data_.p_body_des = ini_body_pos_;
     wbc_data_.v_body_des.fill(0.);
     wbc_data_.a_body_des.fill(0.);
-    wbc_data_.p_body_rpy_des = _ini_body_ori_rpy;
+    wbc_data_.p_body_rpy_des = ini_body_pos_rpy_;
 
     wbc_data_.p_body_rpy_des = drictrl_->GetPosRpyDes();
 
