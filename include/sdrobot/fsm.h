@@ -1,9 +1,6 @@
 #pragma once
 
 #include "sdrobot/drive.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
 
 namespace sdrobot::fsm
 {
@@ -67,11 +64,7 @@ namespace sdrobot::fsm
 
     virtual ~FiniteStateMachine() = default;
 
-    virtual bool Init(
-        leg::LegCtrl::SharedPtr const &legctrl,
-        model::Quadruped::SharedPtr const &quad,
-        drive::DriveCtrl::SharedPtr const &drivectrl,
-        estimate::EstimateCtrl::SharedPtr const &estctrl) = 0;
+    virtual bool Init() = 0;
 
     virtual StateCtrl::SharedPtr const &GetStateCtrl(State state) = 0;
 

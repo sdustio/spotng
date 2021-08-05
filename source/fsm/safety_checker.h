@@ -1,6 +1,8 @@
 #pragma once
 
 #include "sdrobot/fsm.h"
+#include "sdrobot/estimate.h"
+#include "sdrobot/leg.h"
 
 namespace sdrobot::fsm
 {

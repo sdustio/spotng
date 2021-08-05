@@ -1,4 +1,5 @@
 #include <cmath>
+#include "sdrobot/params.h"
 #include "fsm/safety_checker.h"
 
 namespace sdrobot::fsm

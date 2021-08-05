@@ -3,19 +3,25 @@
 #include <unordered_map>
 
 #include "sdrobot/fsm.h"
-#include "fsm/safety_checker.h"
+#include "sdrobot/estimate.h"
+#include "sdrobot/leg.h"
+#include "sdrobot/model.h"
 
+#include "fsm/safety_checker.h"
 
 namespace sdrobot::fsm
 {
   class FiniteStateMachineImpl : public FiniteStateMachine
   {
   public:
-    bool Init(
+    FiniteStateMachineImpl(
+        Options const &opts,
         leg::LegCtrl::SharedPtr const &legctrl,
         model::Quadruped::SharedPtr const &mquat,
         drive::DriveCtrl::SharedPtr const &drictrl,
-        estimate::EstimateCtrl::SharedPtr const &estctrl) override;
+        estimate::EstimateCtrl::SharedPtr const &estctrl);
+
+    bool Init() override;
 
     StateCtrl::SharedPtr const &GetStateCtrl(State state) override;
 

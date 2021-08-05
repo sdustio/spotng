@@ -59,6 +59,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/wbc/wbc_ctrl.cc
   source/fsm/impl.cc
   source/fsm/safety_checker.cc
+  source/fsm/state/init.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}

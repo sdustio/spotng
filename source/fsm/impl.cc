@@ -2,12 +2,15 @@
 
 namespace sdrobot::fsm
 {
-
-  bool FiniteStateMachineImpl::Init(
+  FiniteStateMachineImpl::FiniteStateMachineImpl(
+      Options const &opts,
       leg::LegCtrl::SharedPtr const &legctrl,
       model::Quadruped::SharedPtr const &mquat,
       drive::DriveCtrl::SharedPtr const &drictrl,
-      estimate::EstimateCtrl::SharedPtr const &estctrl)
+      estimate::EstimateCtrl::SharedPtr const &estctrl) : legctrl_(legctrl),
+                                                          mquat_(mquat),
+                                                          drictrl_(drictrl),
+                                                          estctrl_(estctrl)
   {
     // state_ctrls_ =
     // { {State::Init, std::make_shared<StateInit>(cleg, quad, cmd, est)},
@@ -15,12 +18,10 @@ namespace sdrobot::fsm
     //   {State::Locomotion, std::make_shared<StateLocomotion>(cleg, quad, cmd, est)},
     //   {State::BalanceStand, std::make_shared<StateBalanceStand>(cleg, quad, cmd, est)}
     // };
+  }
 
-    legctrl_ = legctrl;
-    mquat_ = mquat;
-    drictrl_ = drictrl;
-    estctrl_ = estctrl;
-
+  bool FiniteStateMachineImpl::Init()
+  {
     // Initialize a new Fsm State with the control data
     current_state_ctrl_ = GetStateCtrl(State::Init);
 
