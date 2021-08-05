@@ -62,6 +62,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/fsm/state/init.cc
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc
+  source/fsm/state/locomotion.cc
   source/robot_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}

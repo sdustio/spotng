@@ -3,6 +3,45 @@
 
 namespace sdrobot::fsm
 {
+  namespace opts
+  {
+    constexpr inline int const fold_ramp_iter = 1000;
+    constexpr inline int const fold_settle_iter = 1000;
+
+    constexpr inline int const standup_ramp_iter = 500;
+    constexpr inline int const standup_settle_iter = 500;
+
+    // 0.5 kHz
+    constexpr inline int const rollover_ramp_iter = 150;
+    constexpr inline int const rollover_settle_iter = 150;
+    // iteration setup
+    // constexpr inline int const rollover_ramp_iter = 300;
+    // constexpr inline int const rollover_settle_iter = 300;
+
+    // JPos
+    constexpr inline std::array<SdVector3f, 4> const fold_jpos = {
+        SdVector3f{-0.0, -1.4, 2.7},
+        SdVector3f{0.0, -1.4, 2.7},
+        SdVector3f{-0.0, -1.4, 2.7},
+        SdVector3f{0.0, -1.4, 2.7}};
+    constexpr inline std::array<SdVector3f, 4> const stand_jpos = {
+        SdVector3f{0., -.8, 1.6},
+        SdVector3f{0., -.8, 1.6},
+        SdVector3f{0., -.8, 1.6},
+        SdVector3f{0., -.8, 1.6}};
+    constexpr inline std::array<SdVector3f, 4> const rolling_jpos = {
+        SdVector3f{1.5, -1.6, 2.77},
+        SdVector3f{1.3, -3.1, 2.77},
+        SdVector3f{1.5, -1.6, 2.77},
+        SdVector3f{1.3, -3.1, 2.77}};
+
+    // 对角线矩阵，row major == column major
+    constexpr inline SdMatrix3f const kp_mat = {80, 0, 0, 0, 80, 0, 0, 0, 80};
+    constexpr inline SdMatrix3f const kd_mat = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+    // kp_mat << 120, 0, 0, 0, 120, 0, 0, 0, 120;
+    // kd_mat << 4, 0, 0, 0, 4, 0, 0, 0, 4;
+  }
+
   StateRecoveryStand::StateRecoveryStand(
       leg::LegCtrl::SharedPtr const &legctrl,
       drive::DriveCtrl::SharedPtr const &drictrl,
@@ -65,7 +104,7 @@ namespace sdrobot::fsm
     return TransitionData{true};
   }
 
-  void StateRecoveryStand::StandUp(const int curr_iter)
+  bool StateRecoveryStand::StandUp(const int curr_iter)
   {
     auto body_height = estctrl_->GetEstState().pos[2];
     bool something_wrong = false;
@@ -102,10 +141,10 @@ namespace sdrobot::fsm
     {
       iter_ = 0;
     }
-
+    return true;
   }
 
-  void StateRecoveryStand::FoldLegs(const int curr_iter)
+  bool StateRecoveryStand::FoldLegs(const int curr_iter)
   {
     for (int i = 0; i < params::model::num_leg; ++i)
     {
@@ -128,9 +167,10 @@ namespace sdrobot::fsm
       }
       iter_ = -1;
     }
+    return true;
   }
 
-  void StateRecoveryStand::RollOver(const int curr_iter)
+  bool StateRecoveryStand::RollOver(const int curr_iter)
   {
     for (int i = 0; i < params::model::num_leg; ++i)
     {
@@ -145,11 +185,12 @@ namespace sdrobot::fsm
         initial_jpos_[i] = opts::rolling_jpos[i];
       iter_ = -1;
     }
+    return true;
   }
 
-  void StateRecoveryStand::SetJPosInterPts(
-        int const curr_iter, int const max_iter, int const leg,
-        SdVector3f const &ini, SdVector3f const &fin)
+  bool StateRecoveryStand::SetJPosInterPts(
+      int const curr_iter, int const max_iter, int const leg,
+      SdVector3f const &ini, SdVector3f const &fin)
   {
     double a = 0.;
     double b = 1.;
@@ -166,15 +207,16 @@ namespace sdrobot::fsm
     ToEigenTp(inter_pos) = a * ToConstEigenTp(ini) + b * ToConstEigenTp(fin);
 
     // do control
-    JointPDControl(leg, inter_pos, SdVector3f{});
+    return JointPDControl(leg, inter_pos, SdVector3f{});
   }
 
-  void StateRecoveryStand::JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes)
+  bool StateRecoveryStand::JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes)
   {
     legctrl_->GetCmdsForUpdate()[leg].kp_joint = opts::kp_mat;
     legctrl_->GetCmdsForUpdate()[leg].kd_joint = opts::kd_mat;
 
     legctrl_->GetCmdsForUpdate()[leg].q_des = qDes;
     legctrl_->GetCmdsForUpdate()[leg].qd_des = qdDes;
+    return true;
   }
 }

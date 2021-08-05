@@ -17,7 +17,7 @@ namespace sdrobot::math
   /*!
  * Convert radians to degrees 转化弧度到度数
  */
-  fpt_t RadToDeg(fpt_t rad)
+  inline fpt_t RadToDeg(fpt_t rad)
   {
     return rad * 180.0 / M_PI;
   }
@@ -25,7 +25,7 @@ namespace sdrobot::math
   /*!
  * Convert degrees to radians
  */
-  fpt_t DegToRad(fpt_t deg)
+  inline fpt_t DegToRad(fpt_t deg)
   {
     return deg * M_PI / 180.0;
   }

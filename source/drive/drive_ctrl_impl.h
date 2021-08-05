@@ -23,6 +23,12 @@ namespace sdrobot::drive
     SdVector3f const &GetVelDes() const override;
     SdVector3f const &GetVelRpyDes() const override;
 
+    bool UpdateState(State state)
+    {
+      state_ = state;
+      return true;
+    }
+
   private:
     fpt_t Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal);
 
