@@ -73,7 +73,7 @@ namespace sdrobot::fsm
         drive::DriveCtrl::SharedPtr const &drivectrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl) = 0;
 
-    virtual StateCtrl::SharedPtr GetStateCtrl(State state) = 0;
+    virtual StateCtrl::SharedPtr const &GetStateCtrl(State state) = 0;
 
     /**
      * Called each control loop iteration. Decides if the robot is safe to
