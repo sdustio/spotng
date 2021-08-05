@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sdrobot/model.h"
-#include "wbc/wbc.h"
 
 namespace sdrobot::wbc
 {
@@ -11,8 +10,6 @@ namespace sdrobot::wbc
   public:
     using Ptr = std::unique_ptr<Task>;
     using SharedPtr = std::shared_ptr<Task>;
-
-    using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
 
     Task(model::FloatBaseModel::SharedPtr const &model,
          SdVector3f const &kp,

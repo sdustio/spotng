@@ -2,6 +2,8 @@
 
 #include "wbc/task.h"
 #include "wbc/contact.h"
+#include "wbc/wbc.h"
+#include "eigen.h"
 
 namespace sdrobot::wbc
 {
@@ -18,7 +20,5 @@ namespace sdrobot::wbc
   private:
     bool _PseudoInverse(MatrixX &ret, MatrixX const &J, fpt_t threshold = 0.001);
     bool _BuildProjectionMatrix(MatrixX &ret, MatrixX const &J);
-
-    using mat18_t = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
   };
 }

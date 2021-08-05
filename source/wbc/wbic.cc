@@ -5,6 +5,10 @@
 
 namespace sdrobot::wbc
 {
+  using Matrix18 = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
+  using Sv_t = Eigen::Matrix<fpt_t, 6, params::model::dim_config>;
+  using Vector12 = Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>;
+
   Wbic::Wbic(double weight)
   {
     W_floating_.fill(weight);
@@ -33,10 +37,10 @@ namespace sdrobot::wbc
     }
 
     Eigen::Map<Sv_t> Sv(Sv_.data());
-    Eigen::Map<mat18_t> A(A_.data());
-    Eigen::Map<mat18_t> Ainv(Ainv_.data());
-    Eigen::Map<gf_t> cori(cori_.data());
-    Eigen::Map<gf_t> grav(grav_.data());
+    Eigen::Map<Matrix18> A(A_.data());
+    Eigen::Map<Matrix18> Ainv(Ainv_.data());
+    Eigen::Map<Vector18> cori(cori_.data());
+    Eigen::Map<Vector18> grav(grav_.data());
 
     VectorX z;
     // Cost
@@ -81,12 +85,12 @@ namespace sdrobot::wbc
       _SetInEqualityConstraint(CI, ci0, Uf, Uf_ieq_vec, Fr_des);
       _WeightedInverse(JcBar, Jc, Ainv);
       qddot_pre = JcBar * (-JcDotQdot);
-      Npre = mat18_t::Identity() - JcBar * Jc;
+      Npre = Matrix18::Identity() - JcBar * Jc;
     }
     else
     {
       qddot_pre = VectorX::Zero(params::model::dim_config);
-      Npre = mat18_t::Identity();
+      Npre = Matrix18::Identity();
     }
 
     // Task
@@ -103,7 +107,7 @@ namespace sdrobot::wbc
       _WeightedInverse(JtBar, JtPre, Ainv);
 
       qddot_pre += JtBar * (xddot - JtDotQdot - Jt * qddot_pre);
-      Npre = Npre * (mat18_t::Identity() - JtBar * JtPre);
+      Npre = Npre * (Matrix18::Identity() - JtBar * JtPre);
     }
 
     // Set equality constraints
@@ -194,9 +198,9 @@ namespace sdrobot::wbc
       Vector18 const &qddot)
   {
     Eigen::Map<Sv_t> Sv(Sv_.data());
-    Eigen::Map<mat18_t> A(A_.data());
-    Eigen::Map<gf_t> cori(cori_.data());
-    Eigen::Map<gf_t> grav(grav_.data());
+    Eigen::Map<Matrix18> A(A_.data());
+    Eigen::Map<Vector18> cori(cori_.data());
+    Eigen::Map<Vector18> grav(grav_.data());
     if (dim_rf_ > 0)
     {
       CE.block(0, 0, dim_eq_cstr_, params::model::dim_floating) =
@@ -249,9 +253,9 @@ namespace sdrobot::wbc
                           VectorX const &Fr_des,
                           MatrixX const &Jc)
   {
-    Eigen::Map<mat18_t> A(A_.data());
-    Eigen::Map<gf_t> cori(cori_.data());
-    Eigen::Map<gf_t> grav(grav_.data());
+    Eigen::Map<Matrix18> A(A_.data());
+    Eigen::Map<Vector18> cori(cori_.data());
+    Eigen::Map<Vector18> grav(grav_.data());
 
     Vector18 tot_tau;
     if (dim_rf_ > 0)
@@ -268,7 +272,7 @@ namespace sdrobot::wbc
       tot_tau = A * qddot + cori + grav;
     }
 
-    Eigen::Map<torq_t> _ret(ret.data());
+    Eigen::Map<Vector12> _ret(ret.data());
     _ret = tot_tau.tail(params::model::num_act_joint);
 
     for (int i = 0; i < 12; i++)

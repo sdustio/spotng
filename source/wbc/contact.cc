@@ -1,4 +1,5 @@
 #include "wbc/contact.h"
+#include "eigen.h"
 
 namespace sdrobot::wbc
 {

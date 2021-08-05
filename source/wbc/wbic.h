@@ -2,6 +2,8 @@
 
 #include "wbc/task.h"
 #include "wbc/contact.h"
+#include "wbc/wbc.h"
+#include "eigen.h"
 
 namespace sdrobot::wbc
 {
@@ -19,6 +21,13 @@ namespace sdrobot::wbc
     bool MakeTorque(SdVector18f &ret, const std::vector<Task::Ptr> &task_list, const std::vector<Contact::Ptr> &contact_list);
 
   private:
+    /* 为了方便阅读，拆分 MakeTorque 为多个私有方法。
+    * 这些私有方法在接口上不是必须的，仅仅为了阅读。
+    * 所以这些私有方法的参数使用了Eigen数据类型作为参数，并且没有使用Eigen::Ref，完全是为了方便。
+    * 同样，为了定义这些私有方法，只能将 using Vector18 提到这里的位置（本应该在cpp中）。
+    */
+    using Vector18 = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
+
     bool _SetQPSize(MatrixX &G,
                     VectorX &g0,
                     MatrixX &CE,
@@ -59,11 +68,6 @@ namespace sdrobot::wbc
                           MatrixX const &J,
                           MatrixX const &Winv,
                           fpt_t threshold = 0.0001);
-
-    using Sv_t = Eigen::Matrix<fpt_t, 6, params::model::dim_config>;
-    using mat18_t = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
-    using gf_t = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
-    using torq_t = Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>;
 
     std::array<fpt_t, 6 *params::model::dim_config> Sv_ = {}; // Virtual joint
     model::MassMatTp A_;

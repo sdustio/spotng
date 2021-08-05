@@ -19,6 +19,21 @@ namespace sdrobot::mpc
     }
   }
 
+  using A_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13>;
+  using B_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 12 * opts::horizon_len>;
+  using S_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13 * opts::horizon_len>;
+  using eye_12h_t = Eigen::Matrix<fpt_t, 12 * opts::horizon_len, 12 * opts::horizon_len>;
+  using X_d_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 1>;
+
+  using qH_t = Eigen::Matrix<fpt_t, num_variables, num_variables>;
+  using qA_t = Eigen::Matrix<fpt_t, num_constraints, num_variables>;
+
+  using qub_t = Eigen::Matrix<fpt_t, num_constraints, 1>;
+  using qlb_t = Eigen::Matrix<fpt_t, num_constraints, 1>;
+  using qg_t = Eigen::Matrix<fpt_t, num_variables, 1>;
+
+  using qsoln_t = Eigen::Matrix<fpt_t, num_variables, 1>;
+
   void QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
                          SdVector4f const &ori, SdVector3f const &vel_rpy, std::array<fpt_t, 12> const &rel_foot_p,
                          fpt_t const yaw, std::array<fpt_t, 12> const &weights,

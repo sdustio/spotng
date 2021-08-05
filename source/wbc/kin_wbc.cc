@@ -3,6 +3,9 @@
 
 namespace sdrobot::wbc
 {
+  using Vector18 = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
+  using Matrix18 = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
+
   bool KinWbc::FindConfiguration(SdVector12f const &curr_config,
                                  std::vector<Task::Ptr> const &task_list, std::vector<Contact::Ptr> const &contact_list,
                                  SdVector12f &jpos_cmd, SdVector12f &jvel_cmd)
@@ -59,7 +62,7 @@ namespace sdrobot::wbc
   {
     MatrixX J_pinv;
     _PseudoInverse(J_pinv, J);
-    ret = mat18_t::Identity() - J_pinv * J;
+    ret = Matrix18::Identity() - J_pinv * J;
     return true;
   }
 

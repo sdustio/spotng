@@ -4,26 +4,9 @@
 
 namespace sdrobot::model
 {
-  namespace
-  {
-    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> ToEigenTp_(GeneralFTp &v)
-    {
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, 1>> egv(v.data());
-      return egv;
-    }
-
-    Eigen::Ref<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> ToEigenTp_(MassMatTp &v)
-    {
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>> egv(v.data());
-      return egv;
-    }
-
-    Eigen::Ref<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> ToEigenTp_(ContactJacobTp &v)
-    {
-      Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::dim_config>> egv(v.data());
-      return egv;
-    }
-  }
+  using genf_t = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
+  using mass_t = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
+  using jc_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
 
   bool FloatBaseModelImpl::UpdateState(FloatBaseModelState const &state)
   {
@@ -43,7 +26,7 @@ namespace sdrobot::model
     CompositeInertias();
     H_.fill(0.);
 
-    auto H = ToEigenTp_(H_);
+    Eigen::Map<mass_t> H(H_.data());
 
     // Top left corner is the locked inertia of the whole system
     H.topLeftCorner<6, 6>() = ToConstEigenTp(IC_[5]);
@@ -89,14 +72,15 @@ namespace sdrobot::model
 
     // Gravity comp force is the same as force required to accelerate
     // oppostite gravity
-    ToEigenTp_(G_).topRows<6>() = -ToConstEigenTp(IC_[5]) * ToConstEigenTp(ag_[5]);
+    Eigen::Map<genf_t> G(G_.data());
+    G.topRows<6>() = -ToConstEigenTp(IC_[5]) * ToConstEigenTp(ag_[5]);
     for (int i = 6; i < params::model::dim_config; i++)
     {
       ToEigenTp(ag_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(ag_[parents_[i]]);
       ToEigenTp(agrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(ag_[parents_[i]]);
 
       // body and rotor
-      G_[i] = -ToConstEigenTp(S_[i]).dot(ToConstEigenTp(IC_[i]) * ToConstEigenTp(ag_[i])) -
+      G[i] = -ToConstEigenTp(S_[i]).dot(ToConstEigenTp(IC_[i]) * ToConstEigenTp(ag_[i])) -
               ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(Irot_[i]) * ToConstEigenTp(agrot_[i]));
     }
     return true;
@@ -139,7 +123,8 @@ namespace sdrobot::model
     }
 
     // Force on floating base
-    ToEigenTp_(Cqd_).topRows<6>() = ToConstEigenTp(fvp_[5]);
+    Eigen::Map<genf_t> Cqd(Cqd_.data());
+    Cqd.topRows<6>() = ToConstEigenTp(fvp_[5]);
     return true;
   }
 
@@ -150,7 +135,7 @@ namespace sdrobot::model
 
     for (int k = 0; k < n_ground_contact_; k++)
     {
-      auto Jc_k = ToEigenTp_(Jc_[k]);
+      Eigen::Map<jc_t> Jc_k(Jc_[k].data());
       auto Jcdqd_k = ToEigenTp(Jcdqd_[k]);
       Jc_k.setZero();
       Jcdqd_k.setZero();
