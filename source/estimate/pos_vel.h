@@ -3,6 +3,7 @@
 #include "sdrobot/estimate.h"
 #include "sdrobot/leg.h"
 #include "sdrobot/model.h"
+#include "eigen.h"
 
 namespace sdrobot::estimate
 {
@@ -14,6 +15,12 @@ namespace sdrobot::estimate
     bool RunOnce(State &ret) override;
 
   private:
+    using Vector12 = Eigen::Matrix<fpt_t, 12, 1>;
+    using Vector18 = Eigen::Matrix<fpt_t, 18, 1>;
+    using Vector28 = Eigen::Matrix<fpt_t, 28, 1>;
+    using Matrix18 = Eigen::Matrix<fpt_t, 18, 18>;
+    using Matrix28 = Eigen::Matrix<fpt_t, 28, 28>;
+
     fpt_t dt_;
     fpt_t gravity_;
     leg::LegCtrl::SharedPtr const legctrl_;

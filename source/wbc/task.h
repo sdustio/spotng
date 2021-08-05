@@ -1,8 +1,7 @@
 #pragma once
 
 #include "sdrobot/model.h"
-#include "eigen.h"
-
+#include "wbc/wbc.h"
 
 namespace sdrobot::wbc
 {

@@ -1,9 +1,7 @@
 #pragma once
 
-#include "eigen.h"
 #include "wbc/task.h"
 #include "wbc/contact.h"
-#include "wbc/wbc.h"
 
 namespace sdrobot::wbc
 {

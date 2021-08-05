@@ -10,13 +10,13 @@
 
 - fsm
 - robot
-- 再读论文
+- [x] 再读论文
 
 **2021-07-30**
 
-- mpc
+- [x] mpc
 - wbc
-- 再读论文
+- [x] 再读论文
 
 **2021-07-31**
 
@@ -34,7 +34,8 @@
   - [ ] 自动档
   - [ ] Init状态问题
 - 优化
-  - [ ] del useless(or just for sim) code
-  - [ ] dynamic vector/matrix -> fixed vector/matrix
+  - 删除 eigen.h 中，大于6的 Vector 和 Matrix
+  - [x] del useless(or just for sim) code
+  - [x] dynamic vector/matrix -> fixed vector/matrix
 - [ ] 更多测试
 - [ ] 仿真

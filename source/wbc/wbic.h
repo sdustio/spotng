@@ -1,6 +1,5 @@
 #pragma once
 
-#include "wbc/wbc.h"
 #include "wbc/task.h"
 #include "wbc/contact.h"
 

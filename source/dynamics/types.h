@@ -35,7 +35,7 @@ namespace sdrobot::dynamics
   using SpatialXform = Matrix6;
 
   // 10x1 Vector
-  using MassProperties = Vector10;
+  using MassProperties = Eigen::Matrix<fpt_t, 10, 1>;
 
   using RotationalInertia = Matrix3; //InertiaMat
 

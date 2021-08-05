@@ -1,6 +1,5 @@
 #include "estimate/pos_vel.h"
 #include "sdrobot/params.h"
-#include "eigen.h"
 
 namespace sdrobot::estimate
 {
@@ -22,7 +21,7 @@ namespace sdrobot::estimate
     ps_.fill(0.);
     vs_.fill(0.);
     //状态转移矩阵，计算K+1时刻状态值X[k+1] 自己写出来算下就知道
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> A(A_.data());
+    Eigen::Map<Matrix18> A(A_.data());
     A.setZero();
     A.block<3, 3>(0, 0) = Matrix3::Identity();
     A.block<3, 3>(0, 3) = dt_ * Matrix3::Identity();
@@ -55,11 +54,11 @@ namespace sdrobot::estimate
     C(24, 8) = 1.;
 
     //初始不确定性
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> P(P_.data());
+    Eigen::Map<Matrix18> P(P_.data());
     P.setIdentity();
     P = 100. * P;
     //初始状态估计噪声
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> Q0(Q0_.data());
+    Eigen::Map<Matrix18> Q0(Q0_.data());
     Q0.setIdentity();
     Q0.block<3, 3>(0, 0) = (dt_ / 20.) * Matrix3::Identity();
     Q0.block<3, 3>(3, 3) =
@@ -67,7 +66,7 @@ namespace sdrobot::estimate
 
     Q0.block<12, 12>(6, 6) = dt_ * Eigen::Matrix<fpt_t, 12, 12>::Identity();
 
-    Eigen::Map<Eigen::Matrix<fpt_t, 28, 28>> R0(R0_.data());
+    Eigen::Map<Matrix28> R0(R0_.data());
     R0.setIdentity();
 
     return true;
@@ -86,23 +85,23 @@ namespace sdrobot::estimate
     Eigen::Map<Vector18> xhat(xhat_.data());
     Eigen::Map<Vector12> ps(ps_.data());
     Eigen::Map<Vector12> vs(vs_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> A(A_.data());
+    Eigen::Map<Matrix18> A(A_.data());
     Eigen::Map<Eigen::Matrix<fpt_t, 18, 3>> B(B_.data());
     Eigen::Map<Eigen::Matrix<fpt_t, 28, 18>> C(C_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> P(P_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, 18, 18>> Q0(Q0_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, 28, 28>> R0(R0_.data());
+    Eigen::Map<Matrix18> P(P_.data());
+    Eigen::Map<Matrix18> Q0(Q0_.data());
+    Eigen::Map<Matrix28> R0(R0_.data());
 
     auto rot_body = ToConstEigenTp(ret.rot_body);
     auto const &datas = legctrl_->GetDatas();
 
     //状态估计噪声
-    MatrixX Q = Eigen::Matrix<fpt_t, 18, 18>::Identity();;
+    MatrixX Q = Matrix18::Identity();;
     Q.block<3, 3>(0, 0) = Q0.block<3, 3>(0, 0) * process_noise_pimu;
     Q.block<3, 3>(3, 3) = Q0.block<3, 3>(3, 3) * process_noise_vimu;
     Q.block<12, 12>(6, 6) = Q0.block<12, 12>(6, 6) * process_noise_pfoot;
     //观测噪声矩阵
-    MatrixX R = Eigen::Matrix<fpt_t, 28, 28>::Identity();
+    MatrixX R = Matrix28::Identity();
     R.block<12, 12>(0, 0) = R0.block<12, 12>(0, 0) * sensor_noise_pimu_rel_foot;
     R.block<12, 12>(12, 12) =
         R0.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
@@ -211,7 +210,7 @@ namespace sdrobot::estimate
 
     MatrixX S_C = S.lu().solve(C); // ??  Eigen::Matrix<fpt_t, 28, 18>
 
-    P = (Eigen::Matrix<fpt_t, 18, 18>::Identity() - Pm * C.transpose() * S_C) * Pm; //最佳估计不确定性协方差??
+    P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm; //最佳估计不确定性协方差??
 
     P = (P + P.transpose()) / 2.; //??
 

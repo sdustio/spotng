@@ -9,29 +9,13 @@ namespace sdrobot
 {
     using Vector3 = Eigen::Matrix<fpt_t, 3, 1>;
     using Vector4 = Eigen::Matrix<fpt_t, 4, 1>;
+    using Vector6 = Eigen::Matrix<fpt_t, 6, 1>;
     using VectorX = Eigen::Matrix<fpt_t, Eigen::Dynamic, 1>;
 
     using Matrix3 = Eigen::Matrix<fpt_t, 3, 3>;
     using Matrix4 = Eigen::Matrix<fpt_t, 4, 4>;
-    using MatrixX = Eigen::Matrix<fpt_t, Eigen::Dynamic, Eigen::Dynamic>;
-
-    // 6x1 Vector
-    using Vector6 = Eigen::Matrix<fpt_t, 6, 1>;
-
-    // 10x1 Vector
-    using Vector10 = Eigen::Matrix<fpt_t, 10, 1>;
-
-    // 12x1 Vector
-    using Vector12 = Eigen::Matrix<fpt_t, 12, 1>;
-
-    // 18x1 Vector
-    using Vector18 = Eigen::Matrix<fpt_t, 18, 1>;
-
-    // 28x1 vector
-    using Vector28 = Eigen::Matrix<fpt_t, 28, 1>;
-
-    // 6x6 Matrix
     using Matrix6 = Eigen::Matrix<fpt_t, 6, 6>;
+    using MatrixX = Eigen::Matrix<fpt_t, Eigen::Dynamic, Eigen::Dynamic>;
 
     // 3x4 Matrix
     using Matrix3x4 = Eigen::Matrix<fpt_t, 3, 4>;

@@ -56,6 +56,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/wbc/contact.cc
   source/wbc/wbic.cc
   source/wbc/kin_wbc.cc
+  source/wbc/wbc_ctrl.cc
   source/fsm/impl.cc
   source/fsm/safety_checker.cc
   source/robot_impl.cc
