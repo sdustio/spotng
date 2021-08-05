@@ -10,16 +10,15 @@ namespace sdrobot::wbc
 
   struct InData
   {
-    // TODO rename
-    SdVector3f p_body_des;
-    SdVector3f v_body_des;
-    SdVector3f a_body_des;
-    SdVector3f p_body_rpy_des;
-    SdVector3f vbody_ori_des;
+    SdVector3f pos_body_des;
+    SdVector3f vel_body_des;
+    SdVector3f acc_body_des;
+    SdVector3f pos_rpy_body_des;
+    SdVector3f vel_rpy_body_des;
 
-    std::array<SdVector3f, 4> p_foot_des;
-    std::array<SdVector3f, 4> v_foot_des;
-    std::array<SdVector3f, 4> a_foot_des;
+    std::array<SdVector3f, 4> pos_foot_des;
+    std::array<SdVector3f, 4> vel_foot_des;
+    std::array<SdVector3f, 4> acc_foot_des;
 
     std::array<SdVector3f, 4> Fr_des;
 

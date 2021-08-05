@@ -17,7 +17,7 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta)
+  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta)
   {
     RotMat R;
     CoordinateRot(R, axis, theta);
@@ -168,16 +168,16 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool RotationFromSpatialXform(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X)
+  bool SpatialXformToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X)
   {
     ret = X.topLeftCorner<3, 3>();
     return true;
   }
 
-  bool TranslationFromSpatialXform(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X)
+  bool SpatialXformToTranslation(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X)
   {
     RotMat R;
-    RotationFromSpatialXform(R, X);
+    SpatialXformToRotMat(R, X);
     math::MatToSkewVec(ret, R.transpose() * X.bottomLeftCorner<3, 3>());
     ret = -ret;
     return true;
@@ -186,14 +186,14 @@ namespace sdrobot::dynamics
   bool InvertSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<SpatialXform const> const &X)
   {
     RotMat R;
-    RotationFromSpatialXform(R, X);
+    SpatialXformToRotMat(R, X);
     Vector3 r;
     math::MatToSkewVec(r, R.transpose() * X.bottomLeftCorner<3, 3>());
     BuildSpatialXform(ret, R.transpose(), -R * -r);
     return true;
   }
 
-  bool JointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis)
+  bool BuildJointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis)
   {
     Vector3 v(0, 0, 0);
     ret.setZero();
@@ -214,12 +214,12 @@ namespace sdrobot::dynamics
     return true;
   }
 
-  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q)
+  bool BuildJointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q)
   {
     ret.setZero();
     if (joint == JointType::Revolute)
     {
-      SpatialRotation(ret, axis, q);
+      BuildSpatialXform(ret, axis, q);
     }
     else if (joint == JointType::Prismatic)
     {
@@ -276,9 +276,9 @@ namespace sdrobot::dynamics
   bool SpatialXformPoint(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X, Eigen::Ref<Vector3 const> const &p)
   {
     Matrix3 R;
-    RotationFromSpatialXform(R, X);
+    SpatialXformToRotMat(R, X);
     Vector3 r;
-    TranslationFromSpatialXform(r, X);
+    SpatialXformToTranslation(r, X);
     ret = R * (p - r);
     return true;
   }

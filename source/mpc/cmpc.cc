@@ -209,9 +209,9 @@ namespace sdrobot::mpc
         foot_swing_trajs_[foot].ComputeSwingTrajectoryBezier(swingState, swing_times_[foot]);
 
         // Update for WBC
-        wbcdata.p_foot_des[foot] = foot_swing_trajs_[foot].GetPosition();
-        wbcdata.v_foot_des[foot] = foot_swing_trajs_[foot].GetVelocity();
-        wbcdata.a_foot_des[foot] = foot_swing_trajs_[foot].GetAcceleration();
+        wbcdata.pos_foot_des[foot] = foot_swing_trajs_[foot].GetPosition();
+        wbcdata.vel_foot_des[foot] = foot_swing_trajs_[foot].GetVelocity();
+        wbcdata.acc_foot_des[foot] = foot_swing_trajs_[foot].GetAcceleration();
       }
       else // foot is in stance
       {
@@ -230,11 +230,11 @@ namespace sdrobot::mpc
     }
 
     // Update For WBC
-    wbcdata.p_body_des = pos_des_world_;
-    wbcdata.v_body_des = sd_vel_des_world;
-    wbcdata.a_body_des.fill(0.);
-    wbcdata.p_body_rpy_des = drivectrl->GetPosRpyDes();
-    wbcdata.vbody_ori_des = drivectrl->GetVelRpyDes();
+    wbcdata.pos_body_des = pos_des_world_;
+    wbcdata.vel_body_des = sd_vel_des_world;
+    wbcdata.acc_body_des.fill(0.);
+    wbcdata.pos_rpy_body_des = drivectrl->GetPosRpyDes();
+    wbcdata.vel_rpy_body_des = drivectrl->GetVelRpyDes();
     gait_skd->CalcContactState(wbcdata.contact_state);
     // END of WBC Update
 

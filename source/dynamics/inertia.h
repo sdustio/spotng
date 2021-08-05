@@ -29,7 +29,7 @@ namespace sdrobot::dynamics
   * Calculate the spatial coordinate transform from A to B where B is rotate by
   * theta about axis.
   */
-  bool SpatialRotation(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta); //TODO BuildSpatialXform
+  bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta);
 
   /*!
    * Construct spatial inertia from pseudo-inertia. This is described in
@@ -88,12 +88,12 @@ namespace sdrobot::dynamics
   /*!
   * Get rotation matrix from spatial transformation
   */
-  bool RotationFromSpatialXform(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X); // TODO SpatialXformToRotMat
+  bool SpatialXformToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X);
 
   /*!
   * Get translation vector from spatial transformation
   */
-  bool TranslationFromSpatialXform(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X); //TODO SpatialXformToTranslation
+  bool SpatialXformToTranslation(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X);
 
   /*!
   * Invert a spatial transformation (much faster than matrix inverse)
@@ -103,12 +103,12 @@ namespace sdrobot::dynamics
   /*!
  * Compute joint motion subspace vector
  */
-  bool JointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis); //TODO BuildJointMotionSubspace
+  bool BuildJointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis);
 
   /*!
  * Compute joint transformation
  */
-  bool JointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q); //TODO BuildJointXform
+  bool BuildJointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q);
 
   /*!
  * Convert from spatial velocity to linear velocity.

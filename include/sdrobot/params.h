@@ -59,7 +59,7 @@ namespace sdrobot::params
     constexpr inline int const num_q = 19;
     constexpr inline int const num_leg = 4;
     constexpr inline int const num_leg_joint = 3;
-    constexpr inline int const dim_config = 18; //TODO num_dof
+    constexpr inline int const dim_config = 18;
     constexpr inline int const dim_floating = 6;
 
   } // namespace model

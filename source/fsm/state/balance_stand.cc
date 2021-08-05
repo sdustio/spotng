@@ -55,23 +55,23 @@ namespace sdrobot::fsm
   void StateBalanceStand::Step()
   {
 
-    wbc_data_.p_body_des = ini_body_pos_;
-    wbc_data_.v_body_des.fill(0.);
-    wbc_data_.a_body_des.fill(0.);
-    wbc_data_.p_body_rpy_des = ini_body_pos_rpy_;
+    wbc_data_.pos_body_des = ini_body_pos_;
+    wbc_data_.vel_body_des.fill(0.);
+    wbc_data_.acc_body_des.fill(0.);
+    wbc_data_.pos_rpy_body_des = ini_body_pos_rpy_;
 
-    wbc_data_.p_body_rpy_des = drictrl_->GetPosRpyDes();
+    wbc_data_.pos_rpy_body_des = drictrl_->GetPosRpyDes();
 
     // Height
-    wbc_data_.p_body_des[2] += drictrl_->GetPosDes()[2];
+    wbc_data_.pos_body_des[2] += drictrl_->GetPosDes()[2];
 
-    wbc_data_.vbody_ori_des.fill(0.);
+    wbc_data_.vel_rpy_body_des.fill(0.);
 
     for (int i = 0; i < params::model::num_leg; ++i)
     {
-      wbc_data_.p_foot_des[i].fill(0.);
-      wbc_data_.v_foot_des[i].fill(0.);
-      wbc_data_.a_foot_des[i].fill(0.);
+      wbc_data_.pos_foot_des[i].fill(0.);
+      wbc_data_.vel_foot_des[i].fill(0.);
+      wbc_data_.acc_foot_des[i].fill(0.);
       wbc_data_.Fr_des[i].fill(0.);
       wbc_data_.Fr_des[i][2] = body_weight_ / 4.;
       wbc_data_.contact_state[i] = true;

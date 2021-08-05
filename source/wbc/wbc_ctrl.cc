@@ -144,13 +144,13 @@ namespace sdrobot::wbc
     _CleanUp();
 
     body_ori_task_->UpdateTask(
-        wbcdata.p_body_rpy_des,
-        wbcdata.vbody_ori_des,
+        wbcdata.pos_rpy_body_des,
+        wbcdata.vel_rpy_body_des,
         SdVector3f{});
     body_pos_task_->UpdateTask(
-        wbcdata.p_body_des,
-        wbcdata.v_body_des,
-        wbcdata.a_body_des);
+        wbcdata.pos_body_des,
+        wbcdata.vel_body_des,
+        wbcdata.acc_body_des);
 
     task_list_.push_back(body_ori_task_);
     task_list_.push_back(body_pos_task_);
@@ -166,9 +166,9 @@ namespace sdrobot::wbc
       else
       { // No Contact (swing)
         foot_task_[leg]->UpdateTask(
-            wbcdata.p_foot_des[leg],
-            wbcdata.v_foot_des[leg],
-            wbcdata.a_foot_des[leg]);
+            wbcdata.pos_foot_des[leg],
+            wbcdata.vel_foot_des[leg],
+            wbcdata.acc_foot_des[leg]);
         //zero_vec3);
         task_list_.push_back(foot_task_[leg]);
       }

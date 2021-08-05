@@ -423,16 +423,16 @@ namespace sdrobot::model
     {
       // joint xform
       Matrix6 XJ;
-      dynamics::JointXform(XJ, joint_types_[i], joint_axes_[i], state_.q[i - 6]);
+      dynamics::BuildJointXform(XJ, joint_types_[i], joint_axes_[i], state_.q[i - 6]);
       ToEigenTp(Xup_[i]) = XJ * ToConstEigenTp(Xtree_[i]);
-      dynamics::JointMotionSubspace(ToEigenTp(S_[i]), joint_types_[i], joint_axes_[i]);
+      dynamics::BuildJointMotionSubspace(ToEigenTp(S_[i]), joint_types_[i], joint_axes_[i]);
       dynamics::SpatialVec vJ = ToConstEigenTp(S_[i]) * state_.qd[i - 6];
       // total velocity of body i
       ToEigenTp(v_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJ;
 
       // Same for rotors
       Matrix6 XJrot;
-      JointXform(XJrot, joint_types_[i], joint_axes_[i], state_.q[i - 6] * gear_ratios_[i]);
+      BuildJointXform(XJrot, joint_types_[i], joint_axes_[i], state_.q[i - 6] * gear_ratios_[i]);
       ToEigenTp(Srot_[i]) = ToConstEigenTp(S_[i]) * gear_ratios_[i];
       dynamics::SpatialVec vJrot = ToConstEigenTp(Srot_[i]) * state_.qd[i - 6];
       ToEigenTp(Xuprot_[i]) = XJrot * ToConstEigenTp(Xrot_[i]);
