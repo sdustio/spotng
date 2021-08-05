@@ -7,33 +7,50 @@
 #include "sdrobot/leg.h"
 #include "sdrobot/model.h"
 
+#include "wbc/wbc_ctrl.h"
+
+
 namespace sdrobot::fsm
 {
-  class StateInit : public StateCtrl
+  class StateBalanceStand : public StateCtrl
   {
   public:
-    StateInit(
+    StateBalanceStand(
         Options const &opts,
         leg::LegCtrl::SharedPtr const &legctrl,
         model::Quadruped::SharedPtr const &mquat,
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
-
     void OnEnter() override;
     void OnExit() override;
     bool RunOnce() override;
+
     State CheckTransition() override
     {
       return state_trans_[drictrl_->GetState()];
     }
     TransitionData Transition(const State next) override;
 
-    State GetState() const override { return State::Init; }
+    State GetState() const override { return State::BalanceStand; }
+
+    bool NeedCheckSafeOrientation() const override { return true; }
+    bool NeedCheckForceFeedForward() const override { return true; }
 
   private:
+    // Parses contact specific controls to the leg controller
+    void Step();
+
     std::unordered_map<drive::State, State> state_trans_;
 
+    leg::LegCtrl::SharedPtr legctrl_;
     drive::DriveCtrl::SharedPtr drictrl_;
-  };
+    estimate::EstimateCtrl::SharedPtr estctrl_;
 
+    wbc::WbcCtrl::Ptr wbc_;
+    wbc::InData wbc_data_;
+
+    SdVector3f ini_body_pos_;
+    SdVector3f _ini_body_ori_rpy;
+    double body_weight_;
+  };
 }

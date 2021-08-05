@@ -25,6 +25,9 @@ namespace sdrobot::wbc
   class WbcCtrl
   {
   public:
+    using Ptr = std::unique_ptr<WbcCtrl>;
+    using SharedPtr = std::shared_ptr<WbcCtrl>;
+
     WbcCtrl(model::FloatBaseModel::SharedPtr const &model,
             Options const &opts, double weight = 0.1);
     void Run(InData &wbcdata,

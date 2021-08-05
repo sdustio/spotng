@@ -5,15 +5,15 @@ namespace sdrobot::fsm
 
   StateInit::StateInit(
       [[maybe_unused]] Options const &opts,
-      leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::SharedPtr const &mquat,
+      [[maybe_unused]] leg::LegCtrl::SharedPtr const &legctrl,
+      [[maybe_unused]] model::Quadruped::SharedPtr const &mquat,
       drive::DriveCtrl::SharedPtr const &drictrl,
-      estimate::EstimateCtrl::SharedPtr const &estctrl) : state_trans_{
-                                                              {drive::State::Init, State::Init},
-                                                              {drive::State::RecoveryStand, State::RecoveryStand},
-                                                              {drive::State::Locomotion, State::RecoveryStand},
-                                                              {drive::State::BalanceStand, State::RecoveryStand}},
-                                                          legctrl_(legctrl), mquat_(mquat), drictrl_(drictrl), estctrl_(estctrl) {}
+      [[maybe_unused]] estimate::EstimateCtrl::SharedPtr const &estctrl) : state_trans_{
+                                                                               {drive::State::Init, State::Init},
+                                                                               {drive::State::RecoveryStand, State::RecoveryStand},
+                                                                               {drive::State::Locomotion, State::RecoveryStand},
+                                                                               {drive::State::BalanceStand, State::RecoveryStand}},
+                                                                           drictrl_(drictrl) {}
 
   void StateInit::OnEnter()
   {
