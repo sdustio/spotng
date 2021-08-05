@@ -1,23 +1,23 @@
 #include "fsm/impl.h"
+#include "fsm/state/init.h"
+#include "fsm/state/balance_stand.h"
+#include "fsm/state/locomotion.h"
+#include "fsm/state/recovery_stand.h"
 
 namespace sdrobot::fsm
 {
   FiniteStateMachineImpl::FiniteStateMachineImpl(
       Options const &opts,
       leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::SharedPtr const &mquat,
+      model::Quadruped::SharedPtr const &mquad,
       drive::DriveCtrl::SharedPtr const &drictrl,
-      estimate::EstimateCtrl::SharedPtr const &estctrl) : legctrl_(legctrl),
-                                                          mquat_(mquat),
-                                                          drictrl_(drictrl),
-                                                          estctrl_(estctrl)
+      estimate::EstimateCtrl::SharedPtr const &estctrl) : state_ctrls_{
+                                                              {State::Init, std::make_shared<StateInit>(drictrl)},
+                                                              {State::RecoveryStand, std::make_shared<StateRecoveryStand>(legctrl, drictrl, estctrl)},
+                                                              {State::Locomotion, std::make_shared<StateLocomotion>(opts, legctrl, mquad, drictrl, estctrl)},
+                                                              {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl, mquad, drictrl, estctrl)}},
+                                                          legctrl_(legctrl), mquad_(mquad), drictrl_(drictrl), estctrl_(estctrl)
   {
-    // state_ctrls_ =
-    // { {State::Init, std::make_shared<StateInit>(cleg, quad, cmd, est)},
-    //   {State::RecoveryStand, std::make_shared<StateRecoveryStand>(cleg, quad, cmd, est)},
-    //   {State::Locomotion, std::make_shared<StateLocomotion>(cleg, quad, cmd, est)},
-    //   {State::BalanceStand, std::make_shared<StateBalanceStand>(cleg, quad, cmd, est)}
-    // };
   }
 
   bool FiniteStateMachineImpl::Init()

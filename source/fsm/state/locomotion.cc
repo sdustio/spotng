@@ -17,20 +17,20 @@ namespace sdrobot::fsm
   StateLocomotion::StateLocomotion(
       Options const &opts,
       leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::SharedPtr const &mquat,
+      model::Quadruped::SharedPtr const &mquad,
       drive::DriveCtrl::SharedPtr const &drictrl,
       estimate::EstimateCtrl::SharedPtr const &estctrl) : state_trans_{
                                                               {drive::State::Init, State::Init},
                                                               {drive::State::RecoveryStand, State::RecoveryStand},
                                                               {drive::State::Locomotion, State::Locomotion},
                                                               {drive::State::BalanceStand, State::BalanceStand}},
-                                                          legctrl_(legctrl), mquat_(mquat), drictrl_(drictrl), estctrl_(estctrl)
+                                                          legctrl_(legctrl), mquad_(mquad), drictrl_(drictrl), estctrl_(estctrl)
   {
     mpc_ = std::make_unique<mpc::CMpc>(opts.ctrl_dt_sec, opts.gravity, 30 / (1000. * opts.ctrl_dt_sec));
 
     // Initialize GRF and footstep locations to 0s
     // footstepLocations = Matrix3x4::Zero();
-    wbc_ = std::make_unique<wbc::WbcCtrl>(mquat->GetFloatBaseModel(), opts);
+    wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts);
   }
 
   void StateLocomotion::OnEnter()
@@ -76,7 +76,7 @@ namespace sdrobot::fsm
     // Contact state logic
     // estimateContact();
 
-    mpc_->Run(wbc_data_, legctrl_, mquat_, drictrl_, estctrl_);
+    mpc_->Run(wbc_data_, legctrl_, mquad_, drictrl_, estctrl_);
 
     std::array<SdVector3f, 4> pDes_backup;
     std::array<SdVector3f, 4> vDes_backup;

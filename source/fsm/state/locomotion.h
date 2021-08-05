@@ -18,7 +18,7 @@ namespace sdrobot::fsm
     StateLocomotion(
         Options const &opts,
         leg::LegCtrl::SharedPtr const &legctrl,
-        model::Quadruped::SharedPtr const &mquat,
+        model::Quadruped::SharedPtr const &mquad,
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
     void OnEnter() override;
@@ -43,7 +43,7 @@ namespace sdrobot::fsm
     std::unordered_map<drive::State, State> state_trans_;
 
     leg::LegCtrl::SharedPtr legctrl_;
-    model::Quadruped::SharedPtr mquat_;
+    model::Quadruped::SharedPtr mquad_;
     drive::DriveCtrl::SharedPtr drictrl_;
     estimate::EstimateCtrl::SharedPtr estctrl_;
 

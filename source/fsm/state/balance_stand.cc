@@ -6,7 +6,7 @@ namespace sdrobot::fsm
   StateBalanceStand::StateBalanceStand(
       Options const &opts,
       leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::SharedPtr const &mquat,
+      model::Quadruped::SharedPtr const &mquad,
       drive::DriveCtrl::SharedPtr const &drictrl,
       estimate::EstimateCtrl::SharedPtr const &estctrl) : state_trans_{
                                                               {drive::State::Init, State::Init},
@@ -16,7 +16,7 @@ namespace sdrobot::fsm
                                                           legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl),
                                                           body_weight_(params::model::body_mass * opts.gravity)
   {
-    wbc_ = std::make_unique<wbc::WbcCtrl>(mquat->GetFloatBaseModel(), opts, 1000.);
+    wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.);
   }
 
   void StateBalanceStand::OnEnter()

@@ -18,7 +18,7 @@ namespace sdrobot::fsm
     StateBalanceStand(
         Options const &opts,
         leg::LegCtrl::SharedPtr const &legctrl,
-        model::Quadruped::SharedPtr const &mquat,
+        model::Quadruped::SharedPtr const &mquad,
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
     void OnEnter() override;
