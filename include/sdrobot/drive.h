@@ -42,7 +42,7 @@ namespace sdrobot::drive
     using SharedPtr = std::shared_ptr<DriveCtrl>;
     using ConstSharedPtr = std::shared_ptr<DriveCtrl const>;
 
-    virtual ~DriveCtrl() = 0;
+    virtual ~DriveCtrl() = default;
 
     virtual bool UpdateDriveCmd(DriveCmd const &cmd) = 0;
     virtual bool CmdtoDesData() = 0;

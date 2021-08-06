@@ -8,7 +8,8 @@
 
 sdrobot::Options opts;
 opts.drive_mode = sdrobot::DriveMode::kManualAll;
-opts.ctrl_dt_sec = 0.001;
+opts.ctrl_dt_sec = 0.002;
+opts.act_itf_sec = 0.025;
 
 sdrobot::interface::ActuatorInterface::SharedPtr act_itf;
 /*....*/
