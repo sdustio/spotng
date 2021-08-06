@@ -24,14 +24,14 @@ endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
+option(BUILD_EXAMPLES "Build examples." ON)
 
 #### Library
 find_package(Eigen3 REQUIRED)
 find_package(qpOASES REQUIRED)
 find_package(eiquadprog REQUIRED)
 
-add_library(${PROJECT_NAME} SHARED ${sources})
-target_sources(${PROJECT_NAME} PRIVATE
+set(LIB_SOURCES
   source/eigen.cc
   source/math/algebra.cc
   source/math/interpolate.cc
@@ -65,6 +65,9 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/fsm/state/locomotion.cc
   source/robot_impl.cc
 )
+
+add_library(${PROJECT_NAME} SHARED)
+target_sources(${PROJECT_NAME} PRIVATE ${LIB_SOURCES})
 target_link_libraries(${PROJECT_NAME}
   Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog
 )
@@ -148,5 +151,7 @@ install(
     ${INSTALL_CMAKEDIR}
 )
 
-# Test
-add_subdirectory(test)
+# example
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
