@@ -48,16 +48,16 @@ namespace sdrobot::wbc
     std::vector<Task::ConstSharedPtr> task_list_;
     std::vector<Contact::ConstSharedPtr> contact_list_;
 
-    std::array<fpt_t, params::model::num_leg_joint> Kp_joint_, Kd_joint_;
+    std::array<fpt_t, params::model::kNumLegJoint> Kp_joint_, Kd_joint_;
 
     Task::SharedPtr body_pos_task_;
     Task::SharedPtr body_ori_task_;
 
-    std::array<Task::SharedPtr, params::model::num_leg> foot_task_;
-    std::array<Contact::SharedPtr, params::model::num_leg> foot_contact_;
+    std::array<Task::SharedPtr, params::model::kNumLeg> foot_task_;
+    std::array<Contact::SharedPtr, params::model::kNumLeg> foot_contact_;
 
-    std::array<SdVector3f, params::model::num_leg> pre_foot_vel_;
-    std::array<SdVector3f, params::model::num_leg> Fr_result_;
+    std::array<SdVector3f, params::model::kNumLeg> pre_foot_vel_;
+    std::array<SdVector3f, params::model::kNumLeg> Fr_result_;
 
     SdVector12f full_config_;
     SdVector12f tau_ff_;

@@ -16,9 +16,9 @@ namespace sdrobot::model
     std::array<fpt_t, 12> qd;
   };
 
-  using GeneralFTp = std::array<fpt_t, params::model::dim_config>;
-  using MassMatTp = std::array<fpt_t, params::model::dim_config * params::model::dim_config>;
-  using ContactJacobTp = std::array<fpt_t, 3 * params::model::dim_config>;
+  using GeneralFTp = std::array<fpt_t, params::model::kDimConfig>;
+  using MassMatTp = std::array<fpt_t, params::model::kDimConfig * params::model::kDimConfig>;
+  using ContactJacobTp = std::array<fpt_t, 3 * params::model::kDimConfig>;
 
   class SDROBOT_EXPORT FloatBaseModel
   {

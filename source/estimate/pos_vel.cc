@@ -120,7 +120,7 @@ namespace sdrobot::estimate
     v0 << xhat_[3], xhat_[4], xhat_[5];
 
     //构成状态变量等
-    for (int i = 0; i < params::model::num_leg; i++)
+    for (int i = 0; i < params::model::kNumLeg; i++)
     {
       int i1 = 3 * i;
       SdVector3f _ph;

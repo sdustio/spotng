@@ -31,36 +31,36 @@ namespace sdrobot::params
 
   namespace model
   {
-    constexpr inline fpt_t const body_length = 0.19 * 2;
-    constexpr inline fpt_t const body_width = 0.049 * 2;
-    constexpr inline fpt_t const body_height = 0.05 * 2;
-    constexpr inline fpt_t const body_mass = 3.3;
+    constexpr inline fpt_t const kBodyLength = 0.19 * 2;
+    constexpr inline fpt_t const kBodyWidth = 0.049 * 2;
+    constexpr inline fpt_t const kBodyHeight = 0.05 * 2;
+    constexpr inline fpt_t const kBodyMass = 3.3;
 
-    constexpr inline fpt_t const abad_gear_ratio = 6.0;
-    constexpr inline fpt_t const hip_gear_ratio = 6.0;
-    constexpr inline fpt_t const knee_gear_ratio = 9.33;
+    constexpr inline fpt_t const kAbadGearRatio = 6.0;
+    constexpr inline fpt_t const kHipGearRatio = 6.0;
+    constexpr inline fpt_t const kKneeGearRatio = 9.33;
 
-    constexpr inline fpt_t const abad_link_length = 0.062;
-    constexpr inline fpt_t const hip_link_length = 0.209;
-    constexpr inline fpt_t const knee_link_length = 0.195;
+    constexpr inline fpt_t const kAbadLinkLength = 0.062;
+    constexpr inline fpt_t const kHipLinkLength = 0.209;
+    constexpr inline fpt_t const kKneeLinkLength = 0.195;
 
-    constexpr inline fpt_t const knee_link_y_offset = 0.004;
-    constexpr inline fpt_t const max_leg_length = 0.409;
+    constexpr inline fpt_t const kKneeLinkYOffset = 0.004;
+    constexpr inline fpt_t const kMaxLegLength = 0.409;
 
-    constexpr inline fpt_t const motor_kt = 0.05;
-    constexpr inline fpt_t const motor_r = 0.173;
-    constexpr inline fpt_t const motor_tau_max = 3.0;
-    constexpr inline fpt_t const battery_v = 24;
+    constexpr inline fpt_t const kMotorKt = 0.05;
+    constexpr inline fpt_t const kMotorR = 0.173;
+    constexpr inline fpt_t const kMotorTauMax = 3.0;
+    constexpr inline fpt_t const kBatteryV = 24;
 
-    constexpr inline fpt_t const joint_damping = 0.01;
-    constexpr inline fpt_t const joint_dry_friction = 0.2;
+    constexpr inline fpt_t const kJointDamping = 0.01;
+    constexpr inline fpt_t const kJointDryFriction = 0.2;
 
-    constexpr inline int const num_act_joint = 12;
-    constexpr inline int const num_q = 19;
-    constexpr inline int const num_leg = 4;
-    constexpr inline int const num_leg_joint = 3;
-    constexpr inline int const dim_config = 18;
-    constexpr inline int const dim_floating = 6;
+    constexpr inline int const kNumActJoint = 12;
+    constexpr inline int const kNumQ = 19;
+    constexpr inline int const kNumLeg = 4;
+    constexpr inline int const kNumLegJoint = 3;
+    constexpr inline int const kDimConfig = 18;
+    constexpr inline int const kDimFloating = 6;
 
   } // namespace model
 

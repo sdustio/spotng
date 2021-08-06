@@ -56,10 +56,10 @@ namespace sdrobot::leg
 
   bool LegCtrlImpl::ComputeLegJacobianAndPosition(int leg)
   {
-    fpt_t l1 = params::model::abad_link_length;
-    fpt_t l2 = params::model::hip_link_length;
-    fpt_t l3 = params::model::knee_link_length;
-    fpt_t l4 = params::model::knee_link_y_offset;
+    fpt_t l1 = params::model::kAbadLinkLength;
+    fpt_t l2 = params::model::kHipLinkLength;
+    fpt_t l3 = params::model::kKneeLinkLength;
+    fpt_t l4 = params::model::kKneeLinkYOffset;
     fpt_t side_sign = GetSideSign(leg); //also check bounds
 
     auto const &q = datas_[leg].q;
@@ -95,7 +95,7 @@ namespace sdrobot::leg
 
   bool LegCtrlImpl::UpdateDatasFromActuatorInterface()
   {
-    for (int leg = 0; leg < params::model::num_leg; leg++)
+    for (int leg = 0; leg < params::model::kNumLeg; leg++)
     {
       auto const &data = act_itf_->GetActuatorData();
       // q: 关节角
@@ -121,7 +121,7 @@ namespace sdrobot::leg
   {
     auto &cmd = act_itf_->GetActuatorCmdForUpdate();
 
-    for (int leg = 0; leg < params::model::num_leg; leg++)
+    for (int leg = 0; leg < params::model::kNumLeg; leg++)
     {
       // tauFF 获得从控制器来的力矩
       auto const &tff = cmds_[leg].tau_feed_forward;

@@ -64,7 +64,7 @@ namespace sdrobot::fsm
     iter_ = 0;
 
     // initial configuration, position
-    for (int i = 0; i < params::model::num_leg; ++i)
+    for (int i = 0; i < params::model::kNumLeg; ++i)
     {
       initial_jpos_[i] = legctrl_->GetDatas()[i].q;
     }
@@ -118,7 +118,7 @@ namespace sdrobot::fsm
 
     if (curr_iter <= floor(opts::standup_ramp_iter * 0.7))
     {
-      for (int leg = 0; leg < params::model::num_leg; ++leg)
+      for (int leg = 0; leg < params::model::kNumLeg; ++leg)
       {
         SetJPosInterPts(curr_iter, opts::standup_ramp_iter,
                         leg, initial_jpos_[leg], opts::stand_jpos[leg]);
@@ -129,7 +129,7 @@ namespace sdrobot::fsm
       // If body height is too low because of some reason
       // even after the stand up motion is almost over
       // (Can happen when E-Stop is engaged in the middle of Other state)
-      for (int i = 0; i < params::model::num_leg; ++i)
+      for (int i = 0; i < params::model::kNumLeg; ++i)
       {
         initial_jpos_[i] = legctrl_->GetDatas()[i].q;
       }
@@ -148,7 +148,7 @@ namespace sdrobot::fsm
 
   bool StateRecoveryStand::FoldLegs(const int curr_iter)
   {
-    for (int i = 0; i < params::model::num_leg; ++i)
+    for (int i = 0; i < params::model::kNumLeg; ++i)
     {
       SetJPosInterPts(curr_iter, opts::fold_ramp_iter, i,
                       initial_jpos_[i], opts::fold_jpos[i]);
@@ -158,13 +158,13 @@ namespace sdrobot::fsm
       if (UpsideDown())
       {
         flag_ = Flag::RollOver;
-        for (int i = 0; i < params::model::num_leg; ++i)
+        for (int i = 0; i < params::model::kNumLeg; ++i)
           initial_jpos_[i] = opts::fold_jpos[i];
       }
       else
       {
         flag_ = Flag::StandUp;
-        for (int i = 0; i < params::model::num_leg; ++i)
+        for (int i = 0; i < params::model::kNumLeg; ++i)
           initial_jpos_[i] = opts::fold_jpos[i];
       }
       iter_ = -1;
@@ -174,7 +174,7 @@ namespace sdrobot::fsm
 
   bool StateRecoveryStand::RollOver(const int curr_iter)
   {
-    for (int i = 0; i < params::model::num_leg; ++i)
+    for (int i = 0; i < params::model::kNumLeg; ++i)
     {
       SetJPosInterPts(curr_iter, opts::rollover_ramp_iter, i,
                       initial_jpos_[i], opts::rolling_jpos[i]);
@@ -183,7 +183,7 @@ namespace sdrobot::fsm
     if (curr_iter > opts::rollover_ramp_iter + opts::rollover_settle_iter)
     {
       flag_ = Flag::FoldLegs;
-      for (int i = 0; i < params::model::num_leg; ++i)
+      for (int i = 0; i < params::model::kNumLeg; ++i)
         initial_jpos_[i] = opts::rolling_jpos[i];
       iter_ = -1;
     }

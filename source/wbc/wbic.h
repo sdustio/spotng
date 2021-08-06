@@ -26,7 +26,7 @@ namespace sdrobot::wbc
     * 所以这些私有方法的参数使用了Eigen数据类型作为参数，并且没有使用Eigen::Ref，完全是为了方便。
     * 同样，为了定义这些私有方法，只能将 using Vector18 提到这里的位置（本应该在cpp中）。
     */
-    using Vector18 = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
+    using Vector18 = Eigen::Matrix<fpt_t, params::model::kDimConfig, 1>;
 
     bool _SetQPSize(MatrixX &G,
                     VectorX &g0,
@@ -69,7 +69,7 @@ namespace sdrobot::wbc
                           MatrixX const &Winv,
                           fpt_t threshold = 0.0001);
 
-    std::array<fpt_t, 6 *params::model::dim_config> Sv_ = {}; // Virtual joint
+    std::array<fpt_t, 6 *params::model::kDimConfig> Sv_ = {}; // Virtual joint
     model::MassMatTp A_;
     model::MassMatTp Ainv_;
     model::GeneralFTp cori_;

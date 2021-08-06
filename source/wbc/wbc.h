@@ -5,8 +5,8 @@
 
 namespace sdrobot::wbc
 {
-  using SdVector12f = std::array<fpt_t, params::model::num_act_joint>;
-  using SdVector18f = std::array<fpt_t, params::model::dim_config>;
+  using SdVector12f = std::array<fpt_t, params::model::kNumActJoint>;
+  using SdVector18f = std::array<fpt_t, params::model::kDimConfig>;
 
   struct InData
   {

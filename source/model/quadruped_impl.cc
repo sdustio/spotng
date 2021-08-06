@@ -92,21 +92,21 @@ namespace sdrobot::model
     bodyRotationalInertia = bodyRotationalInertia * 1e-6;
     Vector3 bodyCOM(0, 0, 0);
     dynamics::SpatialInertia body_spatial_inertia;
-    dynamics::BuildSpatialInertia(body_spatial_inertia, params::model::body_mass, bodyCOM,
+    dynamics::BuildSpatialInertia(body_spatial_inertia, params::model::kBodyMass, bodyCOM,
                                   bodyRotationalInertia);
 
     // locations
-    Vector3 abad_location(params::model::body_length * 0.5, params::model::body_width * 0.5, 0);
+    Vector3 abad_location(params::model::kBodyLength * 0.5, params::model::kBodyWidth * 0.5, 0);
     Vector3 abad_rotor_location(0.125, 0.049, 0);
-    Vector3 hip_location(0, params::model::abad_link_length, 0);
+    Vector3 hip_location(0, params::model::kAbadLinkLength, 0);
     Vector3 hip_rotor_location(0, 0.04, 0);
-    Vector3 knee_location(0, 0, -params::model::hip_link_length);
+    Vector3 knee_location(0, 0, -params::model::kHipLinkLength);
     Vector3 knee_rotor_location(0, 0, 0);
 
     auto model = std::make_shared<FloatBaseModelImpl>();
     // we assume the cheetah's body (not including rotors) can be modeled as a uniformly distributed box.
     //我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
-    Vector3 bodyDims(params::model::body_length, params::model::body_width, params::model::body_height);
+    Vector3 bodyDims(params::model::kBodyLength, params::model::kBodyWidth, params::model::kBodyHeight);
 
     // model->addBase(_bodyMass, Vector3(0,0,0), BuildRotationalInertia(_bodyMass,
     // bodyDims));
@@ -124,7 +124,7 @@ namespace sdrobot::model
     dynamics::SpatialInertia spatial_inertia, rotor_spatial_inertia;
 
     // loop over 4 legs
-    for (int leg_id = 0; leg_id < params::model::num_leg; leg_id++)
+    for (int leg_id = 0; leg_id < params::model::kNumLeg; leg_id++)
     {
       // Ab/Ad joint
       //  int addBody(const SpatialInertia& inertia, const SpatialInertia&
@@ -153,7 +153,7 @@ namespace sdrobot::model
       model->AddBody(
           spatial_inertia,
           rotor_spatial_inertia,
-          params::model::abad_gear_ratio, base_id, dynamics::JointType::Revolute,
+          params::model::kAbadGearRatio, base_id, dynamics::JointType::Revolute,
           dynamics::CoordinateAxis::X, xtree_abad, xtree_abad_rotor);
 
       // Hip Joint
@@ -179,11 +179,11 @@ namespace sdrobot::model
       }
 
       model->AddBody(
-          spatial_inertia, rotor_spatial_inertia, params::model::hip_gear_ratio,
+          spatial_inertia, rotor_spatial_inertia, params::model::kHipGearRatio,
           body_id - 1, dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y, xtree_hip, xtree_hip_rotor);
 
       // add knee ground contact point
-      model->AddGroundContactPoint(body_id, Vector3(0, 0, -params::model::hip_link_length));
+      model->AddGroundContactPoint(body_id, Vector3(0, 0, -params::model::kHipLinkLength));
 
       // Knee Joint
       body_id++;
@@ -192,7 +192,7 @@ namespace sdrobot::model
       Matrix6 xtree_knee_rotor;
       dynamics::BuildSpatialXform(xtree_knee_rotor, I3, knee_rotor_location);
 
-      fpt_t signed_knee_link_y_offset = params::model::knee_link_y_offset;
+      fpt_t signed_knee_link_y_offset = params::model::kKneeLinkYOffset;
       if (side_sign < 0)
       {
         dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, knee_spatial_inertia, dynamics::CoordinateAxis::Y);
@@ -209,11 +209,11 @@ namespace sdrobot::model
       model->AddBody(
           spatial_inertia,
           rotor_spatial_inertia,
-          params::model::knee_gear_ratio, body_id - 1, dynamics::JointType::Revolute,
+          params::model::kKneeGearRatio, body_id - 1, dynamics::JointType::Revolute,
           dynamics::CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
       model->AddGroundContactPoint(
-          body_id, Vector3(0, signed_knee_link_y_offset, -params::model::knee_link_length), true);
+          body_id, Vector3(0, signed_knee_link_y_offset, -params::model::kKneeLinkLength), true);
 
       // add foot
       //model->addGroundContactPoint(body_id, Vector3(0, 0, -_kneeLinkLength), true);
@@ -234,7 +234,7 @@ namespace sdrobot::model
 
   bool QuadrupedImpl::CalcHipLocation(SdVector3f &ret, int const leg) const
   {
-    fpt_t hip_location[3] = {params::model::body_length * 0.5, params::model::body_width * 0.5, 0};
+    fpt_t hip_location[3] = {params::model::kBodyLength * 0.5, params::model::kBodyWidth * 0.5, 0};
     ret = {
         (leg == leg::idx::fr || leg == leg::idx::fl) ? hip_location[0] : -hip_location[0],
         (leg == leg::idx::fl || leg == leg::idx::hl) ? hip_location[1] : -hip_location[1],

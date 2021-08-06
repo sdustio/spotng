@@ -17,11 +17,11 @@ namespace sdrobot::fsm
 
     // Safety parameters
     double max_angle = 1.0472; // 60 degrees (should be changed)
-    double max_p_des = params::model::max_leg_length * std::sin(max_angle);
+    double max_p_des = params::model::kMaxLegLength * std::sin(max_angle);
 
     auto &cmds = legctrl->GetCmdsForUpdate();
     // Check all of the legs
-    for (int leg = 0; leg < params::model::num_leg; leg++)
+    for (int leg = 0; leg < params::model::kNumLeg; leg++)
     {
       // Keep the foot from going too far from the body in +x
       if (cmds[leg].p_des[0] > max_p_des)
@@ -53,16 +53,16 @@ namespace sdrobot::fsm
 
       // Keep the leg under the motor module (don't raise above body or crash into
       // module)
-      if (cmds[leg].p_des[2] > -params::model::max_leg_length / 4)
+      if (cmds[leg].p_des[2] > -params::model::kMaxLegLength / 4)
       {
-        cmds[leg].p_des[2] = -params::model::max_leg_length / 4;
+        cmds[leg].p_des[2] = -params::model::kMaxLegLength / 4;
         check_safe = false;
       }
 
       // Keep the foot within the kinematic limits
-      if (cmds[leg].p_des[2] < -params::model::max_leg_length)
+      if (cmds[leg].p_des[2] < -params::model::kMaxLegLength)
       {
-        cmds[leg].p_des[2] = -params::model::max_leg_length;
+        cmds[leg].p_des[2] = -params::model::kMaxLegLength;
         check_safe = false;
       }
     }
@@ -83,7 +83,7 @@ namespace sdrobot::fsm
     auto &cmds = legctrl->GetCmdsForUpdate();
 
     // Check all of the legs
-    for (int leg = 0; leg < params::model::num_leg; leg++)
+    for (int leg = 0; leg < params::model::kNumLeg; leg++)
     {
       // Limit the lateral forces in +x body frame
       if (cmds[leg].force_feed_forward[0] > max_lateral_force)

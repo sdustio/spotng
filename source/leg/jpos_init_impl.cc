@@ -31,17 +31,17 @@ namespace sdrobot::leg
 
     if (curr_time_ < end_time_)
     {
-      Eigen::Matrix<fpt_t, params::model::num_act_joint, 1> jpos;
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>> y0(ini_jpos_.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>> y1(mid_jpos_.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::num_act_joint, 1>> yf(target_jpos_.data());
+      Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> jpos;
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> y0(ini_jpos_.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> y1(mid_jpos_.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> yf(target_jpos_.data());
       fpt_t t = curr_time_ / end_time_;
 
       math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);
 
-      for (int leg(0); leg < params::model::num_leg; ++leg)
+      for (int leg(0); leg < params::model::kNumLeg; ++leg)
       {
-        for (int jidx(0); jidx < params::model::num_leg_joint; ++jidx)
+        for (int jidx(0); jidx < params::model::kNumLegJoint; ++jidx)
         {
           auto &cmds = ctrl->GetCmdsForUpdate();
           cmds[leg].tau_feed_forward[jidx] = 0.;
@@ -57,9 +57,9 @@ namespace sdrobot::leg
 
   bool JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl)
   {
-    for (int leg(0); leg < params::model::num_leg; ++leg)
+    for (int leg(0); leg < params::model::kNumLeg; ++leg)
     {
-      for (int jidx(0); jidx < params::model::num_leg_joint; ++jidx)
+      for (int jidx(0); jidx < params::model::kNumLegJoint; ++jidx)
       {
         int idx = 3 * leg + jidx;
         ini_jpos_[idx] = ctrl->GetDatas()[leg].q[jidx];

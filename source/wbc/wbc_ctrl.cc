@@ -5,7 +5,7 @@
 
 namespace sdrobot::wbc
 {
-  using Matrix18 = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
+  using Matrix18 = Eigen::Matrix<fpt_t, params::model::kDimConfig, params::model::kDimConfig>;
 
   WbcCtrl::WbcCtrl(
       model::FloatBaseModel::SharedPtr const &model,
@@ -56,11 +56,11 @@ namespace sdrobot::wbc
     _state.ori = estdata.ori;
     _state.pos = estdata.pos;
 
-    for (int i = 0; i < params::model::num_leg_joint; i++)
+    for (int i = 0; i < params::model::kNumLegJoint; i++)
     {
       _state.vel[i] = estdata.vel_rpy_body[i];
       _state.vel[i + 3] = estdata.vel_body[i];
-      for (int leg = 0; leg < params::model::num_leg; leg++)
+      for (int leg = 0; leg < params::model::kNumLeg; leg++)
       {
         _state.q[3 * leg + i] = legdata[leg].q[i];
         _state.qd[3 * leg + i] = legdata[leg].qd[i];
@@ -101,13 +101,13 @@ namespace sdrobot::wbc
   {
     auto &cmds = legctrl->GetCmdsForUpdate();
 
-    for (int leg(0); leg < params::model::num_leg; ++leg)
+    for (int leg(0); leg < params::model::kNumLeg; ++leg)
     {
-      for (int jidx(0); jidx < params::model::num_leg_joint; ++jidx)
+      for (int jidx(0); jidx < params::model::kNumLegJoint; ++jidx)
       {
-        cmds[leg].tau_feed_forward[jidx] = tau_ff_[params::model::num_leg_joint * leg + jidx];
-        cmds[leg].q_des[jidx] = des_jpos_[params::model::num_leg_joint * leg + jidx];
-        cmds[leg].qd_des[jidx] = des_jvel_[params::model::num_leg_joint * leg + jidx];
+        cmds[leg].tau_feed_forward[jidx] = tau_ff_[params::model::kNumLegJoint * leg + jidx];
+        cmds[leg].q_des[jidx] = des_jpos_[params::model::kNumLegJoint * leg + jidx];
+        cmds[leg].qd_des[jidx] = des_jvel_[params::model::kNumLegJoint * leg + jidx];
 
         ToEigenTp(cmds[leg].kp_joint)(jidx, jidx) = Kp_joint_[jidx];
         ToEigenTp(cmds[leg].kd_joint)(jidx, jidx) = Kd_joint_[jidx];
@@ -122,7 +122,7 @@ namespace sdrobot::wbc
     }
 
     // Knee joint non flip barrier
-    for (int leg(0); leg < params::model::num_leg; ++leg)
+    for (int leg(0); leg < params::model::kNumLeg; ++leg)
     {
       if (cmds[leg].q_des[2] < 0.3)
       {
@@ -154,7 +154,7 @@ namespace sdrobot::wbc
     task_list_.push_back(body_ori_task_);
     task_list_.push_back(body_pos_task_);
 
-    for (int leg(0); leg < params::model::num_leg; ++leg)
+    for (int leg(0); leg < params::model::kNumLeg; ++leg)
     {
       if (wbcdata.contact_state[leg] > 0.)
       { // Contact

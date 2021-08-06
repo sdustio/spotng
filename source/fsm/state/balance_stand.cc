@@ -13,7 +13,7 @@ namespace sdrobot::fsm
                                                               {drive::State::RecoveryStand, State::RecoveryStand},
                                                               {drive::State::Locomotion, State::Locomotion},
                                                               {drive::State::BalanceStand, State::BalanceStand}},
-                                                          legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl), body_weight_(params::model::body_mass * opts.gravity)
+                                                          legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl), body_weight_(params::model::kBodyMass * opts.gravity)
   {
     wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.);
   }
@@ -67,7 +67,7 @@ namespace sdrobot::fsm
 
     wbc_data_.vel_rpy_body_des.fill(0.);
 
-    for (int i = 0; i < params::model::num_leg; ++i)
+    for (int i = 0; i < params::model::kNumLeg; ++i)
     {
       wbc_data_.pos_foot_des[i].fill(0.);
       wbc_data_.vel_foot_des[i].fill(0.);
