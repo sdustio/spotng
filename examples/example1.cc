@@ -11,7 +11,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   opts.drive_mode = DriveMode::kManualAll;
   opts.ctrl_dt_sec = 0.002;
   opts.act_itf_sec = 0.025;
-  opts.jpos_init_sec = 0.05;
+  opts.jpos_init_sec = 0.1;
 
   interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
   /*....*/
@@ -31,16 +31,26 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   robot->UpdateImu(imu_data);
   robot->UpdateDriveCmd(drive_cmd);
 
-  for (size_t i = 0; i < 100; i++)
+  unsigned cdt = 1000 * opts.ctrl_dt_sec;
+  unsigned adt = 1000 * opts.act_itf_sec;
+
+  for (size_t i = 0; i < 60'000; i++)
   {
-    printf("\n===================\niter: %zu\n", i);
-    robot->RunOnce();
-    itf->RunOnce();
-    if (i % 10 == 0)
+    if (i % cdt == 0)
     {
-      std::dynamic_pointer_cast<EchoActuatorInterface>(itf)->PrintCmd();
+      robot->RunOnce();
     }
 
+    if (i % adt == 0)
+    {
+      itf->RunOnce();
+    }
+
+    if (i % 50 == 0)
+    {
+      printf("\n===================\niter: %zu\n", i);
+      std::dynamic_pointer_cast<EchoActuatorInterface>(itf)->PrintCmd();
+    }
   }
 
   return 0;

@@ -1,7 +1,7 @@
-- lib usage example/test
-- make above pass
-- ros2 demo
+- logging
+- debug
 - 开始研究仿真
+- ros2 demo
 
 **更多**
 

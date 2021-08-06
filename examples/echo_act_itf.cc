@@ -63,5 +63,6 @@ bool EchoActuatorInterface::PrintArray4f(sdrobot::SdVector4f const &arr) const
 {
   for (auto &&i : arr)
     printf("%3.f\t", i);
+  printf("\n");
   return true;
 }
