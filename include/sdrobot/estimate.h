@@ -28,6 +28,8 @@ namespace sdrobot::estimate
   public:
     using Ptr = std::unique_ptr<Estimator>;
     using SharedPtr = std::shared_ptr<Estimator>;
+    using ConstPtr = std::unique_ptr<Estimator const>;
+    using ConstSharedPtr = std::shared_ptr<Estimator const>;
 
     virtual ~Estimator() = default;
     virtual bool Init() = 0;
@@ -39,6 +41,8 @@ namespace sdrobot::estimate
   public:
     using Ptr = std::unique_ptr<EstimateCtrl>;
     using SharedPtr = std::shared_ptr<EstimateCtrl>;
+    using ConstPtr = std::unique_ptr<EstimateCtrl const>;
+    using ConstSharedPtr = std::shared_ptr<EstimateCtrl const>;
 
     virtual ~EstimateCtrl() = default;
 

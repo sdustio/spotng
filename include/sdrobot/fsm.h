@@ -27,6 +27,8 @@ namespace sdrobot::fsm
   public:
     using Ptr = std::unique_ptr<StateCtrl>;
     using SharedPtr = std::shared_ptr<StateCtrl>;
+    using ConstPtr = std::unique_ptr<StateCtrl const>;
+    using ConstSharedPtr = std::shared_ptr<StateCtrl const>;
 
     virtual ~StateCtrl() = default;
 
@@ -61,6 +63,8 @@ namespace sdrobot::fsm
   public:
     using Ptr = std::unique_ptr<FiniteStateMachine>;
     using SharedPtr = std::shared_ptr<FiniteStateMachine>;
+    using ConstPtr = std::unique_ptr<FiniteStateMachine const>;
+    using ConstSharedPtr = std::shared_ptr<FiniteStateMachine const>;
 
     virtual ~FiniteStateMachine() = default;
 

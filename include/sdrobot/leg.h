@@ -63,6 +63,8 @@ namespace sdrobot::leg
   public:
     using Ptr = std::unique_ptr<LegCtrl>;
     using SharedPtr = std::shared_ptr<LegCtrl>;
+    using ConstPtr = std::unique_ptr<LegCtrl const>;
+    using ConstSharedPtr = std::shared_ptr<LegCtrl const>;
 
     virtual ~LegCtrl() = default;
 
@@ -104,6 +106,8 @@ namespace sdrobot::leg
   public:
     using Ptr = std::unique_ptr<JPosInit>;
     using SharedPtr = std::shared_ptr<JPosInit>;
+    using ConstPtr = std::unique_ptr<JPosInit const>;
+    using ConstSharedPtr = std::shared_ptr<JPosInit const>;
 
     virtual ~JPosInit() = default;
 
