@@ -20,7 +20,7 @@ bool EchoActuatorInterface::RunOnce()
   data_.qd_knee = cmd_.qd_des_knee;
   data_.flags = cmd_.flags;
   data_.driver_status = 1;
-  return PrintCmd();
+  return true;
 }
 
 bool EchoActuatorInterface::PrintCmd() const

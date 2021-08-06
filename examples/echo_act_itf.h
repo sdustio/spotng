@@ -9,9 +9,9 @@ public:
   ActuatorCmd &GetActuatorCmdForUpdate() override;
   bool UpdateActuatorCmd(ActuatorCmd const &cmd) override;
   bool RunOnce() override;
+  bool PrintCmd() const;
 
 private:
-  bool PrintCmd() const;
   bool PrintArray4f(sdrobot::SdVector4f const &) const;
 
   ActuatorData data_;
