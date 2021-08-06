@@ -9,7 +9,7 @@ namespace sdrobot::interface
     cmd_ = cmd;
     return true;
   }
-  bool EchoActuatorInterface::Init() { return true; }
+
   bool EchoActuatorInterface::RunOnce()
   {
     data_.q_abad = cmd_.q_des_abad;

@@ -8,7 +8,6 @@ namespace sdrobot::interface
     ActuatorData const &GetActuatorData() const override;
     ActuatorCmd &GetActuatorCmdForUpdate() override;
     bool UpdateActuatorCmd(ActuatorCmd const &cmd) override;
-    bool Init() override;
     bool RunOnce() override;
 
   private:

@@ -21,8 +21,6 @@ namespace sdrobot::fsm
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
 
-    bool Init() override;
-
     StateCtrl::SharedPtr const &GetStateCtrl(State const state) override;
 
     bool RunOnce() override;

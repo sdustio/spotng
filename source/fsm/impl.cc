@@ -18,10 +18,6 @@ namespace sdrobot::fsm
                                                               {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl, mquad, drictrl, estctrl)}},
                                                           legctrl_(legctrl), mquad_(mquad), drictrl_(drictrl), estctrl_(estctrl)
   {
-  }
-
-  bool FiniteStateMachineImpl::Init()
-  {
     // Initialize a new Fsm State with the control data
     current_state_ctrl_ = GetStateCtrl(State::Init);
 
@@ -33,8 +29,6 @@ namespace sdrobot::fsm
 
     // Initialize Fsm mode to normal operation
     opmode_ = OperatingMode::Normal;
-
-    return true;
   }
 
   StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State const state)

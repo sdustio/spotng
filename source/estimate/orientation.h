@@ -17,7 +17,6 @@ namespace sdrobot::estimate
   {
   public:
     bool Update(sensor::ImuData const &imu);
-    bool Init() override;
     bool RunOnce(State &ret) override;
 
   private:

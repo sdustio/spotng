@@ -66,8 +66,6 @@ namespace sdrobot::fsm
 
     virtual ~FiniteStateMachine() = default;
 
-    virtual bool Init() = 0;
-
     virtual StateCtrl::SharedPtr const &GetStateCtrl(State const state) = 0;
 
     /**

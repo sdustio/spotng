@@ -13,7 +13,6 @@ namespace sdrobot::estimate
     bool AddEstimator(std::string const &name, Estimator::SharedPtr const &est) override;
     Estimator::SharedPtr const &GetEstimator(std::string const &name) override;
 
-    bool Init() override;
     bool RunOnce() override;
 
     State const &GetEstState() const override;

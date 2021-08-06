@@ -57,7 +57,6 @@ namespace sdrobot::interface
     virtual ActuatorData const &GetActuatorData() const = 0;
     virtual ActuatorCmd &GetActuatorCmdForUpdate() = 0;
     virtual bool UpdateActuatorCmd(ActuatorCmd const &cmd) = 0;
-    virtual bool Init() = 0;    // return true if ok
     virtual bool RunOnce() = 0; // return true if ok
   };
 }

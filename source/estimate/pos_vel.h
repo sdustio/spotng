@@ -10,8 +10,7 @@ namespace sdrobot::estimate
   class PosVel : public Estimator
   {
   public:
-    PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &quad);
-    bool Init() override;
+    PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl, model::Quadruped::ConstSharedPtr const &quad);
     bool RunOnce(State &ret) override;
 
   private:
@@ -23,8 +22,8 @@ namespace sdrobot::estimate
 
     fpt_t dt_;
     fpt_t gravity_;
-    leg::LegCtrl::SharedPtr const legctrl_;
-    model::Quadruped::SharedPtr const quad_;
+    leg::LegCtrl::ConstSharedPtr const legctrl_;
+    model::Quadruped::ConstSharedPtr const quad_;
 
     std::array<fpt_t, 18> xhat_;    //状态估计值 [p v p1 p2 p3 p4] 世界坐标下
     std::array<fpt_t, 12> ps_;      //储存状态p

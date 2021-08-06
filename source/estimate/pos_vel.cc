@@ -6,16 +6,11 @@ namespace sdrobot::estimate
   PosVel::PosVel(
       fpt_t dt,
       fpt_t gravity,
-      leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::SharedPtr const &quad) : dt_(dt),
+      leg::LegCtrl::ConstSharedPtr const &legctrl,
+      model::Quadruped::ConstSharedPtr const &quad) : dt_(dt),
                                                  gravity_(gravity),
                                                  legctrl_(legctrl),
                                                  quad_(quad)
-  {
-    Init();
-  }
-
-  bool PosVel::Init()
   {
     xhat_.fill(0.);
     ps_.fill(0.);
@@ -68,8 +63,6 @@ namespace sdrobot::estimate
 
     Eigen::Map<Matrix28> R0(R0_.data());
     R0.setIdentity();
-
-    return true;
   }
 
   bool PosVel::RunOnce(State &ret)
