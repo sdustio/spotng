@@ -27,10 +27,14 @@ namespace sdrobot::math
 
   bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold)
   {
+    if (!(ret.rows() == inmat.cols() && ret.cols() == inmat.rows()))
+    {
+      return false;
+    }
+
 
     if ((1 == inmat.rows()) && (1 == inmat.cols()))
     {
-      ret.resize(1, 1);
       if (inmat.coeff(0, 0) > sigma_threshold)
       {
         ret.coeffRef(0, 0) = 1.0 / inmat.coeff(0, 0);

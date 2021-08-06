@@ -33,13 +33,14 @@ namespace sdrobot::wbc
 
     Vector18 delta_q = Vector18::Zero();
     Vector18 qdot = Vector18::Zero();
-    MatrixX Jt, Jt_pinv, N_nx;
+    MatrixX Jt, N_nx;
     for (size_t i = 0; i < task_list.size(); ++i)
     {
       auto const &task = task_list[i];
       Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::kDimConfig> const> _Jt(
           task->GetTaskJacobian().data());
       Jt = _Jt * Nc;
+      MatrixX Jt_pinv(Jt.cols(), Jt.rows());
       _PseudoInverse(Jt_pinv, Jt);
 
       delta_q = delta_q + Jt_pinv * (ToConstEigenTp(task->GetPosError()) - _Jt * delta_q);
@@ -59,7 +60,7 @@ namespace sdrobot::wbc
 
   bool KinWbc::_BuildProjectionMatrix(MatrixX &ret, MatrixX const &J)
   {
-    MatrixX J_pinv;
+    MatrixX J_pinv(J.cols(), J.rows());
     _PseudoInverse(J_pinv, J);
     ret = Matrix18::Identity() - J_pinv * J;
     return true;
