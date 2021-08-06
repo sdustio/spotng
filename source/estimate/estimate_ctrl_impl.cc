@@ -24,7 +24,7 @@ namespace sdrobot::estimate
   bool EstimateCtrlImpl::Init()
   {
     bool ret = true;
-    for (const auto &mp : est_map_)
+    for (auto const &mp : est_map_)
     {
       ret = ret && mp.second->Init();
     }
@@ -34,7 +34,7 @@ namespace sdrobot::estimate
   bool EstimateCtrlImpl::RunOnce()
   {
     bool ret = true;
-    for (const auto &mp : est_map_)
+    for (auto const &mp : est_map_)
     {
       ret = ret && mp.second->RunOnce(est_state_);
     }

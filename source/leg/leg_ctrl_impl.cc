@@ -25,7 +25,7 @@ namespace sdrobot::leg
   LegCtrlImpl::LegCtrlImpl(
       interface::ActuatorInterface::SharedPtr const &act_itf) : act_itf_(act_itf) {}
 
-  const Datas &LegCtrlImpl::GetDatas() const
+  Datas const &LegCtrlImpl::GetDatas() const
   {
     return datas_;
   }
@@ -166,8 +166,8 @@ namespace sdrobot::leg
 
       // estimate torque
       ToEigenTp(datas_[leg].tau_estimate) = leg_torque +
-                                                kp_joint * (q_des - q) +
-                                                kd_joint * (qd_des - qd);
+                                            kp_joint * (q_des - q) +
+                                            kd_joint * (qd_des - qd);
 
       cmd.flags[leg] = 1;
     }

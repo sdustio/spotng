@@ -20,7 +20,7 @@ namespace sdrobot::leg
         1.7, 0.5, 0.5};
   }
 
-  bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr &ctrl)
+  bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl)
   {
     curr_time_ += dt_;
     if (first_visit_)
@@ -55,7 +55,7 @@ namespace sdrobot::leg
     return true;
   }
 
-  void JPosInitImpl::UpdateInitial(const LegCtrl::SharedPtr &ctrl)
+  void JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl)
   {
     for (int leg(0); leg < params::model::num_leg; ++leg)
     {

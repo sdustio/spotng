@@ -29,7 +29,7 @@ namespace sdrobot::wbc
     return true;
   }
 
-  bool Wbic::MakeTorque(SdVector12f &ret, const std::vector<Task::SharedPtr> &task_list, const std::vector<Contact::SharedPtr> &contact_list)
+  bool Wbic::MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list, std::vector<Contact::ConstSharedPtr> const &contact_list)
   {
     if (!b_updatesetting_)
     {
@@ -94,7 +94,7 @@ namespace sdrobot::wbc
     }
 
     // Task
-    for (auto &task : task_list)
+    for (auto const &task : task_list)
     {
       Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::dim_config> const> Jt(
           task->GetTaskJacobian().data());
@@ -163,7 +163,7 @@ namespace sdrobot::wbc
       MatrixX &Jc, //  , num_qdot_
       VectorX &JcDotQdot,
       VectorX &Fr_des,
-      std::vector<Contact::SharedPtr> const &contact_list)
+      std::vector<Contact::ConstSharedPtr> const &contact_list)
   {
     int dim_accumul_rf = 0, dim_accumul_uf = 0;
 
@@ -299,7 +299,7 @@ namespace sdrobot::wbc
                         MatrixX &Jc,
                         VectorX &JcDotQdot,
                         VectorX &Fr_des,
-                        std::vector<Contact::SharedPtr> const &contact_list)
+                        std::vector<Contact::ConstSharedPtr> const &contact_list)
   {
     // Dimension
     dim_rf_ = 0;

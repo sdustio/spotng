@@ -55,8 +55,8 @@ namespace sdrobot::fsm
     Flag flag_ = Flag::FoldLegs;
 
     leg::LegCtrl::SharedPtr legctrl_;
-    drive::DriveCtrl::SharedPtr drictrl_;
-    estimate::EstimateCtrl::SharedPtr estctrl_;
+    drive::DriveCtrl::ConstSharedPtr drictrl_;
+    estimate::EstimateCtrl::ConstSharedPtr estctrl_;
 
     std::array<SdVector3f, 4> initial_jpos_;
   };

@@ -7,7 +7,7 @@ namespace sdrobot::wbc
   class TaskBodyPos : public Task
   {
   public:
-    TaskBodyPos(model::FloatBaseModel::SharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd);
+    TaskBodyPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd);
 
   private:
     // Update op_cmd_

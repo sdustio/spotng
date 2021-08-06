@@ -7,7 +7,7 @@ namespace sdrobot::wbc
   using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
 
   TaskBodyPos::TaskBodyPos(
-      model::FloatBaseModel::SharedPtr const &model,
+      model::FloatBaseModel::ConstSharedPtr const &model,
       SdVector3f const &kp, SdVector3f const &kd) : Task(model, kp, kd)
   {
     Eigen::Map<Jt_t> Jt(Jt_.data());

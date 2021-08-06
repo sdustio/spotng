@@ -51,7 +51,6 @@ namespace sdrobot::interface
   public:
     using Ptr = std::unique_ptr<ActuatorInterface>;
     using SharedPtr = std::shared_ptr<ActuatorInterface>;
-    using ConstPtr = std::unique_ptr<ActuatorInterface const>;
     using ConstSharedPtr = std::shared_ptr<ActuatorInterface const>;
 
     virtual ~ActuatorInterface() = default;

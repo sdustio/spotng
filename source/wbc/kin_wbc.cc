@@ -6,9 +6,8 @@ namespace sdrobot::wbc
   using Vector18 = Eigen::Matrix<fpt_t, params::model::dim_config, 1>;
   using Matrix18 = Eigen::Matrix<fpt_t, params::model::dim_config, params::model::dim_config>;
 
-  bool KinWbc::FindConfiguration(SdVector12f const &curr_config,
-                                 std::vector<Task::SharedPtr> const &task_list, std::vector<Contact::SharedPtr> const &contact_list,
-                                 SdVector12f &jpos_cmd, SdVector12f &jvel_cmd)
+  bool KinWbc::FindConfiguration(SdVector12f &jpos_cmd, SdVector12f &jvel_cmd, SdVector12f const &curr_config,
+                                 std::vector<Task::ConstSharedPtr> const &task_list, std::vector<Contact::ConstSharedPtr> const &contact_list)
   {
     // Contact Jacobian Setup
     MatrixX Nc(params::model::dim_config, params::model::dim_config);

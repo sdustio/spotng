@@ -9,21 +9,22 @@ namespace sdrobot::wbc
   public:
     using Ptr = std::unique_ptr<Contact>;
     using SharedPtr = std::shared_ptr<Contact>;
+    using ConstSharedPtr = std::shared_ptr<Contact const>;
 
-    Contact(model::FloatBaseModel::SharedPtr const &model, int contact_pt);
+    Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_pt);
 
     int GetDim() const { return 3; }
     int GetDimRFConstraint() const { return 6; }
 
-    SdVector3f const &GetRFdes() { return Fr_des_; }
+    SdVector3f const &GetRFdes() const { return Fr_des_; }
     bool UpdateRFdes(SdVector3f const &Fr_des);
 
     bool UpdateContact();
 
-    model::ContactJacobTp const &GetContactJacobian() { return Jc_; }
-    SdVector3f const &GetJcDotQdot() { return JcDotQdot_; }
-    std::array<fpt_t, 6 * 3> const &GetRFConstraintMtx() { return Uf_; }
-    SdVector6f const &GetRFConstraintVec() { return ieq_vec_; }
+    model::ContactJacobTp const &GetContactJacobian() const { return Jc_; }
+    SdVector3f const &GetJcDotQdot() const { return JcDotQdot_; }
+    std::array<fpt_t, 6 * 3> const &GetRFConstraintMtx() const { return Uf_; }
+    SdVector6f const &GetRFConstraintVec() const { return ieq_vec_; }
 
   private:
     bool _UpdateJc();
@@ -31,7 +32,7 @@ namespace sdrobot::wbc
     bool _UpdateUf();
     bool _UpdateInequalityVector();
 
-    model::FloatBaseModel::SharedPtr const robot_sys_;
+    model::FloatBaseModel::ConstSharedPtr robot_sys_;
 
     std::array<fpt_t, 6 * 3> Uf_ = {};
     SdVector6f ieq_vec_;

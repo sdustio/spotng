@@ -21,7 +21,7 @@ namespace sdrobot::fsm
 
   void StateBalanceStand::OnEnter()
   {
-    const auto &estdata = estctrl_->GetEstState();
+    auto const &estdata = estctrl_->GetEstState();
 
     ini_body_pos_ = estdata.pos;
 

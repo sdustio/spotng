@@ -13,6 +13,7 @@ namespace sdrobot::mpc
   public:
     using Ptr = std::unique_ptr<GaitSkd>;
     using SharedPtr = std::shared_ptr<GaitSkd>;
+    using ConstSharedPtr = std::shared_ptr<GaitSkd const>;
 
     virtual ~GaitSkd() = default;
 

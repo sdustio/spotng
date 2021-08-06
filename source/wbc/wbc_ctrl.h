@@ -27,25 +27,26 @@ namespace sdrobot::wbc
   public:
     using Ptr = std::unique_ptr<WbcCtrl>;
     using SharedPtr = std::shared_ptr<WbcCtrl>;
+    using ConstSharedPtr = std::shared_ptr<WbcCtrl const>;
 
     WbcCtrl(model::FloatBaseModel::SharedPtr const &model,
             Options const &opts, double weight = 0.1);
     void Run(InData &wbcdata,
-             leg::LegCtrl::SharedPtr &legctrl,
-             drive::DriveCtrl::SharedPtr const &drivectrl,
-             estimate::EstimateCtrl::SharedPtr const &estctrl);
+             leg::LegCtrl::SharedPtr const &legctrl,
+             drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+             estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
 
   private:
     bool _UpdateModel(estimate::State const &estdata, leg::Datas const &legdata);
     bool _ComputeWBC();
-    bool _UpdateLegCMD(leg::LegCtrl::SharedPtr &legctrl, drive::DriveCtrl::SharedPtr const &drivectrl);
+    bool _UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::ConstSharedPtr const &drivectrl);
     bool _ContactTaskUpdate(InData const &wbcdata);
     bool _CleanUp();
 
     model::FloatBaseModel::SharedPtr model_;
 
-    std::vector<Task::SharedPtr> task_list_;
-    std::vector<Contact::SharedPtr> contact_list_;
+    std::vector<Task::ConstSharedPtr> task_list_;
+    std::vector<Contact::ConstSharedPtr> contact_list_;
 
     std::array<fpt_t, params::model::num_leg_joint> Kp_joint_, Kd_joint_;
 

@@ -37,7 +37,7 @@ namespace sdrobot::fsm
     return true;
   }
 
-  StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State state)
+  StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State const state)
   {
     return state_ctrls_[state];
   }

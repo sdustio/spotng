@@ -6,7 +6,7 @@ namespace sdrobot::wbc
   using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::dim_config>;
 
   TaskLinkPos::TaskLinkPos(
-      model::FloatBaseModel::SharedPtr const &model,
+      model::FloatBaseModel::ConstSharedPtr const &model,
       SdVector3f const &kp, SdVector3f const &kd,
       int linkid, bool virtual_depend)
       : Task(model, kp, kd), link_idx_(linkid), virtual_depend_(virtual_depend)

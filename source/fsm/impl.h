@@ -23,7 +23,7 @@ namespace sdrobot::fsm
 
     bool Init() override;
 
-    StateCtrl::SharedPtr const &GetStateCtrl(State state) override;
+    StateCtrl::SharedPtr const &GetStateCtrl(State const state) override;
 
     bool RunOnce() override;
 

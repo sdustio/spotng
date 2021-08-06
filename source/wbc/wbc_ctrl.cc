@@ -34,9 +34,9 @@ namespace sdrobot::wbc
   }
 
   void WbcCtrl::Run(InData &wbcdata,
-                    leg::LegCtrl::SharedPtr &legctrl,
-                    drive::DriveCtrl::SharedPtr const &drivectrl,
-                    estimate::EstimateCtrl::SharedPtr const &estctrl)
+                    leg::LegCtrl::SharedPtr const &legctrl,
+                    drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                    estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
   {
 
     // Update Model
@@ -79,8 +79,8 @@ namespace sdrobot::wbc
   bool WbcCtrl::_ComputeWBC()
   {
     // TEST
-    kin_wbc_->FindConfiguration(full_config_, task_list_, contact_list_,
-                                des_jpos_, des_jvel_);
+    kin_wbc_->FindConfiguration(des_jpos_, des_jvel_, full_config_,
+                                task_list_, contact_list_);
 
     auto grav = model_->GetGeneralizedGravityForce();
     auto coriolis = model_->GetGeneralizedCoriolisForce();
@@ -97,7 +97,7 @@ namespace sdrobot::wbc
     return true;
   }
 
-  bool WbcCtrl::_UpdateLegCMD(leg::LegCtrl::SharedPtr &legctrl, drive::DriveCtrl::SharedPtr const &drivectrl)
+  bool WbcCtrl::_UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::ConstSharedPtr const &drivectrl)
   {
     auto &cmds = legctrl->GetCmdsForUpdate();
 

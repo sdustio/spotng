@@ -27,7 +27,6 @@ namespace sdrobot::fsm
   public:
     using Ptr = std::unique_ptr<StateCtrl>;
     using SharedPtr = std::shared_ptr<StateCtrl>;
-    using ConstPtr = std::unique_ptr<StateCtrl const>;
     using ConstSharedPtr = std::shared_ptr<StateCtrl const>;
 
     virtual ~StateCtrl() = default;
@@ -45,7 +44,7 @@ namespace sdrobot::fsm
     virtual State CheckTransition() = 0;
 
     // Runs the transition behaviors and returns true when done transitioning
-    virtual TransitionData Transition(const State next) = 0;
+    virtual TransitionData Transition(State const next) = 0;
 
     // Return State Enum
     virtual State GetState() const = 0;
@@ -63,14 +62,13 @@ namespace sdrobot::fsm
   public:
     using Ptr = std::unique_ptr<FiniteStateMachine>;
     using SharedPtr = std::shared_ptr<FiniteStateMachine>;
-    using ConstPtr = std::unique_ptr<FiniteStateMachine const>;
     using ConstSharedPtr = std::shared_ptr<FiniteStateMachine const>;
 
     virtual ~FiniteStateMachine() = default;
 
     virtual bool Init() = 0;
 
-    virtual StateCtrl::SharedPtr const &GetStateCtrl(State state) = 0;
+    virtual StateCtrl::SharedPtr const &GetStateCtrl(State const state) = 0;
 
     /**
      * Called each control loop iteration. Decides if the robot is safe to

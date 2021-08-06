@@ -12,7 +12,6 @@ namespace sdrobot
   public:
     using Ptr = std::unique_ptr<Robot>;
     using SharedPtr = std::shared_ptr<Robot>;
-    using ConstPtr = std::unique_ptr<Robot const>;
     using ConstSharedPtr = std::shared_ptr<Robot const>;
 
     static bool Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);

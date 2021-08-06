@@ -9,10 +9,10 @@ namespace sdrobot::leg
   {
   public:
     JPosInitImpl(fpt_t dt, fpt_t end_time);
-    bool IsInitialized(LegCtrl::SharedPtr &legctrl) override;
+    bool IsInitialized(LegCtrl::SharedPtr const &legctrl) override;
 
   private:
-    void UpdateInitial(const LegCtrl::SharedPtr &legctrl);
+    void UpdateInitial(LegCtrl::SharedPtr const &legctrl);
 
     fpt_t dt_;
     fpt_t end_time_;

@@ -63,12 +63,11 @@ namespace sdrobot::leg
   public:
     using Ptr = std::unique_ptr<LegCtrl>;
     using SharedPtr = std::shared_ptr<LegCtrl>;
-    using ConstPtr = std::unique_ptr<LegCtrl const>;
     using ConstSharedPtr = std::shared_ptr<LegCtrl const>;
 
     virtual ~LegCtrl() = default;
 
-    virtual const Datas &GetDatas() const = 0;
+    virtual Datas const &GetDatas() const = 0;
 
     virtual Cmds &GetCmdsForUpdate() = 0;
     virtual bool UpdateCmds(Cmds const &cmds) = 0;
@@ -106,12 +105,11 @@ namespace sdrobot::leg
   public:
     using Ptr = std::unique_ptr<JPosInit>;
     using SharedPtr = std::shared_ptr<JPosInit>;
-    using ConstPtr = std::unique_ptr<JPosInit const>;
     using ConstSharedPtr = std::shared_ptr<JPosInit const>;
 
     virtual ~JPosInit() = default;
 
-    virtual bool IsInitialized(LegCtrl::SharedPtr &ctrl) = 0;
+    virtual bool IsInitialized(LegCtrl::SharedPtr const &ctrl) = 0;
   };
 
 } // namespace sdrobot::leg

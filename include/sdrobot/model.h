@@ -25,7 +25,6 @@ namespace sdrobot::model
   public:
     using Ptr = std::unique_ptr<FloatBaseModel>;
     using SharedPtr = std::shared_ptr<FloatBaseModel>;
-    using ConstPtr = std::unique_ptr<FloatBaseModel const>;
     using ConstSharedPtr = std::shared_ptr<FloatBaseModel const>;
 
     virtual ~FloatBaseModel() = default;
@@ -53,7 +52,6 @@ namespace sdrobot::model
   public:
     using Ptr = std::unique_ptr<Quadruped>;
     using SharedPtr = std::shared_ptr<Quadruped>;
-    using ConstPtr = std::unique_ptr<Quadruped const>;
     using ConstSharedPtr = std::shared_ptr<Quadruped const>;
 
     virtual ~Quadruped() = default;

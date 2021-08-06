@@ -19,10 +19,10 @@ namespace sdrobot::mpc
   }
 
   bool CMpc::Run(wbc::InData &wbcdata,
-                 leg::LegCtrl::SharedPtr &legctrl,
-                 model::Quadruped::SharedPtr const &quad,
-                 drive::DriveCtrl::SharedPtr const &drivectrl,
-                 estimate::EstimateCtrl::SharedPtr const &estctrl)
+                 leg::LegCtrl::SharedPtr const &legctrl,
+                 model::Quadruped::ConstSharedPtr const &quad,
+                 drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
   {
     auto _body_height = 0.3 + drivectrl->GetPosDes()[2];
 
@@ -52,7 +52,7 @@ namespace sdrobot::mpc
     }
 
     auto cmd_gait = drivectrl->GetGait();
-    GaitSkd::Ptr &gait_skd = gait_map_[cmd_gait];
+    auto const &gait_skd = gait_map_[cmd_gait];
 
     gait_skd->SetIterations(iter_between_mpc_, iter_counter_);
 
@@ -249,9 +249,9 @@ namespace sdrobot::mpc
   void CMpc::UpdateMPCIfNeeded(
       std::array<SdVector3f, 4> &out,
       std::vector<int> const &mpcTable,
-      drive::DriveCtrl::SharedPtr const &drivectrl,
-      estimate::EstimateCtrl::SharedPtr const &estctrl,
-      const SdVector3f &vel_des_world)
+      drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+      estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
+      SdVector3f const &vel_des_world)
   {
     //iter_between_mpc_ = 30;
     if ((iter_counter_ % iter_between_mpc_) != 0)
@@ -330,19 +330,19 @@ namespace sdrobot::mpc
   void CMpc::SolveMPC(
       std::array<SdVector3f, 4> &out,
       std::vector<int> const &mpcTable,
-      estimate::EstimateCtrl::SharedPtr const &estctrl)
+      estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
   {
-    const auto &seResult = estctrl->GetEstState();
+    auto const &seResult = estctrl->GetEstState();
 
     std::array<fpt_t, 12> weights = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
     //fptype Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
     fpt_t yaw = seResult.pos_rpy[2];
     fpt_t alpha = 4e-5; // make setting eventually
     //fptype alpha = 4e-7; // make setting eventually: DH
-    const auto &pos = seResult.pos;               //p
-    const auto &v_world = seResult.vel_world;     //v
-    const auto &w_world = seResult.vel_rpy_world; //w
-    const auto &ori = seResult.ori;               //q
+    auto const &pos = seResult.pos;               //p
+    auto const &v_world = seResult.vel_world;     //v
+    auto const &w_world = seResult.vel_rpy_world; //w
+    auto const &ori = seResult.ori;               //q
 
     std::array<fpt_t, 12> r;
     for (int i = 0; i < 12; i++)

@@ -40,7 +40,6 @@ namespace sdrobot::drive
   public:
     using Ptr = std::unique_ptr<DriveCtrl>;
     using SharedPtr = std::shared_ptr<DriveCtrl>;
-    using ConstPtr = std::unique_ptr<DriveCtrl const>;
     using ConstSharedPtr = std::shared_ptr<DriveCtrl const>;
 
     virtual ~DriveCtrl() = 0;

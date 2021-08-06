@@ -17,22 +17,22 @@ namespace sdrobot::mpc
     CMpc(fpt_t dt, fpt_t g, int iter_between_mpc);
     bool Init() override;
     bool Run(wbc::InData &wbcdata,
-             leg::LegCtrl::SharedPtr &legctrl,
-             model::Quadruped::SharedPtr const &quad,
-             drive::DriveCtrl::SharedPtr const &drivectrl,
-             estimate::EstimateCtrl::SharedPtr const &estctrl) override;
+             leg::LegCtrl::SharedPtr const &legctrl,
+             model::Quadruped::ConstSharedPtr const &quad,
+             drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+             estimate::EstimateCtrl::ConstSharedPtr const &estctrl) override;
 
   private:
     void UpdateMPCIfNeeded(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,
-        drive::DriveCtrl::SharedPtr const &drivectrl,
-        estimate::EstimateCtrl::SharedPtr const &estctrl,
-        const SdVector3f &v_des_world);
+        drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+        estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
+        SdVector3f const &v_des_world);
     void SolveMPC(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,
-        estimate::EstimateCtrl::SharedPtr const &estctrl);
+        estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
 
     fpt_t dt_;
     fpt_t dt_mpc_;

@@ -18,7 +18,7 @@ namespace sdrobot::wbc
     bool UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv,
                        model::GeneralFTp const &cori, model::GeneralFTp const &grav);
 
-    bool MakeTorque(SdVector12f &ret, const std::vector<Task::SharedPtr> &task_list, const std::vector<Contact::SharedPtr> &contact_list);
+    bool MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,  std::vector<Contact::ConstSharedPtr> const &contact_list);
 
   private:
     /* 为了方便阅读，拆分 MakeTorque 为多个私有方法。
@@ -39,14 +39,14 @@ namespace sdrobot::wbc
                     MatrixX &Jc,
                     VectorX &JcDotQdot,
                     VectorX &Fr_des,
-                    std::vector<Contact::SharedPtr> const &contact_list);
+                    std::vector<Contact::ConstSharedPtr> const &contact_list);
 
     bool _ContactBuilding(MatrixX &Uf,
                           VectorX &Uf_ieq_vec,
                           MatrixX &Jc, //  , num_qdot_
                           VectorX &JcDotQdot,
                           VectorX &Fr_des,
-                          std::vector<Contact::SharedPtr> const &contact_list);
+                          std::vector<Contact::ConstSharedPtr> const &contact_list);
     bool _SetEqualityConstraint(MatrixX &CE, VectorX &ce0,
                                 MatrixX const &Jc,
                                 VectorX const &Fr_des,

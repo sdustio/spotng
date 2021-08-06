@@ -43,9 +43,9 @@ namespace sdrobot::fsm
     std::unordered_map<drive::State, State> state_trans_;
 
     leg::LegCtrl::SharedPtr legctrl_;
-    model::Quadruped::SharedPtr mquad_;
-    drive::DriveCtrl::SharedPtr drictrl_;
-    estimate::EstimateCtrl::SharedPtr estctrl_;
+    model::Quadruped::ConstSharedPtr mquad_;
+    drive::DriveCtrl::ConstSharedPtr drictrl_;
+    estimate::EstimateCtrl::ConstSharedPtr estctrl_;
 
     wbc::WbcCtrl::Ptr wbc_;
     wbc::InData wbc_data_;

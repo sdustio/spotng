@@ -23,14 +23,15 @@ namespace sdrobot::mpc
   public:
     using Ptr = std::unique_ptr<Mpc>;
     using SharedPtr = std::shared_ptr<Mpc>;
+    using ConstSharedPtr = std::shared_ptr<Mpc const>;
 
     virtual ~Mpc() = default;
     virtual bool Init() = 0;
     virtual bool Run(wbc::InData &wbcdata,
-                     leg::LegCtrl::SharedPtr &legctrl,
-                     model::Quadruped::SharedPtr const &quad,
-                     drive::DriveCtrl::SharedPtr const &drivectrl,
-                     estimate::EstimateCtrl::SharedPtr const &estctrl) = 0;
+                     leg::LegCtrl::SharedPtr const &legctrl,
+                     model::Quadruped::ConstSharedPtr const &quad,
+                     drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                     estimate::EstimateCtrl::ConstSharedPtr const &estctrl) = 0;
   };
 
 }

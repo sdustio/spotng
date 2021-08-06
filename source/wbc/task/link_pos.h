@@ -7,7 +7,7 @@ namespace sdrobot::wbc
   class TaskLinkPos : public Task
   {
   public:
-    TaskLinkPos(model::FloatBaseModel::SharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd, int linkid, bool virtual_depend = true);
+    TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd, int linkid, bool virtual_depend = true);
 
   private:
     // Update op_cmd_

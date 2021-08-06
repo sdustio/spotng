@@ -10,8 +10,9 @@ namespace sdrobot::wbc
   public:
     using Ptr = std::unique_ptr<Task>;
     using SharedPtr = std::shared_ptr<Task>;
+    using ConstSharedPtr = std::shared_ptr<Task const>;
 
-    Task(model::FloatBaseModel::SharedPtr const &model,
+    Task(model::FloatBaseModel::ConstSharedPtr const &model,
          SdVector3f const &kp,
          SdVector3f const &kd) : robot_sys_(model), Kp_(kp), Kd_(kd)
     {
@@ -31,13 +32,13 @@ namespace sdrobot::wbc
       return true;
     }
 
-    SdVector3f const &GetCommand() { return op_cmd_; }
-    std::array<fpt_t, 3 * params::model::dim_config> const &GetTaskJacobian() { return Jt_; }
-    SdVector3f const &GetTaskJacobianDotQdot() { return JtDotQdot_; }
+    SdVector3f const &GetCommand() const { return op_cmd_; }
+    std::array<fpt_t, 3 * params::model::dim_config> const &GetTaskJacobian() const { return Jt_; }
+    SdVector3f const &GetTaskJacobianDotQdot() const { return JtDotQdot_; }
 
-    SdVector3f const &GetPosError() { return pos_err_; }
-    SdVector3f const &GetDesVel() { return vel_des_; }
-    SdVector3f const &GetDesAcc() { return acc_des_; }
+    SdVector3f const &GetPosError() const { return pos_err_; }
+    SdVector3f const &GetDesVel() const { return vel_des_; }
+    SdVector3f const &GetDesAcc() const { return acc_des_; }
 
   protected:
     // Update op_cmd_
@@ -50,7 +51,7 @@ namespace sdrobot::wbc
     // Additional Update (defined in child classes)
     virtual bool _AdditionalUpdate() = 0;
 
-    model::FloatBaseModel::SharedPtr const robot_sys_;
+    model::FloatBaseModel::ConstSharedPtr robot_sys_;
 
     bool b_set_task_ = false;
 

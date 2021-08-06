@@ -10,7 +10,7 @@ namespace sdrobot::fsm
     return (abs(state.pos_rpy[0]) < 0.5 && abs(state.pos_rpy[1]) < 0.5);
   }
 
-  bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr &legctrl)
+  bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl)
   {
     // Assumed safe to start
     bool check_safe = true;
@@ -71,7 +71,7 @@ namespace sdrobot::fsm
     return check_safe;
   }
 
-  bool SafetyChecker::CheckForceFeedForward(leg::LegCtrl::SharedPtr &legctrl)
+  bool SafetyChecker::CheckForceFeedForward(leg::LegCtrl::SharedPtr const &legctrl)
   {
     // Assumed safe to start
     bool check_safe = true;

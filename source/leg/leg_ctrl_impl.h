@@ -9,7 +9,7 @@ namespace sdrobot::leg
   public:
     LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf);
 
-    const Datas &GetDatas() const override;
+    Datas const &GetDatas() const override;
 
     Cmds &GetCmdsForUpdate() override;
     bool UpdateCmds(Cmds const &cmds) override;

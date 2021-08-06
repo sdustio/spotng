@@ -64,7 +64,9 @@ namespace sdrobot::fsm
       return state_trans_[drictrl_->GetState()];
     }
 
-    std::dynamic_pointer_cast<drive::DriveCtrlImpl>(drictrl_)->UpdateState(drive::State::RecoveryStand);
+    std::dynamic_pointer_cast<drive::DriveCtrlImpl>(
+        std::const_pointer_cast<drive::DriveCtrl>(drictrl_))
+        ->UpdateState(drive::State::RecoveryStand);
     return State::RecoveryStand;
   }
 
@@ -102,7 +104,7 @@ namespace sdrobot::fsm
 
   bool StateLocomotion::locomotionSafe()
   {
-    const auto &seResult = estctrl_->GetEstState();
+    auto const &seResult = estctrl_->GetEstState();
 
     if (std::fabs(seResult.pos_rpy[0]) > math::DegToRad(opts::max_roll))
     {
