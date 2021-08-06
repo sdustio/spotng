@@ -42,6 +42,19 @@ namespace sdrobot
 
   bool RobotImpl::RunOnce()
   {
+    legctrl_->UpdateDatasFromActuatorInterface();
+    legctrl_->ZeroCmd();
+
+    estctrl_->RunOnce();
+
+    if (jposinit_->IsInitialized(legctrl_))
+    {
+      drivectrl_->CmdtoDesData();
+      fsm_->RunOnce();
+    }
+
+    legctrl_->SendCmdsToActuatorInterface();
+
     return true;
   }
 
