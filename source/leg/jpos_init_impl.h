@@ -12,7 +12,7 @@ namespace sdrobot::leg
     bool IsInitialized(LegCtrl::SharedPtr const &legctrl) override;
 
   private:
-    void UpdateInitial(LegCtrl::SharedPtr const &legctrl);
+    bool UpdateInitial(LegCtrl::SharedPtr const &legctrl);
 
     fpt_t dt_;
     fpt_t end_time_;

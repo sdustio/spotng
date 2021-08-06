@@ -59,7 +59,7 @@ namespace sdrobot::fsm
   {
   }
 
-  void StateRecoveryStand::OnEnter()
+  bool StateRecoveryStand::OnEnter()
   {
     iter_ = 0;
 
@@ -80,6 +80,7 @@ namespace sdrobot::fsm
         flag_ = Flag::StandUp;
       }
     }
+    return true;
   }
 
   bool StateRecoveryStand::UpsideDown()
@@ -87,9 +88,10 @@ namespace sdrobot::fsm
     return (ToConstEigenTp(estctrl_->GetEstState().rot_body)(2, 2) < 0);
   }
 
-  void StateRecoveryStand::OnExit()
+  bool StateRecoveryStand::OnExit()
   {
     // do nothing
+    return true;
   }
 
   bool StateRecoveryStand::RunOnce()

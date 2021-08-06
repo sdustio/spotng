@@ -9,9 +9,6 @@ namespace sdrobot::fsm
   {
     constexpr inline double const max_roll = 80.;  //40;
     constexpr inline double const max_pitch = 80.; //40;
-
-    constexpr inline SdMatrix3f const kp_stance = {};
-    constexpr inline SdMatrix3f const kd_stance = {14, 0, 0, 0, 14, 0, 0, 0, 14};
   } // namespace opts
 
   StateLocomotion::StateLocomotion(
@@ -33,18 +30,19 @@ namespace sdrobot::fsm
     wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts);
   }
 
-  void StateLocomotion::OnEnter()
+  bool StateLocomotion::OnEnter()
   {
-    mpc_->Init();
+    return mpc_->Init();
   }
 
-  void StateLocomotion::OnExit() {}
+  bool StateLocomotion::OnExit() {
+    return true;
+  }
 
   bool StateLocomotion::RunOnce()
   {
     // Call the locomotion control logic for this iteration
-    LocomotionControlStep();
-    return true;
+    return LocomotionControlStep();
   }
 
   TransitionData StateLocomotion::Transition(const State next)
@@ -71,35 +69,18 @@ namespace sdrobot::fsm
   }
 
   // Parses contact specific controls to the leg controller
-  void StateLocomotion::LocomotionControlStep()
+  bool StateLocomotion::LocomotionControlStep()
   {
     // StateEstimate<T> stateEstimate = this->_data->_stateEstimator->getResult();
 
     // Contact state logic
     // estimateContact();
 
-    mpc_->Run(wbc_data_, legctrl_, mquad_, drictrl_, estctrl_);
+    mpc_->RunOnce(wbc_data_, legctrl_, mquad_, drictrl_, estctrl_);
 
-    std::array<SdVector3f, 4> pDes_backup;
-    std::array<SdVector3f, 4> vDes_backup;
+    wbc_->RunOnce(wbc_data_, legctrl_, drictrl_, estctrl_);
 
-    auto &leg_cmd = legctrl_->GetCmdsForUpdate();
-
-    for (int leg(0); leg < 4; ++leg)
-    {
-      pDes_backup[leg] = leg_cmd[leg].p_des;
-      vDes_backup[leg] = leg_cmd[leg].v_des;
-    }
-
-    wbc_->Run(wbc_data_, legctrl_, drictrl_, estctrl_);
-
-    for (int leg(0); leg < 4; ++leg)
-    {
-      leg_cmd[leg].p_des = pDes_backup[leg];
-      leg_cmd[leg].v_des = vDes_backup[leg];
-      leg_cmd[leg].kp_cartesian = opts::kp_stance;
-      leg_cmd[leg].kd_cartesian = opts::kd_stance;
-    }
+    return true;
   }
 
   bool StateLocomotion::locomotionSafe()

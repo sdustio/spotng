@@ -53,7 +53,7 @@ namespace sdrobot::model
     * Add the bounding points of a box to the contact model. Assumes the box is
     * centered around the origin of the body coordinate system and is axis aligned.
     */
-    void AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims);
+    bool AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims);
 
     /*!
     * Add a body
@@ -78,12 +78,12 @@ namespace sdrobot::model
     * Populate member variables when bodies are added
     * @param count (6 for fb, 1 for joint)
     */
-    void AddDynamicsVars(int count);
+    bool AddDynamicsVars(int count);
 
     bool CompositeInertias();
     bool BiasAccelerations();
     bool ForwardKinematics();
-    void ResetCalculationFlags();
+    bool ResetCalculationFlags();
 
     int curr_n_dof_ = 0;
     SdVector3f gravity_;

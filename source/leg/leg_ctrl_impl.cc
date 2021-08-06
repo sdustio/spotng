@@ -54,7 +54,7 @@ namespace sdrobot::leg
     }
   }
 
-  void LegCtrlImpl::ComputeLegJacobianAndPosition(int leg)
+  bool LegCtrlImpl::ComputeLegJacobianAndPosition(int leg)
   {
     fpt_t l1 = params::model::abad_link_length;
     fpt_t l2 = params::model::hip_link_length;
@@ -89,9 +89,11 @@ namespace sdrobot::leg
     p[0] = l3 * s23 + l2 * s2;
     p[1] = (l1 + l4) * side_sign * c1 + l3 * (s1 * c23) + l2 * c2 * s1;
     p[2] = (l1 + l4) * side_sign * s1 - l3 * (c1 * c23) - l2 * c1 * c2;
+
+    return true;
   }
 
-  void LegCtrlImpl::UpdateDatasFromActuatorInterface()
+  bool LegCtrlImpl::UpdateDatasFromActuatorInterface()
   {
     for (int leg = 0; leg < params::model::num_leg; leg++)
     {
@@ -112,9 +114,10 @@ namespace sdrobot::leg
       // v 足端速度
       ToEigenTp(datas_[leg].v) = ToConstEigenTp(datas_[leg].J) * ToConstEigenTp(datas_[leg].qd);
     }
+    return true;
   }
 
-  void LegCtrlImpl::SendCmdsToActuatorInterface()
+  bool LegCtrlImpl::SendCmdsToActuatorInterface()
   {
     auto &cmd = act_itf_->GetActuatorCmdForUpdate();
 
@@ -171,5 +174,7 @@ namespace sdrobot::leg
 
       cmd.flags[leg] = 1;
     }
+
+    return true;
   }
 }

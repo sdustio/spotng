@@ -11,8 +11,8 @@ namespace sdrobot::fsm
   public:
     StateInit(drive::DriveCtrl::SharedPtr const &drictrl);
 
-    void OnEnter() override;
-    void OnExit() override;
+    bool OnEnter() override;
+    bool OnExit() override;
     bool RunOnce() override;
     State CheckTransition() override
     {

@@ -85,19 +85,19 @@ namespace sdrobot::leg
     * Compute the position of the foot and its Jacobian.  This is done in the local
     * leg coordinate system. If J/p are NULL, the calculation will be skipped.
     */
-    virtual void ComputeLegJacobianAndPosition(int leg) = 0;
+    virtual bool ComputeLegJacobianAndPosition(int leg) = 0;
 
     /*!
     * Update the "leg data" from Actuator Interface
     * 从spine卡 更新腿部信息
     */
-    virtual void UpdateDatasFromActuatorInterface() = 0;
+    virtual bool UpdateDatasFromActuatorInterface() = 0;
 
     /*!
     * Send the "leg command" to Actuator Interface
     * 向控制器发送控制命令
     */
-    virtual void SendCmdsToActuatorInterface() = 0;
+    virtual bool SendCmdsToActuatorInterface() = 0;
   };
 
   class SDROBOT_EXPORT JPosInit

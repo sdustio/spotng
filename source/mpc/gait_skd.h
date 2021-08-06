@@ -20,7 +20,7 @@ namespace sdrobot::mpc
     virtual bool CalcContactState(SdVector4f &ret) const = 0;
     virtual bool CalcSwingState(SdVector4f &ret) const = 0;
     virtual std::vector<int> const &GetMpcTable() const = 0;
-    virtual void SetIterations(int iterationsBetweenMPC, int currentIteration) = 0;
+    virtual bool SetIterations(int iterationsBetweenMPC, int currentIteration) = 0;
     virtual fpt_t GetCurrentStanceTime(fpt_t dtMPC, int leg) const = 0;
     virtual fpt_t GetCurrentSwingTime(fpt_t dtMPC, int leg) const = 0;
     virtual int GetCurrentGaitPhase() const = 0;
@@ -33,7 +33,7 @@ namespace sdrobot::mpc
     bool CalcContactState(SdVector4f &ret) const override;
     bool CalcSwingState(SdVector4f &ret) const override;
     std::vector<int> const &GetMpcTable() const override;
-    void SetIterations(int iterationsPerMPC, int currentIteration) override;
+    bool SetIterations(int iterationsPerMPC, int currentIteration) override;
     fpt_t GetCurrentStanceTime(fpt_t dtMPC, int leg) const override;
     fpt_t GetCurrentSwingTime(fpt_t dtMPC, int leg) const override;
     int GetCurrentGaitPhase() const override;

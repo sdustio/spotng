@@ -74,7 +74,7 @@ namespace sdrobot::mpc
     return mpc_table_;
   }
 
-  void OffsetDurationGait::SetIterations(int iterationsPerMPC, int currentIteration)
+  bool OffsetDurationGait::SetIterations(int iterationsPerMPC, int currentIteration)
   {
     iteration_ = (currentIteration / iterationsPerMPC) % n_iterations_;
     phase_ = (fpt_t)(currentIteration % (iterationsPerMPC * n_iterations_)) / (fpt_t)(iterationsPerMPC * n_iterations_);
@@ -95,6 +95,7 @@ namespace sdrobot::mpc
           mpc_table_[i * 4 + j] = 0;
       }
     }
+    return true;
   }
 
   fpt_t OffsetDurationGait::GetCurrentStanceTime(fpt_t dtMPC, [[maybe_unused]] int leg) const { return dtMPC * stance_; }

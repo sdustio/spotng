@@ -21,8 +21,8 @@ namespace sdrobot::fsm
         model::Quadruped::SharedPtr const &mquad,
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
-    void OnEnter() override;
-    void OnExit() override;
+    bool OnEnter() override;
+    bool OnExit() override;
     bool RunOnce() override;
 
     State CheckTransition() override;
@@ -36,7 +36,7 @@ namespace sdrobot::fsm
 
   private:
     // Parses contact specific controls to the leg controller
-    void LocomotionControlStep();
+    bool LocomotionControlStep();
 
     bool locomotionSafe();
 

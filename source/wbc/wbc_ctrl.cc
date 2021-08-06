@@ -33,10 +33,10 @@ namespace sdrobot::wbc
     full_config_.fill(0.);
   }
 
-  void WbcCtrl::Run(InData &wbcdata,
-                    leg::LegCtrl::SharedPtr const &legctrl,
-                    drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-                    estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
+  bool WbcCtrl::RunOnce(InData &wbcdata,
+                        leg::LegCtrl::SharedPtr const &legctrl,
+                        drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                        estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
   {
 
     // Update Model
@@ -47,7 +47,7 @@ namespace sdrobot::wbc
 
     // WBC Computation
     _ComputeWBC();
-    _UpdateLegCMD(legctrl, drivectrl);
+    return _UpdateLegCMD(legctrl, drivectrl);
   }
 
   bool WbcCtrl::_UpdateModel(estimate::State const &estdata, leg::Datas const &legdata)
@@ -103,7 +103,6 @@ namespace sdrobot::wbc
 
     for (int leg(0); leg < params::model::num_leg; ++leg)
     {
-      cmds[leg].Zero();
       for (int jidx(0); jidx < params::model::num_leg_joint; ++jidx)
       {
         cmds[leg].tau_feed_forward[jidx] = tau_ff_[params::model::num_leg_joint * leg + jidx];

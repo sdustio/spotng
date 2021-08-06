@@ -14,7 +14,7 @@ namespace sdrobot::model
     /*!
   * Flip signs of elements of a vector V depending on which leg it belongs to 一个向量V的元素的翻转符号取决于它属于哪条腿
   */
-    void FlipWithSideSigns(Eigen::Ref<Vector3> ret, Eigen::Ref<Vector3 const> const &v, int const leg_id)
+    bool FlipWithSideSigns(Eigen::Ref<Vector3> ret, Eigen::Ref<Vector3 const> const &v, int const leg_id)
     {
       switch (leg_id)
       {
@@ -33,6 +33,7 @@ namespace sdrobot::model
       default:
         throw std::runtime_error("Invalid leg id!");
       }
+      return true;
     }
 
   }

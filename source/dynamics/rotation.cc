@@ -13,7 +13,7 @@ namespace sdrobot::dynamics
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-  void CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t const theta)
+  bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t const theta)
   {
     fpt_t s = std::sin(theta);
     fpt_t c = std::cos(theta);
@@ -30,13 +30,13 @@ namespace sdrobot::dynamics
     {
       ret << c, s, 0, -s, c, 0, 0, 0, 1;
     }
-    return;
+    return true;
   }
 
   /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
-  void RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v)
+  bool RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v)
   {
     // ret = CoordinateRot(CoordinateAxis::X, v[0]) *
     //       CoordinateRot(CoordinateAxis::Y, v[1]) *
@@ -48,13 +48,13 @@ namespace sdrobot::dynamics
     ret = ret * tmp;
     CoordinateRot(tmp, CoordinateAxis::Z, v[2]);
     ret = ret * tmp;
-    return;
+    return true;
   }
 
   /*!
  * Convert a coordinate transformation matrix to an orientation quaternion. 将坐标变换矩阵转换为方向四元数
  */
-  void RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1)
+  bool RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1)
   {
     RotMat r = r1.transpose();
     fpt_t tr = r.trace();
@@ -90,7 +90,7 @@ namespace sdrobot::dynamics
       ret(2) = (r(1, 2) + r(2, 1)) / S;
       ret(3) = 0.25 * S;
     }
-    return;
+    return true;
   }
 
   /*!
@@ -100,7 +100,7 @@ namespace sdrobot::dynamics
  *将四元数转换为旋转矩阵。这个矩阵表示
  *坐标转换为指定方向的具有指定方向的坐标系 通过四元数
  */
-  void QuatToRotMat(Eigen::Ref<RotMat> ret,  Eigen::Ref<Quat const> const &q)
+  bool QuatToRotMat(Eigen::Ref<RotMat> ret,  Eigen::Ref<Quat const> const &q)
   {
     fpt_t e0 = q(0);
     fpt_t e1 = q(1);
@@ -113,14 +113,14 @@ namespace sdrobot::dynamics
         2 * (e1 * e3 - e0 * e2), 2 * (e2 * e3 + e0 * e1),
         1 - 2 * (e1 * e1 + e2 * e2);
     ret.transposeInPlace();
-    return;
+    return true;
   }
 
   /*!
  * Convert a quaternion to RPY.  Uses ZYX order (yaw-pitch-roll), but returns
  * angles in (roll, pitch, yaw).
  */
-  void QuatToRPY(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
+  bool QuatToRPY(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
     fpt_t as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
     ret(2) =
@@ -130,23 +130,23 @@ namespace sdrobot::dynamics
     ret(0) =
         std::atan2(2 * (q[2] * q[3] + q[0] * q[1]),
                    math::Square(q[0]) - math::Square(q[1]) - math::Square(q[2]) + math::Square(q[3]));
-    return;
+    return true;
   }
 
-  void RPYToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &rpy)
+  bool RPYToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &rpy)
   {
     RotMat R;
     RPYToRotMat(R, rpy);
     RotMatToQuat(ret, R);
-    return;
+    return true;
   }
 
-  void RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R)
+  bool RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R)
   {
     Quat q;
     RotMatToQuat(q, R);
     QuatToRPY(ret, q);
-    return;
+    return true;
   }
   /*!
  * Quaternion derivative calculation, like rqd(q, omega) in MATLAB. 四元数导数的计算
@@ -156,7 +156,7 @@ namespace sdrobot::dynamics
  * @param omega
  * @return
  */
-  void QuatDerivative(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega)
+  bool QuatDerivative(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega)
   {
     auto quaternionDerivativeStabilization = 0.1;
     // first case in rqd
@@ -168,13 +168,13 @@ namespace sdrobot::dynamics
         quaternionDerivativeStabilization * omega.norm() * (1 - q.norm()),
         omega[0], omega[1], omega[2]);
     ret = 0.5 * Q * qq;
-    return;
+    return true;
   }
 
   /*!
  * Take the product of two quaternions 取两个四元数的乘积
  */
-  void QuatProduct(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q1,  Eigen::Ref<Quat const> const &q2)
+  bool QuatProduct(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &q1,  Eigen::Ref<Quat const> const &q2)
   {
     fpt_t r1 = q1[0];
     fpt_t r2 = q2[0];
@@ -184,7 +184,7 @@ namespace sdrobot::dynamics
     fpt_t r = r1 * r2 - v1.dot(v2);
     Vector3 v = r1 * v2 + r2 * v1 + v1.cross(v2);
     ret << r, v[0], v[1], v[2];
-    return;
+    return true;
   }
 
   /*!
@@ -195,7 +195,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fpt_t const dt)
+  bool QuatIntegrate(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fpt_t const dt)
   {
     Vector3 axis;
     fpt_t ang = omega.norm();
@@ -214,7 +214,7 @@ namespace sdrobot::dynamics
 
     QuatProduct(ret, quatD, quat);
     ret = ret / ret.norm();
-    return;
+    return true;
   }
 
   /*!
@@ -224,7 +224,7 @@ namespace sdrobot::dynamics
  * @param dt The timestep
  * @return
  */
-  void QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fpt_t const dt)
+  bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret,  Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega, fpt_t const dt)
   {
     Vector3 axis;
     fpt_t ang = omega.norm();
@@ -243,22 +243,22 @@ namespace sdrobot::dynamics
 
     QuatProduct(ret, quat, quatD);
     ret = ret / ret.norm();
-    return;
+    return true;
   }
 
   /*!
  * Convert a quaternion to so3.
  */
-  void QuatToSO3(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
+  bool QuatToSO3(Eigen::Ref<Vector3> ret,  Eigen::Ref<Quat const> const &q)
   {
     fpt_t theta = 2. * std::acos(q[0]);
     ret[0] = theta * q[1] / std::sin(theta / 2.);
     ret[1] = theta * q[2] / std::sin(theta / 2.);
     ret[2] = theta * q[3] / std::sin(theta / 2.);
-    return;
+    return true;
   }
 
-  void SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3)
+  bool SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3)
   {
     fpt_t theta = sqrt(so3[0] * so3[0] + so3[1] * so3[1] + so3[2] * so3[2]);
 
@@ -266,12 +266,12 @@ namespace sdrobot::dynamics
     {
       ret.setZero();
       ret[0] = 1.;
-      return;
+      return true;
     }
     ret[0] = cos(theta / 2.);
     ret[1] = so3[0] / theta * sin(theta / 2.);
     ret[2] = so3[1] / theta * sin(theta / 2.);
     ret[3] = so3[2] / theta * sin(theta / 2.);
-    return;
+    return true;
   }
 } // namespace sdrobot::kinematics

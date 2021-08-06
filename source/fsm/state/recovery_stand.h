@@ -17,8 +17,8 @@ namespace sdrobot::fsm
         drive::DriveCtrl::SharedPtr const &drictrl,
         estimate::EstimateCtrl::SharedPtr const &estctrl);
 
-    void OnEnter() override;
-    void OnExit() override;
+    bool OnEnter() override;
+    bool OnExit() override;
     bool RunOnce() override;
     State CheckTransition() override
     {

@@ -18,11 +18,11 @@ namespace sdrobot::mpc
     gait_map_[drive::Gait::Bound] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5}, "Bound");
   }
 
-  bool CMpc::Run(wbc::InData &wbcdata,
-                 leg::LegCtrl::SharedPtr const &legctrl,
-                 model::Quadruped::ConstSharedPtr const &quad,
-                 drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
+  bool CMpc::RunOnce(wbc::InData &wbcdata,
+                     leg::LegCtrl::SharedPtr const &legctrl,
+                     model::Quadruped::ConstSharedPtr const &quad,
+                     drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                     estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
   {
     auto _body_height = 0.3 + drivectrl->GetPosDes()[2];
 
@@ -225,6 +225,8 @@ namespace sdrobot::mpc
             rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
         ToEigenTp(leg_cmds[foot].v_des) =
             rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - vel_world);
+        leg_cmds[foot].kp_cartesian = kp_stance_;
+        leg_cmds[foot].kd_cartesian = kd_stance_;
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
       }
     }
@@ -246,7 +248,7 @@ namespace sdrobot::mpc
     return true;
   }
 
-  void CMpc::UpdateMPCIfNeeded(
+  bool CMpc::UpdateMPCIfNeeded(
       std::array<SdVector3f, 4> &out,
       std::vector<int> const &mpcTable,
       drive::DriveCtrl::ConstSharedPtr const &drivectrl,
@@ -256,7 +258,7 @@ namespace sdrobot::mpc
     //iter_between_mpc_ = 30;
     if ((iter_counter_ % iter_between_mpc_) != 0)
     {
-      return;
+      return false;
     }
 
     if ((iter_counter_ / iter_between_mpc_) >= opts::horizon_len)
@@ -323,11 +325,11 @@ namespace sdrobot::mpc
         traj_all_[12 * i + 2] = traj_all_[12 * (i - 1) + 2] + dt_mpc_ * velrpy[2];
       }
     }
-    SolveMPC(out, mpcTable, estctrl);
+    return SolveMPC(out, mpcTable, estctrl);
     //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
   }
 
-  void CMpc::SolveMPC(
+  bool CMpc::SolveMPC(
       std::array<SdVector3f, 4> &out,
       std::vector<int> const &mpcTable,
       estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
@@ -376,6 +378,7 @@ namespace sdrobot::mpc
 
       out[leg] = f;
     }
+    return true;
   }
 
 }

@@ -13,13 +13,12 @@ namespace sdrobot::fsm
                                                               {drive::State::RecoveryStand, State::RecoveryStand},
                                                               {drive::State::Locomotion, State::Locomotion},
                                                               {drive::State::BalanceStand, State::BalanceStand}},
-                                                          legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl),
-                                                          body_weight_(params::model::body_mass * opts.gravity)
+                                                          legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl), body_weight_(params::model::body_mass * opts.gravity)
   {
     wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.);
   }
 
-  void StateBalanceStand::OnEnter()
+  bool StateBalanceStand::OnEnter()
   {
     auto const &estdata = estctrl_->GetEstState();
 
@@ -32,15 +31,16 @@ namespace sdrobot::fsm
     //   ini_body_pos_[2]=0.26;
 
     ini_body_pos_rpy_ = estdata.pos_rpy;
+    return true;
   }
 
-  void StateBalanceStand::OnExit()
+  bool StateBalanceStand::OnExit()
   { /* do nothing*/
+    return true;
   }
   bool StateBalanceStand::RunOnce()
   {
-    Step();
-    return true;
+    return Step();
   }
 
   TransitionData StateBalanceStand::Transition(const State next)
@@ -52,7 +52,7 @@ namespace sdrobot::fsm
     return TransitionData{true};
   }
 
-  void StateBalanceStand::Step()
+  bool StateBalanceStand::Step()
   {
 
     wbc_data_.pos_body_des = ini_body_pos_;
@@ -77,6 +77,6 @@ namespace sdrobot::fsm
       wbc_data_.contact_state[i] = true;
     }
 
-    wbc_->Run(wbc_data_, legctrl_, drictrl_, estctrl_);
+    return wbc_->RunOnce(wbc_data_, legctrl_, drictrl_, estctrl_);
   }
 }

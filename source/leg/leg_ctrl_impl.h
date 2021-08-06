@@ -17,11 +17,11 @@ namespace sdrobot::leg
 
     void ZeroCmd() override;
 
-    void ComputeLegJacobianAndPosition(int leg) override;
+    bool ComputeLegJacobianAndPosition(int leg) override;
 
-    void UpdateDatasFromActuatorInterface() override;
+    bool UpdateDatasFromActuatorInterface() override;
 
-    void SendCmdsToActuatorInterface() override;
+    bool SendCmdsToActuatorInterface() override;
 
   private:
     Datas datas_;

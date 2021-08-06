@@ -32,10 +32,10 @@ namespace sdrobot::fsm
     virtual ~StateCtrl() = default;
 
     // Behavior to be carried out when entering a state
-    virtual void OnEnter() = 0;
+    virtual bool OnEnter() = 0;
 
     // Behavior to be carried out when exiting a state
-    virtual void OnExit() = 0;
+    virtual bool OnExit() = 0;
 
     // Run the normal behavior for the state
     virtual bool RunOnce() = 0;

@@ -34,7 +34,7 @@ namespace sdrobot::mpc
 
   using qsoln_t = Eigen::Matrix<fpt_t, num_variables, 1>;
 
-  void QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
+  bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
                          SdVector4f const &ori, SdVector3f const &vel_rpy, std::array<fpt_t, 12> const &rel_foot_p,
                          fpt_t const yaw, std::array<fpt_t, 12> const &weights,
                          std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, fpt_t g,
@@ -278,18 +278,19 @@ namespace sdrobot::mpc
         vc++;
       }
     }
+    return true;
   }
 
-  void QPSolver::Setup(fpt_t dt, fpt_t mu, fpt_t f_max)
+  bool QPSolver::Setup(fpt_t dt, fpt_t mu, fpt_t f_max)
   {
     f_max_ = f_max;
     mu_ = mu;
     dt_ = dt;
 
-    ResetQPMats();
+    return ResetQPMats();
   }
 
-  void QPSolver::ResetQPMats()
+  bool QPSolver::ResetQPMats()
   {
     A_qp_.fill(0.);
     B_qp_.fill(0.);
@@ -313,6 +314,7 @@ namespace sdrobot::mpc
     q_red_.fill(0.);
     var_ind_.fill(0.);
     con_ind_.fill(0.);
+    return true;
   }
 
   QPSolver::QPSolver()

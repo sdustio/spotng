@@ -252,7 +252,7 @@ namespace sdrobot::model
     return n_ground_contact_++;
   }
 
-  void FloatBaseModelImpl::AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims)
+  bool FloatBaseModelImpl::AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims)
   {
     AddGroundContactPoint(body_id, Vector3(dims[0], dims[1], dims[2]) / 2);
     AddGroundContactPoint(body_id, Vector3(-dims[0], dims[1], dims[2]) / 2);
@@ -263,6 +263,7 @@ namespace sdrobot::model
     AddGroundContactPoint(body_id, Vector3(-dims[0], dims[1], -dims[2]) / 2);
     AddGroundContactPoint(body_id, Vector3(dims[0], -dims[1], -dims[2]) / 2);
     AddGroundContactPoint(body_id, Vector3(-dims[0], -dims[1], -dims[2]) / 2);
+    return true;
   }
 
   int FloatBaseModelImpl::AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
@@ -297,7 +298,7 @@ namespace sdrobot::model
     return curr_n_dof_;
   }
 
-  void FloatBaseModelImpl::AddDynamicsVars(int count)
+  bool FloatBaseModelImpl::AddDynamicsVars(int count)
   {
     if (count != 1 && count != 6)
     {
@@ -350,9 +351,10 @@ namespace sdrobot::model
 
     // J_.push_back(SpatialVecXd::Zero(6, curr_n_dof_));
     // Jdqd_.push_back(SpatialVec::Zero());
+    return true;
   }
 
-  void FloatBaseModelImpl::ResetCalculationFlags()
+  bool FloatBaseModelImpl::ResetCalculationFlags()
   {
     bias_acc_uptodate_ = false;
     composite_inertias_uptodate_ = false;
@@ -362,6 +364,7 @@ namespace sdrobot::model
     force_propagators_uptodate_ = false;
     qdd_effects_uptodate_ = false;
     acc_uptodate_ = false;
+    return true;
   }
 
   bool FloatBaseModelImpl::CompositeInertias()

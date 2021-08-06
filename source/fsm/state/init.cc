@@ -11,13 +11,15 @@ namespace sdrobot::fsm
                                                         {drive::State::BalanceStand, State::RecoveryStand}},
                                                     drictrl_(drictrl) {}
 
-  void StateInit::OnEnter()
+  bool StateInit::OnEnter()
   {
     // nothing
+    return true;
   }
-  void StateInit::OnExit()
+  bool StateInit::OnExit()
   {
     // nothing
+    return true;
   }
 
   bool StateInit::RunOnce()

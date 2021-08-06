@@ -31,10 +31,10 @@ namespace sdrobot::wbc
 
     WbcCtrl(model::FloatBaseModel::SharedPtr const &model,
             Options const &opts, double weight = 0.1);
-    void Run(InData &wbcdata,
-             leg::LegCtrl::SharedPtr const &legctrl,
-             drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-             estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
+    bool RunOnce(InData &wbcdata,
+                 leg::LegCtrl::SharedPtr const &legctrl,
+                 drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
 
   private:
     bool _UpdateModel(estimate::State const &estdata, leg::Datas const &legdata);

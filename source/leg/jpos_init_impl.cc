@@ -55,7 +55,7 @@ namespace sdrobot::leg
     return true;
   }
 
-  void JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl)
+  bool JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl)
   {
     for (int leg(0); leg < params::model::num_leg; ++leg)
     {
@@ -79,6 +79,7 @@ namespace sdrobot::leg
       cmd.kp_joint = kp;
       cmd.kd_joint = kd;
     }
+    return true;
   }
 
 }

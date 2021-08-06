@@ -16,20 +16,20 @@ namespace sdrobot::mpc
   public:
     CMpc(fpt_t dt, fpt_t g, int iter_between_mpc);
     bool Init() override;
-    bool Run(wbc::InData &wbcdata,
-             leg::LegCtrl::SharedPtr const &legctrl,
-             model::Quadruped::ConstSharedPtr const &quad,
-             drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-             estimate::EstimateCtrl::ConstSharedPtr const &estctrl) override;
+    bool RunOnce(wbc::InData &wbcdata,
+                 leg::LegCtrl::SharedPtr const &legctrl,
+                 model::Quadruped::ConstSharedPtr const &quad,
+                 drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl) override;
 
   private:
-    void UpdateMPCIfNeeded(
+    bool UpdateMPCIfNeeded(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,
         drive::DriveCtrl::ConstSharedPtr const &drivectrl,
         estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
         SdVector3f const &v_des_world);
-    void SolveMPC(
+    bool SolveMPC(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,
         estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
@@ -55,6 +55,8 @@ namespace sdrobot::mpc
 
     drive::Gait current_gait_;
     bool first_run_ = true;
+    SdMatrix3f kp_stance_ = {};
+    SdMatrix3f kd_stance_ = {7, 0, 0, 0, 7, 0, 0, 0, 7}; //row major == column major
 
     std::unique_ptr<QPSolver> qpsolver_;
 
