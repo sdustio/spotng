@@ -30,7 +30,7 @@ namespace sdrobot
 
   bool RobotImpl::UpdateImu(sensor::ImuData const &imu)
   {
-    std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->Update(imu);
+    std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
     return true;
   }
 

@@ -3,7 +3,7 @@
 
 namespace sdrobot::estimate
 {
-  bool Orientation::Update(sensor::ImuData const &imu)
+  bool Orientation::UpdateImu(sensor::ImuData const &imu)
   {
     imu_ = imu;
     return true;

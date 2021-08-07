@@ -16,7 +16,7 @@ namespace sdrobot::estimate
   class Orientation : public Estimator
   {
   public:
-    bool Update(sensor::ImuData const &imu);
+    bool UpdateImu(sensor::ImuData const &imu);
     bool RunOnce(State &ret) override;
 
   private:
