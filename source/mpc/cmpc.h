@@ -55,8 +55,6 @@ namespace sdrobot::mpc
 
     drive::Gait current_gait_;
     bool first_run_ = true;
-    SdMatrix3f kp_stance_ = {};
-    SdMatrix3f kd_stance_ = {7, 0, 0, 0, 7, 0, 0, 0, 7}; //row major == column major
 
     std::unique_ptr<QPSolver> qpsolver_;
 

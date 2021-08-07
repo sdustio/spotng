@@ -3,6 +3,12 @@
 
 namespace sdrobot::mpc
 {
+  namespace opts
+  {
+    constexpr inline SdMatrix3f const kp_stance = {};
+    constexpr inline SdMatrix3f const kd_stance = {7, 0, 0, 0, 7, 0, 0, 0, 7}; //row major == column major
+  } // namespace opts
+
   CMpc::CMpc(fpt_t dt, fpt_t g, int iter_between_mpc_) : dt_(dt),
                                                          dt_mpc_(dt * iter_between_mpc_),
                                                          gravity_(g),
@@ -225,8 +231,8 @@ namespace sdrobot::mpc
             rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
         ToEigenTp(leg_cmds[foot].v_des) =
             rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - vel_world);
-        leg_cmds[foot].kp_cartesian = kp_stance_;
-        leg_cmds[foot].kd_cartesian = kd_stance_;
+        leg_cmds[foot].kp_cartesian = opts::kp_stance;
+        leg_cmds[foot].kd_cartesian = opts::kd_stance;
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
       }
     }

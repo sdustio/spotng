@@ -5,10 +5,9 @@
 
 **更多**
 
-- 写死的常量参数化
+- 写死的常量分离出来
   - [ ] quadruped_impl.cc
-  - [ ] 各类 jpos(eg. jposinit, recovery_stand, etc.)
-  - [ ] 各类写死的 kp, kd(eg. search "const kp", etc.)
+- 如何确认各种常量(是硬件相关的常量还是可变的参数？如果是常量，数值应该是多少？如果是参数，默认值是多少？)
 - feature
   - [ ] 自动档
   - [ ] Init状态问题
