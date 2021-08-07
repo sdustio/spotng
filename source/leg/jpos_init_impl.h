@@ -20,8 +20,5 @@ namespace sdrobot::leg
     bool first_visit_ = true;
 
     std::array<fpt_t, params::model::kNumActJoint> ini_jpos_;
-    std::array<fpt_t, params::model::kNumActJoint> target_jpos_;
-    std::array<fpt_t, params::model::kNumActJoint> mid_jpos_;
-
   };
 }

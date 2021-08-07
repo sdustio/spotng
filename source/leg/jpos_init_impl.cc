@@ -3,21 +3,32 @@
 
 namespace sdrobot::leg
 {
-  JPosInitImpl::JPosInitImpl(fpt_t dt, fpt_t time_end) : dt_(dt),
-                                                           end_time_(time_end)
+  namespace opts
   {
 
-    ini_jpos_ = {};
-    target_jpos_ = {
+    constexpr inline std::array<fpt_t, params::model::kNumActJoint> const target_jpos = {
         -0.6, -1.0, 2.7,
         0.6, -1.0, 2.7,
         -0.6, -1.0, 2.7,
         0.6, -1.0, 2.7};
-    mid_jpos_ = {
+    constexpr inline std::array<fpt_t, params::model::kNumActJoint> const mid_jpos = {
         -1.8, 0., 2.7,
         1.8, 0., 2.7,
         -1.7, 0.5, 0.5,
         1.7, 0.5, 0.5};
+
+    // 对角线矩阵，row major == column major
+    constexpr inline SdMatrix3f const kp_mat = {5, 0, 0, 0, 5, 0, 0, 0, 5};
+    constexpr inline SdMatrix3f const kd_mat = {0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
+    // kp_mat << 120, 0, 0, 0, 120, 0, 0, 0, 120;
+    // kd_mat << 4, 0, 0, 0, 4, 0, 0, 0, 4;
+  }
+
+  JPosInitImpl::JPosInitImpl(fpt_t dt, fpt_t time_end) : dt_(dt),
+                                                         end_time_(time_end)
+  {
+
+    ini_jpos_ = {};
   }
 
   bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl)
@@ -32,9 +43,9 @@ namespace sdrobot::leg
     if (curr_time_ < end_time_)
     {
       Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> jpos;
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> y0(ini_jpos_.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> y1(mid_jpos_.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>> yf(target_jpos_.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> y0(ini_jpos_.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> y1(opts::mid_jpos.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> yf(opts::target_jpos.data());
       fpt_t t = curr_time_ / end_time_;
 
       math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);
@@ -66,18 +77,10 @@ namespace sdrobot::leg
       }
     }
 
-    SdMatrix3f kp, kd; // column major!!因为对称，所以 column major 和 row major 一致
-    kp = {5, 0, 0,
-          0, 5, 0,
-          0, 0, 5};
-    kd = {0.1, 0, 0,
-          0, 0.1, 0,
-          0, 0, 0.1};
-
     for (auto &cmd : ctrl->GetCmdsForUpdate())
     {
-      cmd.kp_joint = kp;
-      cmd.kd_joint = kd;
+      cmd.kp_joint = opts::kp_mat;
+      cmd.kd_joint = opts::kd_mat;
     }
     return true;
   }
