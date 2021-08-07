@@ -5,6 +5,8 @@
 
 **更多**
 
+- 写死的常量参数化
+  - [ ] quadruped_impl.cc
 - feature
   - [ ] 自动档
   - [ ] Init状态问题

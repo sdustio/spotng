@@ -280,7 +280,7 @@ namespace sdrobot::wbc
       {
 
         printf("!!!!!!!!danger!!!!! WBC torque num %d\tout the limitation: %f.2f ", i, ret[i]);
-        ret[i] = ret[i] / fabs(ret[i]) * 24.0;
+        ret[i] = ret[i] / fabs(ret[i]) * params::interface::kMaxTorque;
         printf("  edit to %f.2f\n", ret[i]);
       }
     }

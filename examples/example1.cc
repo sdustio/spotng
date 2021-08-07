@@ -25,7 +25,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   /*...*/
   drive_cmd.gait = drive::Gait::Trot;
   drive_cmd.state = drive::State::Locomotion;
-  drive_cmd.move_x = 3.;
+  drive_cmd.move_x = 1.5;
   /*...*/
 
   robot->UpdateImu(imu_data);
@@ -34,7 +34,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   unsigned cdt = 1000 * opts.ctrl_dt_sec;
   unsigned adt = 1000 * opts.act_itf_sec;
 
-  for (size_t i = 0; i < 60'000; i++)
+  for (size_t i = 0; i < 10'000; i++)
   {
     if (i % cdt == 0)
     {

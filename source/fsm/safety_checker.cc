@@ -16,8 +16,7 @@ namespace sdrobot::fsm
     bool check_safe = true;
 
     // Safety parameters
-    double max_angle = 1.0472; // 60 degrees (should be changed)
-    double max_p_des = params::model::kMaxLegLength * std::sin(max_angle);
+    auto max_p_des = params::model::kMaxLegLength * std::sin(params::interface::kMaxAngle);
 
     auto &cmds = legctrl->GetCmdsForUpdate();
     // Check all of the legs
@@ -76,54 +75,50 @@ namespace sdrobot::fsm
     // Assumed safe to start
     bool check_safe = true;
 
-    // Initialize maximum vertical and lateral forces
-    double max_lateral_force = 350.;
-    double max_vertical_force = 350.;
-
     auto &cmds = legctrl->GetCmdsForUpdate();
 
     // Check all of the legs
     for (int leg = 0; leg < params::model::kNumLeg; leg++)
     {
       // Limit the lateral forces in +x body frame
-      if (cmds[leg].force_feed_forward[0] > max_lateral_force)
+      if (cmds[leg].force_feed_forward[0] > params::interface::kMaxLateralForce)
       {
-        cmds[leg].force_feed_forward[0] = max_lateral_force;
+        cmds[leg].force_feed_forward[0] = params::interface::kMaxLateralForce;
         check_safe = false;
       }
 
       // Limit the lateral forces in -x body frame
-      if (cmds[leg].force_feed_forward[0] < -max_lateral_force)
+      if (cmds[leg].force_feed_forward[0] < -params::interface::kMaxLateralForce)
       {
-        cmds[leg].force_feed_forward[0] = -max_lateral_force;
+        cmds[leg].force_feed_forward[0] = -params::interface::kMaxLateralForce;
         check_safe = false;
       }
 
       // Limit the lateral forces in +y body frame
-      if (cmds[leg].force_feed_forward[1] > max_lateral_force)
+      if (cmds[leg].force_feed_forward[1] > params::interface::kMaxLateralForce)
       {
-        cmds[leg].force_feed_forward[1] = max_lateral_force;
+        cmds[leg].force_feed_forward[1] = params::interface::kMaxLateralForce;
         check_safe = false;
       }
 
       // Limit the lateral forces in -y body frame
-      if (cmds[leg].force_feed_forward[1] < -max_lateral_force)
+      if (cmds[leg].force_feed_forward[1] < -params::interface::kMaxLateralForce)
       {
-        cmds[leg].force_feed_forward[1] = -max_lateral_force;
+        cmds[leg].force_feed_forward[1] = -params::interface::kMaxLateralForce;
         check_safe = false;
       }
 
       // Limit the vertical forces in +z body frame
-      if (cmds[leg].force_feed_forward[2] > max_vertical_force)
+      if (cmds[leg].force_feed_forward[2] > params::interface::kMaxVerticalForce)
       {
-        cmds[leg].force_feed_forward[2] = max_vertical_force;
+        cmds[leg].force_feed_forward[2] = params::interface::kMaxVerticalForce;
         check_safe = false;
       }
 
       // Limit the vertical forces in -z body frame
-      if (cmds[leg].force_feed_forward[2] < -max_vertical_force)
+      if (cmds[leg].force_feed_forward[2] < -params::interface::kMaxVerticalForce)
       {
-        cmds[leg].force_feed_forward[2] = -max_vertical_force;
+        cmds[leg].force_feed_forward[2] = -params::interface::kMaxVerticalForce;
         check_safe = false;
       }
     }
