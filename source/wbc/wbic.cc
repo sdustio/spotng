@@ -114,20 +114,19 @@ namespace sdrobot::wbc
     _SetEqualityConstraint(CE, ce0, Jc, Fr_des, qddot_pre);
 
     // Optimization
-    auto n = z.size();
+    auto n = g0.size();
     auto m = ce0.size();
     auto p = ci0.size();
 
     // use normal
     // VectorX activeSet(p);
     // int activeSetSize;
-    // eiquadprog::solvers::solve_quadprog(2 * G, g0, CE, ce0, CI, ci0, z, activeSet, activeSetSize);
+    // eiquadprog::solvers::solve_quadprog(2 * G,  2 * g0, CE.transpose(), ce0, CI.transpose(), ci0, z, activeSet, activeSetSize);
 
     // use fast
     eiquadprog::solvers::EiquadprogFast qp_;
     qp_.reset(n, m, p);
-    qp_.solve_quadprog(
-        G, g0, CE.transpose(), ce0, CI.transpose(), ci0, z);
+    qp_.solve_quadprog(G, g0, CE, ce0, CI, ci0, z);
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
     for (int i(0); i < params::model::kDimFloating; ++i)
@@ -151,7 +150,7 @@ namespace sdrobot::wbc
                               fpt_t threshold)
   {
     MatrixX lambda(J * Winv * J.transpose());
-    MatrixX lambda_inv;
+    MatrixX lambda_inv(lambda.cols(), lambda.rows());
     math::PseudoInverse(lambda_inv, lambda, threshold);
     ret = Winv * J.transpose() * lambda_inv;
     return true;
