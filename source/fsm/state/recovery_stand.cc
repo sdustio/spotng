@@ -51,9 +51,9 @@ namespace sdrobot::fsm
                                                               {drive::State::Locomotion, State::Locomotion},
                                                               {drive::State::BalanceStand, State::BalanceStand}},
                                                           flag_dispatch_{
-                                                            {Flag::StandUp, &StateRecoveryStand::StandUp},
-                                                            {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
-                                                            {Flag::RollOver, &StateRecoveryStand::RollOver}},
+                                                              {Flag::StandUp, &StateRecoveryStand::StandUp},
+                                                              {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
+                                                              {Flag::RollOver, &StateRecoveryStand::RollOver}},
                                                           legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl)
 
   {
@@ -220,5 +220,13 @@ namespace sdrobot::fsm
     legctrl_->GetCmdsForUpdate()[leg].q_des = qDes;
     legctrl_->GetCmdsForUpdate()[leg].qd_des = qdDes;
     return true;
+  }
+
+  State StateRecoveryStand::CheckTransition()
+  {
+    if (flag_ != Flag::StandUp)
+      return State::RecoveryStand;
+
+    return state_trans_[drictrl_->GetState()];
   }
 }

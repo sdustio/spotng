@@ -4,7 +4,7 @@
 namespace sdrobot::drive
 {
   DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode),
-                                                            dt_(dt)
+                                                           dt_(dt)
   {
   }
 
@@ -38,14 +38,8 @@ namespace sdrobot::drive
 
   bool DriveCtrlImpl::UpdateDriveCmd(DriveCmd const &cmd)
   {
-    // state_ 可能被内部重置。
-    // 只有在传入的 state 发生变化时才更新 state_
-    // 否则我们应当保持 state_ 为内部的重置值
-
-    if (cmd_.state != cmd.state)
-      state_ = cmd_.state = cmd.state;
+    state_ = cmd_.state = cmd.state;
     gait_ = cmd_.gait = cmd.gait;
-
     step_height_ = cmd_.step_height = Deadband(cmd.step_height, params::drive::kMinStepHeight, params::drive::kMaxStepHeight);
 
     cmd_.variant_height = cmd.variant_height;
