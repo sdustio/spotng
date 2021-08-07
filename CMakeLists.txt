@@ -71,7 +71,7 @@ set(LIB_SOURCES
 add_library(${PROJECT_NAME} SHARED)
 target_sources(${PROJECT_NAME} PRIVATE ${LIB_SOURCES})
 target_link_libraries(${PROJECT_NAME}
-  Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog
+  PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog
 )
 
 include(GenerateExportHeader)
