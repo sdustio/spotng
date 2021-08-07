@@ -32,15 +32,20 @@ namespace sdrobot::drive
         Deadband(cmd_.angle_pitch, params::drive::kMinAngleP, params::drive::kMaxAngleP),
         dt_ * vel_rpy_[2]};
 
-    // TODO Drive Mode
+    step_height_ = cmd_.step_height;
+
+    state_ = cmd_.state;
+    gait_ = cmd_.gait;
+
+    // TODO 根据 Drive Mode 进行参数修正。比如 自动档无视 state，gait， state 和 move 是否冲突等等
     return true;
   }
 
   bool DriveCtrlImpl::UpdateDriveCmd(DriveCmd const &cmd)
   {
-    state_ = cmd_.state = cmd.state;
-    gait_ = cmd_.gait = cmd.gait;
-    step_height_ = cmd_.step_height = Deadband(cmd.step_height, params::drive::kMinStepHeight, params::drive::kMaxStepHeight);
+    cmd_.state = cmd.state;
+    cmd_.gait = cmd.gait;
+    cmd_.step_height = Deadband(cmd.step_height, params::drive::kMinStepHeight, params::drive::kMaxStepHeight);
 
     cmd_.variant_height = cmd.variant_height;
     cmd_.move_x = cmd_.move_x * (1.0 - params::drive::kFilter) + cmd.move_x * params::drive::kFilter;
