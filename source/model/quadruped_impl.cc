@@ -49,9 +49,9 @@ namespace sdrobot::model
     rotorRotationalInertiaZ = 1e-6 * rotorRotationalInertiaZ;
 
     Matrix3 RY;
-    dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y, M_PI / 2);
+    dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y, params::math::kPI / 2);
     Matrix3 RX;
-    dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X, M_PI / 2);
+    dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X, params::math::kPI / 2);
 
     dynamics::RotationalInertia rotorRotationalInertiaX =
         RY * rotorRotationalInertiaZ * RY.transpose();
@@ -159,7 +159,7 @@ namespace sdrobot::model
       // Hip Joint
       body_id++;
       dynamics::RotMat RZ;
-      dynamics::CoordinateRot(RZ, dynamics::CoordinateAxis::Z, M_PI);
+      dynamics::CoordinateRot(RZ, dynamics::CoordinateAxis::Z, params::math::kPI);
       FlipWithSideSigns(location, hip_location, leg_id);
       FlipWithSideSigns(rotor_location, hip_rotor_location, leg_id);
       Matrix6 xtree_hip;

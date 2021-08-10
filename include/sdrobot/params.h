@@ -7,6 +7,7 @@ namespace sdrobot::params
   namespace math
   {
     constexpr inline fpt_t const kZeroEpsilon = 1.e-12;
+    constexpr inline fpt_t const kPI = 3.14159265358979323846;
   }
 
   namespace drive

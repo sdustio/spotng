@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <cstring>
+#include <string>
 
 #include "sdrobot/types.h"
 
@@ -14,7 +14,7 @@ namespace sdrobot::estimate
     SdVector3f pos = {};           //位置
     SdVector3f pos_rpy = {};       //欧拉角
     SdVector4f ori = {};           //四元数: w, x, y, z
-    SdMatrix3f rot_body = {};     //旋转矩阵 3x3
+    SdMatrix3f rot_body = {};      //旋转矩阵 3x3
     SdVector3f vel_body = {};      //机身坐标速度
     SdVector3f vel_world = {};     //世界坐标速度
     SdVector3f vel_rpy_body = {};  //机身坐标角速度
