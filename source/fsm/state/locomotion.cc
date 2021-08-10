@@ -23,7 +23,7 @@ namespace sdrobot::fsm
                                                               {drive::State::BalanceStand, State::BalanceStand}},
                                                           legctrl_(legctrl), mquad_(mquad), drictrl_(drictrl), estctrl_(estctrl)
   {
-    mpc_ = std::make_unique<mpc::CMpc>(opts.ctrl_dt_sec, opts.gravity, 30 / (1000. * opts.ctrl_dt_sec));
+    mpc_ = std::make_unique<mpc::CMpc>(opts.ctrl_dt_sec, opts.gravity, 30 / int(1000. * opts.ctrl_dt_sec));
 
     // Initialize GRF and footstep locations to 0s
     // footstepLocations = Matrix3x4::Zero();
