@@ -19,9 +19,9 @@ namespace sdrobot::drive
     Gait GetGait() const override;
 
     SdVector3f const &GetPosDes() const override;
-    SdVector3f const &GetPosRpyDes() const override;
+    SdVector3f const &GetRpyDes() const override;
     SdVector3f const &GetVelDes() const override;
-    SdVector3f const &GetVelRpyDes() const override;
+    SdVector3f const &GetAvelDes() const override;
 
     bool UpdateState(State state)
     {
@@ -40,9 +40,9 @@ namespace sdrobot::drive
     State state_ = State::Init;
     Gait gait_ = Gait::Trot;
     SdVector3f pos_ = {};
-    SdVector3f pos_rpy_ = {};
+    SdVector3f rpy_ = {};
     SdVector3f vel_ = {};
-    SdVector3f vel_rpy_ = {};
+    SdVector3f avel_ = {};
   };
 
 }

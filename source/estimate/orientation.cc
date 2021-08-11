@@ -29,16 +29,16 @@ namespace sdrobot::estimate
 
     dynamics::QuatProduct(ori, ori_ini_inv, ori); //两四元数相乘
 
-    dynamics::QuatToRPY(ToEigenTp(ret.pos_rpy), ori); //转欧拉角
+    dynamics::QuatToRPY(ToEigenTp(ret.rpy), ori); //转欧拉角
 
-    dynamics::QuatToRotMat(ToEigenTp(ret.rot_body), ori); //转旋转矩阵
-    ret.vel_rpy_body = imu_.gyro; //得机体坐标角速度
+    dynamics::QuatToRotMat(ToEigenTp(ret.rot_mat), ori); //转旋转矩阵
+    ret.avel_robot = imu_.gyro; //得机体坐标角速度
 
-    ToEigenTp(ret.vel_rpy_world) = ToConstEigenTp(ret.rot_body).transpose() * ToConstEigenTp(ret.vel_rpy_body); //得世界坐标下角速度
+    ToEigenTp(ret.avel) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.avel_robot); //得世界坐标下角速度
 
-    ret.acc_body = imu_.acc; //得机体坐标加速度
+    ret.acc_robot = imu_.acc; //得机体坐标加速度
 
-    ToEigenTp(ret.acc_world) = ToConstEigenTp(ret.rot_body).transpose() * ToConstEigenTp(ret.acc_body); //得世界坐标加速度
+    ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.acc_robot); //得世界坐标加速度
     return true;
   }
 }

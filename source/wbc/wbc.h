@@ -10,15 +10,15 @@ namespace sdrobot::wbc
 
   struct InData
   {
-    SdVector3f pos_body_des;
-    SdVector3f vel_body_des;
-    SdVector3f acc_body_des;
-    SdVector3f pos_rpy_body_des;
-    SdVector3f vel_rpy_body_des;
+    SdVector3f body_pos_des;
+    SdVector3f body_vel_des;
+    SdVector3f body_acc_des;
+    SdVector3f body_rpy_des;
+    SdVector3f body_avel_des;
 
-    std::array<SdVector3f, 4> pos_foot_des;
-    std::array<SdVector3f, 4> vel_foot_des;
-    std::array<SdVector3f, 4> acc_foot_des;
+    std::array<SdVector3f, 4> foot_pos_des;
+    std::array<SdVector3f, 4> foot_vel_des;
+    std::array<SdVector3f, 4> foot_acc_des;
 
     std::array<SdVector3f, 4> Fr_des;
 

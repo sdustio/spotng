@@ -58,8 +58,8 @@ namespace sdrobot::wbc
 
     for (int i = 0; i < params::model::kNumLegJoint; i++)
     {
-      _state.vel[i] = estdata.vel_rpy_body[i];
-      _state.vel[i + 3] = estdata.vel_body[i];
+      _state.gvel_robot[i] = estdata.avel_robot[i];
+      _state.gvel_robot[i + 3] = estdata.vel_robot[i];
       for (int leg = 0; leg < params::model::kNumLeg; leg++)
       {
         _state.q[3 * leg + i] = legdata[leg].q[i];
@@ -143,13 +143,13 @@ namespace sdrobot::wbc
     _CleanUp();
 
     body_ori_task_->UpdateTask(
-        wbcdata.pos_rpy_body_des,
-        wbcdata.vel_rpy_body_des,
+        wbcdata.body_rpy_des,
+        wbcdata.body_avel_des,
         SdVector3f{});
     body_pos_task_->UpdateTask(
-        wbcdata.pos_body_des,
-        wbcdata.vel_body_des,
-        wbcdata.acc_body_des);
+        wbcdata.body_pos_des,
+        wbcdata.body_vel_des,
+        wbcdata.body_acc_des);
 
     task_list_.push_back(body_ori_task_);
     task_list_.push_back(body_pos_task_);
@@ -165,9 +165,9 @@ namespace sdrobot::wbc
       else
       { // No Contact (swing)
         foot_task_[leg]->UpdateTask(
-            wbcdata.pos_foot_des[leg],
-            wbcdata.vel_foot_des[leg],
-            wbcdata.acc_foot_des[leg]);
+            wbcdata.foot_pos_des[leg],
+            wbcdata.foot_vel_des[leg],
+            wbcdata.foot_acc_des[leg]);
         //zero_vec3);
         task_list_.push_back(foot_task_[leg]);
       }

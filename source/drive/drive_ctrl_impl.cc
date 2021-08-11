@@ -24,13 +24,13 @@ namespace sdrobot::drive
         dt_ * vel_[1],
         Deadband(cmd_.variant_height, params::drive::kMinVarHeight, params::drive::kMaxVarHeight)};
 
-    vel_rpy_ = {
+    avel_ = {
         0., 0, Deadband(cmd_.turn_rate, params::drive::kMinRateY, params::drive::kMaxRateY)};
 
-    pos_rpy_ = {
+    rpy_ = {
         0.,
         Deadband(cmd_.angle_pitch, params::drive::kMinAngleP, params::drive::kMaxAngleP),
-        dt_ * vel_rpy_[2]};
+        dt_ * avel_[2]};
 
     step_height_ = cmd_.step_height;
 
@@ -76,17 +76,17 @@ namespace sdrobot::drive
   {
     return pos_;
   }
-  SdVector3f const &DriveCtrlImpl::GetPosRpyDes() const
+  SdVector3f const &DriveCtrlImpl::GetRpyDes() const
   {
-    return pos_rpy_;
+    return rpy_;
   }
   SdVector3f const &DriveCtrlImpl::GetVelDes() const
   {
     return vel_;
   }
-  SdVector3f const &DriveCtrlImpl::GetVelRpyDes() const
+  SdVector3f const &DriveCtrlImpl::GetAvelDes() const
   {
-    return vel_rpy_;
+    return avel_;
   }
 
   fpt_t DriveCtrlImpl::Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal)

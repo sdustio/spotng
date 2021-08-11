@@ -85,7 +85,7 @@ namespace sdrobot::estimate
     Eigen::Map<Matrix18> Q0(Q0_.data());
     Eigen::Map<Matrix28> R0(R0_.data());
 
-    auto rot_body = ToConstEigenTp(ret.rot_body);
+    auto rot_mat = ToConstEigenTp(ret.rot_mat);
     auto const &datas = legctrl_->GetDatas();
 
     //状态估计噪声
@@ -106,10 +106,10 @@ namespace sdrobot::estimate
     int rindex3 = 0;
     //重力向量
     Vector3 g(0, 0, -gravity_);
-    Matrix3 Rbod = rot_body.transpose(); //机身到世界的变换矩阵
+    Matrix3 Rbod = rot_mat.transpose(); //机身到世界的变换矩阵
     // in old code, Rbod * se_acc + g
     //输入量a 世界下
-    Vector3 acc = ToConstEigenTp(ret.acc_world) + g;
+    Vector3 acc = ToConstEigenTp(ret.acc) + g;
 
     // std::cout << "A WORLD\n" << acc << "\n";
     Vector4 pzs = Vector4::Zero();
@@ -136,7 +136,7 @@ namespace sdrobot::estimate
 
       //足端速度在世界坐标系描述 机身转动导致足端速度+足端本身速度
       Vector3 dp_f =
-          Rbod * (ToConstEigenTp(ret.vel_rpy_body).cross(p_rel) + dp_rel);
+          Rbod * (ToConstEigenTp(ret.avel_robot).cross(p_rel) + dp_rel);
 
       //更新四条腿用索引
       qindex = 6 + i1;
@@ -215,8 +215,8 @@ namespace sdrobot::estimate
     }
     //输出状态量
     ToEigenTp(ret.pos) = xhat.block<3, 1>(0, 0);
-    ToEigenTp(ret.vel_world) = xhat.block<3, 1>(3, 0);
-    ToEigenTp(ret.vel_body) = rot_body * ToConstEigenTp(ret.vel_world);
+    ToEigenTp(ret.vel) = xhat.block<3, 1>(3, 0);
+    ToEigenTp(ret.vel_robot) = rot_mat * ToConstEigenTp(ret.vel);
 
     return true;
   }

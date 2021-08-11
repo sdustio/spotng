@@ -87,13 +87,13 @@ namespace sdrobot::fsm
   {
     auto const &seResult = estctrl_->GetEstState();
 
-    if (std::fabs(seResult.pos_rpy[0]) > math::DegToRad(opts::max_roll))
+    if (std::fabs(seResult.rpy[0]) > math::DegToRad(opts::max_roll))
     {
       // printf("Unsafe locomotion: roll is %.3f degrees (max %.3f)\n", math::RadToDeg(seResult.rpy[0]), max_roll);
       return false;
     }
 
-    if (std::fabs(seResult.pos_rpy[1]) > math::DegToRad(opts::max_pitch))
+    if (std::fabs(seResult.rpy[1]) > math::DegToRad(opts::max_pitch))
     {
       // printf("Unsafe locomotion: pitch is %.3f degrees (max %.3f)\n", math::RadToDeg(seResult.rpy[1]), max_pitch);
       return false;

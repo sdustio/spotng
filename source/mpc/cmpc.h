@@ -28,7 +28,7 @@ namespace sdrobot::mpc
         std::vector<int> const &mpcTable,
         drive::DriveCtrl::ConstSharedPtr const &drivectrl,
         estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
-        SdVector3f const &v_des_world);
+        SdVector3f const &vel_des);
     bool SolveMPC(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,
@@ -45,8 +45,8 @@ namespace sdrobot::mpc
     SdVector4f swing_times_;
     SdVector4f swing_time_remaining_;
 
-    SdVector3f pos_des_world_;
-    SdVector3f pos_rpy_int_;
+    SdVector3f pos_des_;
+    SdVector3f rpy_int_;
     std::array<SdVector3f, 4> p_foot_;
     fpt_t x_comp_integral = 0;
 

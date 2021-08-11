@@ -11,7 +11,7 @@ namespace sdrobot::model
   {
     SdVector4f ori;
     SdVector3f pos;
-    SdVector6f vel; // body coordinates
+    SdVector6f gvel_robot; // combine of avel and vel [avel, vel]
     std::array<fpt_t, 12> q;
     std::array<fpt_t, 12> qd;
   };

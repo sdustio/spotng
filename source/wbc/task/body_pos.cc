@@ -22,7 +22,7 @@ namespace sdrobot::wbc
     auto const &robot_pos =robot_sys_->GetState().pos;
     dynamics::RotMat rot;
     dynamics::QuatToRotMat(rot, ToConstEigenTp(robot_sys_->GetState().ori));
-    Vector6 curr_vel = ToConstEigenTp(robot_sys_->GetState().vel);
+    Vector6 curr_vel = ToConstEigenTp(robot_sys_->GetState().gvel_robot);
     curr_vel.tail(3) = rot.transpose() * curr_vel.tail(3);
 
     // X, Y, Z

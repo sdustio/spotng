@@ -53,9 +53,9 @@ namespace sdrobot::drive
     virtual Gait GetGait() const = 0;
 
     virtual SdVector3f const &GetPosDes() const = 0;
-    virtual SdVector3f const &GetPosRpyDes() const = 0;
+    virtual SdVector3f const &GetRpyDes() const = 0;
     virtual SdVector3f const &GetVelDes() const = 0;
-    virtual SdVector3f const &GetVelRpyDes() const = 0;
+    virtual SdVector3f const &GetAvelDes() const = 0;
   };
 
 }

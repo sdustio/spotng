@@ -35,7 +35,7 @@ namespace sdrobot::mpc
   using qsoln_t = Eigen::Matrix<fpt_t, num_variables, 1>;
 
   bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
-                         SdVector4f const &ori, SdVector3f const &vel_rpy, std::array<fpt_t, 12> const &rel_foot_p,
+                         SdVector4f const &ori, SdVector3f const &avel, std::array<fpt_t, 12> const &rel_foot_p,
                          fpt_t const yaw, std::array<fpt_t, 12> const &weights,
                          std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, fpt_t g,
                          std::vector<int> const &gait)
@@ -69,7 +69,7 @@ namespace sdrobot::mpc
     dynamics::QuatToRPY(rpy, ToConstEigenTp(ori));
 
     Eigen::Matrix<fpt_t, 13, 1> x_0;
-    x_0 << rpy(2), rpy(1), rpy(0), ToConstEigenTp(pos), ToConstEigenTp(vel_rpy), ToConstEigenTp(vel), -g;
+    x_0 << rpy(2), rpy(1), rpy(0), ToConstEigenTp(pos), ToConstEigenTp(avel), ToConstEigenTp(vel), -g;
 
     Matrix3 I_world = R_yaw * I_body * R_yaw.transpose();
 

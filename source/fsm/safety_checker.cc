@@ -7,7 +7,7 @@ namespace sdrobot::fsm
   bool SafetyChecker::CheckSafeOrientation(estimate::EstimateCtrl::SharedPtr const &estctrl)
   {
     auto const &state = estctrl->GetEstState();
-    return (abs(state.pos_rpy[0]) < 0.5 && abs(state.pos_rpy[1]) < 0.5);
+    return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
   }
 
   bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl)

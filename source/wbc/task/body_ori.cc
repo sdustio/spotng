@@ -35,7 +35,7 @@ namespace sdrobot::wbc
     }
     Vector3 ori_err_so3;
     dynamics::QuatToSO3(ori_err_so3, ori_err);
-    auto const &robot_vel = robot_sys_->GetState().vel;
+    auto const &robot_vel = robot_sys_->GetState().gvel_robot;
 
     // Configuration space: Local
     // Operational Space: Global

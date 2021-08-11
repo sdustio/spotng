@@ -19,7 +19,7 @@ namespace sdrobot::mpc
     bool ResetQPMats();
 
     bool SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &vel,
-                 SdVector4f const &ori, SdVector3f const &vel_rpy, std::array<fpt_t, 12> const &rel_foot_p,
+                 SdVector4f const &ori, SdVector3f const &avel, std::array<fpt_t, 12> const &rel_foot_p,
                  fpt_t const yaw, std::array<fpt_t, 12> const &weights,
                  std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha, fpt_t g,
                  std::vector<int> const &gait);

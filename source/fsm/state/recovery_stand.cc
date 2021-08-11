@@ -85,7 +85,7 @@ namespace sdrobot::fsm
 
   bool StateRecoveryStand::UpsideDown()
   {
-    return (ToConstEigenTp(estctrl_->GetEstState().rot_body)(2, 2) < 0);
+    return (ToConstEigenTp(estctrl_->GetEstState().rot_mat)(2, 2) < 0);
   }
 
   bool StateRecoveryStand::OnExit()
