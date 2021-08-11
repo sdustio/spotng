@@ -50,6 +50,7 @@ set(LIB_SOURCES
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
+  source/estimate/contact.cc
   source/leg/impl.cc
   source/leg/leg_ctrl_impl.cc
   source/leg/jpos_init_impl.cc
