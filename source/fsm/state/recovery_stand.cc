@@ -1,4 +1,5 @@
 #include "fsm/state/recovery_stand.h"
+#include "estimate/contact.h"
 #include "eigen.h"
 
 namespace sdrobot::fsm
@@ -50,11 +51,7 @@ namespace sdrobot::fsm
                                                               {drive::State::RecoveryStand, State::RecoveryStand},
                                                               {drive::State::Locomotion, State::Locomotion},
                                                               {drive::State::BalanceStand, State::BalanceStand}},
-                                                          flag_dispatch_{
-                                                              {Flag::StandUp, &StateRecoveryStand::StandUp},
-                                                              {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
-                                                              {Flag::RollOver, &StateRecoveryStand::RollOver}},
-                                                          legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl)
+                                                          flag_dispatch_{{Flag::StandUp, &StateRecoveryStand::StandUp}, {Flag::FoldLegs, &StateRecoveryStand::FoldLegs}, {Flag::RollOver, &StateRecoveryStand::RollOver}}, legctrl_(legctrl), drictrl_(drictrl), estctrl_(estctrl)
 
   {
   }
@@ -143,6 +140,10 @@ namespace sdrobot::fsm
     {
       iter_ = 0;
     }
+
+    auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
+    est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
+
     return true;
   }
 

@@ -1,5 +1,6 @@
 #include "mpc/cmpc.h"
 #include "dynamics/rotation.h"
+#include "estimate/contact.h"
 
 namespace sdrobot::mpc
 {
@@ -71,7 +72,7 @@ namespace sdrobot::mpc
       _body_height = 0.31;
 
     // integrate position setpoint
-    auto rot_body = ToConstEigenTp(seResult.rot_mat);
+    auto rot_mat = ToConstEigenTp(seResult.rot_mat);
     auto vel = ToConstEigenTp(seResult.vel);
     auto pos = ToConstEigenTp(seResult.pos);
     auto rpy = ToConstEigenTp(seResult.rpy);
@@ -80,7 +81,7 @@ namespace sdrobot::mpc
     auto avel_des_robot = ToConstEigenTp(drivectrl->GetAvelDes());
     auto rpy_des_robot = ToConstEigenTp(drivectrl->GetRpyDes());
     SdVector3f vel_des;
-    ToEigenTp(vel_des) = rot_body.transpose() * vel_des_robot;
+    ToEigenTp(vel_des) = rot_mat.transpose() * vel_des_robot;
 
     //Integral-esque pitche and roll compensation
     if (fabs(vel[0]) > .02) //avoid dividing by zero
@@ -99,7 +100,7 @@ namespace sdrobot::mpc
     {
       SdVector3f loc;
       quad->CalcHipLocation(loc, i);
-      ToEigenTp(p_foot_[i]) = pos + rot_body.transpose() * (ToConstEigenTp(loc) +
+      ToEigenTp(p_foot_[i]) = pos + rot_mat.transpose() * (ToConstEigenTp(loc) +
                                                             ToConstEigenTp(legctrl->GetDatas()[i].p));
     }
 
@@ -162,25 +163,25 @@ namespace sdrobot::mpc
       dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des_robot[2] * stance_time / 2);
       Vector3 pYawCorrected = _rot * pRobotFrame;
 
-      Vector3 Pf = pos + rot_body.transpose() * (pYawCorrected + vel_des_robot * swing_time_remaining_[i]);
+      Vector3 Pf = pos + rot_mat.transpose() * (pYawCorrected + vel_des_robot * swing_time_remaining_[i]);
 
       //+ vel * swing_time_remaining_[i];
 
       fpt_t p_rel_max = 0.35;
-      //    fptype p_rel_max = 0.3f;
+      // fptype p_rel_max = 0.3f;
 
       // Using the estimated velocity is correct
-      //Vector3 vel_des = seResult.rot_body.transpose() * vel_des_robot;
+      //Vector3 vel_des = seResult.rot_mat.transpose() * vel_des_robot;
       fpt_t pfx_rel = vel[0] * (.5 + opts::bonus_swing) * stance_time +
                       .1 * (vel[0] - vel_des[0]) +
-                      (0.5 * pos[2] / 9.81) * (vel[1] * avel_des_robot[2]);
+                      (0.5 * pos[2] / gravity_) * (vel[1] * avel_des_robot[2]);
 
       if (fabs(pfx_rel) > p_rel_max)
         printf("!!!!!!!!!!!!!!!!out of the max step\n");
 
       fpt_t pfy_rel = vel[1] * .5 * stance_time * dt_mpc_ +
                       .09 * (vel[1] - vel_des[1]) +
-                      (0.5 * pos[2] / 9.81) * (-vel[0] * avel_des_robot[2]);
+                      (0.5 * pos[2] / gravity_) * (-vel[0] * avel_des_robot[2]);
       pfx_rel = fminf(fmaxf(pfx_rel, -p_rel_max), p_rel_max);
       pfy_rel = fminf(fmaxf(pfy_rel, -p_rel_max), p_rel_max);
       Pf[0] += pfx_rel;
@@ -195,11 +196,14 @@ namespace sdrobot::mpc
 
     // gait
     SdVector4f swingStates;
+    SdVector4f contactStates;
     gait_skd->CalcSwingState(swingStates);
+    gait_skd->CalcContactState(contactStates);
 
     UpdateMPCIfNeeded(
         wbcdata.Fr_des, gait_skd->GetMpcTable(), drivectrl, estctrl, vel_des);
 
+    SdVector4f se_contactState = {};
     //  StateEstimator* se = hw_i->state_estimator;
     for (int foot = 0; foot < 4; foot++)
     {
@@ -228,14 +232,18 @@ namespace sdrobot::mpc
         SdVector3f loc;
         quad->CalcHipLocation(loc, foot);
         ToEigenTp(leg_cmds[foot].p_des) =
-            rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
+            rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
         ToEigenTp(leg_cmds[foot].v_des) =
-            rot_body * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - vel);
+            rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - vel);
         leg_cmds[foot].kp_cartesian = opts::kp_stance;
         leg_cmds[foot].kd_cartesian = opts::kd_stance;
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
+        se_contactState[foot] = contactStates[foot];
       }
     }
+
+    auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl->GetEstimator("contact"));
+    est_contact->UpdateContact(se_contactState);
 
     // Update For WBC
     wbcdata.body_pos_des = pos_des_;

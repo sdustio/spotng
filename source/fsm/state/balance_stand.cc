@@ -1,4 +1,5 @@
 #include "fsm/state/balance_stand.h"
+#include "estimate/contact.h"
 
 namespace sdrobot::fsm
 {
@@ -40,6 +41,8 @@ namespace sdrobot::fsm
   }
   bool StateBalanceStand::RunOnce()
   {
+    auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
+    est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
     return Step();
   }
 

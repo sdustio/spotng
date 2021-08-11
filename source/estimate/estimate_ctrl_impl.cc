@@ -4,6 +4,10 @@
 
 namespace sdrobot::estimate
 {
+  EstimateCtrlImpl::EstimateCtrlImpl()
+  {
+    est_map_[""] = nullptr;
+  }
 
   bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est)
   {
@@ -13,11 +17,11 @@ namespace sdrobot::estimate
     return true;
   }
 
-  Estimator::SharedPtr const &EstimateCtrlImpl::GetEstimator(std::string const &name)
+  Estimator::SharedPtr const &EstimateCtrlImpl::GetEstimator(std::string const &name) const
   {
     auto iter = est_map_.find(name);
     if (iter == est_map_.end())
-      return est_map_[""];
+      return est_map_.at("");
     return iter->second;
   }
 

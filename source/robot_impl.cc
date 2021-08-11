@@ -6,6 +6,7 @@
 #include "estimate/estimate_ctrl_impl.h"
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
+#include "estimate/contact.h"
 #include "fsm/impl.h"
 
 namespace sdrobot
@@ -24,6 +25,9 @@ namespace sdrobot
     estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
     estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts.ctrl_dt_sec, opts.gravity, legctrl_, mquad_));
     estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
+    auto est_contact = std::make_shared<estimate::Contact>();
+    est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
+    estctrl_->AddEstimator("contact", est_contact);
 
     fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, legctrl_, mquad_, drivectrl_, estctrl_);
   }
