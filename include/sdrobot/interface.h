@@ -43,7 +43,7 @@ namespace sdrobot::interface
     SdVector4f qd_knee = {};
 
     std::array<std::uint8_t, 4> flags = {};
-    std::uint8_t driver_status;
+    std::uint8_t driver_status = 0;
   };
 
   class SDROBOT_EXPORT ActuatorInterface

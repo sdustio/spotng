@@ -6,12 +6,12 @@ namespace sdrobot::leg
   namespace opts
   {
 
-    constexpr inline std::array<fpt_t, params::model::kNumActJoint> const target_jpos = {
+    constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const target_jpos = {
         -0.6, -1.0, 2.7,
         0.6, -1.0, 2.7,
         -0.6, -1.0, 2.7,
         0.6, -1.0, 2.7};
-    constexpr inline std::array<fpt_t, params::model::kNumActJoint> const mid_jpos = {
+    constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const mid_jpos = {
         -1.8, 0., 2.7,
         1.8, 0., 2.7,
         -1.7, 0.5, 0.5,
@@ -42,17 +42,17 @@ namespace sdrobot::leg
 
     if (curr_time_ < end_time_)
     {
-      Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> jpos;
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> y0(ini_jpos_.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> y1(opts::mid_jpos.data());
-      Eigen::Map<Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1> const> yf(opts::target_jpos.data());
+      Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> jpos;
+      Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y0(ini_jpos_.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y1(opts::mid_jpos.data());
+      Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> yf(opts::target_jpos.data());
       fpt_t t = curr_time_ / end_time_;
 
       math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);
 
-      for (int leg(0); leg < params::model::kNumLeg; ++leg)
+      for (int leg(0); leg < consts::model::kNumLeg; ++leg)
       {
-        for (int jidx(0); jidx < params::model::kNumLegJoint; ++jidx)
+        for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx)
         {
           auto &cmds = ctrl->GetCmdsForUpdate();
           cmds[leg].tau_feed_forward[jidx] = 0.;
@@ -68,9 +68,9 @@ namespace sdrobot::leg
 
   bool JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl)
   {
-    for (int leg(0); leg < params::model::kNumLeg; ++leg)
+    for (int leg(0); leg < consts::model::kNumLeg; ++leg)
     {
-      for (int jidx(0); jidx < params::model::kNumLegJoint; ++jidx)
+      for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx)
       {
         int idx = 3 * leg + jidx;
         ini_jpos_[idx] = ctrl->GetDatas()[leg].q[jidx];

@@ -4,9 +4,9 @@
 
 namespace sdrobot::model
 {
-  using genf_t = Eigen::Matrix<fpt_t, params::model::kDimConfig, 1>;
-  using mass_t = Eigen::Matrix<fpt_t, params::model::kDimConfig, params::model::kDimConfig>;
-  using jc_t = Eigen::Matrix<fpt_t, 3, params::model::kDimConfig>;
+  using genf_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
+  using mass_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+  using jc_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
   bool FloatBaseModelImpl::UpdateState(FloatBaseModelState const &state)
   {
@@ -31,7 +31,7 @@ namespace sdrobot::model
     // Top left corner is the locked inertia of the whole system
     H.topLeftCorner<6, 6>() = ToConstEigenTp(IC_[5]);
 
-    for (int j = 6; j < params::model::kDimConfig; j++)
+    for (int j = 6; j < consts::model::kDimConfig; j++)
     {
       // f = spatial force required for a unit qdd_j
       dynamics::SpatialVec f = ToConstEigenTp(IC_[j]) * ToConstEigenTp(S_[j]);
@@ -74,7 +74,7 @@ namespace sdrobot::model
     // oppostite gravity
     Eigen::Map<genf_t> G(G_.data());
     G.topRows<6>() = -ToConstEigenTp(IC_[5]) * ToConstEigenTp(ag_[5]);
-    for (int i = 6; i < params::model::kDimConfig; i++)
+    for (int i = 6; i < consts::model::kDimConfig; i++)
     {
       ToEigenTp(ag_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(ag_[parents_[i]]);
       ToEigenTp(agrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(ag_[parents_[i]]);
@@ -97,7 +97,7 @@ namespace sdrobot::model
     dynamics::ForceCrossProduct(tmpsv, ToConstEigenTp(v_[5]), Ifb * ToConstEigenTp(v_[5]));
     ToEigenTp(fvp_[5]) = Ifb * ToConstEigenTp(avp_[5]) + tmpsv;
 
-    for (int i = 6; i < params::model::kDimConfig; i++)
+    for (int i = 6; i < consts::model::kDimConfig; i++)
     {
       // Force on body i
       auto Ii = ToConstEigenTp(Ibody_[i]);
@@ -112,7 +112,7 @@ namespace sdrobot::model
       ToEigenTp(fvprot_[i]) = Ir * ToConstEigenTp(avprot_[i]) + tmpsv;
     }
 
-    for (int i = params::model::kDimConfig - 1; i > 5; i--)
+    for (int i = consts::model::kDimConfig - 1; i > 5; i--)
     {
       // Extract force along the joints
       Cqd_[i] = ToConstEigenTp(S_[i]).dot(ToConstEigenTp(fvp_[i])) + ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(fvprot_[i]));
@@ -375,13 +375,13 @@ namespace sdrobot::model
 
     ForwardKinematics();
     // initialize
-    for (int i = 5; i < params::model::kDimConfig; i++)
+    for (int i = 5; i < consts::model::kDimConfig; i++)
     {
       IC_[i] = Ibody_[i];
     }
 
     // backward loop
-    for (int i = params::model::kDimConfig - 1; i > 5; i--)
+    for (int i = consts::model::kDimConfig - 1; i > 5; i--)
     {
       // Propagate inertia down the tree
       ToEigenTp(IC_[parents_[i]]) += ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(IC_[i]) * ToConstEigenTp(Xup_[i]);
@@ -400,7 +400,7 @@ namespace sdrobot::model
     ToEigenTp(avp_[5]) << 0, 0, 0, 0, 0, 0;
 
     // from base to tips
-    for (int i = 6; i < params::model::kDimConfig; i++)
+    for (int i = 6; i < consts::model::kDimConfig; i++)
     {
       // Outward kinamtic propagtion
       ToEigenTp(avp_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(avp_[parents_[i]]) + ToConstEigenTp(c_[i]);
@@ -422,7 +422,7 @@ namespace sdrobot::model
     dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), rot, ToConstEigenTp(state_.pos));
     v_[5] = state_.gvel_robot;
 
-    for (int i = 6; i < params::model::kDimConfig; i++)
+    for (int i = 6; i < consts::model::kDimConfig; i++)
     {
       // joint xform
       Matrix6 XJ;
@@ -447,7 +447,7 @@ namespace sdrobot::model
     }
 
     // calculate from absolute transformations
-    for (int i = 5; i < params::model::kDimConfig; i++)
+    for (int i = 5; i < consts::model::kDimConfig; i++)
     {
       if (parents_[i] == 0)
       {

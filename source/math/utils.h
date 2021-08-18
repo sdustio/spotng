@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include "sdrobot/types.h"
-#include "sdrobot/params.h"
+#include "sdrobot/consts.h"
 
 namespace sdrobot::math
 {
@@ -20,7 +20,7 @@ namespace sdrobot::math
  */
   inline fpt_t RadToDeg(fpt_t rad)
   {
-    return rad * 180.0 / params::math::kPI;
+    return rad * 180.0 / consts::math::kPI;
   }
 
   /*!
@@ -28,7 +28,7 @@ namespace sdrobot::math
  */
   inline fpt_t DegToRad(fpt_t deg)
   {
-    return deg * params::math::kPI / 180.0;
+    return deg * consts::math::kPI / 180.0;
   }
 
 }

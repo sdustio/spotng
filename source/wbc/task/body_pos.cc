@@ -4,7 +4,7 @@
 
 namespace sdrobot::wbc
 {
-  using Jt_t = Eigen::Matrix<fpt_t, 3, params::model::kDimConfig>;
+  using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
   TaskBodyPos::TaskBodyPos(
       model::FloatBaseModel::ConstSharedPtr const &model,

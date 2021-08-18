@@ -39,7 +39,7 @@ namespace sdrobot::wbc
 
     SdVector3f Fr_des_;
 
-    std::array<fpt_t, 3 *params::model::kDimConfig> Jc_ = {};
+    std::array<fpt_t, 3 *consts::model::kDimConfig> Jc_ = {};
     SdVector3f JcDotQdot_ = {};
 
     fpt_t _max_Fz = 1500.;

@@ -3,14 +3,14 @@
 
 namespace sdrobot::wbc
 {
-  using Vector18 = Eigen::Matrix<fpt_t, params::model::kDimConfig, 1>;
-  using Matrix18 = Eigen::Matrix<fpt_t, params::model::kDimConfig, params::model::kDimConfig>;
+  using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
+  using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
   bool KinWbc::FindConfiguration(SdVector12f &jpos_cmd, SdVector12f &jvel_cmd, SdVector12f const &curr_config,
                                  std::vector<Task::ConstSharedPtr> const &task_list, std::vector<Contact::ConstSharedPtr> const &contact_list)
   {
     // Contact Jacobian Setup
-    MatrixX Nc(params::model::kDimConfig, params::model::kDimConfig);
+    MatrixX Nc(consts::model::kDimConfig, consts::model::kDimConfig);
     Nc.setIdentity();
 
     if (contact_list.size() > 0)
@@ -19,11 +19,11 @@ namespace sdrobot::wbc
       MatrixX Jc;
       for (size_t i = 0; i < contact_list.size(); ++i)
       {
-        Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::kDimConfig> const> _Jc(
+        Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jc(
             contact_list[i]->GetContactJacobian().data());
         auto num_new_rows = _Jc.rows(); //3
-        Jc.conservativeResize(num_rows + num_new_rows, params::model::kDimConfig);
-        Jc.block(num_rows, 0, num_new_rows, params::model::kDimConfig) = _Jc;
+        Jc.conservativeResize(num_rows + num_new_rows, consts::model::kDimConfig);
+        Jc.block(num_rows, 0, num_new_rows, consts::model::kDimConfig) = _Jc;
         num_rows += num_new_rows;
       }
 
@@ -37,7 +37,7 @@ namespace sdrobot::wbc
     for (size_t i = 0; i < task_list.size(); ++i)
     {
       auto const &task = task_list[i];
-      Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::kDimConfig> const> _Jt(
+      Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jt(
           task->GetTaskJacobian().data());
       Jt = _Jt * Nc;
       MatrixX Jt_pinv(Jt.cols(), Jt.rows());
@@ -50,7 +50,7 @@ namespace sdrobot::wbc
       Nc = Nc * N_nx;
     }
 
-    for (int i(0); i < params::model::kNumActJoint; ++i)
+    for (int i(0); i < consts::model::kNumActJoint; ++i)
     {
       jpos_cmd[i] = curr_config[i] + delta_q[i + 6];
       jvel_cmd[i] = qdot[i + 6];

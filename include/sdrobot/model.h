@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "sdrobot/types.h"
-#include "sdrobot/params.h"
+#include "sdrobot/consts.h"
 
 namespace sdrobot::model
 {
@@ -16,9 +16,9 @@ namespace sdrobot::model
     std::array<fpt_t, 12> qd;
   };
 
-  using GeneralFTp = std::array<fpt_t, params::model::kDimConfig>;
-  using MassMatTp = std::array<fpt_t, params::model::kDimConfig * params::model::kDimConfig>;
-  using ContactJacobTp = std::array<fpt_t, 3 * params::model::kDimConfig>;
+  using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
+  using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
+  using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
   class SDROBOT_EXPORT FloatBaseModel
   {

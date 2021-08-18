@@ -7,7 +7,7 @@
 #include <sdrobot/robot.h>
 
 sdrobot::Options opts;
-opts.drive_mode = sdrobot::DriveMode::kManualAll;
+opts.drive_mode = sdrobot::DriveMode::kManual;
 opts.ctrl_dt_sec = 0.002;
 opts.act_itf_sec = 0.025;
 

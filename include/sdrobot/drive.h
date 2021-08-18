@@ -25,14 +25,14 @@ namespace sdrobot::drive
 
   struct SDROBOT_EXPORT DriveCmd
   {
-    fpt_t move_x;
-    fpt_t move_y;
-    fpt_t turn_rate;
-    fpt_t angle_pitch;
-    fpt_t variant_height;
-    fpt_t step_height;
-    State state;
-    Gait gait;
+    fpt_t move_x = 0.;
+    fpt_t move_y = 0.;
+    fpt_t turn_rate = 0.;
+    fpt_t angle_pitch = 0.;
+    fpt_t variant_height = 0.;
+    fpt_t step_height = 0.1;
+    State state = State::Init;
+    Gait gait = Gait::Trot;
   };
 
   class SDROBOT_EXPORT DriveCtrl

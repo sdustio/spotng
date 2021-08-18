@@ -33,7 +33,7 @@ namespace sdrobot::wbc
     }
 
     SdVector3f const &GetCommand() const { return op_cmd_; }
-    std::array<fpt_t, 3 * params::model::kDimConfig> const &GetTaskJacobian() const { return Jt_; }
+    std::array<fpt_t, 3 * consts::model::kDimConfig> const &GetTaskJacobian() const { return Jt_; }
     SdVector3f const &GetTaskJacobianDotQdot() const { return JtDotQdot_; }
 
     SdVector3f const &GetPosError() const { return pos_err_; }
@@ -56,7 +56,7 @@ namespace sdrobot::wbc
     bool b_set_task_ = false;
 
     SdVector3f op_cmd_;
-    std::array<fpt_t, 3 * params::model::kDimConfig> Jt_;
+    std::array<fpt_t, 3 * consts::model::kDimConfig> Jt_;
     SdVector3f JtDotQdot_;
 
     SdVector3f pos_err_;

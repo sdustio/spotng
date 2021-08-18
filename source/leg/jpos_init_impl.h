@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sdrobot/leg.h"
-#include "sdrobot/params.h"
+#include "sdrobot/consts.h"
 
 namespace sdrobot::leg
 {
@@ -19,6 +19,6 @@ namespace sdrobot::leg
     fpt_t curr_time_ = 0.0;
     bool first_visit_ = true;
 
-    std::array<fpt_t, params::model::kNumActJoint> ini_jpos_;
+    std::array<fpt_t, consts::model::kNumActJoint> ini_jpos_;
   };
 }

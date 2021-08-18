@@ -2,7 +2,7 @@
 
 #include "sdrobot/types.h"
 
-namespace sdrobot::params
+namespace sdrobot::consts
 {
   namespace math
   {
@@ -28,6 +28,7 @@ namespace sdrobot::params
     constexpr inline fpt_t const kMinStepHeight = 0.05;
     constexpr inline fpt_t const kDeadbandRegion = 0.075;
     constexpr inline fpt_t const kFilter = 0.1;
+    constexpr inline fpt_t const kDefaultStepHeight = 0.1;
   }
 
   namespace model

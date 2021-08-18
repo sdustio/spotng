@@ -8,7 +8,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   using namespace sdrobot;
 
   Options opts;
-  opts.drive_mode = DriveMode::kManualAll;
+  opts.drive_mode = DriveMode::kManual;
   opts.ctrl_dt_sec = 0.002;
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;

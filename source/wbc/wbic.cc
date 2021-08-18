@@ -5,9 +5,9 @@
 
 namespace sdrobot::wbc
 {
-  using Matrix18 = Eigen::Matrix<fpt_t, params::model::kDimConfig, params::model::kDimConfig>;
-  using Sv_t = Eigen::Matrix<fpt_t, 6, params::model::kDimConfig>;
-  using Vector12 = Eigen::Matrix<fpt_t, params::model::kNumActJoint, 1>;
+  using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+  using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
+  using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1>;
 
   Wbic::Wbic(double weight)
   {
@@ -89,14 +89,14 @@ namespace sdrobot::wbc
     }
     else
     {
-      qddot_pre = VectorX::Zero(params::model::kDimConfig);
+      qddot_pre = VectorX::Zero(consts::model::kDimConfig);
       Npre = Matrix18::Identity();
     }
 
     // Task
     for (auto const &task : task_list)
     {
-      Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::kDimConfig> const> Jt(
+      Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jt(
           task->GetTaskJacobian().data());
       auto JtDotQdot = ToConstEigenTp(task->GetTaskJacobianDotQdot());
       auto xddot = ToConstEigenTp(task->GetCommand());
@@ -129,14 +129,14 @@ namespace sdrobot::wbc
     qp_.solve_quadprog(G, g0, CE, ce0, CI, ci0, z);
 
     // pretty_print(qddot_pre, std::cout, "qddot_cmd");
-    for (int i(0); i < params::model::kDimFloating; ++i)
+    for (int i(0); i < consts::model::kDimFloating; ++i)
       qddot_pre[i] += z[i];
 
-    for (int i = 0; i < params::model::kDimConfig; i++)
+    for (int i = 0; i < consts::model::kDimConfig; i++)
     {
       if (fabs(qddot_pre[i]) > 99999.)
       {
-        qddot_pre = VectorX::Zero(params::model::kDimConfig);
+        qddot_pre = VectorX::Zero(consts::model::kDimConfig);
       }
     }
 
@@ -168,13 +168,13 @@ namespace sdrobot::wbc
 
     for (size_t i = 0; i < contact_list.size(); i++)
     {
-      Eigen::Map<Eigen::Matrix<fpt_t, 3, params::model::kDimConfig> const> _Jc(
+      Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jc(
           contact_list[i]->GetContactJacobian().data());
 
       auto dim_new_rf = contact_list[i]->GetDim();
       auto dim_new_uf = contact_list[i]->GetDimRFConstraint();
 
-      Jc.block(dim_accumul_rf, 0, dim_new_rf, params::model::kDimConfig) = _Jc;
+      Jc.block(dim_accumul_rf, 0, dim_new_rf, consts::model::kDimConfig) = _Jc;
       JcDotQdot.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetJcDotQdot());
 
       Eigen::Map<Eigen::Matrix<fpt_t, 6, 3> const> _Uf(
@@ -202,17 +202,17 @@ namespace sdrobot::wbc
     Eigen::Map<Vector18> grav(grav_.data());
     if (dim_rf_ > 0)
     {
-      CE.block(0, 0, dim_eq_cstr_, params::model::kDimFloating) =
-          A.block(0, 0, dim_eq_cstr_, params::model::kDimFloating);
-      CE.block(0, params::model::kDimFloating, dim_eq_cstr_, dim_rf_) =
+      CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
+          A.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating);
+      CE.block(0, consts::model::kDimFloating, dim_eq_cstr_, dim_rf_) =
           -Sv * Jc.transpose();
       ce0 = -Sv * (A * qddot + cori + grav -
                    Jc.transpose() * Fr_des);
     }
     else
     {
-      CE.block(0, 0, dim_eq_cstr_, params::model::kDimFloating) =
-          A.block(0, 0, dim_eq_cstr_, params::model::kDimFloating);
+      CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
+          A.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating);
       ce0 = -Sv * (A * qddot + cori + grav);
     }
 
@@ -225,7 +225,7 @@ namespace sdrobot::wbc
       VectorX const &Uf_ieq_vec,
       VectorX const &Fr_des)
   {
-    CI.block(0, params::model::kDimFloating, dim_Uf_, dim_rf_) = Uf;
+    CI.block(0, consts::model::kDimFloating, dim_Uf_, dim_rf_) = Uf;
     ci0 = Uf_ieq_vec - Uf * Fr_des;
     return true;
   }
@@ -234,11 +234,11 @@ namespace sdrobot::wbc
   {
     // Set Cost
     int idx_offset = 0;
-    for (int i = 0; i < params::model::kDimFloating; ++i)
+    for (int i = 0; i < consts::model::kDimFloating; ++i)
     {
       G((i + idx_offset), (i + idx_offset)) = 0.5 * W_floating_[i];
     }
-    idx_offset += params::model::kDimFloating;
+    idx_offset += consts::model::kDimFloating;
     for (int i = 0; i < dim_rf_; ++i)
     {
       G((i + idx_offset), (i + idx_offset)) = 0.5 * W_rf_[i];
@@ -262,7 +262,7 @@ namespace sdrobot::wbc
       VectorX _Fr(dim_rf_);
       // get Reaction forces
       for (int i(0); i < dim_rf_; ++i)
-        _Fr[i] = z[i + params::model::kDimFloating] + Fr_des[i];
+        _Fr[i] = z[i + consts::model::kDimFloating] + Fr_des[i];
       tot_tau =
           A * qddot + cori + grav - Jc.transpose() * _Fr;
     }
@@ -272,7 +272,7 @@ namespace sdrobot::wbc
     }
 
     Eigen::Map<Vector12> _ret(ret.data());
-    _ret = tot_tau.tail(params::model::kNumActJoint);
+    _ret = tot_tau.tail(consts::model::kNumActJoint);
 
     for (int i = 0; i < 12; i++)
     {
@@ -280,7 +280,7 @@ namespace sdrobot::wbc
       {
 
         printf("!!!!!!!!danger!!!!! WBC torque num %d\tout the limitation: %f.2f ", i, ret[i]);
-        ret[i] = ret[i] / fabs(ret[i]) * params::interface::kMaxTorque;
+        ret[i] = ret[i] / fabs(ret[i]) * consts::interface::kMaxTorque;
         printf("  edit to %f.2f\n", ret[i]);
       }
     }
@@ -309,8 +309,8 @@ namespace sdrobot::wbc
       dim_Uf_ += contact_list[i]->GetDimRFConstraint();
     }
 
-    dim_opt_ = params::model::kDimFloating + dim_rf_;
-    dim_eq_cstr_ = params::model::kDimFloating;
+    dim_opt_ = consts::model::kDimFloating + dim_rf_;
+    dim_eq_cstr_ = consts::model::kDimFloating;
 
     // Matrix Setting
     G = MatrixX::Zero(dim_opt_, dim_opt_);
@@ -324,7 +324,7 @@ namespace sdrobot::wbc
       CI = MatrixX::Zero(dim_Uf_, dim_opt_);
       ci0 = VectorX::Zero(dim_Uf_);
 
-      Jc = MatrixX(dim_rf_, params::model::kDimConfig);
+      Jc = MatrixX(dim_rf_, consts::model::kDimConfig);
       JcDotQdot = VectorX(dim_rf_);
       Fr_des = VectorX(dim_rf_);
 

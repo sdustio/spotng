@@ -1,12 +1,12 @@
 #pragma once
 
 #include "sdrobot/types.h"
-#include "sdrobot/params.h"
+#include "sdrobot/consts.h"
 
 namespace sdrobot::wbc
 {
-  using SdVector12f = std::array<fpt_t, params::model::kNumActJoint>;
-  using SdVector18f = std::array<fpt_t, params::model::kDimConfig>;
+  using SdVector12f = std::array<fpt_t, consts::model::kNumActJoint>;
+  using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
   struct InData
   {

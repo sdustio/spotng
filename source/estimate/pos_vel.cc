@@ -1,5 +1,5 @@
 #include "estimate/pos_vel.h"
-#include "sdrobot/params.h"
+#include "sdrobot/consts.h"
 
 namespace sdrobot::estimate
 {
@@ -68,12 +68,12 @@ namespace sdrobot::estimate
   bool PosVel::RunOnce(State &ret)
   {
 
-    fpt_t process_noise_pimu = params::noise::kIMUProcessNoisePosition;
-    fpt_t process_noise_vimu = params::noise::kIMUProcessNoiseVelocity;
-    fpt_t process_noise_pfoot = params::noise::kFootProcessNoisePosition;
-    fpt_t sensor_noise_pimu_rel_foot = params::noise::kFootSensorNoisePosition;
-    fpt_t sensor_noise_vimu_rel_foot = params::noise::kFootSensorNoiseVelocity;
-    fpt_t sensor_noise_zfoot = params::noise::kFootHeightSensorNoise;
+    fpt_t process_noise_pimu = consts::noise::kIMUProcessNoisePosition;
+    fpt_t process_noise_vimu = consts::noise::kIMUProcessNoiseVelocity;
+    fpt_t process_noise_pfoot = consts::noise::kFootProcessNoisePosition;
+    fpt_t sensor_noise_pimu_rel_foot = consts::noise::kFootSensorNoisePosition;
+    fpt_t sensor_noise_vimu_rel_foot = consts::noise::kFootSensorNoiseVelocity;
+    fpt_t sensor_noise_zfoot = consts::noise::kFootHeightSensorNoise;
 
     Eigen::Map<Vector18> xhat(xhat_.data());
     Eigen::Map<Vector12> ps(ps_.data());
@@ -120,7 +120,7 @@ namespace sdrobot::estimate
     v0 << xhat_[3], xhat_[4], xhat_[5];
 
     //构成状态变量等
-    for (int i = 0; i < params::model::kNumLeg; i++)
+    for (int i = 0; i < consts::model::kNumLeg; i++)
     {
       int i1 = 3 * i;
       SdVector3f _ph;
