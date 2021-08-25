@@ -27,7 +27,10 @@ namespace sdrobot::drive
   {
     fpt_t linear_vel_x = 0.;
     fpt_t linear_vel_y = 0.;
-    fpt_t angular_vel_z = 0.; // turn rate, yaw vel
+    fpt_t linear_vel_z = 0.; // reserved, unused
+    fpt_t angular_vel_x = 0.; // reserved, unused, roll vel
+    fpt_t angular_vel_y = 0.; // reserved, unused, pitch vel
+    fpt_t angular_vel_z = 0.; // yaw vel
     fpt_t variant_pitch = 0.;
     fpt_t variant_height = 0.;
   };
