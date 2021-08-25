@@ -120,7 +120,8 @@ bool FiniteStateMachineImpl::PreCheck() {
 }
 
 bool FiniteStateMachineImpl::PostCheckAndLimit() {
-  bool c1, c2;
+  bool c1 = true;
+  bool c2 = true;
   if (current_state_ctrl_->NeedCheckPDesFoot()) {
     c1 = safety_checker_.CheckPDesFoot(legctrl_);
   }
