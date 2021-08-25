@@ -14,14 +14,14 @@ namespace sdrobot::drive
 
   bool DriveCtrlImpl::CmdtoDesData()
   {
-    vel_ = {
+    lvel_ = {
         Deadband(twist_.linear_vel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
         Deadband(twist_.linear_vel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
         0};
 
     pos_ = {
-        dt_ * vel_[0],
-        dt_ * vel_[1],
+        dt_ * lvel_[0],
+        dt_ * lvel_[1],
         Deadband(twist_.variant_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
 
     avel_ = {
@@ -90,9 +90,9 @@ namespace sdrobot::drive
   {
     return rpy_;
   }
-  SdVector3f const &DriveCtrlImpl::GetVelDes() const
+  SdVector3f const &DriveCtrlImpl::GetLvelDes() const
   {
-    return vel_;
+    return lvel_;
   }
   SdVector3f const &DriveCtrlImpl::GetAvelDes() const
   {

@@ -15,8 +15,8 @@ namespace sdrobot::estimate
     SdVector3f rpy = {};        //欧拉角
     SdVector4f ori = {};        //四元数: w, x, y, z
     SdMatrix3f rot_mat = {};    //旋转矩阵 3x3
-    SdVector3f vel_robot = {};  //机身坐标速度
-    SdVector3f vel = {};        //世界坐标速度
+    SdVector3f lvel_robot = {};  //机身坐标速度
+    SdVector3f lvel = {};        //世界坐标速度
     SdVector3f avel_robot = {}; //机身坐标角速度
     SdVector3f avel = {};       //世界坐标角速度
     SdVector3f acc_robot = {};  //机身坐标加速度

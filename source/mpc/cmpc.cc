@@ -73,24 +73,24 @@ namespace sdrobot::mpc
 
     // integrate position setpoint
     auto rot_mat = ToConstEigenTp(seResult.rot_mat);
-    auto vel = ToConstEigenTp(seResult.vel);
+    auto lvel = ToConstEigenTp(seResult.lvel);
     auto pos = ToConstEigenTp(seResult.pos);
     auto rpy = ToConstEigenTp(seResult.rpy);
 
-    auto vel_des_robot = ToConstEigenTp(drivectrl->GetVelDes());
+    auto lvel_des_robot = ToConstEigenTp(drivectrl->GetLvelDes());
     auto avel_des_robot = ToConstEigenTp(drivectrl->GetAvelDes());
     auto rpy_des_robot = ToConstEigenTp(drivectrl->GetRpyDes());
-    SdVector3f vel_des;
-    ToEigenTp(vel_des) = rot_mat.transpose() * vel_des_robot;
+    SdVector3f lvel_des;
+    ToEigenTp(lvel_des) = rot_mat.transpose() * lvel_des_robot;
 
     //Integral-esque pitche and roll compensation
-    if (fabs(vel[0]) > .02) //avoid dividing by zero
+    if (fabs(lvel[0]) > .02) //avoid dividing by zero
     {
-      rpy_int_[1] += 5 * dt_ * (rpy_des_robot[1] - rpy[1]) / vel[0];
+      rpy_int_[1] += 5 * dt_ * (rpy_des_robot[1] - rpy[1]) / lvel[0];
     }
-    if (fabs(vel[1]) > 0.01)
+    if (fabs(lvel[1]) > 0.01)
     {
-      rpy_int_[0] += dt_ * (rpy_des_robot[0] - rpy[0]) / vel[1];
+      rpy_int_[0] += dt_ * (rpy_des_robot[0] - rpy[0]) / lvel[1];
     }
 
     rpy_int_[0] = fminf(fmaxf(rpy_int_[0], -.25), .25);
@@ -104,7 +104,7 @@ namespace sdrobot::mpc
                                                             ToConstEigenTp(legctrl->GetDatas()[i].p));
     }
 
-    ToEigenTp(pos_des_) += dt_ * ToConstEigenTp(vel_des);
+    ToEigenTp(pos_des_) += dt_ * ToConstEigenTp(lvel_des);
     pos_des_[2] = _body_height;
 
     // foot placement
@@ -117,7 +117,7 @@ namespace sdrobot::mpc
     //fptype interleave_gain = -0.13;
     fpt_t interleave_gain = 0; //-0.2;
     //fptype v_abs = std::fabs(seResult.vBody[0]);
-    fpt_t v_abs = std::fabs(vel_des_robot[0]);
+    fpt_t v_abs = std::fabs(lvel_des_robot[0]);
 
     for (int i = 0; i < 4; i++)
     {
@@ -148,9 +148,9 @@ namespace sdrobot::mpc
       if (cmd_gait == drive::Gait::Walk) //walk gait
       {
         if (i == 0)
-          offset(1) = -0.085 * (1 - fabs(vel_des_robot[0]) / 2.0);
+          offset(1) = -0.085 * (1 - fabs(lvel_des_robot[0]) / 2.0);
         else if (i == 1)
-          offset(1) = 0.085 * (1 - fabs(vel_des_robot[0]) / 2.0);
+          offset(1) = 0.085 * (1 - fabs(lvel_des_robot[0]) / 2.0);
       }
 
       SdVector3f loc;
@@ -163,25 +163,25 @@ namespace sdrobot::mpc
       dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des_robot[2] * stance_time / 2);
       Vector3 pYawCorrected = _rot * pRobotFrame;
 
-      Vector3 Pf = pos + rot_mat.transpose() * (pYawCorrected + vel_des_robot * swing_time_remaining_[i]);
+      Vector3 Pf = pos + rot_mat.transpose() * (pYawCorrected + lvel_des_robot * swing_time_remaining_[i]);
 
-      //+ vel * swing_time_remaining_[i];
+      //+ lvel * swing_time_remaining_[i];
 
       fpt_t p_rel_max = 0.35;
       // fptype p_rel_max = 0.3f;
 
       // Using the estimated velocity is correct
-      //Vector3 vel_des = seResult.rot_mat.transpose() * vel_des_robot;
-      fpt_t pfx_rel = vel[0] * (.5 + opts::bonus_swing) * stance_time +
-                      .1 * (vel[0] - vel_des[0]) +
-                      (0.5 * pos[2] / gravity_) * (vel[1] * avel_des_robot[2]);
+      //Vector3 lvel_des = seResult.rot_mat.transpose() * lvel_des_robot;
+      fpt_t pfx_rel = lvel[0] * (.5 + opts::bonus_swing) * stance_time +
+                      .1 * (lvel[0] - lvel_des[0]) +
+                      (0.5 * pos[2] / gravity_) * (lvel[1] * avel_des_robot[2]);
 
       if (fabs(pfx_rel) > p_rel_max)
         printf("!!!!!!!!!!!!!!!!out of the max step\n");
 
-      fpt_t pfy_rel = vel[1] * .5 * stance_time * dt_mpc_ +
-                      .09 * (vel[1] - vel_des[1]) +
-                      (0.5 * pos[2] / gravity_) * (-vel[0] * avel_des_robot[2]);
+      fpt_t pfy_rel = lvel[1] * .5 * stance_time * dt_mpc_ +
+                      .09 * (lvel[1] - lvel_des[1]) +
+                      (0.5 * pos[2] / gravity_) * (-lvel[0] * avel_des_robot[2]);
       pfx_rel = fminf(fmaxf(pfx_rel, -p_rel_max), p_rel_max);
       pfy_rel = fminf(fmaxf(pfy_rel, -p_rel_max), p_rel_max);
       Pf[0] += pfx_rel;
@@ -201,7 +201,7 @@ namespace sdrobot::mpc
     gait_skd->CalcContactState(contactStates);
 
     UpdateMPCIfNeeded(
-        wbcdata.Fr_des, gait_skd->GetMpcTable(), drivectrl, estctrl, vel_des);
+        wbcdata.Fr_des, gait_skd->GetMpcTable(), drivectrl, estctrl, lvel_des);
 
     SdVector4f se_contactState = {};
     //  StateEstimator* se = hw_i->state_estimator;
@@ -220,7 +220,7 @@ namespace sdrobot::mpc
 
         // Update for WBC
         wbcdata.foot_pos_des[foot] = foot_swing_trajs_[foot].GetPosition();
-        wbcdata.foot_vel_des[foot] = foot_swing_trajs_[foot].GetVelocity();
+        wbcdata.foot_lvel_des[foot] = foot_swing_trajs_[foot].GetVelocity();
         wbcdata.foot_acc_des[foot] = foot_swing_trajs_[foot].GetAcceleration();
       }
       else // foot is in stance
@@ -234,7 +234,7 @@ namespace sdrobot::mpc
         ToEigenTp(leg_cmds[foot].p_des) =
             rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
         ToEigenTp(leg_cmds[foot].v_des) =
-            rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - vel);
+            rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - lvel);
         leg_cmds[foot].kp_cartesian = opts::kp_stance;
         leg_cmds[foot].kd_cartesian = opts::kd_stance;
         //cout << "Foot " << foot << " relative velocity desired: " << vDesLeg.transpose() << "\n";
@@ -247,7 +247,7 @@ namespace sdrobot::mpc
 
     // Update For WBC
     wbcdata.body_pos_des = pos_des_;
-    wbcdata.body_vel_des = vel_des;
+    wbcdata.body_lvel_des = lvel_des;
     wbcdata.body_acc_des.fill(0.);
     wbcdata.body_rpy_des = drivectrl->GetRpyDes();
     wbcdata.body_avel_des = drivectrl->GetAvelDes();
@@ -267,7 +267,7 @@ namespace sdrobot::mpc
       std::vector<int> const &mpcTable,
       drive::DriveCtrl::ConstSharedPtr const &drivectrl,
       estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
-      SdVector3f const &vel_des)
+      SdVector3f const &lvel_des)
   {
     //iter_between_mpc_ = 30;
     if ((iter_counter_ % iter_between_mpc_) != 0)
@@ -282,11 +282,11 @@ namespace sdrobot::mpc
 
     auto const &seResult = estctrl->GetEstState();
     auto const &pos = seResult.pos;
-    auto const &vel = seResult.vel;
+    auto const &lvel = seResult.lvel;
 
     SdVector3f rpy_comp = {};
-    rpy_comp[1] = vel[0] * rpy_int_[1];
-    rpy_comp[0] = vel[1] * rpy_int_[0];
+    rpy_comp[1] = lvel[0] * rpy_int_[1];
+    rpy_comp[0] = lvel[1] * rpy_int_[0];
     rpy_comp[2] = drivectrl->GetRpyDes()[2]; // angle_y
 
     fpt_t const max_pos_error = .1;
@@ -306,7 +306,7 @@ namespace sdrobot::mpc
     pos_des_[0] = xStart;
     pos_des_[1] = yStart;
 
-    auto const &velrpy = drivectrl->GetAvelDes();
+    auto const &avel_des_robot = drivectrl->GetAvelDes();
 
     fpt_t trajInitial[12] = {rpy_comp[0], // 0
                              rpy_comp[1], // 1
@@ -314,12 +314,12 @@ namespace sdrobot::mpc
                              pos_des_[0], // 3
                              pos_des_[1], // 4
                              pos_des_[2], // 5
-                             velrpy[0],   // 6
-                             velrpy[1],   // 7
-                             velrpy[2],   // 8
-                             vel_des[0],  // 9
-                             vel_des[1],  // 10
-                             vel_des[2]}; // 11
+                             avel_des_robot[0],   // 6
+                             avel_des_robot[1],   // 7
+                             avel_des_robot[2],   // 8
+                             lvel_des[0],  // 9
+                             lvel_des[1],  // 10
+                             lvel_des[2]}; // 11
 
     for (int i = 0; i < opts::horizon_len; i++)
     {
@@ -334,9 +334,9 @@ namespace sdrobot::mpc
       }
       else
       {
-        traj_all_[12 * i + 3] = traj_all_[12 * (i - 1) + 3] + dt_mpc_ * vel_des[0];
-        traj_all_[12 * i + 4] = traj_all_[12 * (i - 1) + 4] + dt_mpc_ * vel_des[1];
-        traj_all_[12 * i + 2] = traj_all_[12 * (i - 1) + 2] + dt_mpc_ * velrpy[2];
+        traj_all_[12 * i + 3] = traj_all_[12 * (i - 1) + 3] + dt_mpc_ * lvel_des[0];
+        traj_all_[12 * i + 4] = traj_all_[12 * (i - 1) + 4] + dt_mpc_ * lvel_des[1];
+        traj_all_[12 * i + 2] = traj_all_[12 * (i - 1) + 2] + dt_mpc_ * avel_des_robot[2];
       }
     }
     return SolveMPC(out, mpcTable, estctrl);
@@ -356,7 +356,7 @@ namespace sdrobot::mpc
     fpt_t alpha = 4e-5; // make setting eventually
     //fptype alpha = 4e-7; // make setting eventually: DH
     auto const &pos = seResult.pos;   //p
-    auto const &vel = seResult.vel;   //v
+    auto const &lvel = seResult.lvel;   //v
     auto const &avel = seResult.avel; //w
     auto const &ori = seResult.ori;   //q
 
@@ -372,7 +372,7 @@ namespace sdrobot::mpc
 
     fpt_t pz_err = pos[2] - pos_des_[2];
 
-    Vector3 vxy(vel[0], vel[1], 0);
+    Vector3 vxy(lvel[0], lvel[1], 0);
 
     qpsolver_->Setup(dt_mpc_, 0.4, 150);
 
@@ -381,7 +381,7 @@ namespace sdrobot::mpc
       x_comp_integral += opts::cmpc_x_drag * pz_err * dt_mpc_ / vxy[0];
     }
 
-    qpsolver_->SolveQP(x_comp_integral, pos, vel, ori, avel, r, yaw, weights, traj_all_, alpha, gravity_, mpcTable);
+    qpsolver_->SolveQP(x_comp_integral, pos, lvel, ori, avel, r, yaw, weights, traj_all_, alpha, gravity_, mpcTable);
 
     auto const &solu = qpsolver_->GetSolution();
     for (int leg = 0; leg < 4; leg++)

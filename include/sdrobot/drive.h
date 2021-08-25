@@ -58,7 +58,7 @@ namespace sdrobot::drive
 
     virtual SdVector3f const &GetPosDes() const = 0;
     virtual SdVector3f const &GetRpyDes() const = 0;
-    virtual SdVector3f const &GetVelDes() const = 0;
+    virtual SdVector3f const &GetLvelDes() const = 0;
     virtual SdVector3f const &GetAvelDes() const = 0;
   };
 

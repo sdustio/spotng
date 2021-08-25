@@ -28,7 +28,7 @@ namespace sdrobot::mpc
         std::vector<int> const &mpcTable,
         drive::DriveCtrl::ConstSharedPtr const &drivectrl,
         estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
-        SdVector3f const &vel_des);
+        SdVector3f const &lvel_des);
     bool SolveMPC(
         std::array<SdVector3f, 4> &out,
         std::vector<int> const &mpcTable,

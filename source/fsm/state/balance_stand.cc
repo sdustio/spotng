@@ -59,7 +59,7 @@ namespace sdrobot::fsm
   {
 
     wbc_data_.body_pos_des = ini_body_pos_;
-    wbc_data_.body_vel_des.fill(0.);
+    wbc_data_.body_lvel_des.fill(0.);
     wbc_data_.body_acc_des.fill(0.);
     wbc_data_.body_rpy_des = ini_body_rpy_;
 
@@ -75,7 +75,7 @@ namespace sdrobot::fsm
     for (int i = 0; i < consts::model::kNumLeg; ++i)
     {
       wbc_data_.foot_pos_des[i].fill(0.);
-      wbc_data_.foot_vel_des[i].fill(0.);
+      wbc_data_.foot_lvel_des[i].fill(0.);
       wbc_data_.foot_acc_des[i].fill(0.);
       wbc_data_.Fr_des[i].fill(0.);
       wbc_data_.Fr_des[i][2] = body_weight_ / 4.;

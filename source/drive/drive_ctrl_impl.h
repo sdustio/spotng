@@ -24,7 +24,7 @@ namespace sdrobot::drive
 
     SdVector3f const &GetPosDes() const override;
     SdVector3f const &GetRpyDes() const override;
-    SdVector3f const &GetVelDes() const override;
+    SdVector3f const &GetLvelDes() const override;
     SdVector3f const &GetAvelDes() const override;
 
   private:
@@ -39,7 +39,7 @@ namespace sdrobot::drive
     Gait gait_ = Gait::Trot;
     SdVector3f pos_ = {};
     SdVector3f rpy_ = {};
-    SdVector3f vel_ = {};
+    SdVector3f lvel_ = {};
     SdVector3f avel_ = {};
   };
 

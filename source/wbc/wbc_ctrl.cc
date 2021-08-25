@@ -59,7 +59,7 @@ namespace sdrobot::wbc
     for (int i = 0; i < consts::model::kNumLegJoint; i++)
     {
       _state.gvel_robot[i] = estdata.avel_robot[i];
-      _state.gvel_robot[i + 3] = estdata.vel_robot[i];
+      _state.gvel_robot[i + 3] = estdata.lvel_robot[i];
       for (int leg = 0; leg < consts::model::kNumLeg; leg++)
       {
         _state.q[3 * leg + i] = legdata[leg].q[i];
@@ -148,7 +148,7 @@ namespace sdrobot::wbc
         SdVector3f{});
     body_pos_task_->UpdateTask(
         wbcdata.body_pos_des,
-        wbcdata.body_vel_des,
+        wbcdata.body_lvel_des,
         wbcdata.body_acc_des);
 
     task_list_.push_back(body_ori_task_);
@@ -166,7 +166,7 @@ namespace sdrobot::wbc
       { // No Contact (swing)
         foot_task_[leg]->UpdateTask(
             wbcdata.foot_pos_des[leg],
-            wbcdata.foot_vel_des[leg],
+            wbcdata.foot_lvel_des[leg],
             wbcdata.foot_acc_des[leg]);
         //zero_vec3);
         task_list_.push_back(foot_task_[leg]);

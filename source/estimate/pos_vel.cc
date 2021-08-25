@@ -215,8 +215,8 @@ namespace sdrobot::estimate
     }
     //输出状态量
     ToEigenTp(ret.pos) = xhat.block<3, 1>(0, 0);
-    ToEigenTp(ret.vel) = xhat.block<3, 1>(3, 0);
-    ToEigenTp(ret.vel_robot) = rot_mat * ToConstEigenTp(ret.vel);
+    ToEigenTp(ret.lvel) = xhat.block<3, 1>(3, 0);
+    ToEigenTp(ret.lvel_robot) = rot_mat * ToConstEigenTp(ret.lvel);
 
     return true;
   }
