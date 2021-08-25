@@ -1,0 +1,24 @@
+image: sd/sdrobot-build #gcc, cmake, eigen, qpOASES, eiquadprog, cpplint, cppcheck
+
+variables:
+  CMAKE_BUILD: /build
+
+cache:
+  paths:
+    - "$CMAKE_BUILD"
+
+build:
+  stage: build
+  # instead of calling g++ directly you can also use some build toolkit like make
+  # install the necessary build tools when needed
+  # before_script:
+  #   - apt update && apt -y install make autoconf
+  script:
+    - cmake "-DCMAKE_CXX_CPPLINT:STRING=cpplint;--quiet" "-DCMAKE_CXX_CPPCHECK=/usr/bin/cppcheck;--std=c++17;--quiet;--enable=performance,portability" -DBUILD_TESTING:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$CI_PROJECT_DIR -B$CMAKE_BUILD
+    - cmake --build $CMAKE_BUILD --target all
+
+# run tests using the binary built before
+test:
+  stage: test
+  script:
+    - $CMAKE_BUILD/examples/example1
