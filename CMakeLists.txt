@@ -31,7 +31,7 @@ endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
-option(BUILD_EXAMPLES "Build examples." ON)
+option(BUILD_TESTING "Build examples.")
 
 #### Library
 find_package(Eigen3 REQUIRED)
@@ -160,6 +160,7 @@ install(
 )
 
 # example
-if(BUILD_EXAMPLES)
+if(BUILD_TESTING)
+  set(CMAKE_CXX_CPPLINT "cpplint;--linelength=100")
   add_subdirectory(examples)
 endif()
