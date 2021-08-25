@@ -159,7 +159,6 @@ install(
     ${INSTALL_CMAKEDIR}
 )
 
-# example
 if(BUILD_TESTING)
   add_subdirectory(examples)
 endif()
