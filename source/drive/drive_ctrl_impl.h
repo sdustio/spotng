@@ -10,7 +10,11 @@ namespace sdrobot::drive
     explicit DriveCtrlImpl(fpt_t dt);
     DriveCtrlImpl(DriveMode mode, fpt_t dt);
 
-    bool UpdateDriveCmd(DriveCmd const &cmd) override;
+    bool UpdateTwist(Twist const &twist) override;
+    bool UpdateState(State const &state) override;
+    bool UpdateGait(Gait const &gait) override;
+    bool UpdateStepHeight(fpt_t const height) override;
+
     bool CmdtoDesData() override;
 
     fpt_t GetDuration() const override;
@@ -23,18 +27,12 @@ namespace sdrobot::drive
     SdVector3f const &GetVelDes() const override;
     SdVector3f const &GetAvelDes() const override;
 
-    bool UpdateState(State state)
-    {
-      state_ = state;
-      return true;
-    }
-
   private:
     fpt_t Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal);
 
     DriveMode mode_;
     fpt_t dt_;
-    DriveCmd cmd_;
+    Twist twist_;
 
     fpt_t step_height_ = 0.1;
     State state_ = State::Init;

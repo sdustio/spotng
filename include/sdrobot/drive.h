@@ -23,16 +23,13 @@ namespace sdrobot::drive
     Bound
   };
 
-  struct SDROBOT_EXPORT DriveCmd
+  struct SDROBOT_EXPORT Twist
   {
-    fpt_t move_x = 0.;
-    fpt_t move_y = 0.;
-    fpt_t turn_rate = 0.;
-    fpt_t angle_pitch = 0.;
+    fpt_t linear_vel_x = 0.;
+    fpt_t linear_vel_y = 0.;
+    fpt_t angular_vel_z = 0.; // turn rate, yaw vel
+    fpt_t variant_pitch = 0.;
     fpt_t variant_height = 0.;
-    fpt_t step_height = 0.1;
-    State state = State::Init;
-    Gait gait = Gait::Trot;
   };
 
   class SDROBOT_EXPORT DriveCtrl
@@ -44,7 +41,11 @@ namespace sdrobot::drive
 
     virtual ~DriveCtrl() = default;
 
-    virtual bool UpdateDriveCmd(DriveCmd const &cmd) = 0;
+    virtual bool UpdateTwist(Twist const &twist) = 0;
+    virtual bool UpdateState(State const &state) = 0;
+    virtual bool UpdateGait(Gait const &gait) = 0;
+    virtual bool UpdateStepHeight(fpt_t const height) = 0;
+
     virtual bool CmdtoDesData() = 0;
 
     virtual fpt_t GetDuration() const = 0;

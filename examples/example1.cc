@@ -20,16 +20,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   Robot::Build(robot, opts, itf);
 
   sensor::ImuData imu_data;
-  drive::DriveCmd drive_cmd;
+  drive::Twist drive_twist;
 
   /*...*/
-  drive_cmd.gait = drive::Gait::Trot;
-  drive_cmd.state = drive::State::Locomotion;
-  drive_cmd.move_x = 1.5;
-  /*...*/
-
   robot->UpdateImu(imu_data);
-  robot->UpdateDriveCmd(drive_cmd);
+  robot->UpdateDriveGait(drive::Gait::Trot);
+  robot->UpdateDriveState(drive::State::Locomotion);
+  drive_twist.linear_vel_x = 1.5;
+  robot->UpdateDriveTwist(drive_twist);
+  /*...*/
 
   unsigned cdt = 1000 * opts.ctrl_dt_sec;
   unsigned adt = 1000 * opts.act_itf_sec;

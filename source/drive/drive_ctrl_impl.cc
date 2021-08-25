@@ -15,43 +15,53 @@ namespace sdrobot::drive
   bool DriveCtrlImpl::CmdtoDesData()
   {
     vel_ = {
-        Deadband(cmd_.move_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
-        Deadband(cmd_.move_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
+        Deadband(twist_.linear_vel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
+        Deadband(twist_.linear_vel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
         0};
 
     pos_ = {
         dt_ * vel_[0],
         dt_ * vel_[1],
-        Deadband(cmd_.variant_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
+        Deadband(twist_.variant_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
 
     avel_ = {
-        0., 0, Deadband(cmd_.turn_rate, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
+        0., 0, Deadband(twist_.angular_vel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
 
     rpy_ = {
         0.,
-        Deadband(cmd_.angle_pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP),
+        Deadband(twist_.variant_pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP),
         dt_ * avel_[2]};
 
-    step_height_ = cmd_.step_height;
-
-    state_ = cmd_.state;
-    gait_ = cmd_.gait;
 
     // TODO 根据 Drive Mode 进行参数修正。比如 自动档无视 state， state 和 move 是否冲突等等
     return true;
   }
 
-  bool DriveCtrlImpl::UpdateDriveCmd(DriveCmd const &cmd)
+  bool DriveCtrlImpl::UpdateTwist(Twist const &twist)
   {
-    cmd_.state = cmd.state;
-    cmd_.gait = cmd.gait;
-    cmd_.step_height = Deadband(cmd.step_height, consts::drive::kMinStepHeight, consts::drive::kMaxStepHeight);
+    twist_.variant_height = twist.variant_height;
+    twist_.linear_vel_x = twist_.linear_vel_x * (1.0 - consts::drive::kFilter) + twist.linear_vel_x * consts::drive::kFilter;
+    twist_.linear_vel_y = twist_.linear_vel_y * (1.0 - consts::drive::kFilter) + twist.linear_vel_y * consts::drive::kFilter;
+    twist_.angular_vel_z = twist_.angular_vel_z * (1.0 - consts::drive::kFilter) + twist.angular_vel_z * consts::drive::kFilter;
+    twist_.variant_pitch = twist_.variant_pitch * (1.0 - consts::drive::kFilter) + twist.variant_pitch * consts::drive::kFilter;
+    return true;
+  }
 
-    cmd_.variant_height = cmd.variant_height;
-    cmd_.move_x = cmd_.move_x * (1.0 - consts::drive::kFilter) + cmd.move_x * consts::drive::kFilter;
-    cmd_.move_y = cmd_.move_y * (1.0 - consts::drive::kFilter) + cmd.move_y * consts::drive::kFilter;
-    cmd_.turn_rate = cmd_.turn_rate * (1.0 - consts::drive::kFilter) + cmd.turn_rate * consts::drive::kFilter;
-    cmd_.angle_pitch = cmd_.angle_pitch * (1.0 - consts::drive::kFilter) + cmd.angle_pitch * consts::drive::kFilter;
+  bool DriveCtrlImpl::UpdateState(State const &state)
+  {
+    state_ = state;
+    return true;
+  }
+
+  bool DriveCtrlImpl::UpdateGait(Gait const &gait)
+  {
+    gait_ = gait;
+    return true;
+  }
+
+  bool DriveCtrlImpl::UpdateStepHeight(fpt_t const height)
+  {
+    step_height_ = Deadband(height, consts::drive::kMinStepHeight, consts::drive::kMaxStepHeight);;
     return true;
   }
 

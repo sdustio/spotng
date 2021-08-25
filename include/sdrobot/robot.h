@@ -20,7 +20,11 @@ namespace sdrobot
     virtual ~Robot() = default;
 
     virtual bool UpdateImu(sensor::ImuData const &imu) = 0;
-    virtual bool UpdateDriveCmd(drive::DriveCmd const &dcmd) = 0;
+    virtual bool UpdateDriveTwist(drive::Twist const &twist) = 0;
+    virtual bool UpdateDriveState(drive::State const &state) = 0;
+    virtual bool UpdateDriveGait(drive::Gait const &gait) = 0;
+    virtual bool UpdateDriveStepHeight(fpt_t const height) = 0;
+
     virtual bool RunOnce() = 0;
   };
 

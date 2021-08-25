@@ -13,7 +13,10 @@ namespace sdrobot
   public:
     RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
     bool UpdateImu(sensor::ImuData const &imu) override;
-    bool UpdateDriveCmd(drive::DriveCmd const &dcmd) override;
+    bool UpdateDriveTwist(drive::Twist const &twist) override;
+    bool UpdateDriveState(drive::State const &state) override;
+    bool UpdateDriveGait(drive::Gait const &gait) override;
+    bool UpdateDriveStepHeight(fpt_t const height) override;
     bool RunOnce() override;
   private:
     Options const opts_;

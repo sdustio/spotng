@@ -38,9 +38,27 @@ namespace sdrobot
     return true;
   }
 
-  bool RobotImpl::UpdateDriveCmd(drive::DriveCmd const &dcmd)
+  bool RobotImpl::UpdateDriveTwist(drive::Twist const &twist)
   {
-    drivectrl_->UpdateDriveCmd(dcmd);
+    drivectrl_->UpdateTwist(twist);
+    return true;
+  }
+
+  bool RobotImpl::UpdateDriveState(drive::State const &state)
+  {
+    drivectrl_->UpdateState(state);
+    return true;
+  }
+
+  bool RobotImpl::UpdateDriveGait(drive::Gait const &gait)
+  {
+    drivectrl_->UpdateGait(gait);
+    return true;
+  }
+
+  bool RobotImpl::UpdateDriveStepHeight(fpt_t const height)
+  {
+    drivectrl_->UpdateStepHeight(height);
     return true;
   }
 
