@@ -16,18 +16,16 @@ namespace sdrobot {
 
 RobotImpl::RobotImpl(Options const &opts,
                      interface::ActuatorInterface::SharedPtr const &act_itf)
-    : opts_(opts) {
-  mquad_ = std::make_shared<model::QuadrupedImpl>();
+    : opts_(opts),
+      mquad_(std::make_shared<model::QuadrupedImpl>()),
+      legctrl_(std::make_shared<leg::LegCtrlImpl>(act_itf)),
+      jposinit_(std::make_shared<leg::JPosInitImpl>(opts.ctrl_dt_sec,
+                                                    opts.jpos_init_sec)),
+      drivectrl_(std::make_shared<drive::DriveCtrlImpl>(opts.drive_mode,
+                                                        opts.ctrl_dt_sec)),
+      estctrl_(std::make_shared<estimate::EstimateCtrlImpl>()) {
   mquad_->ComputeFloatBaseModel(opts.gravity);
 
-  legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
-  jposinit_ =
-      std::make_shared<leg::JPosInitImpl>(opts.ctrl_dt_sec, opts.jpos_init_sec);
-
-  drivectrl_ =
-      std::make_shared<drive::DriveCtrlImpl>(opts.drive_mode, opts.ctrl_dt_sec);
-
-  estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
   estctrl_->AddEstimator("posvel",
                          std::make_shared<estimate::PosVel>(
                              opts.ctrl_dt_sec, opts.gravity, legctrl_, mquad_));

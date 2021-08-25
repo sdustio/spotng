@@ -24,15 +24,11 @@ StateLocomotion::StateLocomotion(
       legctrl_(legctrl),
       mquad_(mquad),
       drictrl_(drictrl),
-      estctrl_(estctrl) {
-  mpc_ = std::make_unique<mpc::CMpc>(
-      opts.ctrl_dt_sec, opts.gravity,
-      30 / static_cast<int>(1000. * opts.ctrl_dt_sec));
-
-  // Initialize GRF and footstep locations to 0s
-  // footstepLocations = Matrix3x4::Zero();
-  wbc_ = std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts);
-}
+      estctrl_(estctrl),
+      wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
+      mpc_(std::make_unique<mpc::CMpc>(
+          opts.ctrl_dt_sec, opts.gravity,
+          30 / static_cast<int>(1000. * opts.ctrl_dt_sec))) {}
 
 bool StateLocomotion::OnEnter() { return mpc_->Init(); }
 

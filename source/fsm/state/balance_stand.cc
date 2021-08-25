@@ -18,9 +18,8 @@ StateBalanceStand::StateBalanceStand(
       legctrl_(legctrl),
       drictrl_(drictrl),
       estctrl_(estctrl),
+      wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.)),
       body_weight_(consts::model::kBodyMass * opts.gravity) {
-  wbc_ =
-      std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.);
 }
 
 bool StateBalanceStand::OnEnter() {

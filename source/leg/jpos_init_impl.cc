@@ -20,7 +20,6 @@ constexpr inline SdMatrix3f const kd_mat = {0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
 
 JPosInitImpl::JPosInitImpl(fpt_t dt, fpt_t time_end)
     : dt_(dt), end_time_(time_end) {
-  ini_jpos_ = {};
 }
 
 bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl) {

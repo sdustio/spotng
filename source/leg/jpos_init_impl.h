@@ -17,6 +17,6 @@ class JPosInitImpl : public JPosInit {
   fpt_t curr_time_ = 0.0;
   bool first_visit_ = true;
 
-  std::array<fpt_t, consts::model::kNumActJoint> ini_jpos_;
+  std::array<fpt_t, consts::model::kNumActJoint> ini_jpos_ = {};
 };
 }  // namespace sdrobot::leg
