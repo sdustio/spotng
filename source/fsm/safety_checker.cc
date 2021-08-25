@@ -1,130 +1,122 @@
-#include <cmath>
-#include "sdrobot/consts.h"
 #include "fsm/safety_checker.h"
 
-namespace sdrobot::fsm
-{
-  bool SafetyChecker::CheckSafeOrientation(estimate::EstimateCtrl::SharedPtr const &estctrl)
-  {
-    auto const &state = estctrl->GetEstState();
-    return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
-  }
+#include <cmath>
 
-  bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl)
-  {
-    // Assumed safe to start
-    bool check_safe = true;
+#include "sdrobot/consts.h"
 
-    // Safety parameters
-    auto max_p_des = consts::model::kMaxLegLength * std::sin(consts::interface::kMaxAngle);
-
-    auto &cmds = legctrl->GetCmdsForUpdate();
-    // Check all of the legs
-    for (int leg = 0; leg < consts::model::kNumLeg; leg++)
-    {
-      // Keep the foot from going too far from the body in +x
-      if (cmds[leg].p_des[0] > max_p_des)
-      {
-        cmds[leg].p_des[0] = max_p_des;
-        check_safe = false;
-      }
-
-      // Keep the foot from going too far from the body in -x
-      if (cmds[leg].p_des[0] < -max_p_des)
-      {
-        cmds[leg].p_des[0] = -max_p_des;
-        check_safe = false;
-      }
-
-      // Keep the foot from going too far from the body in +y
-      if (cmds[leg].p_des[1] > max_p_des)
-      {
-        cmds[leg].p_des[1] = max_p_des;
-        check_safe = false;
-      }
-
-      // Keep the foot from going too far from the body in -y
-      if (cmds[leg].p_des[1] < -max_p_des)
-      {
-        cmds[leg].p_des[1] = -max_p_des;
-        check_safe = false;
-      }
-
-      // Keep the leg under the motor module (don't raise above body or crash into
-      // module)
-      if (cmds[leg].p_des[2] > -consts::model::kMaxLegLength / 4)
-      {
-        cmds[leg].p_des[2] = -consts::model::kMaxLegLength / 4;
-        check_safe = false;
-      }
-
-      // Keep the foot within the kinematic limits
-      if (cmds[leg].p_des[2] < -consts::model::kMaxLegLength)
-      {
-        cmds[leg].p_des[2] = -consts::model::kMaxLegLength;
-        check_safe = false;
-      }
-    }
-
-    // Return true if all desired positions are safe 如果所有需要的位置都是安全的，则返回true
-    return check_safe;
-  }
-
-  bool SafetyChecker::CheckForceFeedForward(leg::LegCtrl::SharedPtr const &legctrl)
-  {
-    // Assumed safe to start
-    bool check_safe = true;
-
-    auto &cmds = legctrl->GetCmdsForUpdate();
-
-    // Check all of the legs
-    for (int leg = 0; leg < consts::model::kNumLeg; leg++)
-    {
-      // Limit the lateral forces in +x body frame
-      if (cmds[leg].force_feed_forward[0] > consts::interface::kMaxLateralForce)
-      {
-        cmds[leg].force_feed_forward[0] = consts::interface::kMaxLateralForce;
-        check_safe = false;
-      }
-
-      // Limit the lateral forces in -x body frame
-      if (cmds[leg].force_feed_forward[0] < -consts::interface::kMaxLateralForce)
-      {
-        cmds[leg].force_feed_forward[0] = -consts::interface::kMaxLateralForce;
-        check_safe = false;
-      }
-
-      // Limit the lateral forces in +y body frame
-      if (cmds[leg].force_feed_forward[1] > consts::interface::kMaxLateralForce)
-      {
-        cmds[leg].force_feed_forward[1] = consts::interface::kMaxLateralForce;
-        check_safe = false;
-      }
-
-      // Limit the lateral forces in -y body frame
-      if (cmds[leg].force_feed_forward[1] < -consts::interface::kMaxLateralForce)
-      {
-        cmds[leg].force_feed_forward[1] = -consts::interface::kMaxLateralForce;
-        check_safe = false;
-      }
-
-      // Limit the vertical forces in +z body frame
-      if (cmds[leg].force_feed_forward[2] > consts::interface::kMaxVerticalForce)
-      {
-        cmds[leg].force_feed_forward[2] = consts::interface::kMaxVerticalForce;
-        check_safe = false;
-      }
-
-      // Limit the vertical forces in -z body frame
-      if (cmds[leg].force_feed_forward[2] < -consts::interface::kMaxVerticalForce)
-      {
-        cmds[leg].force_feed_forward[2] = -consts::interface::kMaxVerticalForce;
-        check_safe = false;
-      }
-    }
-
-    // Return true if all feed forward forces are safe
-    return check_safe;
-  }
-
+namespace sdrobot::fsm {
+bool SafetyChecker::CheckSafeOrientation(
+    estimate::EstimateCtrl::SharedPtr const &estctrl) {
+  auto const &state = estctrl->GetEstState();
+  return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
 }
+
+bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl) {
+  // Assumed safe to start
+  bool check_safe = true;
+
+  // Safety parameters
+  auto max_p_des =
+      consts::model::kMaxLegLength * std::sin(consts::interface::kMaxAngle);
+
+  auto &cmds = legctrl->GetCmdsForUpdate();
+  // Check all of the legs
+  for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
+    // Keep the foot from going too far from the body in +x
+    if (cmds[leg].p_des[0] > max_p_des) {
+      cmds[leg].p_des[0] = max_p_des;
+      check_safe = false;
+    }
+
+    // Keep the foot from going too far from the body in -x
+    if (cmds[leg].p_des[0] < -max_p_des) {
+      cmds[leg].p_des[0] = -max_p_des;
+      check_safe = false;
+    }
+
+    // Keep the foot from going too far from the body in +y
+    if (cmds[leg].p_des[1] > max_p_des) {
+      cmds[leg].p_des[1] = max_p_des;
+      check_safe = false;
+    }
+
+    // Keep the foot from going too far from the body in -y
+    if (cmds[leg].p_des[1] < -max_p_des) {
+      cmds[leg].p_des[1] = -max_p_des;
+      check_safe = false;
+    }
+
+    // Keep the leg under the motor module (don't raise above body or crash into
+    // module)
+    if (cmds[leg].p_des[2] > -consts::model::kMaxLegLength / 4) {
+      cmds[leg].p_des[2] = -consts::model::kMaxLegLength / 4;
+      check_safe = false;
+    }
+
+    // Keep the foot within the kinematic limits
+    if (cmds[leg].p_des[2] < -consts::model::kMaxLegLength) {
+      cmds[leg].p_des[2] = -consts::model::kMaxLegLength;
+      check_safe = false;
+    }
+  }
+
+  // Return true if all desired positions are safe
+  // 如果所有需要的位置都是安全的，则返回true
+  return check_safe;
+}
+
+bool SafetyChecker::CheckForceFeedForward(
+    leg::LegCtrl::SharedPtr const &legctrl) {
+  // Assumed safe to start
+  bool check_safe = true;
+
+  auto &cmds = legctrl->GetCmdsForUpdate();
+
+  // Check all of the legs
+  for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
+    // Limit the lateral forces in +x body frame
+    if (cmds[leg].force_feed_forward[0] > consts::interface::kMaxLateralForce) {
+      cmds[leg].force_feed_forward[0] = consts::interface::kMaxLateralForce;
+      check_safe = false;
+    }
+
+    // Limit the lateral forces in -x body frame
+    if (cmds[leg].force_feed_forward[0] <
+        -consts::interface::kMaxLateralForce) {
+      cmds[leg].force_feed_forward[0] = -consts::interface::kMaxLateralForce;
+      check_safe = false;
+    }
+
+    // Limit the lateral forces in +y body frame
+    if (cmds[leg].force_feed_forward[1] > consts::interface::kMaxLateralForce) {
+      cmds[leg].force_feed_forward[1] = consts::interface::kMaxLateralForce;
+      check_safe = false;
+    }
+
+    // Limit the lateral forces in -y body frame
+    if (cmds[leg].force_feed_forward[1] <
+        -consts::interface::kMaxLateralForce) {
+      cmds[leg].force_feed_forward[1] = -consts::interface::kMaxLateralForce;
+      check_safe = false;
+    }
+
+    // Limit the vertical forces in +z body frame
+    if (cmds[leg].force_feed_forward[2] >
+        consts::interface::kMaxVerticalForce) {
+      cmds[leg].force_feed_forward[2] = consts::interface::kMaxVerticalForce;
+      check_safe = false;
+    }
+
+    // Limit the vertical forces in -z body frame
+    if (cmds[leg].force_feed_forward[2] <
+        -consts::interface::kMaxVerticalForce) {
+      cmds[leg].force_feed_forward[2] = -consts::interface::kMaxVerticalForce;
+      check_safe = false;
+    }
+  }
+
+  // Return true if all feed forward forces are safe
+  return check_safe;
+}
+
+}  // namespace sdrobot::fsm

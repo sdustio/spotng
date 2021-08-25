@@ -6,6 +6,7 @@
     "C_Cpp.autoAddFileAssociations": false,
     "cmake.installPrefix": "${userHome}/.local",
     "cmake.configureSettings": {
+        "CMAKE_CXX_CPPLINT": "cpplint",
         "BUILD_TESTING": true
     }
 }

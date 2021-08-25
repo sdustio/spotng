@@ -1,10 +1,9 @@
 #include <iostream>
 
-#include "sdrobot/robot.h"
 #include "echo_act_itf.h"
+#include "sdrobot/robot.h"
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
-{
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   using namespace sdrobot;
 
   Options opts;
@@ -13,7 +12,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
-  interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
+  interface::ActuatorInterface::SharedPtr itf =
+      std::make_shared<EchoActuatorInterface>();
   /*....*/
 
   Robot::Ptr robot;
@@ -33,20 +33,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   unsigned cdt = 1000 * opts.ctrl_dt_sec;
   unsigned adt = 1000 * opts.act_itf_sec;
 
-  for (size_t i = 0; i < 10'000; i++)
-  {
-    if (i % cdt == 0)
-    {
+  for (size_t i = 0; i < 10'000; i++) {
+    if (i % cdt == 0) {
       robot->RunOnce();
     }
 
-    if (i % adt == 0)
-    {
+    if (i % adt == 0) {
       itf->RunOnce();
     }
 
-    if (i % 50 == 0)
-    {
+    if (i % 50 == 0) {
       printf("\n===================\niter: %zu\n", i);
       std::dynamic_pointer_cast<EchoActuatorInterface>(itf)->PrintCmd();
     }

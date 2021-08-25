@@ -39,7 +39,7 @@ find_package(qpOASES REQUIRED)
 find_package(eiquadprog REQUIRED)
 
 set(LIB_SOURCES
-  source/eigen.cc
+  source/eigen/types.cc
   source/math/algebra.cc
   source/math/interpolate.cc
   source/dynamics/rotation.cc
@@ -71,7 +71,7 @@ set(LIB_SOURCES
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc
   source/fsm/state/locomotion.cc
-  source/robot_impl.cc
+  source/robot/robot_impl.cc
 )
 
 add_library(${PROJECT_NAME} SHARED)
@@ -161,6 +161,5 @@ install(
 
 # example
 if(BUILD_TESTING)
-  set(CMAKE_CXX_CPPLINT "cpplint;--linelength=100")
   add_subdirectory(examples)
 endif()
