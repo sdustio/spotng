@@ -1,6 +1,9 @@
 #include "sdrobot/interface.h"
 
-using namespace sdrobot::interface;
+using sdrobot::SdVector4f;
+using sdrobot::interface::ActuatorCmd;
+using sdrobot::interface::ActuatorData;
+using sdrobot::interface::ActuatorInterface;
 
 class EchoActuatorInterface : public ActuatorInterface {
  public:
@@ -11,7 +14,7 @@ class EchoActuatorInterface : public ActuatorInterface {
   bool PrintCmd() const;
 
  private:
-  bool PrintArray4f(sdrobot::SdVector4f const &) const;
+  bool PrintArray4f(SdVector4f const &) const;
 
   ActuatorData data_;
   ActuatorCmd cmd_;

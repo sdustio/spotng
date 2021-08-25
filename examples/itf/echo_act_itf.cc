@@ -1,4 +1,4 @@
-#include "echo_act_itf.h"
+#include "itf/echo_act_itf.h"
 
 ActuatorData const &EchoActuatorInterface::GetActuatorData() const { return data_; }
 
@@ -56,7 +56,7 @@ bool EchoActuatorInterface::PrintCmd() const {
   return true;
 }
 
-bool EchoActuatorInterface::PrintArray4f(sdrobot::SdVector4f const &arr) const {
+bool EchoActuatorInterface::PrintArray4f(SdVector4f const &arr) const {
   for (auto &&i : arr) printf("%3.f\t", i);
   printf("\n");
   return true;

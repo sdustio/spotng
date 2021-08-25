@@ -1,30 +1,28 @@
 #include <iostream>
 
-#include "echo_act_itf.h"
+#include "itf/echo_act_itf.h"
 #include "sdrobot/robot.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
-  using namespace sdrobot;
-
-  Options opts;
-  opts.drive_mode = DriveMode::kManual;
+  sdrobot::Options opts;
+  opts.drive_mode = sdrobot::DriveMode::kManual;
   opts.ctrl_dt_sec = 0.002;
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
-  interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
+  sdrobot::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
   /*....*/
 
-  Robot::Ptr robot;
-  Robot::Build(robot, opts, itf);
+  sdrobot::Robot::Ptr robot;
+  sdrobot::Robot::Build(robot, opts, itf);
 
-  sensor::ImuData imu_data;
-  drive::Twist drive_twist;
+  sdrobot::sensor::ImuData imu_data;
+  sdrobot::drive::Twist drive_twist;
 
   /*...*/
   robot->UpdateImu(imu_data);
-  robot->UpdateDriveGait(drive::Gait::Trot);
-  robot->UpdateDriveState(drive::State::Locomotion);
+  robot->UpdateDriveGait(sdrobot::drive::Gait::Trot);
+  robot->UpdateDriveState(sdrobot::drive::State::Locomotion);
   drive_twist.lvel_x = 1.5;
   robot->UpdateDriveTwist(drive_twist);
   /*...*/
