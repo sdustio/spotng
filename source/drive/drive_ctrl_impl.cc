@@ -15,21 +15,21 @@ namespace sdrobot::drive
   bool DriveCtrlImpl::CmdtoDesData()
   {
     lvel_ = {
-        Deadband(twist_.linear_vel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
-        Deadband(twist_.linear_vel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
+        Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
+        Deadband(twist_.lvel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
         0};
 
     pos_ = {
         dt_ * lvel_[0],
         dt_ * lvel_[1],
-        Deadband(twist_.variant_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
+        Deadband(twist_.var_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
 
     avel_ = {
-        0., 0, Deadband(twist_.angular_vel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
+        0., 0, Deadband(twist_.avel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
 
     rpy_ = {
         0.,
-        Deadband(twist_.variant_pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP),
+        Deadband(twist_.var_pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP),
         dt_ * avel_[2]};
 
 
@@ -39,11 +39,11 @@ namespace sdrobot::drive
 
   bool DriveCtrlImpl::UpdateTwist(Twist const &twist)
   {
-    twist_.variant_height = twist.variant_height;
-    twist_.linear_vel_x = twist_.linear_vel_x * (1.0 - consts::drive::kFilter) + twist.linear_vel_x * consts::drive::kFilter;
-    twist_.linear_vel_y = twist_.linear_vel_y * (1.0 - consts::drive::kFilter) + twist.linear_vel_y * consts::drive::kFilter;
-    twist_.angular_vel_z = twist_.angular_vel_z * (1.0 - consts::drive::kFilter) + twist.angular_vel_z * consts::drive::kFilter;
-    twist_.variant_pitch = twist_.variant_pitch * (1.0 - consts::drive::kFilter) + twist.variant_pitch * consts::drive::kFilter;
+    twist_.var_height = twist.var_height;
+    twist_.lvel_x = twist_.lvel_x * (1.0 - consts::drive::kFilter) + twist.lvel_x * consts::drive::kFilter;
+    twist_.lvel_y = twist_.lvel_y * (1.0 - consts::drive::kFilter) + twist.lvel_y * consts::drive::kFilter;
+    twist_.avel_z = twist_.avel_z * (1.0 - consts::drive::kFilter) + twist.avel_z * consts::drive::kFilter;
+    twist_.var_pitch = twist_.var_pitch * (1.0 - consts::drive::kFilter) + twist.var_pitch * consts::drive::kFilter;
     return true;
   }
 

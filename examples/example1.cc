@@ -26,7 +26,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
   robot->UpdateImu(imu_data);
   robot->UpdateDriveGait(drive::Gait::Trot);
   robot->UpdateDriveState(drive::State::Locomotion);
-  drive_twist.linear_vel_x = 1.5;
+  drive_twist.lvel_x = 1.5;
   robot->UpdateDriveTwist(drive_twist);
   /*...*/
 

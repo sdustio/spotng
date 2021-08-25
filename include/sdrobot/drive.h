@@ -25,14 +25,14 @@ namespace sdrobot::drive
 
   struct SDROBOT_EXPORT Twist
   {
-    fpt_t linear_vel_x = 0.;
-    fpt_t linear_vel_y = 0.;
-    fpt_t linear_vel_z = 0.; // reserved, unused
-    fpt_t angular_vel_x = 0.; // reserved, unused, roll vel
-    fpt_t angular_vel_y = 0.; // reserved, unused, pitch vel
-    fpt_t angular_vel_z = 0.; // yaw vel
-    fpt_t variant_pitch = 0.;
-    fpt_t variant_height = 0.;
+    fpt_t lvel_x = 0.;
+    fpt_t lvel_y = 0.;
+    fpt_t lvel_z = 0.; // reserved, unused
+    fpt_t avel_x = 0.; // reserved, unused, roll vel
+    fpt_t avel_y = 0.; // reserved, unused, pitch vel
+    fpt_t avel_z = 0.; // yaw vel
+    fpt_t var_pitch = 0.; //variant pitch
+    fpt_t var_height = 0.; //variant height
   };
 
   class SDROBOT_EXPORT DriveCtrl
