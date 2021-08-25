@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <qpOASES.hpp>
+#include <vector>
 
 #include "eigen/types.h"
 #include "mpc/mpc.h"
@@ -17,15 +17,11 @@ class QPSolver {
 
   bool ResetQPMats();
 
-  bool SolveQP(fpt_t const x_drag, SdVector3f const &pos,
-               SdVector3f const &lvel, SdVector4f const &ori,
-               SdVector3f const &avel, std::array<fpt_t, 12> const &rel_foot_p,
-               fpt_t const yaw, std::array<fpt_t, 12> const &weights,
-               std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha,
+  bool SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &lvel, SdVector4f const &ori,
+               SdVector3f const &avel, std::array<fpt_t, 12> const &rel_foot_p, fpt_t const yaw,
+               std::array<fpt_t, 12> const &weights, std::array<fpt_t, 12 * 36> const &state_trajectory, fpt_t alpha,
                fpt_t g, std::vector<int> const &gait);
-  std::array<fpt_t, 12 * opts::horizon_len> const &GetSolution() {
-    return qsoln_;
-  }
+  std::array<fpt_t, 12 * opts::horizon_len> const &GetSolution() { return qsoln_; }
 
  private:
   fpt_t dt_;
@@ -36,8 +32,7 @@ class QPSolver {
   std::array<fpt_t, (13 * opts::horizon_len) * 13> A_qp_;
   std::array<fpt_t, (13 * opts::horizon_len) * (12 * opts::horizon_len)> B_qp_;
   std::array<fpt_t, (13 * opts::horizon_len) * (13 * opts::horizon_len)> S_;
-  std::array<fpt_t, (12 * opts::horizon_len) * (12 * opts::horizon_len)>
-      eye_12h_;
+  std::array<fpt_t, (12 * opts::horizon_len) * (12 * opts::horizon_len)> eye_12h_;
   std::array<fpt_t, (13 * opts::horizon_len)> X_d_;
 
   std::array<fpt_t, num_variables * num_variables> qH_;

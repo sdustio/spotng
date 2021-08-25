@@ -26,11 +26,9 @@ class Mpc {
 
   virtual ~Mpc() = default;
   virtual bool Init() = 0;
-  virtual bool RunOnce(
-      wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
-      model::Quadruped::ConstSharedPtr const &quad,
-      drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-      estimate::EstimateCtrl::ConstSharedPtr const &estctrl) = 0;
+  virtual bool RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
+                       model::Quadruped::ConstSharedPtr const &quad, drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                       estimate::EstimateCtrl::ConstSharedPtr const &estctrl) = 0;
 };
 
 }  // namespace sdrobot::mpc

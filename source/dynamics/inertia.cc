@@ -4,8 +4,7 @@
 #include "math/algebra.h"
 
 namespace sdrobot::dynamics {
-bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass,
-                         Eigen::Ref<Vector3 const> const &com,
+bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
                          Eigen::Ref<RotationalInertia const> const &inertia) {
   Matrix3 cSkew;
   math::VecToSkewMat(cSkew, com);  // 质心向量转反对称矩阵
@@ -17,8 +16,7 @@ bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass,
   return true;
 }
 
-bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis,
-                       fpt_t const theta) {
+bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta) {
   RotMat R;
   CoordinateRot(R, axis, theta);
   ret.setZero();
@@ -27,8 +25,7 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis,
   return true;
 }
 
-bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret,
-                                 Eigen::Ref<SpatialInertia const> const &si,
+bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<SpatialInertia const> const &si,
                                  CoordinateAxis const axis) {
   PseudoRotationalInertia P;
   SpatialInertiaToPseudoRotationalInertia(P, si);
@@ -44,9 +41,8 @@ bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret,
   return true;
 }
 
-bool SpatialInertiaToPseudoRotationalInertia(
-    Eigen::Ref<PseudoRotationalInertia> ret,
-    Eigen::Ref<SpatialInertia const> const &si) {
+bool SpatialInertiaToPseudoRotationalInertia(Eigen::Ref<PseudoRotationalInertia> ret,
+                                             Eigen::Ref<SpatialInertia const> const &si) {
   Vector3 h;
   math::MatToSkewVec(h, si.topRightCorner<3, 3>());
   Matrix3 Ibar = si.topLeftCorner<3, 3>();
@@ -58,12 +54,10 @@ bool SpatialInertiaToPseudoRotationalInertia(
   return true;
 }
 
-bool PseudoRotationalInertiaToSpatialInertia(
-    Eigen::Ref<SpatialInertia> ret,
-    Eigen::Ref<PseudoRotationalInertia const> const &P) {
+bool PseudoRotationalInertiaToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
+                                             Eigen::Ref<PseudoRotationalInertia const> const &P) {
   fpt_t m = P(3, 3);
-  Matrix3 Ibar = P.topLeftCorner<3, 3>().trace() * Matrix3::Identity() -
-                 P.topLeftCorner<3, 3>();
+  Matrix3 Ibar = P.topLeftCorner<3, 3>().trace() * Matrix3::Identity() - P.topLeftCorner<3, 3>();
   ret.topLeftCorner<3, 3>() = Ibar;
   math::VecToSkewMat(ret.topRightCorner<3, 3>(), P.topRightCorner<3, 1>());
   ret.bottomLeftCorner<3, 3>() = ret.topRightCorner<3, 3>().transpose();
@@ -71,8 +65,7 @@ bool PseudoRotationalInertiaToSpatialInertia(
   return true;
 }
 
-bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret,
-                       Eigen::Ref<RotMat const> const &R,
+bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> const &R,
                        Eigen::Ref<Vector3 const> const &r) {
   ret.setZero();
   ret.topLeftCorner<3, 3>() = R;
@@ -91,8 +84,7 @@ bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fpt_t const mass,
   return true;
 }
 
-bool MassPropertiesToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
-                                    Eigen::Ref<MassProperties const> const &a) {
+bool MassPropertiesToSpatialInertia(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<MassProperties const> const &a) {
   ret(0, 0) = a(4);
   ret(0, 1) = a(9);
   ret(0, 2) = a(8);
@@ -110,19 +102,14 @@ bool MassPropertiesToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
   return true;
 }
 
-bool SpatialInertiaToMassProperties(
-    Eigen::Ref<MassProperties> ret,
-    Eigen::Ref<SpatialInertia const> const &si) {
+bool SpatialInertiaToMassProperties(Eigen::Ref<MassProperties> ret, Eigen::Ref<SpatialInertia const> const &si) {
   Vector3 h;
   math::MatToSkewVec(h, si.topRightCorner<3, 3>());
-  ret << si(5, 5), h(0), h(1), h(2), si(0, 0), si(1, 1), si(2, 2), si(2, 1),
-      si(2, 0), si(1, 0);
+  ret << si(5, 5), h(0), h(1), h(2), si(0, 0), si(1, 1), si(2, 2), si(2, 1), si(2, 0), si(1, 0);
   return true;
 }
 
-bool SpatialInertiaToRotationalInertia(
-    Eigen::Ref<RotationalInertia> ret,
-    Eigen::Ref<SpatialInertia const> const &si) {
+bool SpatialInertiaToRotationalInertia(Eigen::Ref<RotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si) {
   fpt_t m;
   MassFromSpatialInertia(m, si);
   Matrix3 mcSkew = si.topRightCorner<3, 3>();
@@ -130,14 +117,12 @@ bool SpatialInertiaToRotationalInertia(
   return true;
 }
 
-bool MassFromSpatialInertia(fpt_t &ret,
-                            Eigen::Ref<SpatialInertia const> const &si) {
+bool MassFromSpatialInertia(fpt_t &ret, Eigen::Ref<SpatialInertia const> const &si) {
   ret = si(5, 5);
   return true;
 }
 
-bool COMFromSpatialInertia(Eigen::Ref<Vector3> ret,
-                           Eigen::Ref<SpatialInertia const> const &si) {
+bool COMFromSpatialInertia(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialInertia const> const &si) {
   fpt_t m;
   MassFromSpatialInertia(m, si);
   Matrix3 mcSkew = si.topRightCorner<3, 3>();
@@ -146,8 +131,7 @@ bool COMFromSpatialInertia(Eigen::Ref<Vector3> ret,
   return true;
 }
 
-bool SpatialXformToHomogeneous(Eigen::Ref<Matrix4> ret,
-                               Eigen::Ref<SpatialXform const> const &X) {
+bool SpatialXformToHomogeneous(Eigen::Ref<Matrix4> ret, Eigen::Ref<SpatialXform const> const &X) {
   ret.setZero();
   RotMat R = X.topLeftCorner<3, 3>();
   Matrix3 skewR = X.bottomLeftCorner<3, 3>();
@@ -157,8 +141,7 @@ bool SpatialXformToHomogeneous(Eigen::Ref<Matrix4> ret,
   return true;
 }
 
-bool HomogeneousToSpatialXform(Eigen::Ref<SpatialXform> ret,
-                               Eigen::Ref<Matrix4 const> const &H) {
+bool HomogeneousToSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<Matrix4 const> const &H) {
   Matrix3 R = H.topLeftCorner<3, 3>();
   Vector3 translate = H.topRightCorner<3, 1>();
   ret.setZero();
@@ -170,14 +153,12 @@ bool HomogeneousToSpatialXform(Eigen::Ref<SpatialXform> ret,
   return true;
 }
 
-bool SpatialXformToRotMat(Eigen::Ref<RotMat> ret,
-                          Eigen::Ref<SpatialXform const> const &X) {
+bool SpatialXformToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<SpatialXform const> const &X) {
   ret = X.topLeftCorner<3, 3>();
   return true;
 }
 
-bool SpatialXformToTranslation(Eigen::Ref<Vector3> ret,
-                               Eigen::Ref<SpatialXform const> const &X) {
+bool SpatialXformToTranslation(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X) {
   RotMat R;
   SpatialXformToRotMat(R, X);
   math::MatToSkewVec(ret, R.transpose() * X.bottomLeftCorner<3, 3>());
@@ -185,8 +166,7 @@ bool SpatialXformToTranslation(Eigen::Ref<Vector3> ret,
   return true;
 }
 
-bool InvertSpatialXform(Eigen::Ref<SpatialXform> ret,
-                        Eigen::Ref<SpatialXform const> const &X) {
+bool InvertSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<SpatialXform const> const &X) {
   RotMat R;
   SpatialXformToRotMat(R, X);
   Vector3 r;
@@ -195,8 +175,7 @@ bool InvertSpatialXform(Eigen::Ref<SpatialXform> ret,
   return true;
 }
 
-bool BuildJointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint,
-                              CoordinateAxis const axis) {
+bool BuildJointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint, CoordinateAxis const axis) {
   Vector3 v(0, 0, 0);
   ret.setZero();
   if (axis == CoordinateAxis::X)
@@ -216,8 +195,7 @@ bool BuildJointMotionSubspace(Eigen::Ref<SpatialVec> ret, JointType const joint,
   return true;
 }
 
-bool BuildJointXform(Eigen::Ref<Matrix6> ret, JointType const joint,
-                     CoordinateAxis const axis, fpt_t const q) {
+bool BuildJointXform(Eigen::Ref<Matrix6> ret, JointType const joint, CoordinateAxis const axis, fpt_t const q) {
   ret.setZero();
   if (joint == JointType::Revolute) {
     BuildSpatialXform(ret, axis, q);
@@ -237,8 +215,7 @@ bool BuildJointXform(Eigen::Ref<Matrix6> ret, JointType const joint,
   return true;
 }
 
-bool SpatialToLinearVelocity(Eigen::Ref<Vector3> ret,
-                             Eigen::Ref<SpatialVec const> const &v,
+bool SpatialToLinearVelocity(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &v,
                              Eigen::Ref<Vector3 const> const &x) {
   Vector3 vsAng = v.topLeftCorner<3, 1>();
   Vector3 vsLin = v.bottomLeftCorner<3, 1>();
@@ -246,24 +223,20 @@ bool SpatialToLinearVelocity(Eigen::Ref<Vector3> ret,
   return true;
 }
 
-bool SpatialToAngularVelocity(Eigen::Ref<Vector3> ret,
-                              Eigen::Ref<SpatialVec const> const &v) {
+bool SpatialToAngularVelocity(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &v) {
   ret = v.topLeftCorner<3, 1>();
   return true;
 }
 
-bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret,
-                                 Eigen::Ref<SpatialVec const> const &a,
+bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &a,
                                  Eigen::Ref<SpatialVec const> const &v) {
   // classical accleration = spatial linear acc + omega x v
   ret = a.tail<3>() + v.head<3>().cross(v.tail<3>());
   return true;
 }
 
-bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret,
-                                 Eigen::Ref<SpatialVec const> const &a,
-                                 Eigen::Ref<SpatialVec const> const &v,
-                                 Eigen::Ref<Vector3 const> const &x) {
+bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialVec const> const &a,
+                                 Eigen::Ref<SpatialVec const> const &v, Eigen::Ref<Vector3 const> const &x) {
   Vector3 alin_x;
   SpatialToLinearVelocity(alin_x, a, x);
   Vector3 vlin_x;
@@ -274,8 +247,7 @@ bool SpatialToLinearAcceleration(Eigen::Ref<Vector3> ret,
   return true;
 }
 
-bool SpatialXformPoint(Eigen::Ref<Vector3> ret,
-                       Eigen::Ref<SpatialXform const> const &X,
+bool SpatialXformPoint(Eigen::Ref<Vector3> ret, Eigen::Ref<SpatialXform const> const &X,
                        Eigen::Ref<Vector3 const> const &p) {
   Matrix3 R;
   SpatialXformToRotMat(R, X);
@@ -285,48 +257,37 @@ bool SpatialXformPoint(Eigen::Ref<Vector3> ret,
   return true;
 }
 
-bool ForceToSpatialForce(Eigen::Ref<SpatialVec> ret,
-                         Eigen::Ref<Vector3 const> const &f,
+bool ForceToSpatialForce(Eigen::Ref<SpatialVec> ret, Eigen::Ref<Vector3 const> const &f,
                          Eigen::Ref<Vector3 const> const &p) {
   ret.topLeftCorner<3, 1>() = p.cross(f);
   ret.bottomLeftCorner<3, 1>() = f;
   return true;
 }
 
-bool MotionCrossMatrix(Eigen::Ref<Matrix6> ret,
-                       Eigen::Ref<Vector6 const> const &v) {
-  ret << 0, -v(2), v(1), 0, 0, 0, v(2), 0, -v(0), 0, 0, 0, -v(1), v(0), 0, 0, 0,
-      0, 0, -v(5), v(4), 0, -v(2), v(1), v(5), 0, -v(3), v(2), 0, -v(0), -v(4),
-      v(3), 0, -v(1), v(0), 0;
+bool MotionCrossMatrix(Eigen::Ref<Matrix6> ret, Eigen::Ref<Vector6 const> const &v) {
+  ret << 0, -v(2), v(1), 0, 0, 0, v(2), 0, -v(0), 0, 0, 0, -v(1), v(0), 0, 0, 0, 0, 0, -v(5), v(4), 0, -v(2), v(1),
+      v(5), 0, -v(3), v(2), 0, -v(0), -v(4), v(3), 0, -v(1), v(0), 0;
   return true;
 }
 
-bool ForceCrossMatrix(Eigen::Ref<Matrix6> ret,
-                      Eigen::Ref<Vector6 const> const &v) {
-  ret << 0, -v(2), v(1), 0, -v(5), v(4), v(2), 0, -v(0), v(5), 0, -v(3), -v(1),
-      v(0), 0, -v(4), v(3), 0, 0, 0, 0, 0, -v(2), v(1), 0, 0, 0, v(2), 0, -v(0),
-      0, 0, 0, -v(1), v(0), 0;
+bool ForceCrossMatrix(Eigen::Ref<Matrix6> ret, Eigen::Ref<Vector6 const> const &v) {
+  ret << 0, -v(2), v(1), 0, -v(5), v(4), v(2), 0, -v(0), v(5), 0, -v(3), -v(1), v(0), 0, -v(4), v(3), 0, 0, 0, 0, 0,
+      -v(2), v(1), 0, 0, 0, v(2), 0, -v(0), 0, 0, 0, -v(1), v(0), 0;
   return true;
 }
 
-bool MotionCrossProduct(Eigen::Ref<SpatialVec> ret,
-                        Eigen::Ref<Vector6 const> const &a,
+bool MotionCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<Vector6 const> const &a,
                         Eigen::Ref<Vector6 const> const &b) {
-  ret << a(1) * b(2) - a(2) * b(1), a(2) * b(0) - a(0) * b(2),
-      a(0) * b(1) - a(1) * b(0),
-      a(1) * b(5) - a(2) * b(4) + a(4) * b(2) - a(5) * b(1),
-      a(2) * b(3) - a(0) * b(5) - a(3) * b(2) + a(5) * b(0),
+  ret << a(1) * b(2) - a(2) * b(1), a(2) * b(0) - a(0) * b(2), a(0) * b(1) - a(1) * b(0),
+      a(1) * b(5) - a(2) * b(4) + a(4) * b(2) - a(5) * b(1), a(2) * b(3) - a(0) * b(5) - a(3) * b(2) + a(5) * b(0),
       a(0) * b(4) - a(1) * b(3) + a(3) * b(1) - a(4) * b(0);
   return true;
 }
 
-bool ForceCrossProduct(Eigen::Ref<SpatialVec> ret,
-                       Eigen::Ref<Vector6 const> const &a,
+bool ForceCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<Vector6 const> const &a,
                        Eigen::Ref<Vector6 const> const &b) {
-  ret << b(2) * a(1) - b(1) * a(2) - b(4) * a(5) + b(5) * a(4),
-      b(0) * a(2) - b(2) * a(0) + b(3) * a(5) - b(5) * a(3),
-      b(1) * a(0) - b(0) * a(1) - b(3) * a(4) + b(4) * a(3),
-      b(5) * a(1) - b(4) * a(2), b(3) * a(2) - b(5) * a(0),
+  ret << b(2) * a(1) - b(1) * a(2) - b(4) * a(5) + b(5) * a(4), b(0) * a(2) - b(2) * a(0) + b(3) * a(5) - b(5) * a(3),
+      b(1) * a(0) - b(0) * a(1) - b(3) * a(4) + b(4) * a(3), b(5) * a(1) - b(4) * a(2), b(3) * a(2) - b(5) * a(0),
       b(4) * a(0) - b(3) * a(1);
   return true;
 }

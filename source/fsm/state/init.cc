@@ -20,7 +20,5 @@ bool StateInit::OnExit() {
 
 bool StateInit::RunOnce() { return true; }
 
-TransitionData StateInit::Transition([[maybe_unused]] const State next) {
-  return TransitionData{true};
-}
+TransitionData StateInit::Transition([[maybe_unused]] const State next) { return TransitionData{true}; }
 }  // namespace sdrobot::fsm

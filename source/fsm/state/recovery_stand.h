@@ -10,8 +10,7 @@
 namespace sdrobot::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
-  StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl,
-                     drive::DriveCtrl::SharedPtr const &drictrl,
+  StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::SharedPtr const &drictrl,
                      estimate::EstimateCtrl::SharedPtr const &estctrl);
 
   bool OnEnter() override;
@@ -30,17 +29,15 @@ class StateRecoveryStand : public StateCtrl {
   bool FoldLegs(const int curr_iter);
   bool RollOver(const int curr_iter);
 
-  bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg,
-                       SdVector3f const &ini, SdVector3f const &fin);
+  bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
+                       SdVector3f const &fin);
 
-  bool JointPDControl(int const leg, SdVector3f const &qDes,
-                      SdVector3f const &qdDes);
+  bool JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes);
 
   int iter_ = 0;
 
   std::unordered_map<drive::State, State> state_trans_;
-  std::unordered_map<Flag, bool (StateRecoveryStand::*)(const int)>
-      flag_dispatch_;
+  std::unordered_map<Flag, bool (StateRecoveryStand::*)(const int)> flag_dispatch_;
 
   Flag flag_ = Flag::FoldLegs;
 

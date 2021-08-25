@@ -8,20 +8,14 @@
 #include "fsm/state/recovery_stand.h"
 
 namespace sdrobot::fsm {
-FiniteStateMachineImpl::FiniteStateMachineImpl(
-    Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-    model::Quadruped::SharedPtr const &mquad,
-    drive::DriveCtrl::SharedPtr const &drictrl,
-    estimate::EstimateCtrl::SharedPtr const &estctrl)
+FiniteStateMachineImpl::FiniteStateMachineImpl(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                                               model::Quadruped::SharedPtr const &mquad,
+                                               drive::DriveCtrl::SharedPtr const &drictrl,
+                                               estimate::EstimateCtrl::SharedPtr const &estctrl)
     : state_ctrls_{{State::Init, std::make_shared<StateInit>(drictrl)},
-                   {State::RecoveryStand, std::make_shared<StateRecoveryStand>(
-                                              legctrl, drictrl, estctrl)},
-                   {State::Locomotion,
-                    std::make_shared<StateLocomotion>(opts, legctrl, mquad,
-                                                      drictrl, estctrl)},
-                   {State::BalanceStand,
-                    std::make_shared<StateBalanceStand>(opts, legctrl, mquad,
-                                                        drictrl, estctrl)}},
+                   {State::RecoveryStand, std::make_shared<StateRecoveryStand>(legctrl, drictrl, estctrl)},
+                   {State::Locomotion, std::make_shared<StateLocomotion>(opts, legctrl, mquad, drictrl, estctrl)},
+                   {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl, mquad, drictrl, estctrl)}},
       legctrl_(legctrl),
       mquad_(mquad),
       drictrl_(drictrl),
@@ -39,10 +33,7 @@ FiniteStateMachineImpl::FiniteStateMachineImpl(
   opmode_ = OperatingMode::Normal;
 }
 
-StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(
-    State const state) {
-  return state_ctrls_[state];
-}
+StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State const state) { return state_ctrls_[state]; }
 
 bool FiniteStateMachineImpl::RunOnce() {
   // safetyPreCheck
@@ -112,8 +103,7 @@ bool FiniteStateMachineImpl::RunOnce() {
 }
 
 bool FiniteStateMachineImpl::PreCheck() {
-  if (current_state_ctrl_->NeedCheckSafeOrientation() &&
-      drictrl_->GetState() != State::RecoveryStand) {
+  if (current_state_ctrl_->NeedCheckSafeOrientation() && drictrl_->GetState() != State::RecoveryStand) {
     return safety_checker_.CheckSafeOrientation(estctrl_);
   }
   return true;

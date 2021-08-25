@@ -14,8 +14,7 @@ namespace sdrobot::dynamics {
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis,
-                   fpt_t const theta) {
+bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t const theta) {
   fpt_t s = std::sin(theta);
   fpt_t c = std::cos(theta);
 
@@ -94,10 +93,8 @@ bool QuatToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Quat const> const &q) {
   fpt_t e2 = q(2);
   fpt_t e3 = q(3);
 
-  ret << 1 - 2 * (e2 * e2 + e3 * e3), 2 * (e1 * e2 - e0 * e3),
-      2 * (e1 * e3 + e0 * e2), 2 * (e1 * e2 + e0 * e3),
-      1 - 2 * (e1 * e1 + e3 * e3), 2 * (e2 * e3 - e0 * e1),
-      2 * (e1 * e3 - e0 * e2), 2 * (e2 * e3 + e0 * e1),
+  ret << 1 - 2 * (e2 * e2 + e3 * e3), 2 * (e1 * e2 - e0 * e3), 2 * (e1 * e3 + e0 * e2), 2 * (e1 * e2 + e0 * e3),
+      1 - 2 * (e1 * e1 + e3 * e3), 2 * (e2 * e3 - e0 * e1), 2 * (e1 * e3 - e0 * e2), 2 * (e2 * e3 + e0 * e1),
       1 - 2 * (e1 * e1 + e2 * e2);
   ret.transposeInPlace();
   return true;
@@ -110,12 +107,10 @@ bool QuatToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Quat const> const &q) {
 bool QuatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<Quat const> const &q) {
   fpt_t as = std::min(-2. * (q[1] * q[3] - q[0] * q[2]), .99999);
   ret(2) = std::atan2(2 * (q[1] * q[2] + q[0] * q[3]),
-                      math::Square(q[0]) + math::Square(q[1]) -
-                          math::Square(q[2]) - math::Square(q[3]));
+                      math::Square(q[0]) + math::Square(q[1]) - math::Square(q[2]) - math::Square(q[3]));
   ret(1) = std::asin(as);
   ret(0) = std::atan2(2 * (q[2] * q[3] + q[0] * q[1]),
-                      math::Square(q[0]) - math::Square(q[1]) -
-                          math::Square(q[2]) + math::Square(q[3]));
+                      math::Square(q[0]) - math::Square(q[1]) - math::Square(q[2]) + math::Square(q[3]));
   return true;
 }
 
@@ -140,16 +135,13 @@ bool RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R) {
  * @param omega
  * @return
  */
-bool QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q,
-                    Eigen::Ref<Vector3 const> const &omega) {
+bool QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega) {
   auto quaternionDerivativeStabilization = 0.1;
   // first case in rqd
   Matrix4 Q;
-  Q << q[0], -q[1], -q[2], -q[3], q[1], q[0], -q[3], q[2], q[2], q[3], q[0],
-      -q[1], q[3], -q[2], q[1], q[0];
+  Q << q[0], -q[1], -q[2], -q[3], q[1], q[0], -q[3], q[2], q[2], q[3], q[0], -q[1], q[3], -q[2], q[1], q[0];
 
-  Quat qq(quaternionDerivativeStabilization * omega.norm() * (1 - q.norm()),
-          omega[0], omega[1], omega[2]);
+  Quat qq(quaternionDerivativeStabilization * omega.norm() * (1 - q.norm()), omega[0], omega[1], omega[2]);
   ret = 0.5 * Q * qq;
   return true;
 }
@@ -157,8 +149,7 @@ bool QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q,
 /*!
  * Take the product of two quaternions 取两个四元数的乘积
  */
-bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1,
-                 Eigen::Ref<Quat const> const &q2) {
+bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1, Eigen::Ref<Quat const> const &q2) {
   fpt_t r1 = q1[0];
   fpt_t r2 = q2[0];
   Vector3 v1(q1[1], q1[2], q1[3]);
@@ -178,8 +169,8 @@ bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1,
  * @param dt The timestep
  * @return
  */
-bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
-                   Eigen::Ref<Vector3 const> const &omega, fpt_t const dt) {
+bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega,
+                   fpt_t const dt) {
   Vector3 axis;
   fpt_t ang = omega.norm();
   if (ang > 0) {
@@ -204,10 +195,8 @@ bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
  * @param dt The timestep
  * @return
  */
-bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret,
-                           Eigen::Ref<Quat const> const &quat,
-                           Eigen::Ref<Vector3 const> const &omega,
-                           fpt_t const dt) {
+bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
+                           Eigen::Ref<Vector3 const> const &omega, fpt_t const dt) {
   Vector3 axis;
   fpt_t ang = omega.norm();
   if (ang > 0) {

@@ -15,8 +15,7 @@ namespace {
  * Flip signs of elements of a vector V depending on which leg it belongs to
  * 一个向量V的元素的翻转符号取决于它属于哪条腿
  */
-bool FlipWithSideSigns(Eigen::Ref<Vector3> ret,
-                       Eigen::Ref<Vector3 const> const &v, int const leg_id) {
+bool FlipWithSideSigns(Eigen::Ref<Vector3> ret, Eigen::Ref<Vector3 const> const &v, int const leg_id) {
   switch (leg_id) {
     case leg::idx::fr:
       ret << v[0], -v[1], v[2];
@@ -47,24 +46,17 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
   rotorRotationalInertiaZ = 1e-6 * rotorRotationalInertiaZ;
 
   Matrix3 RY;
-  dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y,
-                          consts::math::kPI / 2);
+  dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y, consts::math::kPI / 2);
   Matrix3 RX;
-  dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X,
-                          consts::math::kPI / 2);
+  dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X, consts::math::kPI / 2);
 
-  dynamics::RotationalInertia rotorRotationalInertiaX =
-      RY * rotorRotationalInertiaZ * RY.transpose();
-  dynamics::RotationalInertia rotorRotationalInertiaY =
-      RX * rotorRotationalInertiaZ * RX.transpose();
+  dynamics::RotationalInertia rotorRotationalInertiaX = RY * rotorRotationalInertiaZ * RY.transpose();
+  dynamics::RotationalInertia rotorRotationalInertiaY = RX * rotorRotationalInertiaZ * RX.transpose();
   Vector3 rotorCOM(0, 0, 0);
 
-  dynamics::SpatialInertia abad_rotor_spatial_inertia,
-      hip_rotor_spatial_inertia, knee_rotor_spatial_inertia;
-  dynamics::BuildSpatialInertia(abad_rotor_spatial_inertia, 0.055, rotorCOM,
-                                rotorRotationalInertiaX);
-  dynamics::BuildSpatialInertia(hip_rotor_spatial_inertia, 0.055, rotorCOM,
-                                rotorRotationalInertiaY);
+  dynamics::SpatialInertia abad_rotor_spatial_inertia, hip_rotor_spatial_inertia, knee_rotor_spatial_inertia;
+  dynamics::BuildSpatialInertia(abad_rotor_spatial_inertia, 0.055, rotorCOM, rotorRotationalInertiaX);
+  dynamics::BuildSpatialInertia(hip_rotor_spatial_inertia, 0.055, rotorCOM, rotorRotationalInertiaY);
   knee_rotor_spatial_inertia = hip_rotor_spatial_inertia;
 
   // spatial inertias
@@ -73,38 +65,32 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
   abadRotationalInertia = abadRotationalInertia * 1e-6;
   Vector3 abadCOM(0, 0.036, 0);  // LEFT
   dynamics::SpatialInertia abad_spatial_inertia;
-  dynamics::BuildSpatialInertia(abad_spatial_inertia, 0.54, abadCOM,
-                                abadRotationalInertia);
+  dynamics::BuildSpatialInertia(abad_spatial_inertia, 0.54, abadCOM, abadRotationalInertia);
 
   dynamics::RotationalInertia hipRotationalInertia;
   hipRotationalInertia << 1983, 245, 13, 245, 2103, 1.5, 13, 1.5, 408;
   hipRotationalInertia = hipRotationalInertia * 1e-6;
   Vector3 hipCOM(0, 0.016, -0.02);
   dynamics::SpatialInertia hip_spatial_inertia;
-  dynamics::BuildSpatialInertia(hip_spatial_inertia, 0.634, hipCOM,
-                                hipRotationalInertia);
+  dynamics::BuildSpatialInertia(hip_spatial_inertia, 0.634, hipCOM, hipRotationalInertia);
 
-  dynamics::RotationalInertia kneeRotationalInertia,
-      kneeRotationalInertiaRotated;
+  dynamics::RotationalInertia kneeRotationalInertia, kneeRotationalInertiaRotated;
   kneeRotationalInertiaRotated << 6, 0, 0, 0, 248, 0, 0, 0, 245;
   kneeRotationalInertiaRotated = kneeRotationalInertiaRotated * 1e-6;
   kneeRotationalInertia = RY * kneeRotationalInertiaRotated * RY.transpose();
   Vector3 kneeCOM(0, 0, -0.061);
   dynamics::SpatialInertia knee_spatial_inertia;
-  dynamics::BuildSpatialInertia(knee_spatial_inertia, 0.064, kneeCOM,
-                                kneeRotationalInertia);
+  dynamics::BuildSpatialInertia(knee_spatial_inertia, 0.064, kneeCOM, kneeRotationalInertia);
 
   dynamics::RotationalInertia bodyRotationalInertia;
   bodyRotationalInertia << 11253, 0, 0, 0, 36203, 0, 0, 0, 42673;
   bodyRotationalInertia = bodyRotationalInertia * 1e-6;
   Vector3 bodyCOM(0, 0, 0);
   dynamics::SpatialInertia body_spatial_inertia;
-  dynamics::BuildSpatialInertia(body_spatial_inertia, consts::model::kBodyMass,
-                                bodyCOM, bodyRotationalInertia);
+  dynamics::BuildSpatialInertia(body_spatial_inertia, consts::model::kBodyMass, bodyCOM, bodyRotationalInertia);
 
   // locations
-  Vector3 abad_location(consts::model::kBodyLength * 0.5,
-                        consts::model::kBodyWidth * 0.5, 0);
+  Vector3 abad_location(consts::model::kBodyLength * 0.5, consts::model::kBodyWidth * 0.5, 0);
   Vector3 abad_rotor_location(0.125, 0.049, 0);
   Vector3 hip_location(0, consts::model::kAbadLinkLength, 0);
   Vector3 hip_rotor_location(0, 0.04, 0);
@@ -115,8 +101,7 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
   // we assume the cheetah's body (not including rotors) can be modeled as a
   // uniformly distributed box.
   // 我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
-  Vector3 bodyDims(consts::model::kBodyLength, consts::model::kBodyWidth,
-                   consts::model::kBodyHeight);
+  Vector3 bodyDims(consts::model::kBodyLength, consts::model::kBodyWidth, consts::model::kBodyHeight);
 
   // model->addBase(_bodyMass, Vector3(0,0,0), BuildRotationalInertia(_bodyMass,
   // bodyDims));
@@ -150,19 +135,15 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
     dynamics::BuildSpatialXform(xtree_abad_rotor, I3, rotor_location);
 
     if (side_sign < 0) {
-      dynamics::SpatialInertiaFlipAlongAxis(
-          spatial_inertia, abad_spatial_inertia, dynamics::CoordinateAxis::Y);
-      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia,
-                                            abad_rotor_spatial_inertia,
+      dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, abad_spatial_inertia, dynamics::CoordinateAxis::Y);
+      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia, abad_rotor_spatial_inertia,
                                             dynamics::CoordinateAxis::Y);
     } else {
       spatial_inertia = abad_spatial_inertia;
       rotor_spatial_inertia = abad_rotor_spatial_inertia;
     }
-    model->AddBody(spatial_inertia, rotor_spatial_inertia,
-                   consts::model::kAbadGearRatio, base_id,
-                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::X,
-                   xtree_abad, xtree_abad_rotor);
+    model->AddBody(spatial_inertia, rotor_spatial_inertia, consts::model::kAbadGearRatio, base_id,
+                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::X, xtree_abad, xtree_abad_rotor);
 
     // Hip Joint
     body_id++;
@@ -176,24 +157,19 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
     dynamics::BuildSpatialXform(xtree_hip_rotor, RZ, rotor_location);
 
     if (side_sign < 0) {
-      dynamics::SpatialInertiaFlipAlongAxis(
-          spatial_inertia, hip_spatial_inertia, dynamics::CoordinateAxis::Y);
-      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia,
-                                            hip_rotor_spatial_inertia,
+      dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, hip_spatial_inertia, dynamics::CoordinateAxis::Y);
+      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia, hip_rotor_spatial_inertia,
                                             dynamics::CoordinateAxis::Y);
     } else {
       spatial_inertia = hip_spatial_inertia;
       rotor_spatial_inertia = hip_rotor_spatial_inertia;
     }
 
-    model->AddBody(spatial_inertia, rotor_spatial_inertia,
-                   consts::model::kHipGearRatio, body_id - 1,
-                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y,
-                   xtree_hip, xtree_hip_rotor);
+    model->AddBody(spatial_inertia, rotor_spatial_inertia, consts::model::kHipGearRatio, body_id - 1,
+                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y, xtree_hip, xtree_hip_rotor);
 
     // add knee ground contact point
-    model->AddGroundContactPoint(body_id,
-                                 Vector3(0, 0, -consts::model::kHipLinkLength));
+    model->AddGroundContactPoint(body_id, Vector3(0, 0, -consts::model::kHipLinkLength));
 
     // Knee Joint
     body_id++;
@@ -204,10 +180,8 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
 
     fpt_t signed_knee_link_y_offset = consts::model::kKneeLinkYOffset;
     if (side_sign < 0) {
-      dynamics::SpatialInertiaFlipAlongAxis(
-          spatial_inertia, knee_spatial_inertia, dynamics::CoordinateAxis::Y);
-      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia,
-                                            knee_rotor_spatial_inertia,
+      dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, knee_spatial_inertia, dynamics::CoordinateAxis::Y);
+      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia, knee_rotor_spatial_inertia,
                                             dynamics::CoordinateAxis::Y);
     } else {
       spatial_inertia = knee_spatial_inertia;
@@ -216,15 +190,10 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
       signed_knee_link_y_offset *= -1.;
     }
 
-    model->AddBody(spatial_inertia, rotor_spatial_inertia,
-                   consts::model::kKneeGearRatio, body_id - 1,
-                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y,
-                   xtree_knee, xtree_knee_rotor);
+    model->AddBody(spatial_inertia, rotor_spatial_inertia, consts::model::kKneeGearRatio, body_id - 1,
+                   dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y, xtree_knee, xtree_knee_rotor);
 
-    model->AddGroundContactPoint(
-        body_id,
-        Vector3(0, signed_knee_link_y_offset, -consts::model::kKneeLinkLength),
-        true);
+    model->AddGroundContactPoint(body_id, Vector3(0, signed_knee_link_y_offset, -consts::model::kKneeLinkLength), true);
 
     // add foot
     // model->addGroundContactPoint(body_id, Vector3(0, 0, -_kneeLinkLength),
@@ -239,18 +208,12 @@ bool QuadrupedImpl::ComputeFloatBaseModel(fpt_t g) {
   return true;
 }
 
-FloatBaseModel::SharedPtr const &QuadrupedImpl::GetFloatBaseModel() const {
-  return model_;
-}
+FloatBaseModel::SharedPtr const &QuadrupedImpl::GetFloatBaseModel() const { return model_; }
 
 bool QuadrupedImpl::CalcHipLocation(SdVector3f &ret, int const leg) const {
-  fpt_t hip_location[3] = {consts::model::kBodyLength * 0.5,
-                           consts::model::kBodyWidth * 0.5, 0};
-  ret = {(leg == leg::idx::fr || leg == leg::idx::fl) ? hip_location[0]
-                                                      : -hip_location[0],
-         (leg == leg::idx::fl || leg == leg::idx::hl) ? hip_location[1]
-                                                      : -hip_location[1],
-         hip_location[2]};
+  fpt_t hip_location[3] = {consts::model::kBodyLength * 0.5, consts::model::kBodyWidth * 0.5, 0};
+  ret = {(leg == leg::idx::fr || leg == leg::idx::fl) ? hip_location[0] : -hip_location[0],
+         (leg == leg::idx::fl || leg == leg::idx::hl) ? hip_location[1] : -hip_location[1], hip_location[2]};
   return true;
 }
 }  // namespace sdrobot::model

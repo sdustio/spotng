@@ -10,10 +10,8 @@ namespace sdrobot::estimate {
 class EstimateCtrlImpl : public EstimateCtrl {
  public:
   EstimateCtrlImpl();
-  bool AddEstimator(std::string const &name,
-                    Estimator::SharedPtr const &est) override;
-  Estimator::SharedPtr const &GetEstimator(
-      std::string const &name) const override;
+  bool AddEstimator(std::string const &name, Estimator::SharedPtr const &est) override;
+  Estimator::SharedPtr const &GetEstimator(std::string const &name) const override;
 
   bool RunOnce() override;
 

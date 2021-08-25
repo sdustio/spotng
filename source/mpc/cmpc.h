@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "mpc/foot_swing.h"
 #include "mpc/gait_skd.h"
@@ -17,18 +17,14 @@ class CMpc : public Mpc {
   CMpc(fpt_t dt, fpt_t g, int iter_between_mpc);
   bool Init() override;
   bool RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
-               model::Quadruped::ConstSharedPtr const &quad,
-               drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+               model::Quadruped::ConstSharedPtr const &quad, drive::DriveCtrl::ConstSharedPtr const &drivectrl,
                estimate::EstimateCtrl::ConstSharedPtr const &estctrl) override;
 
  private:
-  bool UpdateMPCIfNeeded(std::array<SdVector3f, 4> &out,
-                         std::vector<int> const &mpcTable,
+  bool UpdateMPCIfNeeded(std::array<SdVector3f, 4> &out, std::vector<int> const &mpcTable,
                          drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-                         estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
-                         SdVector3f const &lvel_des);
-  bool SolveMPC(std::array<SdVector3f, 4> &out,
-                std::vector<int> const &mpcTable,
+                         estimate::EstimateCtrl::ConstSharedPtr const &estctrl, SdVector3f const &lvel_des);
+  bool SolveMPC(std::array<SdVector3f, 4> &out, std::vector<int> const &mpcTable,
                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
 
   fpt_t dt_;

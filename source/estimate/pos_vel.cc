@@ -3,8 +3,7 @@
 #include "sdrobot/consts.h"
 
 namespace sdrobot::estimate {
-PosVel::PosVel(fpt_t dt, fpt_t gravity,
-               leg::LegCtrl::ConstSharedPtr const &legctrl,
+PosVel::PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl,
                model::Quadruped::ConstSharedPtr const &quad)
     : dt_(dt), gravity_(gravity), legctrl_(legctrl), quad_(quad) {
   xhat_.fill(0.);
@@ -89,8 +88,7 @@ bool PosVel::RunOnce(State &ret) {
   // 观测噪声矩阵
   MatrixX R = Matrix28::Identity();
   R.block<12, 12>(0, 0) = R0.block<12, 12>(0, 0) * sensor_noise_pimu_rel_foot;
-  R.block<12, 12>(12, 12) =
-      R0.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
+  R.block<12, 12>(12, 12) = R0.block<12, 12>(12, 12) * sensor_noise_vimu_rel_foot;
   R.block<4, 4>(24, 24) = R0.block<4, 4>(24, 24) * sensor_noise_zfoot;
 
   int qindex = 0;
@@ -116,21 +114,18 @@ bool PosVel::RunOnce(State &ret) {
   for (int i = 0; i < consts::model::kNumLeg; i++) {
     int i1 = 3 * i;
     SdVector3f _ph;
-    quad_->CalcHipLocation(
-        _ph, i);  // hip positions relative to CoM 相对于CoM的髋位置
+    quad_->CalcHipLocation(_ph, i);  // hip positions relative to CoM 相对于CoM的髋位置
     Eigen::Map<Vector3> ph(_ph.data());
 
     Eigen::Map<Vector3 const> datap(datas[i].p.data());
     Vector3 p_rel = ph + datap;  // 足端位置在机身坐标系
 
     Eigen::Map<Vector3 const> datav(datas[i].v.data());
-    Vector3 dp_rel = datav;  // 足端速度在机身坐标系
-    Vector3 p_f =
-        Rbod * p_rel;  // 足端位置在世界坐标系描述 即方向 大小 没有位置
+    Vector3 dp_rel = datav;      // 足端速度在机身坐标系
+    Vector3 p_f = Rbod * p_rel;  // 足端位置在世界坐标系描述 即方向 大小 没有位置
 
     // 足端速度在世界坐标系描述 机身转动导致足端速度+足端本身速度
-    Vector3 dp_f =
-        Rbod * (ToConstEigenTp(ret.avel_robot).cross(p_rel) + dp_rel);
+    Vector3 dp_f = Rbod * (ToConstEigenTp(ret.avel_robot).cross(p_rel) + dp_rel);
 
     // 更新四条腿用索引
     qindex = 6 + i1;
@@ -158,21 +153,16 @@ bool PosVel::RunOnce(State &ret) {
 
     // printf("Trust %d: %.3f\n", i, trust);
     // 摆动腿和支撑腿刚触地，即将离地时状态，测量噪声协方差增大
-    Q.block<3, 3>(qindex, qindex) = (1. + (1. - trust) * high_suspect_number) *
-                                    Q.block<3, 3>(qindex, qindex);  // p
+    Q.block<3, 3>(qindex, qindex) = (1. + (1. - trust) * high_suspect_number) * Q.block<3, 3>(qindex, qindex);  // p
 
-    R.block<3, 3>(rindex1, rindex1) = 1 * R.block<3, 3>(rindex1, rindex1);  // p
-    R.block<3, 3>(rindex2, rindex2) =
-        (1. + (1. - trust) * high_suspect_number) *
-        R.block<3, 3>(rindex2, rindex2);  // v
-    R(rindex3, rindex3) =
-        (1. + (1. - trust) * high_suspect_number) * R(rindex3, rindex3);  // z
+    R.block<3, 3>(rindex1, rindex1) = 1 * R.block<3, 3>(rindex1, rindex1);                                          // p
+    R.block<3, 3>(rindex2, rindex2) = (1. + (1. - trust) * high_suspect_number) * R.block<3, 3>(rindex2, rindex2);  // v
+    R(rindex3, rindex3) = (1. + (1. - trust) * high_suspect_number) * R(rindex3, rindex3);                          // z
 
     trusts(i) = trust;
     // 处理后的
-    ps.segment(i1, 3) = -p_f;  // 足端位置在世界坐标系描述
-    vs.segment(i1, 3) =
-        (1.0f - trust) * v0 + trust * (-dp_f);  // 足端速度在世界坐标系描述
+    ps.segment(i1, 3) = -p_f;                                   // 足端位置在世界坐标系描述
+    vs.segment(i1, 3) = (1.0f - trust) * v0 + trust * (-dp_f);  // 足端速度在世界坐标系描述
     pzs(i) = (1.0f - trust) * (p0(2) + p_f(2));
   }
 
@@ -199,8 +189,7 @@ bool PosVel::RunOnce(State &ret) {
 
   MatrixX S_C = S.lu().solve(C);  // ??  Eigen::Matrix<fpt_t, 28, 18>
 
-  P = (Matrix18::Identity() - Pm * C.transpose() * S_C) *
-      Pm;  // 最佳估计不确定性协方差??
+  P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm;  // 最佳估计不确定性协方差??
 
   P = (P + P.transpose()) / 2.;  // ??
 

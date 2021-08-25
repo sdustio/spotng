@@ -12,16 +12,13 @@ namespace sdrobot::fsm {
 class StateBalanceStand : public StateCtrl {
  public:
   StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-                    model::Quadruped::SharedPtr const &mquad,
-                    drive::DriveCtrl::SharedPtr const &drictrl,
+                    model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                     estimate::EstimateCtrl::SharedPtr const &estctrl);
   bool OnEnter() override;
   bool OnExit() override;
   bool RunOnce() override;
 
-  State CheckTransition() override {
-    return state_trans_[drictrl_->GetState()];
-  }
+  State CheckTransition() override { return state_trans_[drictrl_->GetState()]; }
   TransitionData Transition(const State next) override;
 
   State GetState() const override { return State::BalanceStand; }

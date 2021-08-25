@@ -39,10 +39,8 @@ class SDROBOT_EXPORT EstimateCtrl {
 
   virtual ~EstimateCtrl() = default;
 
-  virtual bool AddEstimator(std::string const &name,
-                            Estimator::SharedPtr const &est) = 0;
-  virtual Estimator::SharedPtr const &GetEstimator(
-      std::string const &name) const = 0;
+  virtual bool AddEstimator(std::string const &name, Estimator::SharedPtr const &est) = 0;
+  virtual Estimator::SharedPtr const &GetEstimator(std::string const &name) const = 0;
   virtual bool RemoveEstimator(std::string const &name) = 0;
   virtual bool RemoveAllEstimators() = 0;
 

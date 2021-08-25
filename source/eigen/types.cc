@@ -75,8 +75,7 @@ Eigen::Ref<VectorX const> ToConstEigenTp(SdVectorXf const &v, int const row) {
   Eigen::Map<VectorX const> egv(v.data(), row);
   return egv;
 }
-Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row,
-                                         int const col) {
+Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row, int const col) {
   if (m.size() < unsigned(row * col)) {
     throw("size of m is smaller than row * col");
   }

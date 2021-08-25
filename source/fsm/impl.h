@@ -11,10 +11,8 @@
 namespace sdrobot::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
-  FiniteStateMachineImpl(Options const &opts,
-                         leg::LegCtrl::SharedPtr const &legctrl,
-                         model::Quadruped::SharedPtr const &mquad,
-                         drive::DriveCtrl::SharedPtr const &drictrl,
+  FiniteStateMachineImpl(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                         model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                          estimate::EstimateCtrl::SharedPtr const &estctrl);
 
   StateCtrl::SharedPtr const &GetStateCtrl(State const state) override;

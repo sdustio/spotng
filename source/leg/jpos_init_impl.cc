@@ -5,11 +5,10 @@
 namespace sdrobot::leg {
 namespace opts {
 
-constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const
-    target_jpos = {-0.6, -1.0, 2.7, 0.6, -1.0, 2.7,
-                   -0.6, -1.0, 2.7, 0.6, -1.0, 2.7};
-constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const mid_jpos =
-    {-1.8, 0., 2.7, 1.8, 0., 2.7, -1.7, 0.5, 0.5, 1.7, 0.5, 0.5};
+constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const target_jpos = {-0.6, -1.0, 2.7, 0.6, -1.0, 2.7,
+                                                                                     -0.6, -1.0, 2.7, 0.6, -1.0, 2.7};
+constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const mid_jpos = {-1.8, 0.,  2.7, 1.8, 0.,  2.7,
+                                                                                  -1.7, 0.5, 0.5, 1.7, 0.5, 0.5};
 
 // 对角线矩阵，row major == column major
 constexpr inline SdMatrix3f const kp_mat = {5, 0, 0, 0, 5, 0, 0, 0, 5};
@@ -18,9 +17,7 @@ constexpr inline SdMatrix3f const kd_mat = {0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
 // kd_mat << 4, 0, 0, 0, 4, 0, 0, 0, 4;
 }  // namespace opts
 
-JPosInitImpl::JPosInitImpl(fpt_t dt, fpt_t time_end)
-    : dt_(dt), end_time_(time_end) {
-}
+JPosInitImpl::JPosInitImpl(fpt_t dt, fpt_t time_end) : dt_(dt), end_time_(time_end) {}
 
 bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl) {
   curr_time_ += dt_;
@@ -31,12 +28,9 @@ bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl) {
 
   if (curr_time_ < end_time_) {
     Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> jpos;
-    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y0(
-        ini_jpos_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y1(
-        opts::mid_jpos.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> yf(
-        opts::target_jpos.data());
+    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y0(ini_jpos_.data());
+    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y1(opts::mid_jpos.data());
+    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> yf(opts::target_jpos.data());
     fpt_t t = curr_time_ / end_time_;
 
     math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);

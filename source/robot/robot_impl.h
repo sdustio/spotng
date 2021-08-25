@@ -8,8 +8,7 @@
 namespace sdrobot {
 class RobotImpl : public Robot {
  public:
-  RobotImpl(Options const &opts,
-            interface::ActuatorInterface::SharedPtr const &act_itf);
+  RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
   bool UpdateImu(sensor::ImuData const &imu) override;
   bool UpdateDriveTwist(drive::Twist const &twist) override;
   bool UpdateDriveState(drive::State const &state) override;

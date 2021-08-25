@@ -19,8 +19,7 @@ class GaitSkd {
   virtual bool CalcContactState(SdVector4f &ret) const = 0;
   virtual bool CalcSwingState(SdVector4f &ret) const = 0;
   virtual std::vector<int> const &GetMpcTable() const = 0;
-  virtual bool SetIterations(int iterationsBetweenMPC,
-                             int currentIteration) = 0;
+  virtual bool SetIterations(int iterationsBetweenMPC, int currentIteration) = 0;
   virtual fpt_t GetCurrentStanceTime(fpt_t dtMPC, int leg) const = 0;
   virtual fpt_t GetCurrentSwingTime(fpt_t dtMPC, int leg) const = 0;
   virtual int GetCurrentGaitPhase() const = 0;
@@ -28,8 +27,8 @@ class GaitSkd {
 
 class OffsetDurationGait : public GaitSkd {
  public:
-  OffsetDurationGait(int const nSegment, SdVector4i const &offsets,
-                     SdVector4i const &durations, std::string const &name);
+  OffsetDurationGait(int const nSegment, SdVector4i const &offsets, SdVector4i const &durations,
+                     std::string const &name);
   bool CalcContactState(SdVector4f &ret) const override;
   bool CalcSwingState(SdVector4f &ret) const override;
   std::vector<int> const &GetMpcTable() const override;

@@ -39,6 +39,5 @@ Eigen::Ref<Vector6 const> ToConstEigenTp(SdVector6f const &v);
 Eigen::Ref<Matrix6 const> ToConstEigenTp(SdMatrix6f const &m);
 
 Eigen::Ref<VectorX const> ToConstEigenTp(SdVectorXf const &v, int const row);
-Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row,
-                                         int const col);
+Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row, int const col);
 }  // namespace sdrobot

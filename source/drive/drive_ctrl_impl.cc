@@ -8,23 +8,15 @@ DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
 DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(DriveMode::kAuto, dt) {}
 
 bool DriveCtrlImpl::CmdtoDesData() {
-  lvel_ = {
-      Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
-      Deadband(twist_.lvel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY),
-      0};
+  lvel_ = {Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
+           Deadband(twist_.lvel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY), 0};
 
   pos_ = {dt_ * lvel_[0], dt_ * lvel_[1],
-          Deadband(twist_.var_height, consts::drive::kMinVarHeight,
-                   consts::drive::kMaxVarHeight)};
+          Deadband(twist_.var_height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
 
-  avel_ = {0., 0,
-           Deadband(twist_.avel_z, consts::drive::kMinRateY,
-                    consts::drive::kMaxRateY)};
+  avel_ = {0., 0, Deadband(twist_.avel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
 
-  rpy_ = {0.,
-          Deadband(twist_.var_pitch, consts::drive::kMinAngleP,
-                   consts::drive::kMaxAngleP),
-          dt_ * avel_[2]};
+  rpy_ = {0., Deadband(twist_.var_pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP), dt_ * avel_[2]};
 
   // TODO(Michael Ding) 根据 Drive Mode 进行参数修正。比如 自动档无视 state，
   // state 和 move 是否冲突等等
@@ -33,14 +25,10 @@ bool DriveCtrlImpl::CmdtoDesData() {
 
 bool DriveCtrlImpl::UpdateTwist(Twist const &twist) {
   twist_.var_height = twist.var_height;
-  twist_.lvel_x = twist_.lvel_x * (1.0 - consts::drive::kFilter) +
-                  twist.lvel_x * consts::drive::kFilter;
-  twist_.lvel_y = twist_.lvel_y * (1.0 - consts::drive::kFilter) +
-                  twist.lvel_y * consts::drive::kFilter;
-  twist_.avel_z = twist_.avel_z * (1.0 - consts::drive::kFilter) +
-                  twist.avel_z * consts::drive::kFilter;
-  twist_.var_pitch = twist_.var_pitch * (1.0 - consts::drive::kFilter) +
-                     twist.var_pitch * consts::drive::kFilter;
+  twist_.lvel_x = twist_.lvel_x * (1.0 - consts::drive::kFilter) + twist.lvel_x * consts::drive::kFilter;
+  twist_.lvel_y = twist_.lvel_y * (1.0 - consts::drive::kFilter) + twist.lvel_y * consts::drive::kFilter;
+  twist_.avel_z = twist_.avel_z * (1.0 - consts::drive::kFilter) + twist.avel_z * consts::drive::kFilter;
+  twist_.var_pitch = twist_.var_pitch * (1.0 - consts::drive::kFilter) + twist.var_pitch * consts::drive::kFilter;
   return true;
 }
 
@@ -55,8 +43,7 @@ bool DriveCtrlImpl::UpdateGait(Gait const &gait) {
 }
 
 bool DriveCtrlImpl::UpdateStepHeight(fpt_t const height) {
-  step_height_ = Deadband(height, consts::drive::kMinStepHeight,
-                          consts::drive::kMaxStepHeight);
+  step_height_ = Deadband(height, consts::drive::kMinStepHeight, consts::drive::kMaxStepHeight);
   return true;
 }
 
@@ -71,8 +58,7 @@ SdVector3f const &DriveCtrlImpl::GetLvelDes() const { return lvel_; }
 SdVector3f const &DriveCtrlImpl::GetAvelDes() const { return avel_; }
 
 fpt_t DriveCtrlImpl::Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal) {
-  if (v < consts::drive::kDeadbandRegion &&
-      v > -consts::drive::kDeadbandRegion) {
+  if (v < consts::drive::kDeadbandRegion && v > -consts::drive::kDeadbandRegion) {
     return 0.0;
   } else {
     return (v / 2) * (maxVal - minVal);

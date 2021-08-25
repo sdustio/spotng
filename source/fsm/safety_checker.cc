@@ -5,8 +5,7 @@
 #include "sdrobot/consts.h"
 
 namespace sdrobot::fsm {
-bool SafetyChecker::CheckSafeOrientation(
-    estimate::EstimateCtrl::SharedPtr const &estctrl) {
+bool SafetyChecker::CheckSafeOrientation(estimate::EstimateCtrl::SharedPtr const &estctrl) {
   auto const &state = estctrl->GetEstState();
   return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
 }
@@ -16,8 +15,7 @@ bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl) {
   bool check_safe = true;
 
   // Safety parameters
-  auto max_p_des =
-      consts::model::kMaxLegLength * std::sin(consts::interface::kMaxAngle);
+  auto max_p_des = consts::model::kMaxLegLength * std::sin(consts::interface::kMaxAngle);
 
   auto &cmds = legctrl->GetCmdsForUpdate();
   // Check all of the legs
@@ -65,8 +63,7 @@ bool SafetyChecker::CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl) {
   return check_safe;
 }
 
-bool SafetyChecker::CheckForceFeedForward(
-    leg::LegCtrl::SharedPtr const &legctrl) {
+bool SafetyChecker::CheckForceFeedForward(leg::LegCtrl::SharedPtr const &legctrl) {
   // Assumed safe to start
   bool check_safe = true;
 
@@ -81,8 +78,7 @@ bool SafetyChecker::CheckForceFeedForward(
     }
 
     // Limit the lateral forces in -x body frame
-    if (cmds[leg].force_feed_forward[0] <
-        -consts::interface::kMaxLateralForce) {
+    if (cmds[leg].force_feed_forward[0] < -consts::interface::kMaxLateralForce) {
       cmds[leg].force_feed_forward[0] = -consts::interface::kMaxLateralForce;
       check_safe = false;
     }
@@ -94,22 +90,19 @@ bool SafetyChecker::CheckForceFeedForward(
     }
 
     // Limit the lateral forces in -y body frame
-    if (cmds[leg].force_feed_forward[1] <
-        -consts::interface::kMaxLateralForce) {
+    if (cmds[leg].force_feed_forward[1] < -consts::interface::kMaxLateralForce) {
       cmds[leg].force_feed_forward[1] = -consts::interface::kMaxLateralForce;
       check_safe = false;
     }
 
     // Limit the vertical forces in +z body frame
-    if (cmds[leg].force_feed_forward[2] >
-        consts::interface::kMaxVerticalForce) {
+    if (cmds[leg].force_feed_forward[2] > consts::interface::kMaxVerticalForce) {
       cmds[leg].force_feed_forward[2] = consts::interface::kMaxVerticalForce;
       check_safe = false;
     }
 
     // Limit the vertical forces in -z body frame
-    if (cmds[leg].force_feed_forward[2] <
-        -consts::interface::kMaxVerticalForce) {
+    if (cmds[leg].force_feed_forward[2] < -consts::interface::kMaxVerticalForce) {
       cmds[leg].force_feed_forward[2] = -consts::interface::kMaxVerticalForce;
       check_safe = false;
     }

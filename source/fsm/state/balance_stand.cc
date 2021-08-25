@@ -6,11 +6,10 @@
 
 namespace sdrobot::fsm {
 
-StateBalanceStand::StateBalanceStand(
-    Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-    model::Quadruped::SharedPtr const &mquad,
-    drive::DriveCtrl::SharedPtr const &drictrl,
-    estimate::EstimateCtrl::SharedPtr const &estctrl)
+StateBalanceStand::StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                                     model::Quadruped::SharedPtr const &mquad,
+                                     drive::DriveCtrl::SharedPtr const &drictrl,
+                                     estimate::EstimateCtrl::SharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::Locomotion},
@@ -19,8 +18,7 @@ StateBalanceStand::StateBalanceStand(
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.)),
-      body_weight_(consts::model::kBodyMass * opts.gravity) {
-}
+      body_weight_(consts::model::kBodyMass * opts.gravity) {}
 
 bool StateBalanceStand::OnEnter() {
   auto const &estdata = estctrl_->GetEstState();
@@ -40,8 +38,7 @@ bool StateBalanceStand::OnExit() { /* do nothing*/
   return true;
 }
 bool StateBalanceStand::RunOnce() {
-  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(
-      estctrl_->GetEstimator("contact"));
+  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
   est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
   return Step();
 }
@@ -60,8 +57,7 @@ bool StateBalanceStand::Step() {
   wbc_data_.body_rpy_des = ini_body_rpy_;
 
   auto const &rpy_des = drictrl_->GetRpyDes();
-  for (size_t i = 0; i < rpy_des.size(); i++)
-    wbc_data_.body_rpy_des[i] += rpy_des[i];
+  for (size_t i = 0; i < rpy_des.size(); i++) wbc_data_.body_rpy_des[i] += rpy_des[i];
 
   // Height
   wbc_data_.body_pos_des[2] += drictrl_->GetPosDes()[2];

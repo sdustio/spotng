@@ -12,8 +12,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
-  interface::ActuatorInterface::SharedPtr itf =
-      std::make_shared<EchoActuatorInterface>();
+  interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
   /*....*/
 
   Robot::Ptr robot;

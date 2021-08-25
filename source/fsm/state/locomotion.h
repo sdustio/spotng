@@ -12,10 +12,8 @@
 namespace sdrobot::fsm {
 class StateLocomotion : public StateCtrl {
  public:
-  StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-                  model::Quadruped::SharedPtr const &mquad,
-                  drive::DriveCtrl::SharedPtr const &drictrl,
-                  estimate::EstimateCtrl::SharedPtr const &estctrl);
+  StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &mquad,
+                  drive::DriveCtrl::SharedPtr const &drictrl, estimate::EstimateCtrl::SharedPtr const &estctrl);
   bool OnEnter() override;
   bool OnExit() override;
   bool RunOnce() override;

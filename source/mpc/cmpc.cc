@@ -6,38 +6,27 @@
 namespace sdrobot::mpc {
 namespace opts {
 constexpr inline SdMatrix3f const kp_stance = {};
-constexpr inline SdMatrix3f const kd_stance = {
-    7, 0, 0, 0, 7, 0, 0, 0, 7};  // row major == column major
+constexpr inline SdMatrix3f const kd_stance = {7, 0, 0, 0, 7, 0, 0, 0, 7};  // row major == column major
 }  // namespace opts
 
 CMpc::CMpc(fpt_t dt, fpt_t g, int iter_between_mpc)
-    : dt_(dt),
-      dt_mpc_(dt * iter_between_mpc),
-      gravity_(g),
-      iter_between_mpc_(iter_between_mpc),
-      rpy_int_({}) {
+    : dt_(dt), dt_mpc_(dt * iter_between_mpc), gravity_(g), iter_between_mpc_(iter_between_mpc), rpy_int_({}) {
   first_swing_.fill(true);
   qpsolver_ = std::make_unique<QPSolver>();
-  gait_map_[drive::Gait::Trot] = std::make_unique<OffsetDurationGait>(
-      opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{5, 5, 5, 5},
-      "Trot");
+  gait_map_[drive::Gait::Trot] =
+      std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{5, 5, 5, 5}, "Trot");
   gait_map_[drive::Gait::SlowTrot] = std::make_unique<OffsetDurationGait>(
-      static_cast<int>(opts::horizon_len * 1.2), SdVector4i{0, 6, 6, 0},
-      SdVector4i{6, 6, 6, 6}, "SlowTrot");
-  gait_map_[drive::Gait::FlyingTrot] = std::make_unique<OffsetDurationGait>(
-      opts::horizon_len, SdVector4i{0, 5, 5, 0}, SdVector4i{4, 4, 4, 4},
-      "FlyingTrot");
+      static_cast<int>(opts::horizon_len * 1.2), SdVector4i{0, 6, 6, 0}, SdVector4i{6, 6, 6, 6}, "SlowTrot");
+  gait_map_[drive::Gait::FlyingTrot] = std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{0, 5, 5, 0},
+                                                                            SdVector4i{4, 4, 4, 4}, "FlyingTrot");
   gait_map_[drive::Gait::Walk] = std::make_unique<OffsetDurationGait>(
-      static_cast<int>(opts::horizon_len * 1.6), SdVector4i{0, 8, 4, 12},
-      SdVector4i{12, 12, 12, 12}, "Walk");
-  gait_map_[drive::Gait::Bound] = std::make_unique<OffsetDurationGait>(
-      opts::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5},
-      "Bound");
+      static_cast<int>(opts::horizon_len * 1.6), SdVector4i{0, 8, 4, 12}, SdVector4i{12, 12, 12, 12}, "Walk");
+  gait_map_[drive::Gait::Bound] =
+      std::make_unique<OffsetDurationGait>(opts::horizon_len, SdVector4i{5, 5, 0, 0}, SdVector4i{5, 5, 5, 5}, "Bound");
 }
 
 bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
-                   model::Quadruped::ConstSharedPtr const &quad,
-                   drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                   model::Quadruped::ConstSharedPtr const &quad, drive::DriveCtrl::ConstSharedPtr const &drivectrl,
                    estimate::EstimateCtrl::ConstSharedPtr const &estctrl) {
   auto _body_height = 0.3 + drivectrl->GetPosDes()[2];
 
@@ -101,16 +90,14 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
     SdVector3f loc;
     quad->CalcHipLocation(loc, i);
     ToEigenTp(p_foot_[i]) =
-        pos + rot_mat.transpose() * (ToConstEigenTp(loc) +
-                                     ToConstEigenTp(legctrl->GetDatas()[i].p));
+        pos + rot_mat.transpose() * (ToConstEigenTp(loc) + ToConstEigenTp(legctrl->GetDatas()[i].p));
   }
 
   ToEigenTp(pos_des_) += dt_ * ToConstEigenTp(lvel_des);
   pos_des_[2] = _body_height;
 
   // foot placement
-  for (int l = 0; l < 4; l++)
-    swing_times_[l] = gait_skd->GetCurrentSwingTime(dt_mpc_, l);
+  for (int l = 0; l < 4; l++) swing_times_[l] = gait_skd->GetCurrentSwingTime(dt_mpc_, l);
 
   fpt_t side_sign[4] = {-1, 1, -1, 1};
   //  fptype interleave_y[4] = {-0.08, 0.08, 0.02, -0.02};
@@ -156,13 +143,10 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
     pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain;
     fpt_t stance_time = gait_skd->GetCurrentStanceTime(dt_mpc_, i);
     Matrix3 _rot;
-    dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z,
-                            -avel_des_robot[2] * stance_time / 2);
+    dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des_robot[2] * stance_time / 2);
     Vector3 pYawCorrected = _rot * pRobotFrame;
 
-    Vector3 Pf =
-        pos + rot_mat.transpose() *
-                  (pYawCorrected + lvel_des_robot * swing_time_remaining_[i]);
+    Vector3 Pf = pos + rot_mat.transpose() * (pYawCorrected + lvel_des_robot * swing_time_remaining_[i]);
 
     // + lvel * swing_time_remaining_[i];
 
@@ -171,15 +155,12 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
 
     // Using the estimated velocity is correct
     // Vector3 lvel_des = seResult.rot_mat.transpose() * lvel_des_robot;
-    fpt_t pfx_rel = lvel[0] * (.5 + opts::bonus_swing) * stance_time +
-                    .1 * (lvel[0] - lvel_des[0]) +
+    fpt_t pfx_rel = lvel[0] * (.5 + opts::bonus_swing) * stance_time + .1 * (lvel[0] - lvel_des[0]) +
                     (0.5 * pos[2] / gravity_) * (lvel[1] * avel_des_robot[2]);
 
-    if (fabs(pfx_rel) > p_rel_max)
-      printf("!!!!!!!!!!!!!!!!out of the max step\n");
+    if (fabs(pfx_rel) > p_rel_max) printf("!!!!!!!!!!!!!!!!out of the max step\n");
 
-    fpt_t pfy_rel = lvel[1] * .5 * stance_time * dt_mpc_ +
-                    .09 * (lvel[1] - lvel_des[1]) +
+    fpt_t pfy_rel = lvel[1] * .5 * stance_time * dt_mpc_ + .09 * (lvel[1] - lvel_des[1]) +
                     (0.5 * pos[2] / gravity_) * (-lvel[0] * avel_des_robot[2]);
     pfx_rel = fminf(fmaxf(pfx_rel, -p_rel_max), p_rel_max);
     pfy_rel = fminf(fmaxf(pfy_rel, -p_rel_max), p_rel_max);
@@ -199,8 +180,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
   gait_skd->CalcSwingState(swingStates);
   gait_skd->CalcContactState(contactStates);
 
-  UpdateMPCIfNeeded(wbcdata.Fr_des, gait_skd->GetMpcTable(), drivectrl, estctrl,
-                    lvel_des);
+  UpdateMPCIfNeeded(wbcdata.Fr_des, gait_skd->GetMpcTable(), drivectrl, estctrl, lvel_des);
 
   SdVector4f se_contactState = {};
   //  StateEstimator* se = hw_i->state_estimator;
@@ -212,8 +192,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
         foot_swing_trajs_[foot].UpdateInitialPosition(p_foot_[foot]);
       }
 
-      foot_swing_trajs_[foot].ComputeSwingTrajectoryBezier(swingState,
-                                                           swing_times_[foot]);
+      foot_swing_trajs_[foot].ComputeSwingTrajectoryBezier(swingState, swing_times_[foot]);
 
       // Update for WBC
       wbcdata.foot_pos_des[foot] = foot_swing_trajs_[foot].GetPosition();
@@ -227,12 +206,8 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
       SdVector3f loc;
       quad->CalcHipLocation(loc, foot);
       ToEigenTp(leg_cmds[foot].p_des) =
-          rot_mat *
-              (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) -
-          ToConstEigenTp(loc);
-      ToEigenTp(leg_cmds[foot].v_des) =
-          rot_mat *
-          (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - lvel);
+          rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
+      ToEigenTp(leg_cmds[foot].v_des) = rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - lvel);
       leg_cmds[foot].kp_cartesian = opts::kp_stance;
       leg_cmds[foot].kd_cartesian = opts::kd_stance;
       // cout << "Foot " << foot << " relative velocity desired: " <<
@@ -241,8 +216,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
     }
   }
 
-  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(
-      estctrl->GetEstimator("contact"));
+  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl->GetEstimator("contact"));
   est_contact->UpdateContact(se_contactState);
 
   // Update For WBC
@@ -259,11 +233,9 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
 
 bool CMpc::Init() { return true; }
 
-bool CMpc::UpdateMPCIfNeeded(
-    std::array<SdVector3f, 4> &out, std::vector<int> const &mpcTable,
-    drive::DriveCtrl::ConstSharedPtr const &drivectrl,
-    estimate::EstimateCtrl::ConstSharedPtr const &estctrl,
-    SdVector3f const &lvel_des) {
+bool CMpc::UpdateMPCIfNeeded(std::array<SdVector3f, 4> &out, std::vector<int> const &mpcTable,
+                             drive::DriveCtrl::ConstSharedPtr const &drivectrl,
+                             estimate::EstimateCtrl::ConstSharedPtr const &estctrl, SdVector3f const &lvel_des) {
   // iter_between_mpc_ = 30;
   if ((iter_counter_ % iter_between_mpc_) != 0) {
     return false;
@@ -321,25 +293,20 @@ bool CMpc::UpdateMPCIfNeeded(
       // traj_all_[4] = hw_i->state_estimator->se_pBody[1];
       traj_all_[2] = seResult.rpy[2];
     } else {
-      traj_all_[12 * i + 3] =
-          traj_all_[12 * (i - 1) + 3] + dt_mpc_ * lvel_des[0];
-      traj_all_[12 * i + 4] =
-          traj_all_[12 * (i - 1) + 4] + dt_mpc_ * lvel_des[1];
-      traj_all_[12 * i + 2] =
-          traj_all_[12 * (i - 1) + 2] + dt_mpc_ * avel_des_robot[2];
+      traj_all_[12 * i + 3] = traj_all_[12 * (i - 1) + 3] + dt_mpc_ * lvel_des[0];
+      traj_all_[12 * i + 4] = traj_all_[12 * (i - 1) + 4] + dt_mpc_ * lvel_des[1];
+      traj_all_[12 * i + 2] = traj_all_[12 * (i - 1) + 2] + dt_mpc_ * avel_des_robot[2];
     }
   }
   return SolveMPC(out, mpcTable, estctrl);
   //    printf("TOTAL SOLVE TIME: %.3f\n", solveTimer.getMs());
 }
 
-bool CMpc::SolveMPC(std::array<SdVector3f, 4> &out,
-                    std::vector<int> const &mpcTable,
+bool CMpc::SolveMPC(std::array<SdVector3f, 4> &out, std::vector<int> const &mpcTable,
                     estimate::EstimateCtrl::ConstSharedPtr const &estctrl) {
   auto const &seResult = estctrl->GetEstState();
 
-  std::array<fpt_t, 12> weights = {1.25, 1.25, 10,  2,   2,   50,
-                                   0,    0,    0.3, 1.5, 1.5, 0.2};
+  std::array<fpt_t, 12> weights = {1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2};
   // fptype Q[12] = {0.25, 0.25, 10, 2, 2, 40, 0, 0, 0.3, 0.2, 0.2, 0.2};
   fpt_t yaw = seResult.rpy[2];
   fpt_t alpha = 4e-5;  // make setting eventually
@@ -367,8 +334,7 @@ bool CMpc::SolveMPC(std::array<SdVector3f, 4> &out,
     x_comp_integral += opts::cmpc_x_drag * pz_err * dt_mpc_ / vxy[0];
   }
 
-  qpsolver_->SolveQP(x_comp_integral, pos, lvel, ori, avel, r, yaw, weights,
-                     traj_all_, alpha, gravity_, mpcTable);
+  qpsolver_->SolveQP(x_comp_integral, pos, lvel, ori, avel, r, yaw, weights, traj_all_, alpha, gravity_, mpcTable);
 
   auto const &solu = qpsolver_->GetSolution();
   for (int leg = 0; leg < 4; leg++) {

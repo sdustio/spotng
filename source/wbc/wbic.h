@@ -16,12 +16,10 @@ class Wbic {
 
   explicit Wbic(fpt_t weight);
 
-  bool UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv,
-                     model::GeneralFTp const &cori,
+  bool UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv, model::GeneralFTp const &cori,
                      model::GeneralFTp const &grav);
 
-  bool MakeTorque(SdVector12f &ret,
-                  std::vector<Task::ConstSharedPtr> const &task_list,
+  bool MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
                   std::vector<Contact::ConstSharedPtr> const &contact_list);
 
  private:
@@ -33,29 +31,24 @@ class Wbic {
    */
   using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
 
-  bool _SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0,
-                  MatrixX &CI, VectorX &ci0, MatrixX &Uf, VectorX &Uf_ieq_vec,
-                  MatrixX &Jc, VectorX &JcDotQdot, VectorX &Fr_des,
+  bool _SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, MatrixX &CI, VectorX &ci0, MatrixX &Uf,
+                  VectorX &Uf_ieq_vec, MatrixX &Jc, VectorX &JcDotQdot, VectorX &Fr_des,
                   std::vector<Contact::ConstSharedPtr> const &contact_list);
 
-  bool _ContactBuilding(
-      MatrixX &Uf, VectorX &Uf_ieq_vec,
-      MatrixX &Jc,  //  , num_qdot_
-      VectorX &JcDotQdot, VectorX &Fr_des,
-      std::vector<Contact::ConstSharedPtr> const &contact_list);
-  bool _SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc,
-                              VectorX const &Fr_des, Vector18 const &qddot);
-  bool _SetInEqualityConstraint(MatrixX &CI, VectorX &ci0, MatrixX const &Uf,
-                                VectorX const &Uf_ieq_vec,
+  bool _ContactBuilding(MatrixX &Uf, VectorX &Uf_ieq_vec,
+                        MatrixX &Jc,  //  , num_qdot_
+                        VectorX &JcDotQdot, VectorX &Fr_des, std::vector<Contact::ConstSharedPtr> const &contact_list);
+  bool _SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc, VectorX const &Fr_des,
+                              Vector18 const &qddot);
+  bool _SetInEqualityConstraint(MatrixX &CI, VectorX &ci0, MatrixX const &Uf, VectorX const &Uf_ieq_vec,
                                 VectorX const &Fr_des);
 
   bool _SetCost(MatrixX &G);
 
-  bool _GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &z,
-                    VectorX const &Fr_des, MatrixX const &Jc);
+  bool _GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &z, VectorX const &Fr_des,
+                    MatrixX const &Jc);
 
-  bool _WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv,
-                        fpt_t threshold = 0.0001);
+  bool _WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv, fpt_t threshold = 0.0001);
 
   std::array<fpt_t, 6 *consts::model::kDimConfig> Sv_ = {};  // Virtual joint
   model::MassMatTp A_;

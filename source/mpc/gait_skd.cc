@@ -1,15 +1,9 @@
 #include "mpc/gait_skd.h"
 
 namespace sdrobot::mpc {
-OffsetDurationGait::OffsetDurationGait(int const nSegment,
-                                       SdVector4i const &offsets,
-                                       SdVector4i const &durations,
+OffsetDurationGait::OffsetDurationGait(int const nSegment, SdVector4i const &offsets, SdVector4i const &durations,
                                        std::string const &name)
-    : offsets_(offsets),
-      durations_(durations),
-      n_iterations_(nSegment),
-      name_(name),
-      mpc_table_(nSegment * 4) {
+    : offsets_(offsets), durations_(durations), n_iterations_(nSegment), name_(name), mpc_table_(nSegment * 4) {
   for (size_t i = 0; i < offsets_.size(); i++) {
     offsetsd_[i] = fpt_t(offsets_[i]) / fpt_t(nSegment);
   }
@@ -56,15 +50,11 @@ bool OffsetDurationGait::CalcSwingState(SdVector4f &ret) const {
   return true;
 }
 
-std::vector<int> const &OffsetDurationGait::GetMpcTable() const {
-  return mpc_table_;
-}
+std::vector<int> const &OffsetDurationGait::GetMpcTable() const { return mpc_table_; }
 
-bool OffsetDurationGait::SetIterations(int iterationsPerMPC,
-                                       int currentIteration) {
+bool OffsetDurationGait::SetIterations(int iterationsPerMPC, int currentIteration) {
   iteration_ = (currentIteration / iterationsPerMPC) % n_iterations_;
-  phase_ = (fpt_t)(currentIteration % (iterationsPerMPC * n_iterations_)) /
-           (fpt_t)(iterationsPerMPC * n_iterations_);
+  phase_ = (fpt_t)(currentIteration % (iterationsPerMPC * n_iterations_)) / (fpt_t)(iterationsPerMPC * n_iterations_);
 
   // update mpc_table
   for (int i = 0; i < n_iterations_; i++) {
@@ -82,15 +72,9 @@ bool OffsetDurationGait::SetIterations(int iterationsPerMPC,
   return true;
 }
 
-fpt_t OffsetDurationGait::GetCurrentStanceTime(fpt_t dtMPC,
-                                               [[maybe_unused]] int leg) const {
-  return dtMPC * stance_;
-}
+fpt_t OffsetDurationGait::GetCurrentStanceTime(fpt_t dtMPC, [[maybe_unused]] int leg) const { return dtMPC * stance_; }
 
-fpt_t OffsetDurationGait::GetCurrentSwingTime(fpt_t dtMPC,
-                                              [[maybe_unused]] int leg) const {
-  return dtMPC * swing_;
-}
+fpt_t OffsetDurationGait::GetCurrentSwingTime(fpt_t dtMPC, [[maybe_unused]] int leg) const { return dtMPC * swing_; }
 
 int OffsetDurationGait::GetCurrentGaitPhase() const { return iteration_; }
 }  // namespace sdrobot::mpc

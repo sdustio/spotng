@@ -4,8 +4,7 @@
 
 namespace sdrobot::wbc {
 
-Contact::Contact(model::FloatBaseModel::ConstSharedPtr const &model,
-                 int contact_pt)
+Contact::Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_pt)
     : robot_sys_(model), _contact_pt(contact_pt) {
   fpt_t mu = 0.4;
 

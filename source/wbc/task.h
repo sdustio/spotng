@@ -12,16 +12,14 @@ class Task {
   using SharedPtr = std::shared_ptr<Task>;
   using ConstSharedPtr = std::shared_ptr<Task const>;
 
-  Task(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp,
-       SdVector3f const &kd)
+  Task(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd)
       : robot_sys_(model), Kp_(kp), Kd_(kd) {
     Jt_.fill(0.);
     JtDotQdot_.fill(0.);
     Kp_kin_.fill(1.);
   }
 
-  bool UpdateTask(SdVector3f const &pos_des, SdVector3f const &vel_des,
-                  SdVector3f const &acc_des) {
+  bool UpdateTask(SdVector3f const &pos_des, SdVector3f const &vel_des, SdVector3f const &acc_des) {
     _UpdateTaskJacobian();
     _UpdateTaskJDotQdot();
     _UpdateCommand(pos_des, vel_des, acc_des);
@@ -31,10 +29,7 @@ class Task {
   }
 
   SdVector3f const &GetCommand() const { return op_cmd_; }
-  std::array<fpt_t, 3 * consts::model::kDimConfig> const &GetTaskJacobian()
-      const {
-    return Jt_;
-  }
+  std::array<fpt_t, 3 * consts::model::kDimConfig> const &GetTaskJacobian() const { return Jt_; }
   SdVector3f const &GetTaskJacobianDotQdot() const { return JtDotQdot_; }
 
   SdVector3f const &GetPosError() const { return pos_err_; }
@@ -43,9 +38,7 @@ class Task {
 
  protected:
   // Update op_cmd_
-  virtual bool _UpdateCommand(SdVector3f const &pos_des,
-                              SdVector3f const &vel_des,
-                              SdVector3f const &acc_des) = 0;
+  virtual bool _UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des, SdVector3f const &acc_des) = 0;
   // Update Jt_
   virtual bool _UpdateTaskJacobian() = 0;
   // Update JtDotQdot_

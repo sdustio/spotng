@@ -19,8 +19,7 @@ std::array<fpt_t, 4> const side_signs{-1.0, 1.0, -1.0, 1.0};
 fpt_t GetSideSign(int leg) { return side_signs.at(leg); }
 }  // namespace
 
-LegCtrlImpl::LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf)
-    : act_itf_(act_itf) {}
+LegCtrlImpl::LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf) : act_itf_(act_itf) {}
 
 Datas const &LegCtrlImpl::GetDatas() const { return datas_; }
 
@@ -96,8 +95,7 @@ bool LegCtrlImpl::UpdateDatasFromActuatorInterface() {
     ComputeLegJacobianAndPosition(leg);
 
     // v 足端速度
-    ToEigenTp(datas_[leg].v) =
-        ToConstEigenTp(datas_[leg].J) * ToConstEigenTp(datas_[leg].qd);
+    ToEigenTp(datas_[leg].v) = ToConstEigenTp(datas_[leg].J) * ToConstEigenTp(datas_[leg].qd);
   }
   return true;
 }
@@ -116,12 +114,10 @@ bool LegCtrlImpl::SendCmdsToActuatorInterface() {
 
     // cartesian PD 直角坐标下pd
     foot_force +=
-        ToConstEigenTp(cmds_[leg].kp_cartesian) *
-        (ToConstEigenTp(cmds_[leg].p_des) - ToConstEigenTp(datas_[leg].p));
+        ToConstEigenTp(cmds_[leg].kp_cartesian) * (ToConstEigenTp(cmds_[leg].p_des) - ToConstEigenTp(datas_[leg].p));
 
     foot_force +=
-        ToConstEigenTp(cmds_[leg].kd_cartesian) *
-        (ToConstEigenTp(cmds_[leg].v_des) - ToConstEigenTp(datas_[leg].v));
+        ToConstEigenTp(cmds_[leg].kd_cartesian) * (ToConstEigenTp(cmds_[leg].v_des) - ToConstEigenTp(datas_[leg].v));
 
     // Torque 足力转换成力矩
     leg_torque += ToConstEigenTp(datas_[leg].J).transpose() * foot_force;
@@ -155,8 +151,7 @@ bool LegCtrlImpl::SendCmdsToActuatorInterface() {
     cmd.qd_des_knee[leg] = qd_des[2];
 
     // estimate torque
-    ToEigenTp(datas_[leg].tau_estimate) =
-        leg_torque + kp_joint * (q_des - q) + kd_joint * (qd_des - qd);
+    ToEigenTp(datas_[leg].tau_estimate) = leg_torque + kp_joint * (q_des - q) + kd_joint * (qd_des - qd);
 
     cmd.flags[leg] = 1;
   }

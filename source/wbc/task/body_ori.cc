@@ -5,17 +5,14 @@
 namespace sdrobot::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
-TaskBodyOri::TaskBodyOri(model::FloatBaseModel::ConstSharedPtr const &model,
-                         SdVector3f const &kp, SdVector3f const &kd)
+TaskBodyOri::TaskBodyOri(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd)
     : Task(model, kp, kd) {
   Eigen::Map<Jt_t> Jt(Jt_.data());
   Jt.block<3, 3>(0, 0).setIdentity();
   // kp_ori, kd_ori
 }
 
-bool TaskBodyOri::_UpdateCommand(SdVector3f const &pos_des,
-                                 SdVector3f const &vel_des,
-                                 SdVector3f const &acc_des) {
+bool TaskBodyOri::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des, SdVector3f const &acc_des) {
   Vector4 ori_cmd;
   dynamics::RPYToQuat(ori_cmd, ToConstEigenTp(pos_des));
   auto const &robot_ori = robot_sys_->GetState().ori;
@@ -38,8 +35,7 @@ bool TaskBodyOri::_UpdateCommand(SdVector3f const &pos_des,
   // Operational Space: Global
   dynamics::RotMat rot;
   dynamics::QuatToRotMat(rot, ToConstEigenTp(robot_ori));
-  Vector3 vel_err = rot.transpose() * (ToConstEigenTp(vel_des_) -
-                                       ToConstEigenTp(robot_vel).head(3));
+  Vector3 vel_err = rot.transpose() * (ToConstEigenTp(vel_des_) - ToConstEigenTp(robot_vel).head(3));
 
   for (int m = 0; m < 3; m++) {
     if (fabs(vel_err[m]) > 1000) {

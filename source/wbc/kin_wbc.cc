@@ -4,14 +4,11 @@
 
 namespace sdrobot::wbc {
 using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
-using Matrix18 =
-    Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
-bool KinWbc::FindConfiguration(
-    SdVector12f &jpos_cmd, SdVector12f &jvel_cmd,
-    SdVector12f const &curr_config,
-    std::vector<Task::ConstSharedPtr> const &task_list,
-    std::vector<Contact::ConstSharedPtr> const &contact_list) {
+bool KinWbc::FindConfiguration(SdVector12f &jpos_cmd, SdVector12f &jvel_cmd, SdVector12f const &curr_config,
+                               std::vector<Task::ConstSharedPtr> const &task_list,
+                               std::vector<Contact::ConstSharedPtr> const &contact_list) {
   // Contact Jacobian Setup
   MatrixX Nc(consts::model::kDimConfig, consts::model::kDimConfig);
   Nc.setIdentity();
@@ -37,14 +34,12 @@ bool KinWbc::FindConfiguration(
   MatrixX Jt, N_nx;
   for (size_t i = 0; i < task_list.size(); ++i) {
     auto const &task = task_list[i];
-    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jt(
-        task->GetTaskJacobian().data());
+    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jt(task->GetTaskJacobian().data());
     Jt = _Jt * Nc;
     MatrixX Jt_pinv(Jt.cols(), Jt.rows());
     _PseudoInverse(Jt_pinv, Jt);
 
-    delta_q = delta_q +
-              Jt_pinv * (ToConstEigenTp(task->GetPosError()) - _Jt * delta_q);
+    delta_q = delta_q + Jt_pinv * (ToConstEigenTp(task->GetPosError()) - _Jt * delta_q);
     qdot = qdot + Jt_pinv * (ToConstEigenTp(task->GetDesVel()) - _Jt * qdot);
 
     _BuildProjectionMatrix(N_nx, Jt);

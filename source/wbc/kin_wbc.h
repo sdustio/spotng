@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "eigen/types.h"
 #include "wbc/contact.h"
@@ -14,11 +14,9 @@ class KinWbc {
   using Ptr = std::unique_ptr<KinWbc>;
   using SharedPtr = std::shared_ptr<KinWbc>;
 
-  bool FindConfiguration(
-      SdVector12f &jpos_cmd, SdVector12f &jvel_cmd,
-      SdVector12f const &curr_config,
-      std::vector<Task::ConstSharedPtr> const &task_list,
-      std::vector<Contact::ConstSharedPtr> const &contact_list);
+  bool FindConfiguration(SdVector12f &jpos_cmd, SdVector12f &jvel_cmd, SdVector12f const &curr_config,
+                         std::vector<Task::ConstSharedPtr> const &task_list,
+                         std::vector<Contact::ConstSharedPtr> const &contact_list);
 
  private:
   bool _PseudoInverse(MatrixX &ret, MatrixX const &J, fpt_t threshold = 0.001);

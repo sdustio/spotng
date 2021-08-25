@@ -12,8 +12,7 @@ namespace sdrobot::dynamics {
  * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
-bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis,
-                   fpt_t const theta);
+bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t const theta);
 
 /*!
  * Go from rpy to rotation matrix.从欧拉角转矩阵
@@ -52,14 +51,12 @@ bool RotMatToRPY(Eigen::Ref<Vector3> ret, Eigen::Ref<RotMat const> const &R);
  * @param omega
  * @return
  */
-bool QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q,
-                    Eigen::Ref<Vector3 const> const &omega);
+bool QuatDerivative(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q, Eigen::Ref<Vector3 const> const &omega);
 
 /*!
  * Take the product of two quaternions 取两个四元数的乘积
  */
-bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1,
-                 Eigen::Ref<Quat const> const &q2);
+bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1, Eigen::Ref<Quat const> const &q2);
 
 /*!
  * Compute new quaternion given://根据角速度计算新的四元数
@@ -69,8 +66,8 @@ bool QuatProduct(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q1,
  * @param dt The timestep
  * @return
  */
-bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
-                   Eigen::Ref<Vector3 const> const &omega, fpt_t const dt);
+bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat, Eigen::Ref<Vector3 const> const &omega,
+                   fpt_t const dt);
 
 /*!
  * Compute new quaternion given:
@@ -80,10 +77,8 @@ bool QuatIntegrate(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
  * @param dt The timestep
  * @return
  */
-bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret,
-                           Eigen::Ref<Quat const> const &quat,
-                           Eigen::Ref<Vector3 const> const &omega,
-                           fpt_t const dt);
+bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &quat,
+                           Eigen::Ref<Vector3 const> const &omega, fpt_t const dt);
 
 /*!
  * Convert a quaternion to so3.

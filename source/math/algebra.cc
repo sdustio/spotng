@@ -18,14 +18,11 @@ bool VecToSkewMat(Eigen::Ref<Matrix3> ret, Eigen::Ref<Vector3 const> const &v) {
  * 反对称阵转向量
  */
 bool MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m) {
-  ret =
-      0.5 * Vector3(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0), (m(1, 0) - m(0, 1)));
+  ret = 0.5 * Vector3(m(2, 1) - m(1, 2), m(0, 2) - m(2, 0), (m(1, 0) - m(0, 1)));
   return true;
 }
 
-bool PseudoInverse(Eigen::Ref<MatrixX> ret,
-                   Eigen::Ref<MatrixX const> const &inmat,
-                   fpt_t sigma_threshold) {
+bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold) {
   if (!(ret.rows() == inmat.cols() && ret.cols() == inmat.rows())) {
     return false;
   }
@@ -39,8 +36,7 @@ bool PseudoInverse(Eigen::Ref<MatrixX> ret,
     return true;
   }
 
-  Eigen::JacobiSVD<MatrixX> svd(inmat,
-                                Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<MatrixX> svd(inmat, Eigen::ComputeThinU | Eigen::ComputeThinV);
   // not sure if we need to svd.sort()... probably not
   int const nrows(svd.singularValues().rows());
   MatrixX invS;

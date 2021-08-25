@@ -5,8 +5,7 @@
 #include "math/algebra.h"
 
 namespace sdrobot::wbc {
-using Matrix18 =
-    Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
 using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1>;
 
@@ -18,9 +17,7 @@ Wbic::Wbic(double weight) {
   Sv.block<6, 6>(0, 0).setIdentity();
 }
 
-bool Wbic::UpdateSetting(model::MassMatTp const &A,
-                         model::MassMatTp const &Ainv,
-                         model::GeneralFTp const &cori,
+bool Wbic::UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv, model::GeneralFTp const &cori,
                          model::GeneralFTp const &grav) {
   A_ = A;
   Ainv_ = Ainv;
@@ -30,9 +27,8 @@ bool Wbic::UpdateSetting(model::MassMatTp const &A,
   return true;
 }
 
-bool Wbic::MakeTorque(
-    SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
-    std::vector<Contact::ConstSharedPtr> const &contact_list) {
+bool Wbic::MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
+                      std::vector<Contact::ConstSharedPtr> const &contact_list) {
   if (!b_updatesetting_) {
     printf("[Wanning] WBIC setting is not done\n");
   }
@@ -67,8 +63,7 @@ bool Wbic::MakeTorque(
    * resize G, g0, CE, ce0, CI, ci0
    * resize Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des
    */
-  _SetQPSize(G, g0, CE, ce0, CI, ci0, Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des,
-             contact_list);
+  _SetQPSize(G, g0, CE, ce0, CI, ci0, Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des, contact_list);
 
   _SetCost(G);
 
@@ -93,8 +88,7 @@ bool Wbic::MakeTorque(
 
   // Task
   for (auto const &task : task_list) {
-    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jt(
-        task->GetTaskJacobian().data());
+    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jt(task->GetTaskJacobian().data());
     auto JtDotQdot = ToConstEigenTp(task->GetTaskJacobianDotQdot());
     auto xddot = ToConstEigenTp(task->GetCommand());
 
@@ -139,8 +133,7 @@ bool Wbic::MakeTorque(
   return true;
 }
 
-bool Wbic::_WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv,
-                            fpt_t threshold) {
+bool Wbic::_WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv, fpt_t threshold) {
   MatrixX lambda(J * Winv * J.transpose());
   MatrixX lambda_inv(lambda.cols(), lambda.rows());
   math::PseudoInverse(lambda_inv, lambda, threshold);
@@ -148,11 +141,10 @@ bool Wbic::_WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv,
   return true;
 }
 
-bool Wbic::_ContactBuilding(
-    MatrixX &Uf, VectorX &Uf_ieq_vec,
-    MatrixX &Jc,  //  , num_qdot_
-    VectorX &JcDotQdot, VectorX &Fr_des,
-    std::vector<Contact::ConstSharedPtr> const &contact_list) {
+bool Wbic::_ContactBuilding(MatrixX &Uf, VectorX &Uf_ieq_vec,
+                            MatrixX &Jc,  //  , num_qdot_
+                            VectorX &JcDotQdot, VectorX &Fr_des,
+                            std::vector<Contact::ConstSharedPtr> const &contact_list) {
   int dim_accumul_rf = 0, dim_accumul_uf = 0;
 
   for (size_t i = 0; i < contact_list.size(); i++) {
@@ -163,26 +155,21 @@ bool Wbic::_ContactBuilding(
     auto dim_new_uf = contact_list[i]->GetDimRFConstraint();
 
     Jc.block(dim_accumul_rf, 0, dim_new_rf, consts::model::kDimConfig) = _Jc;
-    JcDotQdot.segment(dim_accumul_rf, dim_new_rf) =
-        ToConstEigenTp(contact_list[i]->GetJcDotQdot());
+    JcDotQdot.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetJcDotQdot());
 
-    Eigen::Map<Eigen::Matrix<fpt_t, 6, 3> const> _Uf(
-        contact_list[i]->GetRFConstraintMtx().data());
+    Eigen::Map<Eigen::Matrix<fpt_t, 6, 3> const> _Uf(contact_list[i]->GetRFConstraintMtx().data());
 
     Uf.block(dim_accumul_uf, dim_accumul_rf, dim_new_uf, dim_new_rf) = _Uf;
-    Uf_ieq_vec.segment(dim_accumul_uf, dim_new_uf) =
-        ToConstEigenTp(contact_list[i]->GetRFConstraintVec());
+    Uf_ieq_vec.segment(dim_accumul_uf, dim_new_uf) = ToConstEigenTp(contact_list[i]->GetRFConstraintVec());
 
-    Fr_des.segment(dim_accumul_rf, dim_new_rf) =
-        ToConstEigenTp(contact_list[i]->GetRFdes());
+    Fr_des.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetRFdes());
     dim_accumul_rf += dim_new_rf;
     dim_accumul_uf += dim_new_uf;
   }
   return true;
 }
 
-bool Wbic::_SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc,
-                                  VectorX const &Fr_des,
+bool Wbic::_SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc, VectorX const &Fr_des,
                                   Vector18 const &qddot) {
   Eigen::Map<Sv_t> Sv(Sv_.data());
   Eigen::Map<Matrix18> A(A_.data());
@@ -191,8 +178,7 @@ bool Wbic::_SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc,
   if (dim_rf_ > 0) {
     CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
         A.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating);
-    CE.block(0, consts::model::kDimFloating, dim_eq_cstr_, dim_rf_) =
-        -Sv * Jc.transpose();
+    CE.block(0, consts::model::kDimFloating, dim_eq_cstr_, dim_rf_) = -Sv * Jc.transpose();
     ce0 = -Sv * (A * qddot + cori + grav - Jc.transpose() * Fr_des);
   } else {
     CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
@@ -203,9 +189,7 @@ bool Wbic::_SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc,
   return true;
 }
 
-bool Wbic::_SetInEqualityConstraint(MatrixX &CI, VectorX &ci0,
-                                    MatrixX const &Uf,
-                                    VectorX const &Uf_ieq_vec,
+bool Wbic::_SetInEqualityConstraint(MatrixX &CI, VectorX &ci0, MatrixX const &Uf, VectorX const &Uf_ieq_vec,
                                     VectorX const &Fr_des) {
   CI.block(0, consts::model::kDimFloating, dim_Uf_, dim_rf_) = Uf;
   ci0 = Uf_ieq_vec - Uf * Fr_des;
@@ -225,8 +209,7 @@ bool Wbic::_SetCost(MatrixX &G) {
   return true;
 }
 
-bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot,
-                        VectorX const &z, VectorX const &Fr_des,
+bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &z, VectorX const &Fr_des,
                         MatrixX const &Jc) {
   Eigen::Map<Matrix18> A(A_.data());
   Eigen::Map<Vector18> cori(cori_.data());
@@ -236,8 +219,7 @@ bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot,
   if (dim_rf_ > 0) {
     VectorX _Fr(dim_rf_);
     // get Reaction forces
-    for (int i(0); i < dim_rf_; ++i)
-      _Fr[i] = z[i + consts::model::kDimFloating] + Fr_des[i];
+    for (int i(0); i < dim_rf_; ++i) _Fr[i] = z[i + consts::model::kDimFloating] + Fr_des[i];
     tot_tau = A * qddot + cori + grav - Jc.transpose() * _Fr;
   } else {
     tot_tau = A * qddot + cori + grav;
@@ -248,9 +230,7 @@ bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot,
 
   for (int i = 0; i < 12; i++) {
     if (fabs(ret[i]) > 24) {
-      printf(
-          "!!!!!!!!danger!!!!! WBC torque num %d\tout the limitation: %f.2f ",
-          i, ret[i]);
+      printf("!!!!!!!!danger!!!!! WBC torque num %d\tout the limitation: %f.2f ", i, ret[i]);
       ret[i] = ret[i] / fabs(ret[i]) * consts::interface::kMaxTorque;
       printf("  edit to %f.2f\n", ret[i]);
     }
@@ -258,11 +238,9 @@ bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot,
   return true;
 }
 
-bool Wbic::_SetQPSize(
-    MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, MatrixX &CI,
-    VectorX &ci0, MatrixX &Uf, VectorX &Uf_ieq_vec, MatrixX &Jc,
-    VectorX &JcDotQdot, VectorX &Fr_des,
-    std::vector<Contact::ConstSharedPtr> const &contact_list) {
+bool Wbic::_SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, MatrixX &CI, VectorX &ci0, MatrixX &Uf,
+                      VectorX &Uf_ieq_vec, MatrixX &Jc, VectorX &JcDotQdot, VectorX &Fr_des,
+                      std::vector<Contact::ConstSharedPtr> const &contact_list) {
   // Dimension
   dim_rf_ = 0;
   dim_Uf_ = 0;  // Dimension of inequality constraint

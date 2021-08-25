@@ -5,16 +5,13 @@
 namespace sdrobot::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
-TaskLinkPos::TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model,
-                         SdVector3f const &kp, SdVector3f const &kd, int linkid,
-                         bool virtual_depend)
+TaskLinkPos::TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd,
+                         int linkid, bool virtual_depend)
     : Task(model, kp, kd), link_idx_(linkid), virtual_depend_(virtual_depend) {
   // kp_foot, kd_foot
 }
 
-bool TaskLinkPos::_UpdateCommand(SdVector3f const &pos_des,
-                                 SdVector3f const &vel_des,
-                                 SdVector3f const &acc_des) {
+bool TaskLinkPos::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &vel_des, SdVector3f const &acc_des) {
   auto const &link_pos = robot_sys_->GetGroundContactPos()[link_idx_];
 
   // X, Y, Z
@@ -26,10 +23,8 @@ bool TaskLinkPos::_UpdateCommand(SdVector3f const &pos_des,
 
   // Op acceleration command
   for (int i(0); i < 3; ++i) {
-    op_cmd_[i] = Kp_[i] * pos_err_[i] +
-                 Kd_[i] * (vel_des_[i] -
-                           robot_sys_->GetGroundContactVel()[link_idx_][i]) +
-                 acc_des_[i];
+    op_cmd_[i] =
+        Kp_[i] * pos_err_[i] + Kd_[i] * (vel_des_[i] - robot_sys_->GetGroundContactVel()[link_idx_][i]) + acc_des_[i];
   }
 
   return true;

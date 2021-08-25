@@ -13,12 +13,9 @@ bool near_one(double a) { return near_zero(a - 1); }
 }  // namespace
 
 using A_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13>;
-using B_qp_t =
-    Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 12 * opts::horizon_len>;
-using S_t =
-    Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13 * opts::horizon_len>;
-using eye_12h_t =
-    Eigen::Matrix<fpt_t, 12 * opts::horizon_len, 12 * opts::horizon_len>;
+using B_qp_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 12 * opts::horizon_len>;
+using S_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 13 * opts::horizon_len>;
+using eye_12h_t = Eigen::Matrix<fpt_t, 12 * opts::horizon_len, 12 * opts::horizon_len>;
 using X_d_t = Eigen::Matrix<fpt_t, 13 * opts::horizon_len, 1>;
 
 using qH_t = Eigen::Matrix<fpt_t, num_variables, num_variables>;
@@ -30,12 +27,9 @@ using qg_t = Eigen::Matrix<fpt_t, num_variables, 1>;
 
 using qsoln_t = Eigen::Matrix<fpt_t, num_variables, 1>;
 
-bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
-                       SdVector3f const &lvel, SdVector4f const &ori,
-                       SdVector3f const &avel,
-                       std::array<fpt_t, 12> const &rel_foot_p, fpt_t const yaw,
-                       std::array<fpt_t, 12> const &weights,
-                       std::array<fpt_t, 12 * 36> const &state_trajectory,
+bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f const &lvel, SdVector4f const &ori,
+                       SdVector3f const &avel, std::array<fpt_t, 12> const &rel_foot_p, fpt_t const yaw,
+                       std::array<fpt_t, 12> const &weights, std::array<fpt_t, 12 * 36> const &state_trajectory,
                        fpt_t alpha, fpt_t g, std::vector<int> const &gait) {
   Eigen::Map<A_qp_t> A_qp(A_qp_.data());
   Eigen::Map<B_qp_t> B_qp(B_qp_.data());
@@ -62,8 +56,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
   dynamics::QuatToRPY(rpy, ToConstEigenTp(ori));
 
   Eigen::Matrix<fpt_t, 13, 1> x_0;
-  x_0 << rpy(2), rpy(1), rpy(0), ToConstEigenTp(pos), ToConstEigenTp(avel),
-      ToConstEigenTp(lvel), -g;
+  x_0 << rpy(2), rpy(1), rpy(0), ToConstEigenTp(pos), ToConstEigenTp(avel), ToConstEigenTp(lvel), -g;
 
   Matrix3 I_world = R_yaw * I_body * R_yaw.transpose();
 
@@ -108,8 +101,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
     for (int c = 0; c < opts::horizon_len; c++) {
       if (r >= c) {
         int a_num = r - c;
-        B_qp.block(13 * r, 12 * c, 13, 12) =
-            powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
+        B_qp.block(13 * r, 12 * c, 13, 12) = powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
       }
     }
   }
@@ -122,8 +114,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
 
   // trajectory
   for (int i = 0; i < opts::horizon_len; i++) {
-    for (int j = 0; j < 12; j++)
-      X_d(13 * i + j, 0) = state_trajectory[12 * i + j];
+    for (int j = 0; j < 12; j++) X_d(13 * i + j, 0) = state_trajectory[12 * i + j];
   }
 
   int k = 0;
@@ -140,8 +131,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
 
   double rep_mu = 1. / (mu_ + 1.e-12);
   Eigen::Matrix<double, 5, 3> f_block;
-  f_block << rep_mu, 0, 1., -rep_mu, 0, 1., 0, rep_mu, 1., 0, -rep_mu, 1., 0, 0,
-      1.;
+  f_block << rep_mu, 0, 1., -rep_mu, 0, 1., 0, rep_mu, 1., 0, -rep_mu, 1., 0, 0, 1.;
 
   for (int i = 0; i < opts::horizon_len * 4; i++) {
     qA.block<5, 3>(i * 5, i * 3) = f_block;
@@ -226,8 +216,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos,
   problem_red.setOptions(op);
   // int_t nWSR = 50000;
 
-  problem_red.init(H_red_.data(), g_red_.data(), A_red_.data(), nullptr,
-                   nullptr, lb_red_.data(), ub_red_.data(), nWSR);
+  problem_red.init(H_red_.data(), g_red_.data(), A_red_.data(), nullptr, nullptr, lb_red_.data(), ub_red_.data(), nWSR);
 
   int rval2 = problem_red.getPrimalSolution(q_red_.data());
   if (rval2 != qpOASES::SUCCESSFUL_RETURN) printf("failed to solve!\n");

@@ -12,9 +12,7 @@ class StateInit : public StateCtrl {
   bool OnEnter() override;
   bool OnExit() override;
   bool RunOnce() override;
-  State CheckTransition() override {
-    return state_trans_[drictrl_->GetState()];
-  }
+  State CheckTransition() override { return state_trans_[drictrl_->GetState()]; }
   TransitionData Transition(const State next) override;
 
   State GetState() const override { return State::Init; }

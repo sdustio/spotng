@@ -11,8 +11,7 @@ FootSwingTrajectory::FootSwingTrajectory() {
   a_.fill(0.);
 }
 
-bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase,
-                                                       fpt_t const swingTime) {
+bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase, fpt_t const swingTime) {
   auto p = ToEigenTp(p_);
   auto v = ToEigenTp(v_);
   auto a = ToEigenTp(a_);
@@ -28,22 +27,17 @@ bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase,
   fpt_t zp, zv, za;
 
   if (phase < 0.5) {
-    math::interpolate_cubic_bezier(zp, p0_[2], p0_[2], p0_[2] + height_,
-                                   p0_[2] + height_, phase * 2);
-    math::interpolate_cubic_bezier_derivative(
-        zv, p0_[2], p0_[2], p0_[2] + height_, p0_[2] + height_, phase * 2);
+    math::interpolate_cubic_bezier(zp, p0_[2], p0_[2], p0_[2] + height_, p0_[2] + height_, phase * 2);
+    math::interpolate_cubic_bezier_derivative(zv, p0_[2], p0_[2], p0_[2] + height_, p0_[2] + height_, phase * 2);
     zv = zv * 2 / swingTime;
-    math::interpolate_cubic_bezier_second_derivative(
-        za, p0_[2], p0_[2], p0_[2] + height_, p0_[2] + height_, phase * 2);
+    math::interpolate_cubic_bezier_second_derivative(za, p0_[2], p0_[2], p0_[2] + height_, p0_[2] + height_, phase * 2);
     za = za * 4 / (swingTime * swingTime);
   } else {
-    math::interpolate_cubic_bezier(zp, p0_[2] + height_, p0_[2] + height_,
-                                   pf_[2], pf_[2], phase * 2 - 1);
-    math::interpolate_cubic_bezier_derivative(
-        zv, p0_[2] + height_, p0_[2] + height_, pf_[2], pf_[2], phase * 2 - 1);
+    math::interpolate_cubic_bezier(zp, p0_[2] + height_, p0_[2] + height_, pf_[2], pf_[2], phase * 2 - 1);
+    math::interpolate_cubic_bezier_derivative(zv, p0_[2] + height_, p0_[2] + height_, pf_[2], pf_[2], phase * 2 - 1);
     zv = zv * 2 / swingTime;
-    math::interpolate_cubic_bezier_second_derivative(
-        za, p0_[2] + height_, p0_[2] + height_, pf_[2], pf_[2], phase * 2 - 1);
+    math::interpolate_cubic_bezier_second_derivative(za, p0_[2] + height_, p0_[2] + height_, pf_[2], pf_[2],
+                                                     phase * 2 - 1);
     za = za * 4 / (swingTime * swingTime);
   }
 

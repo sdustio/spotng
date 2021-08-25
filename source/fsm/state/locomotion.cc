@@ -12,11 +12,9 @@ constexpr inline double const max_roll = 80.;   // 40;
 constexpr inline double const max_pitch = 80.;  // 40;
 }  // namespace opts
 
-StateLocomotion::StateLocomotion(
-    Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-    model::Quadruped::SharedPtr const &mquad,
-    drive::DriveCtrl::SharedPtr const &drictrl,
-    estimate::EstimateCtrl::SharedPtr const &estctrl)
+StateLocomotion::StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                                 model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
+                                 estimate::EstimateCtrl::SharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::Locomotion},
@@ -26,9 +24,8 @@ StateLocomotion::StateLocomotion(
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
-      mpc_(std::make_unique<mpc::CMpc>(
-          opts.ctrl_dt_sec, opts.gravity,
-          30 / static_cast<int>(1000. * opts.ctrl_dt_sec))) {}
+      mpc_(std::make_unique<mpc::CMpc>(opts.ctrl_dt_sec, opts.gravity,
+                                       30 / static_cast<int>(1000. * opts.ctrl_dt_sec))) {}
 
 bool StateLocomotion::OnEnter() { return mpc_->Init(); }
 
@@ -52,8 +49,7 @@ State StateLocomotion::CheckTransition() {
     return state_trans_[drictrl_->GetState()];
   }
 
-  std::dynamic_pointer_cast<drive::DriveCtrlImpl>(
-      std::const_pointer_cast<drive::DriveCtrl>(drictrl_))
+  std::dynamic_pointer_cast<drive::DriveCtrlImpl>(std::const_pointer_cast<drive::DriveCtrl>(drictrl_))
       ->UpdateState(drive::State::RecoveryStand);
   return State::RecoveryStand;
 }

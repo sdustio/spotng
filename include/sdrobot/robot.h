@@ -14,10 +14,8 @@ class SDROBOT_EXPORT Robot {
   using SharedPtr = std::shared_ptr<Robot>;
   using ConstSharedPtr = std::shared_ptr<Robot const>;
 
-  static bool Build(Ptr &ret, Options const &opts,
-                    interface::ActuatorInterface::SharedPtr const &act_itf);
-  static bool Build(SharedPtr &ret, Options const &opts,
-                    interface::ActuatorInterface::SharedPtr const &act_itf);
+  static bool Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+  static bool Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
 
   virtual ~Robot() = default;
 

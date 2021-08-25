@@ -16,8 +16,7 @@ struct SDROBOT_EXPORT FloatBaseModelState {
 };
 
 using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
-using MassMatTp =
-    std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
+using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
 using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
 class SDROBOT_EXPORT FloatBaseModel {
@@ -40,8 +39,7 @@ class SDROBOT_EXPORT FloatBaseModel {
   virtual MassMatTp const &GetMassMatrix() const = 0;
   virtual GeneralFTp const &GetGeneralizedGravityForce() const = 0;
   virtual GeneralFTp const &GetGeneralizedCoriolisForce() const = 0;
-  virtual std::vector<ContactJacobTp> const &GetContactJacobians()
-      const = 0;  // vector of matrix 3 x X
+  virtual std::vector<ContactJacobTp> const &GetContactJacobians() const = 0;  // vector of matrix 3 x X
   virtual std::vector<SdVector3f> const &GetContactJacobiansdqd() const = 0;
   virtual std::vector<SdVector3f> const &GetGroundContactPos() const = 0;
   virtual std::vector<SdVector3f> const &GetGroundContactVel() const = 0;

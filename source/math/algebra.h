@@ -21,7 +21,5 @@ bool MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m);
  * @param inmat : input matrix
  * @param sigmaThreshold : threshold for singular values being zero
  */
-bool PseudoInverse(Eigen::Ref<MatrixX> ret,
-                   Eigen::Ref<MatrixX const> const &inmat,
-                   fpt_t sigma_threshold);
+bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold);
 }  // namespace sdrobot::math

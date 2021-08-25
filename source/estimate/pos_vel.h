@@ -24,7 +24,7 @@ class PosVel : public Estimator {
   leg::LegCtrl::ConstSharedPtr const legctrl_;
   model::Quadruped::ConstSharedPtr const quad_;
 
-  std::array<fpt_t, 18> xhat_;  // 状态估计值 [p v p1 p2 p3 p4] 世界坐标下
+  std::array<fpt_t, 18> xhat_;     // 状态估计值 [p v p1 p2 p3 p4] 世界坐标下
   std::array<fpt_t, 12> ps_;       // 储存状态p
   std::array<fpt_t, 12> vs_;       // 储存状态v
   std::array<fpt_t, 18 * 18> A_;   // 状态转移阵

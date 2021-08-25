@@ -73,8 +73,7 @@ constexpr inline fpt_t const kIMUProcessNoiseVelocity = 0.02;
 
 namespace interface {
 constexpr inline fpt_t const kMaxTorque = 24.0;
-constexpr inline fpt_t const kMaxAngle =
-    1.0472;  // 60 degrees (should be changed)
+constexpr inline fpt_t const kMaxAngle = 1.0472;  // 60 degrees (should be changed)
 constexpr inline fpt_t const kMaxLateralForce = 350.;
 constexpr inline fpt_t const kMaxVerticalForce = 350.;
 }  // namespace interface

@@ -5,27 +5,19 @@
 #include "wbc/task/link_pos.h"
 
 namespace sdrobot::wbc {
-using Matrix18 =
-    Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
-WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model,
-                 Options const &opts, double weight)
+WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options const &opts, double weight)
     : model_(model),
       Kp_joint_(opts.kp_joint),
       Kd_joint_(opts.kd_joint),
-      body_pos_task_(
-          std::make_shared<TaskBodyPos>(model, opts.kp_body, opts.kd_body)),
-      body_ori_task_(
-          std::make_shared<TaskBodyOri>(model, opts.kp_ori, opts.kd_ori)),
+      body_pos_task_(std::make_shared<TaskBodyPos>(model, opts.kp_body, opts.kd_body)),
+      body_ori_task_(std::make_shared<TaskBodyOri>(model, opts.kp_ori, opts.kd_ori)),
       foot_task_({
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot,
-                                        linkid::fr),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot,
-                                        linkid::fl),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot,
-                                        linkid::hr),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot,
-                                        linkid::hl),
+          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, linkid::fr),
+          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, linkid::fl),
+          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, linkid::hr),
+          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, linkid::hl),
       }),
       foot_contact_({
           std::make_shared<Contact>(model, linkid::fr),
@@ -52,8 +44,7 @@ bool WbcCtrl::RunOnce(InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
   return _UpdateLegCMD(legctrl, drivectrl);
 }
 
-bool WbcCtrl::_UpdateModel(estimate::State const &estdata,
-                           leg::Datas const &legdata) {
+bool WbcCtrl::_UpdateModel(estimate::State const &estdata, leg::Datas const &legdata) {
   model::FloatBaseModelState _state;
   _state.ori = estdata.ori;
   _state.pos = estdata.pos;
@@ -78,8 +69,7 @@ bool WbcCtrl::_UpdateModel(estimate::State const &estdata,
 
 bool WbcCtrl::_ComputeWBC() {
   // TEST
-  kin_wbc_->FindConfiguration(des_jpos_, des_jvel_, full_config_, task_list_,
-                              contact_list_);
+  kin_wbc_->FindConfiguration(des_jpos_, des_jvel_, full_config_, task_list_, contact_list_);
 
   auto grav = model_->GetGeneralizedGravityForce();
   auto coriolis = model_->GetGeneralizedCoriolisForce();
@@ -96,18 +86,14 @@ bool WbcCtrl::_ComputeWBC() {
   return true;
 }
 
-bool WbcCtrl::_UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl,
-                            drive::DriveCtrl::ConstSharedPtr const &drivectrl) {
+bool WbcCtrl::_UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::ConstSharedPtr const &drivectrl) {
   auto &cmds = legctrl->GetCmdsForUpdate();
 
   for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
     for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx) {
-      cmds[leg].tau_feed_forward[jidx] =
-          tau_ff_[consts::model::kNumLegJoint * leg + jidx];
-      cmds[leg].q_des[jidx] =
-          des_jpos_[consts::model::kNumLegJoint * leg + jidx];
-      cmds[leg].qd_des[jidx] =
-          des_jvel_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].tau_feed_forward[jidx] = tau_ff_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].q_des[jidx] = des_jpos_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].qd_des[jidx] = des_jvel_[consts::model::kNumLegJoint * leg + jidx];
 
       ToEigenTp(cmds[leg].kp_joint)(jidx, jidx) = Kp_joint_[jidx];
       ToEigenTp(cmds[leg].kd_joint)(jidx, jidx) = Kd_joint_[jidx];
@@ -137,10 +123,8 @@ bool WbcCtrl::_ContactTaskUpdate(InData const &wbcdata) {
   // Wash out the previous setup
   _CleanUp();
 
-  body_ori_task_->UpdateTask(wbcdata.body_rpy_des, wbcdata.body_avel_des,
-                             SdVector3f{});
-  body_pos_task_->UpdateTask(wbcdata.body_pos_des, wbcdata.body_lvel_des,
-                             wbcdata.body_acc_des);
+  body_ori_task_->UpdateTask(wbcdata.body_rpy_des, wbcdata.body_avel_des, SdVector3f{});
+  body_pos_task_->UpdateTask(wbcdata.body_pos_des, wbcdata.body_lvel_des, wbcdata.body_acc_des);
 
   task_list_.push_back(body_ori_task_);
   task_list_.push_back(body_pos_task_);
@@ -151,9 +135,7 @@ bool WbcCtrl::_ContactTaskUpdate(InData const &wbcdata) {
       foot_contact_[leg]->UpdateContact();
       contact_list_.push_back(foot_contact_[leg]);
     } else {  // No Contact (swing)
-      foot_task_[leg]->UpdateTask(wbcdata.foot_pos_des[leg],
-                                  wbcdata.foot_lvel_des[leg],
-                                  wbcdata.foot_acc_des[leg]);
+      foot_task_[leg]->UpdateTask(wbcdata.foot_pos_des[leg], wbcdata.foot_lvel_des[leg], wbcdata.foot_acc_des[leg]);
       // zero_vec3);
       task_list_.push_back(foot_task_[leg]);
     }

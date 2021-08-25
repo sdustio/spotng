@@ -5,8 +5,7 @@
 
 namespace sdrobot::model {
 using genf_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
-using mass_t =
-    Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
+using mass_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 using jc_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
 bool FloatBaseModelImpl::UpdateState(FloatBaseModelState const &state) {
@@ -32,14 +31,12 @@ bool FloatBaseModelImpl::ComputeGeneralizedMassMatrix() {
   for (int j = 6; j < consts::model::kDimConfig; j++) {
     // f = spatial force required for a unit qdd_j
     dynamics::SpatialVec f = ToConstEigenTp(IC_[j]) * ToConstEigenTp(S_[j]);
-    dynamics::SpatialVec frot =
-        ToConstEigenTp(Irot_[j]) * ToConstEigenTp(Srot_[j]);
+    dynamics::SpatialVec frot = ToConstEigenTp(Irot_[j]) * ToConstEigenTp(Srot_[j]);
 
     H(j, j) = ToConstEigenTp(S_[j]).dot(f) + ToConstEigenTp(Srot_[j]).dot(frot);
 
     // Propagate down the tree
-    f = ToConstEigenTp(Xup_[j]).transpose() * f +
-        ToConstEigenTp(Xuprot_[j]).transpose() * frot;
+    f = ToConstEigenTp(Xup_[j]).transpose() * f + ToConstEigenTp(Xuprot_[j]).transpose() * frot;
     int i = parents_[j];
     while (i > 5) {
       // in here f is expressed in frame {i}
@@ -71,16 +68,12 @@ bool FloatBaseModelImpl::ComputeGeneralizedGravityForce() {
   Eigen::Map<genf_t> G(G_.data());
   G.topRows<6>() = -ToConstEigenTp(IC_[5]) * ToConstEigenTp(ag_[5]);
   for (int i = 6; i < consts::model::kDimConfig; i++) {
-    ToEigenTp(ag_[i]) =
-        ToConstEigenTp(Xup_[i]) * ToConstEigenTp(ag_[parents_[i]]);
-    ToEigenTp(agrot_[i]) =
-        ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(ag_[parents_[i]]);
+    ToEigenTp(ag_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(ag_[parents_[i]]);
+    ToEigenTp(agrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(ag_[parents_[i]]);
 
     // body and rotor
-    G[i] = -ToConstEigenTp(S_[i]).dot(ToConstEigenTp(IC_[i]) *
-                                      ToConstEigenTp(ag_[i])) -
-           ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(Irot_[i]) *
-                                        ToConstEigenTp(agrot_[i]));
+    G[i] = -ToConstEigenTp(S_[i]).dot(ToConstEigenTp(IC_[i]) * ToConstEigenTp(ag_[i])) -
+           ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(Irot_[i]) * ToConstEigenTp(agrot_[i]));
   }
   return true;
 }
@@ -92,8 +85,7 @@ bool FloatBaseModelImpl::ComputeGeneralizedCoriolisForce() {
 
   // Floating base force
   Matrix6 Ifb = ToConstEigenTp(Ibody_[5]);
-  dynamics::ForceCrossProduct(tmpsv, ToConstEigenTp(v_[5]),
-                              Ifb * ToConstEigenTp(v_[5]));
+  dynamics::ForceCrossProduct(tmpsv, ToConstEigenTp(v_[5]), Ifb * ToConstEigenTp(v_[5]));
   ToEigenTp(fvp_[5]) = Ifb * ToConstEigenTp(avp_[5]) + tmpsv;
 
   for (int i = 6; i < consts::model::kDimConfig; i++) {
@@ -112,14 +104,12 @@ bool FloatBaseModelImpl::ComputeGeneralizedCoriolisForce() {
 
   for (int i = consts::model::kDimConfig - 1; i > 5; i--) {
     // Extract force along the joints
-    Cqd_[i] = ToConstEigenTp(S_[i]).dot(ToConstEigenTp(fvp_[i])) +
-              ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(fvprot_[i]));
+    Cqd_[i] =
+        ToConstEigenTp(S_[i]).dot(ToConstEigenTp(fvp_[i])) + ToConstEigenTp(Srot_[i]).dot(ToConstEigenTp(fvprot_[i]));
 
     // Propage force down the tree
-    ToEigenTp(fvp_[parents_[i]]) +=
-        ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(fvp_[i]);
-    ToEigenTp(fvp_[parents_[i]]) +=
-        ToConstEigenTp(Xuprot_[i]).transpose() * ToConstEigenTp(fvprot_[i]);
+    ToEigenTp(fvp_[parents_[i]]) += ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(fvp_[i]);
+    ToEigenTp(fvp_[parents_[i]]) += ToConstEigenTp(Xuprot_[i]).transpose() * ToConstEigenTp(fvprot_[i]);
   }
 
   // Force on floating base
@@ -169,8 +159,7 @@ bool FloatBaseModelImpl::ComputeContactJacobians() {
   return true;
 }
 
-bool FloatBaseModelImpl::AddBase(
-    Eigen::Ref<dynamics::SpatialInertia const> const &inertia) {
+bool FloatBaseModelImpl::AddBase(Eigen::Ref<dynamics::SpatialInertia const> const &inertia) {
   if (curr_n_dof_) {
     throw std::runtime_error("Cannot add base multiple times!\n");
   }
@@ -185,10 +174,8 @@ bool FloatBaseModelImpl::AddBase(
   for (int i = 0; i < curr_n_dof_; i++) {
     parents_.push_back(0);
     gear_ratios_.push_back(0);
-    joint_types_.push_back(
-        dynamics::JointType::Nothing);  // doesn't actually matter
-    joint_axes_.push_back(
-        dynamics::CoordinateAxis::X);  // doesn't actually matter
+    joint_types_.push_back(dynamics::JointType::Nothing);  // doesn't actually matter
+    joint_axes_.push_back(dynamics::CoordinateAxis::X);    // doesn't actually matter
     Xtree_.push_back(eye6);
     Ibody_.push_back(zero6);
     Xrot_.push_back(eye6);
@@ -205,21 +192,18 @@ bool FloatBaseModelImpl::AddBase(
   return true;
 }
 
-bool FloatBaseModelImpl::AddBase(fpt_t const mass,
-                                 Eigen::Ref<Vector3 const> const &com,
+bool FloatBaseModelImpl::AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
                                  dynamics::RotationalInertia const &I) {
   Matrix6 IS;
   dynamics::BuildSpatialInertia(IS, mass, com, I);
   return AddBase(IS);
 }
 
-int FloatBaseModelImpl::AddGroundContactPoint(
-    int const body_id, Eigen::Ref<Vector3 const> const &location,
-    bool const is_foot) {
+int FloatBaseModelImpl::AddGroundContactPoint(int const body_id, Eigen::Ref<Vector3 const> const &location,
+                                              bool const is_foot) {
   if (body_id >= curr_n_dof_) {
-    throw std::runtime_error("AddGroundContactPoint got invalid body_id: " +
-                             std::to_string(body_id) + " current nDofs: " +
-                             std::to_string(curr_n_dof_) + "\n");
+    throw std::runtime_error("AddGroundContactPoint got invalid body_id: " + std::to_string(body_id) +
+                             " current nDofs: " + std::to_string(curr_n_dof_) + "\n");
   }
 
   // std::cout << "pt-add: " << location.transpose() << "\n";
@@ -247,8 +231,7 @@ int FloatBaseModelImpl::AddGroundContactPoint(
   return n_ground_contact_++;
 }
 
-bool FloatBaseModelImpl::AddGroundContactBoxPoints(
-    int const body_id, Eigen::Ref<Vector3 const> const &dims) {
+bool FloatBaseModelImpl::AddGroundContactBoxPoints(int const body_id, Eigen::Ref<Vector3 const> const &dims) {
   AddGroundContactPoint(body_id, Vector3(dims[0], dims[1], dims[2]) / 2);
   AddGroundContactPoint(body_id, Vector3(-dims[0], dims[1], dims[2]) / 2);
   AddGroundContactPoint(body_id, Vector3(dims[0], -dims[1], dims[2]) / 2);
@@ -261,18 +244,14 @@ bool FloatBaseModelImpl::AddGroundContactBoxPoints(
   return true;
 }
 
-int FloatBaseModelImpl::AddBody(
-    Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
-    Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia,
-    fpt_t const gear_ratio, int const parent,
-    dynamics::JointType const joint_type,
-    dynamics::CoordinateAxis const joint_axis,
-    Eigen::Ref<Matrix6 const> const &Xtree,
-    Eigen::Ref<Matrix6 const> const &Xrot) {
+int FloatBaseModelImpl::AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,
+                                Eigen::Ref<dynamics::SpatialInertia const> const &rotor_inertia, fpt_t const gear_ratio,
+                                int const parent, dynamics::JointType const joint_type,
+                                dynamics::CoordinateAxis const joint_axis, Eigen::Ref<Matrix6 const> const &Xtree,
+                                Eigen::Ref<Matrix6 const> const &Xrot) {
   if (parent >= curr_n_dof_) {
-    throw std::runtime_error(
-        "AddBody got invalid parent: " + std::to_string(parent) +
-        " nDofs: " + std::to_string(curr_n_dof_) + "\n");
+    throw std::runtime_error("AddBody got invalid parent: " + std::to_string(parent) +
+                             " nDofs: " + std::to_string(curr_n_dof_) + "\n");
   }
 
   parents_.push_back(parent);
@@ -372,12 +351,10 @@ bool FloatBaseModelImpl::CompositeInertias() {
   // backward loop
   for (int i = consts::model::kDimConfig - 1; i > 5; i--) {
     // Propagate inertia down the tree
-    ToEigenTp(IC_[parents_[i]]) += ToConstEigenTp(Xup_[i]).transpose() *
-                                   ToConstEigenTp(IC_[i]) *
-                                   ToConstEigenTp(Xup_[i]);
-    ToEigenTp(IC_[parents_[i]]) += ToConstEigenTp(Xuprot_[i]).transpose() *
-                                   ToConstEigenTp(Irot_[i]) *
-                                   ToConstEigenTp(Xuprot_[i]);
+    ToEigenTp(IC_[parents_[i]]) +=
+        ToConstEigenTp(Xup_[i]).transpose() * ToConstEigenTp(IC_[i]) * ToConstEigenTp(Xup_[i]);
+    ToEigenTp(IC_[parents_[i]]) +=
+        ToConstEigenTp(Xuprot_[i]).transpose() * ToConstEigenTp(Irot_[i]) * ToConstEigenTp(Xuprot_[i]);
   }
   composite_inertias_uptodate_ = true;
   return true;
@@ -392,12 +369,8 @@ bool FloatBaseModelImpl::BiasAccelerations() {
   // from base to tips
   for (int i = 6; i < consts::model::kDimConfig; i++) {
     // Outward kinamtic propagtion
-    ToEigenTp(avp_[i]) =
-        ToConstEigenTp(Xup_[i]) * ToConstEigenTp(avp_[parents_[i]]) +
-        ToConstEigenTp(c_[i]);
-    ToEigenTp(avprot_[i]) =
-        ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(avp_[parents_[i]]) +
-        ToConstEigenTp(crot_[i]);
+    ToEigenTp(avp_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(avp_[parents_[i]]) + ToConstEigenTp(c_[i]);
+    ToEigenTp(avprot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(avp_[parents_[i]]) + ToConstEigenTp(crot_[i]);
   }
   bias_acc_uptodate_ = true;
 
@@ -410,37 +383,30 @@ bool FloatBaseModelImpl::ForwardKinematics() {
   // calculate joint transformations
   dynamics::RotMat rot;
   dynamics::QuatToRotMat(rot, ToConstEigenTp(state_.ori));
-  dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), rot,
-                              ToConstEigenTp(state_.pos));
+  dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), rot, ToConstEigenTp(state_.pos));
   v_[5] = state_.gvel_robot;
 
   for (int i = 6; i < consts::model::kDimConfig; i++) {
     // joint xform
     Matrix6 XJ;
-    dynamics::BuildJointXform(XJ, joint_types_[i], joint_axes_[i],
-                              state_.q[i - 6]);
+    dynamics::BuildJointXform(XJ, joint_types_[i], joint_axes_[i], state_.q[i - 6]);
     ToEigenTp(Xup_[i]) = XJ * ToConstEigenTp(Xtree_[i]);
-    dynamics::BuildJointMotionSubspace(ToEigenTp(S_[i]), joint_types_[i],
-                                       joint_axes_[i]);
+    dynamics::BuildJointMotionSubspace(ToEigenTp(S_[i]), joint_types_[i], joint_axes_[i]);
     dynamics::SpatialVec vJ = ToConstEigenTp(S_[i]) * state_.qd[i - 6];
     // total velocity of body i
-    ToEigenTp(v_[i]) =
-        ToConstEigenTp(Xup_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJ;
+    ToEigenTp(v_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJ;
 
     // Same for rotors
     Matrix6 XJrot;
-    BuildJointXform(XJrot, joint_types_[i], joint_axes_[i],
-                    state_.q[i - 6] * gear_ratios_[i]);
+    BuildJointXform(XJrot, joint_types_[i], joint_axes_[i], state_.q[i - 6] * gear_ratios_[i]);
     ToEigenTp(Srot_[i]) = ToConstEigenTp(S_[i]) * gear_ratios_[i];
     dynamics::SpatialVec vJrot = ToConstEigenTp(Srot_[i]) * state_.qd[i - 6];
     ToEigenTp(Xuprot_[i]) = XJrot * ToConstEigenTp(Xrot_[i]);
-    ToEigenTp(vrot_[i]) =
-        ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJrot;
+    ToEigenTp(vrot_[i]) = ToConstEigenTp(Xuprot_[i]) * ToConstEigenTp(v_[parents_[i]]) + vJrot;
 
     // Coriolis accelerations
     dynamics::MotionCrossProduct(ToEigenTp(c_[i]), ToConstEigenTp(v_[i]), vJ);
-    dynamics::MotionCrossProduct(ToEigenTp(crot_[i]), ToConstEigenTp(vrot_[i]),
-                                 vJrot);
+    dynamics::MotionCrossProduct(ToEigenTp(crot_[i]), ToConstEigenTp(vrot_[i]), vJrot);
   }
 
   // calculate from absolute transformations
@@ -448,8 +414,7 @@ bool FloatBaseModelImpl::ForwardKinematics() {
     if (parents_[i] == 0) {
       Xa_[i] = Xup_[i];  // float base
     } else {
-      ToEigenTp(Xa_[i]) =
-          ToConstEigenTp(Xup_[i]) * ToConstEigenTp(Xa_[parents_[i]]);
+      ToEigenTp(Xa_[i]) = ToConstEigenTp(Xup_[i]) * ToConstEigenTp(Xa_[parents_[i]]);
     }
   }
 
@@ -460,15 +425,12 @@ bool FloatBaseModelImpl::ForwardKinematics() {
     if (!compute_contact_info_[j]) continue;
     int i = gc_parent_[j];
     Matrix6 Xai;
-    dynamics::InvertSpatialXform(
-        Xai, ToConstEigenTp(Xa_[i]));  // from link to absolute
+    dynamics::InvertSpatialXform(Xai, ToConstEigenTp(Xa_[i]));  // from link to absolute
     dynamics::SpatialVec vSpatial = Xai * ToConstEigenTp(v_[i]);
 
     // foot position in world
-    dynamics::SpatialXformPoint(ToEigenTp(gc_p_[j]), Xai,
-                                ToConstEigenTp(gc_location_[j]));
-    dynamics::SpatialToLinearVelocity(ToEigenTp(gc_v_[j]), vSpatial,
-                                      ToConstEigenTp(gc_p_[j]));
+    dynamics::SpatialXformPoint(ToEigenTp(gc_p_[j]), Xai, ToConstEigenTp(gc_location_[j]));
+    dynamics::SpatialToLinearVelocity(ToEigenTp(gc_v_[j]), vSpatial, ToConstEigenTp(gc_p_[j]));
   }
   kinematics_uptodate_ = true;
   return true;

@@ -1,8 +1,6 @@
 #include "echo_act_itf.h"
 
-ActuatorData const &EchoActuatorInterface::GetActuatorData() const {
-  return data_;
-}
+ActuatorData const &EchoActuatorInterface::GetActuatorData() const { return data_; }
 
 ActuatorCmd &EchoActuatorInterface::GetActuatorCmdForUpdate() { return cmd_; }
 
