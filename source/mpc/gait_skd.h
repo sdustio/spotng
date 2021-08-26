@@ -7,7 +7,7 @@
 #include "dynamics/types.h"
 #include "mpc/mpc.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 class GaitSkd {
  public:
   using Ptr = std::unique_ptr<GaitSkd>;
@@ -54,4 +54,4 @@ class OffsetDurationGait : public GaitSkd {
   std::vector<int> mpc_table_;
 };
 
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

@@ -4,7 +4,7 @@
 
 #include "estimate/contact.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 
 StateBalanceStand::StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                      model::Quadruped::SharedPtr const &mquad,
@@ -75,4 +75,4 @@ bool StateBalanceStand::Step() {
 
   return wbc_->RunOnce(wbc_data_, legctrl_, drictrl_, estctrl_);
 }
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

@@ -1,4 +1,4 @@
-image: sd/sdrobot-build #gcc, cmake, eigen, qpOASES, eiquadprog, cpplint, cppcheck
+image: sd/sdquadx-build #gcc, cmake, eigen, qpOASES, eiquadprog, cpplint, cppcheck
 
 variables:
   CMAKE_BUILD: /build

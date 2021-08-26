@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/model.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::model {
+namespace sdquadx::model {
 class QuadrupedImpl : public Quadruped {
  public:
   bool ComputeFloatBaseModel(fpt_t g) override;
@@ -13,4 +13,4 @@ class QuadrupedImpl : public Quadruped {
  private:
   FloatBaseModel::SharedPtr model_;
 };
-}  // namespace sdrobot::model
+}  // namespace sdquadx::model

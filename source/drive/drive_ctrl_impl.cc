@@ -1,8 +1,8 @@
 #include "drive/drive_ctrl_impl.h"
 
-#include "sdrobot/consts.h"
+#include "sdquadx/consts.h"
 
-namespace sdrobot::drive {
+namespace sdquadx::drive {
 DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
 
 DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(DriveMode::kAuto, dt) {}
@@ -64,4 +64,4 @@ fpt_t DriveCtrlImpl::Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal) {
     return (v / 2) * (maxVal - minVal);
   }
 }
-}  // namespace sdrobot::drive
+}  // namespace sdquadx::drive

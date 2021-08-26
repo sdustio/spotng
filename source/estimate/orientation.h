@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sdrobot/estimate.h"
-#include "sdrobot/sensor.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/sensor.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -22,4 +22,4 @@ class Orientation : public Estimator {
   sensor::ImuData imu_;
 };
 
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

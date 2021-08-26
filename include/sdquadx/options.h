@@ -1,14 +1,14 @@
 #pragma once
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot {
+namespace sdquadx {
 enum class DriveMode : uint8_t {
   kAuto,
   kManual,
 };
 
-struct SDROBOT_EXPORT Options {
+struct SDQUADX_EXPORT Options {
   DriveMode drive_mode = DriveMode::kAuto;
 
   fpt_t ctrl_dt_sec = 1.0 / (0.5 * 1'000);   // 0.5kHz
@@ -30,4 +30,4 @@ struct SDROBOT_EXPORT Options {
   SdVector3f kd_ori = {10, 10, 10};
 };
 
-}  // namespace sdrobot
+}  // namespace sdquadx

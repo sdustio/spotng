@@ -5,10 +5,10 @@
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
 #include "model/float_base_impl.h"
-#include "sdrobot/consts.h"
-#include "sdrobot/leg.h"
+#include "sdquadx/consts.h"
+#include "sdquadx/leg.h"
 
-namespace sdrobot::model {
+namespace sdquadx::model {
 
 namespace {
 /*!
@@ -216,4 +216,4 @@ bool QuadrupedImpl::CalcHipLocation(SdVector3f &ret, int const leg) const {
          (leg == leg::idx::fl || leg == leg::idx::hl) ? hip_location[1] : -hip_location[1], hip_location[2]};
   return true;
 }
-}  // namespace sdrobot::model
+}  // namespace sdquadx::model

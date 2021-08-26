@@ -2,7 +2,7 @@
 
 #include "math/interpolate.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 namespace opts {
 
 constexpr inline std::array<fpt_t, consts::model::kNumActJoint> const target_jpos = {-0.6, -1.0, 2.7, 0.6, -1.0, 2.7,
@@ -64,4 +64,4 @@ bool JPosInitImpl::UpdateInitial(LegCtrl::SharedPtr const &ctrl) {
   return true;
 }
 
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

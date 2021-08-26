@@ -4,9 +4,9 @@
 #include <vector>
 
 #include "dynamics/types.h"
-#include "sdrobot/model.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::model {
+namespace sdquadx::model {
 class FloatBaseModelImpl : public FloatBaseModel {
  public:
   bool UpdateState(FloatBaseModelState const &state) override;
@@ -127,4 +127,4 @@ class FloatBaseModelImpl : public FloatBaseModel {
   bool force_propagators_uptodate_ = false;
   bool qdd_effects_uptodate_ = false;
 };
-}  // namespace sdrobot::model
+}  // namespace sdquadx::model

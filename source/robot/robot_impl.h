@@ -1,11 +1,11 @@
-#include "sdrobot/drive.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
-#include "sdrobot/robot.h"
+#include "sdquadx/drive.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
+#include "sdquadx/robot.h"
 
-namespace sdrobot {
+namespace sdquadx {
 class RobotImpl : public Robot {
  public:
   RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
@@ -26,4 +26,4 @@ class RobotImpl : public Robot {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace sdrobot
+}  // namespace sdquadx

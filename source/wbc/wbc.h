@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sdrobot/consts.h"
-#include "sdrobot/types.h"
+#include "sdquadx/consts.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using SdVector12f = std::array<fpt_t, consts::model::kNumActJoint>;
 using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
@@ -22,4 +22,4 @@ struct InData {
 
   SdVector4f contact_state;
 };
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

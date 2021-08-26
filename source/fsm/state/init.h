@@ -2,9 +2,9 @@
 
 #include <unordered_map>
 
-#include "sdrobot/fsm.h"
+#include "sdquadx/fsm.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class StateInit : public StateCtrl {
  public:
   explicit StateInit(drive::DriveCtrl::SharedPtr const &drictrl);
@@ -23,4 +23,4 @@ class StateInit : public StateCtrl {
   drive::DriveCtrl::SharedPtr drictrl_;
 };
 
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sdrobot/model.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 class Contact {
  public:
   using Ptr = std::unique_ptr<Contact>;
@@ -46,4 +46,4 @@ class Contact {
   int _contact_pt;
 };
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

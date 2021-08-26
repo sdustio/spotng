@@ -2,9 +2,9 @@
 
 #include <Eigen/Dense>
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot {
+namespace sdquadx {
 using Vector3 = Eigen::Matrix<fpt_t, 3, 1>;
 using Vector4 = Eigen::Matrix<fpt_t, 4, 1>;
 using Vector6 = Eigen::Matrix<fpt_t, 6, 1>;
@@ -40,4 +40,4 @@ Eigen::Ref<Matrix6 const> ToConstEigenTp(SdMatrix6f const &m);
 
 Eigen::Ref<VectorX const> ToConstEigenTp(SdVectorXf const &v, int const row);
 Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row, int const col);
-}  // namespace sdrobot
+}  // namespace sdquadx

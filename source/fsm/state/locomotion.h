@@ -3,13 +3,13 @@
 #include <unordered_map>
 
 #include "mpc/mpc.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 #include "wbc/wbc_ctrl.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class StateLocomotion : public StateCtrl {
  public:
   StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &mquad,
@@ -44,4 +44,4 @@ class StateLocomotion : public StateCtrl {
   wbc::InData wbc_data_;
   mpc::Mpc::Ptr mpc_;
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

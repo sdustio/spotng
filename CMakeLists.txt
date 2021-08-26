@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(sdrobot
+project(sdquadx
   LANGUAGES CXX
   VERSION 1.0.0
 )
 
 ### Project properties
 set(PACKAGE_ORG sd)
-set(PACKAGE_DESCRIPTION "sdrobot lib")
+set(PACKAGE_DESCRIPTION "sdquadx lib")
 set(TARGET_NAME ${PROJECT_NAME}Targets)
 
 ### C

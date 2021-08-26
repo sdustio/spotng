@@ -2,7 +2,7 @@
 
 #include "eigen/types.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 
 Contact::Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_pt)
     : robot_sys_(model), _contact_pt(contact_pt) {
@@ -57,4 +57,4 @@ bool Contact::UpdateRFdes(SdVector3f const &Fr_des) {
   Fr_des_ = Fr_des;
   return true;
 }
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

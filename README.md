@@ -1,23 +1,23 @@
-# SdRobot
+# sdquadx
 
 ## Usage
 
 ```cpp
 #include <memory>
-#include <sdrobot/robot.h>
+#include <sdquadx/robot.h>
 
-sdrobot::Options opts;
-opts.drive_mode = sdrobot::DriveMode::kManual;
+sdquadx::Options opts;
+opts.drive_mode = sdquadx::DriveMode::kManual;
 opts.ctrl_dt_sec = 0.002;
 opts.act_itf_sec = 0.025;
 
-sdrobot::interface::ActuatorInterface::SharedPtr act_itf;
+sdquadx::interface::ActuatorInterface::SharedPtr act_itf;
 /*....*/
-sdrobot::Robot::Ptr robot;
-sdrobot::Robot::Build(robot, opts, act_itf);
+sdquadx::Robot::Ptr robot;
+sdquadx::Robot::Build(robot, opts, act_itf);
 
-sdrobot::sensor::ImuData imu_data;
-sdrobot::drive::DriveCmd drive_cmd;
+sdquadx::sensor::ImuData imu_data;
+sdquadx::drive::DriveCmd drive_cmd;
 /*...*/
 robot->UpdateImu(imu_data);
 robot->UpdateDriveCmd(drive_cmd);

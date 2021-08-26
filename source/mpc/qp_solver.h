@@ -6,7 +6,7 @@
 #include "eigen/types.h"
 #include "mpc/mpc.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 constexpr inline int const num_constraints = 20 * opts::horizon_len;
 constexpr inline int const num_variables = 12 * opts::horizon_len;
 
@@ -57,4 +57,4 @@ class QPSolver {
   std::array<int, num_variables> var_ind_;
   std::array<int, num_constraints> con_ind_;
 };
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

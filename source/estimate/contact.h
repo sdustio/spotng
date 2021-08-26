@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/estimate.h"
+#include "sdquadx/estimate.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 class Contact : public Estimator {
  public:
   bool UpdateContact(SdVector4f const &contact);
@@ -12,4 +12,4 @@ class Contact : public Estimator {
   SdVector4f contact_;
 };
 
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

@@ -6,7 +6,7 @@
 #include "math/utils.h"
 #include "mpc/cmpc.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 namespace opts {
 constexpr inline double const max_roll = 80.;   // 40;
 constexpr inline double const max_pitch = 80.;  // 40;
@@ -109,4 +109,4 @@ bool StateLocomotion::locomotionSafe() {
 
   return true;
 }
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

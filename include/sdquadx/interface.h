@@ -3,10 +3,10 @@
 #include <cstdint>
 #include <memory>
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::interface {
-struct SDROBOT_EXPORT ActuatorCmd {
+namespace sdquadx::interface {
+struct SDQUADX_EXPORT ActuatorCmd {
   SdVector4f q_des_abad = {};
   SdVector4f q_des_hip = {};
   SdVector4f q_des_knee = {};
@@ -30,7 +30,7 @@ struct SDROBOT_EXPORT ActuatorCmd {
   std::array<std::uint8_t, 4> flags = {};
 };
 
-struct SDROBOT_EXPORT ActuatorData {
+struct SDQUADX_EXPORT ActuatorData {
   SdVector4f q_abad = {};
   SdVector4f q_hip = {};
   SdVector4f q_knee = {};
@@ -43,7 +43,7 @@ struct SDROBOT_EXPORT ActuatorData {
   std::uint8_t driver_status = 0;
 };
 
-class SDROBOT_EXPORT ActuatorInterface {
+class SDQUADX_EXPORT ActuatorInterface {
  public:
   using Ptr = std::unique_ptr<ActuatorInterface>;
   using SharedPtr = std::shared_ptr<ActuatorInterface>;
@@ -55,4 +55,4 @@ class SDROBOT_EXPORT ActuatorInterface {
   virtual bool UpdateActuatorCmd(ActuatorCmd const &cmd) = 0;
   virtual bool RunOnce() = 0;  // return true if ok
 };
-}  // namespace sdrobot::interface
+}  // namespace sdquadx::interface

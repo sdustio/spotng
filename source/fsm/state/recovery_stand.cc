@@ -3,7 +3,7 @@
 #include "eigen/types.h"
 #include "estimate/contact.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 namespace opts {
 constexpr inline int const fold_ramp_iter = 1000;
 constexpr inline int const fold_settle_iter = 1000;
@@ -183,4 +183,4 @@ State StateRecoveryStand::CheckTransition() {
 
   return state_trans_[drictrl_->GetState()];
 }
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

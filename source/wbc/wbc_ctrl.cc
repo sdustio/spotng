@@ -4,7 +4,7 @@
 #include "wbc/task/body_pos.h"
 #include "wbc/task/link_pos.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
 WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options const &opts, double weight)
@@ -149,4 +149,4 @@ bool WbcCtrl::_CleanUp() {
   return true;
 }
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

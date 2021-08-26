@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::consts {
+namespace sdquadx::consts {
 namespace math {
 constexpr inline fpt_t const kZeroEpsilon = 1.e-12;
 constexpr inline fpt_t const kPI = 3.14159265358979323846;
@@ -78,4 +78,4 @@ constexpr inline fpt_t const kMaxLateralForce = 350.;
 constexpr inline fpt_t const kMaxVerticalForce = 350.;
 }  // namespace interface
 
-}  // namespace sdrobot::consts
+}  // namespace sdquadx::consts

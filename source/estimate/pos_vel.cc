@@ -1,8 +1,8 @@
 #include "estimate/pos_vel.h"
 
-#include "sdrobot/consts.h"
+#include "sdquadx/consts.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 PosVel::PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl,
                model::Quadruped::ConstSharedPtr const &quad)
     : dt_(dt), gravity_(gravity), legctrl_(legctrl), quad_(quad) {
@@ -205,4 +205,4 @@ bool PosVel::RunOnce(State &ret) {
 
   return true;
 }
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

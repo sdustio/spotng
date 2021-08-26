@@ -1,9 +1,9 @@
-#include "sdrobot/interface.h"
+#include "sdquadx/interface.h"
 
-using sdrobot::SdVector4f;
-using sdrobot::interface::ActuatorCmd;
-using sdrobot::interface::ActuatorData;
-using sdrobot::interface::ActuatorInterface;
+using sdquadx::SdVector4f;
+using sdquadx::interface::ActuatorCmd;
+using sdquadx::interface::ActuatorData;
+using sdquadx::interface::ActuatorInterface;
 
 class EchoActuatorInterface : public ActuatorInterface {
  public:

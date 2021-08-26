@@ -2,7 +2,7 @@
 
 #include "eigen/types.h"
 
-namespace sdrobot::math {
+namespace sdquadx::math {
 
 /*!
  * Linear interpolation between y0 and yf.  t is between 0 and 1
@@ -83,4 +83,4 @@ bool interpolate_cubic_bezier_second_derivative(Eigen::Ref<VectorX> ret, Eigen::
                                                 Eigen::Ref<VectorX const> const &y2,
                                                 Eigen::Ref<VectorX const> const &yf, fpt_t const t);
 
-}  // namespace sdrobot::math
+}  // namespace sdquadx::math

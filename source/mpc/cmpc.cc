@@ -3,7 +3,7 @@
 #include "dynamics/rotation.h"
 #include "estimate/contact.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 namespace opts {
 constexpr inline SdMatrix3f const kp_stance = {};
 constexpr inline SdMatrix3f const kd_stance = {7, 0, 0, 0, 7, 0, 0, 0, 7};  // row major == column major
@@ -346,4 +346,4 @@ bool CMpc::SolveMPC(std::array<SdVector3f, 4> &out, std::vector<int> const &mpcT
   return true;
 }
 
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

@@ -12,7 +12,7 @@
 #include "leg/leg_ctrl_impl.h"
 #include "model/quadruped_impl.h"
 
-namespace sdrobot {
+namespace sdquadx {
 
 RobotImpl::RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
     : opts_(opts),
@@ -83,4 +83,4 @@ bool Robot::Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterf
   ret = std::make_shared<RobotImpl>(opts, act_itf);
   return true;
 }
-}  // namespace sdrobot
+}  // namespace sdquadx

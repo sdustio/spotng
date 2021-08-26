@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "sdrobot/options.h"
+#include "sdquadx/options.h"
 
-namespace sdrobot::drive {
+namespace sdquadx::drive {
 enum class State : uint8_t { Init, RecoveryStand, Locomotion, BalanceStand };
 
 enum class Gait : uint8_t { Trot, SlowTrot, FlyingTrot, Walk, Bound };
 
-struct SDROBOT_EXPORT Twist {
+struct SDQUADX_EXPORT Twist {
   fpt_t lvel_x = 0.;
   fpt_t lvel_y = 0.;
   fpt_t lvel_z = 0.;      // reserved, unused
@@ -20,7 +20,7 @@ struct SDROBOT_EXPORT Twist {
   fpt_t var_height = 0.;  // variant height
 };
 
-class SDROBOT_EXPORT DriveCtrl {
+class SDQUADX_EXPORT DriveCtrl {
  public:
   using Ptr = std::unique_ptr<DriveCtrl>;
   using SharedPtr = std::shared_ptr<DriveCtrl>;
@@ -46,4 +46,4 @@ class SDROBOT_EXPORT DriveCtrl {
   virtual SdVector3f const &GetAvelDes() const = 0;
 };
 
-}  // namespace sdrobot::drive
+}  // namespace sdquadx::drive

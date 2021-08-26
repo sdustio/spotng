@@ -2,7 +2,7 @@
 
 #include "dynamics/rotation.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 bool Orientation::UpdateImu(sensor::ImuData const &imu) {
   imu_ = imu;
   return true;
@@ -38,4 +38,4 @@ bool Orientation::RunOnce(State &ret) {
   ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.acc_robot);  // 得世界坐标加速度
   return true;
 }
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

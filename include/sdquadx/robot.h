@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdrobot/drive.h"
-#include "sdrobot/interface.h"
-#include "sdrobot/options.h"
-#include "sdrobot/sensor.h"
+#include "sdquadx/drive.h"
+#include "sdquadx/interface.h"
+#include "sdquadx/options.h"
+#include "sdquadx/sensor.h"
 
-namespace sdrobot {
-class SDROBOT_EXPORT Robot {
+namespace sdquadx {
+class SDQUADX_EXPORT Robot {
  public:
   using Ptr = std::unique_ptr<Robot>;
   using SharedPtr = std::shared_ptr<Robot>;
@@ -28,4 +28,4 @@ class SDROBOT_EXPORT Robot {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace sdrobot
+}  // namespace sdquadx

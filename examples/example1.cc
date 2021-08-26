@@ -1,28 +1,28 @@
 #include <iostream>
 
 #include "itf/echo_act_itf.h"
-#include "sdrobot/robot.h"
+#include "sdquadx/robot.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
-  sdrobot::Options opts;
-  opts.drive_mode = sdrobot::DriveMode::kManual;
+  sdquadx::Options opts;
+  opts.drive_mode = sdquadx::DriveMode::kManual;
   opts.ctrl_dt_sec = 0.002;
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
-  sdrobot::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
+  sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
   /*....*/
 
-  sdrobot::Robot::Ptr robot;
-  sdrobot::Robot::Build(robot, opts, itf);
+  sdquadx::Robot::Ptr robot;
+  sdquadx::Robot::Build(robot, opts, itf);
 
-  sdrobot::sensor::ImuData imu_data;
-  sdrobot::drive::Twist drive_twist;
+  sdquadx::sensor::ImuData imu_data;
+  sdquadx::drive::Twist drive_twist;
 
   /*...*/
   robot->UpdateImu(imu_data);
-  robot->UpdateDriveGait(sdrobot::drive::Gait::Trot);
-  robot->UpdateDriveState(sdrobot::drive::State::Locomotion);
+  robot->UpdateDriveGait(sdquadx::drive::Gait::Trot);
+  robot->UpdateDriveState(sdquadx::drive::State::Locomotion);
   drive_twist.lvel_x = 1.5;
   robot->UpdateDriveTwist(drive_twist);
   /*...*/

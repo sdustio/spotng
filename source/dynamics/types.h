@@ -2,10 +2,11 @@
 
 #include "eigen/types.h"
 
-namespace sdrobot::dynamics {
-enum class SDROBOT_EXPORT JointType { Prismatic, Revolute, FloatingBase, Nothing };
+namespace sdquadx::dynamics {
 
-enum class SDROBOT_EXPORT CoordinateAxis { X, Y, Z };
+enum class JointType { Prismatic, Revolute, FloatingBase, Nothing };
+
+enum class CoordinateAxis { X, Y, Z };
 
 // Rotation Matrix
 using RotMat = Matrix3;
@@ -29,4 +30,4 @@ using RotationalInertia = Matrix3;  // InertiaMat
 
 using PseudoRotationalInertia = Matrix4;  // PseudoInertiaMat
 
-}  // namespace sdrobot::dynamics
+}  // namespace sdquadx::dynamics

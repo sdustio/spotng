@@ -8,7 +8,7 @@
 #include "wbc/task.h"
 #include "wbc/wbc.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 class Wbic {
  public:
   using Ptr = std::unique_ptr<Wbic>;
@@ -68,4 +68,4 @@ class Wbic {
   SdVector6f W_floating_;
   SdVector18f W_rf_;
 };
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

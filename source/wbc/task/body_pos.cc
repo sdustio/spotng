@@ -2,7 +2,7 @@
 
 #include "dynamics/rotation.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
 TaskBodyPos::TaskBodyPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd)
@@ -44,4 +44,4 @@ bool TaskBodyPos::_UpdateTaskJDotQdot() { return true; }
 
 bool TaskBodyPos::_AdditionalUpdate() { return true; }
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

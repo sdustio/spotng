@@ -5,7 +5,7 @@
 #include "dynamics/rotation.h"
 #include "math/algebra.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 namespace {
 bool near_zero(double a) { return (a < .01 && a > -.01); }
 
@@ -272,4 +272,4 @@ QPSolver::QPSolver() {
   eye_12h.setIdentity();
 }
 
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

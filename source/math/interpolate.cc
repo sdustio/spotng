@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace sdrobot::math {
+namespace sdquadx::math {
 bool interpolate_linear(fpt_t &ret, fpt_t const y0, fpt_t const yf, fpt_t const t) {
   if (t < 0. || t > 1.) return false;
   ret = y0 + (yf - y0) * t;
@@ -107,4 +107,4 @@ bool interpolate_cubic_bezier_second_derivative(Eigen::Ref<VectorX> ret, Eigen::
   return true;
 }
 
-}  // namespace sdrobot::math
+}  // namespace sdquadx::math

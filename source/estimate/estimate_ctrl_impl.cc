@@ -5,7 +5,7 @@
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 EstimateCtrlImpl::EstimateCtrlImpl() { est_map_[""] = nullptr; }
 
 bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est) {
@@ -36,4 +36,4 @@ bool EstimateCtrlImpl::RemoveAllEstimators() {
   est_map_.clear();
   return true;
 }
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

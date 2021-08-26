@@ -3,11 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include "sdrobot/consts.h"
-#include "sdrobot/types.h"
+#include "sdquadx/consts.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::model {
-struct SDROBOT_EXPORT FloatBaseModelState {
+namespace sdquadx::model {
+
+struct SDQUADX_EXPORT FloatBaseModelState {
   SdVector4f ori;
   SdVector3f pos;
   SdVector6f gvel_robot;  // combine of avel and lvel [avel, lvel]
@@ -19,7 +20,7 @@ using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
 using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
 using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
-class SDROBOT_EXPORT FloatBaseModel {
+class SDQUADX_EXPORT FloatBaseModel {
  public:
   using Ptr = std::unique_ptr<FloatBaseModel>;
   using SharedPtr = std::shared_ptr<FloatBaseModel>;
@@ -45,7 +46,7 @@ class SDROBOT_EXPORT FloatBaseModel {
   virtual std::vector<SdVector3f> const &GetGroundContactVel() const = 0;
 };
 
-class SDROBOT_EXPORT Quadruped {
+class SDQUADX_EXPORT Quadruped {
  public:
   using Ptr = std::unique_ptr<Quadruped>;
   using SharedPtr = std::shared_ptr<Quadruped>;
@@ -58,4 +59,4 @@ class SDROBOT_EXPORT Quadruped {
 
   virtual bool CalcHipLocation(SdVector3f &ret, int const leg) const = 0;
 };
-}  // namespace sdrobot::model
+}  // namespace sdquadx::model

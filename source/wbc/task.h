@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sdrobot/model.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 
 class Task {
  public:
@@ -60,4 +60,4 @@ class Task {
 
   SdVector3f Kp_kin_, Kp_, Kd_;
 };
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

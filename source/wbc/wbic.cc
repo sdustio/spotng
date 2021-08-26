@@ -4,7 +4,7 @@
 
 #include "math/algebra.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
 using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1>;
@@ -277,4 +277,4 @@ bool Wbic::_SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, Matrix
   return true;
 }
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

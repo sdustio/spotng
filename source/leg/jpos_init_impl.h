@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sdrobot/consts.h"
-#include "sdrobot/leg.h"
+#include "sdquadx/consts.h"
+#include "sdquadx/leg.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 class JPosInitImpl : public JPosInit {
  public:
   JPosInitImpl(fpt_t dt, fpt_t end_time);
@@ -19,4 +19,4 @@ class JPosInitImpl : public JPosInit {
 
   std::array<fpt_t, consts::model::kNumActJoint> ini_jpos_ = {};
 };
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

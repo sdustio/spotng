@@ -2,7 +2,7 @@
 
 #include "wbc/task.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 class TaskLinkPos : public Task {
  public:
   TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd,
@@ -22,4 +22,4 @@ class TaskLinkPos : public Task {
   bool virtual_depend_;
 };
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

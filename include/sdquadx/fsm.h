@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdrobot/drive.h"
+#include "sdquadx/drive.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 /**
  * Enumerate all of the operating modes
  */
-enum class SDROBOT_EXPORT OperatingMode : uint8_t {
+enum class SDQUADX_EXPORT OperatingMode : uint8_t {
   Normal,
   Transitioning,
   EStop,
@@ -16,12 +16,12 @@ enum class SDROBOT_EXPORT OperatingMode : uint8_t {
 
 using State = drive::State;
 
-struct SDROBOT_EXPORT TransitionData {
+struct SDQUADX_EXPORT TransitionData {
   // Flag to mark when transition is done
   bool done = false;
 };
 
-class SDROBOT_EXPORT StateCtrl {
+class SDQUADX_EXPORT StateCtrl {
  public:
   using Ptr = std::unique_ptr<StateCtrl>;
   using SharedPtr = std::shared_ptr<StateCtrl>;
@@ -55,7 +55,7 @@ class SDROBOT_EXPORT StateCtrl {
   virtual bool NeedCheckForceFeedForward() const { return false; }
 };
 
-class SDROBOT_EXPORT FiniteStateMachine {
+class SDQUADX_EXPORT FiniteStateMachine {
  public:
   using Ptr = std::unique_ptr<FiniteStateMachine>;
   using SharedPtr = std::shared_ptr<FiniteStateMachine>;
@@ -72,4 +72,4 @@ class SDROBOT_EXPORT FiniteStateMachine {
    */
   virtual bool RunOnce() = 0;
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

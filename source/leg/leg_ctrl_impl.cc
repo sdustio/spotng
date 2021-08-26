@@ -3,9 +3,9 @@
 #include <cmath>
 
 #include "eigen/types.h"
-#include "sdrobot/consts.h"
+#include "sdquadx/consts.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 
 namespace {
 std::array<fpt_t, 4> const side_signs{-1.0, 1.0, -1.0, 1.0};
@@ -158,4 +158,4 @@ bool LegCtrlImpl::SendCmdsToActuatorInterface() {
 
   return true;
 }
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

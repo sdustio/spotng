@@ -2,7 +2,7 @@
 
 #include "eigen/types.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
 TaskLinkPos::TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd,
@@ -46,4 +46,4 @@ bool TaskLinkPos::_UpdateTaskJDotQdot() {
 
 bool TaskLinkPos::_AdditionalUpdate() { return true; }
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

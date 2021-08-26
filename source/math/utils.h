@@ -2,10 +2,10 @@
 
 #include <cmath>
 
-#include "sdrobot/consts.h"
-#include "sdrobot/types.h"
+#include "sdquadx/consts.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::math {
+namespace sdquadx::math {
 /*!
  * Square a number
  */
@@ -24,4 +24,4 @@ inline fpt_t RadToDeg(fpt_t rad) { return rad * 180.0 / consts::math::kPI; }
  */
 inline fpt_t DegToRad(fpt_t deg) { return deg * consts::math::kPI / 180.0; }
 
-}  // namespace sdrobot::math
+}  // namespace sdquadx::math

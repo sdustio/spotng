@@ -1,11 +1,11 @@
 #pragma once
 
 #include "eigen/types.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 class PosVel : public Estimator {
  public:
   PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl,
@@ -34,4 +34,4 @@ class PosVel : public Estimator {
   std::array<fpt_t, 18 * 3> B_;    // 输入阵
   std::array<fpt_t, 28 * 18> C_;   // 观测阵
 };
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

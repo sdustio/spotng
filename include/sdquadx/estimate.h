@@ -3,11 +3,11 @@
 #include <memory>
 #include <string>
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 
-struct SDROBOT_EXPORT State {
+struct SDQUADX_EXPORT State {
   SdVector4f contact = {};     // 接触估计
   SdVector3f pos = {};         // 位置
   SdVector3f rpy = {};         // 欧拉角
@@ -21,7 +21,7 @@ struct SDROBOT_EXPORT State {
   SdVector3f acc = {};         // 世界坐标加速度
 };
 
-class SDROBOT_EXPORT Estimator {
+class SDQUADX_EXPORT Estimator {
  public:
   using Ptr = std::unique_ptr<Estimator>;
   using SharedPtr = std::shared_ptr<Estimator>;
@@ -31,7 +31,7 @@ class SDROBOT_EXPORT Estimator {
   virtual bool RunOnce(State &ret) = 0;
 };
 
-class SDROBOT_EXPORT EstimateCtrl {
+class SDQUADX_EXPORT EstimateCtrl {
  public:
   using Ptr = std::unique_ptr<EstimateCtrl>;
   using SharedPtr = std::shared_ptr<EstimateCtrl>;
@@ -48,4 +48,4 @@ class SDROBOT_EXPORT EstimateCtrl {
 
   virtual State const &GetEstState() const = 0;
 };
-}  //  namespace sdrobot::estimate
+}  //  namespace sdquadx::estimate

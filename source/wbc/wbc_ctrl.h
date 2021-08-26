@@ -3,15 +3,15 @@
 #include <memory>
 #include <vector>
 
-#include "sdrobot/drive.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
-#include "sdrobot/options.h"
+#include "sdquadx/drive.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
+#include "sdquadx/options.h"
 #include "wbc/kin_wbc.h"
 #include "wbc/wbic.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 namespace linkid {
 constexpr inline int const fr = 9;   // Front Right Foot
 constexpr inline int const fl = 11;  // Front Left Foot
@@ -69,4 +69,4 @@ class WbcCtrl {
   Wbic::Ptr wbic_;
 };
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

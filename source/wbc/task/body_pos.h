@@ -2,7 +2,7 @@
 
 #include "wbc/task.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 class TaskBodyPos : public Task {
  public:
   TaskBodyPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd);
@@ -20,4 +20,4 @@ class TaskBodyPos : public Task {
   SdVector3f Kp_kin_, Kp_, Kd_;
 };
 
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

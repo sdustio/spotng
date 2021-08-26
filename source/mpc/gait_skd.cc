@@ -1,6 +1,6 @@
 #include "mpc/gait_skd.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 OffsetDurationGait::OffsetDurationGait(int const nSegment, SdVector4i const &offsets, SdVector4i const &durations,
                                        std::string const &name)
     : offsets_(offsets), durations_(durations), n_iterations_(nSegment), name_(name), mpc_table_(nSegment * 4) {
@@ -77,4 +77,4 @@ fpt_t OffsetDurationGait::GetCurrentStanceTime(fpt_t dtMPC, [[maybe_unused]] int
 fpt_t OffsetDurationGait::GetCurrentSwingTime(fpt_t dtMPC, [[maybe_unused]] int leg) const { return dtMPC * swing_; }
 
 int OffsetDurationGait::GetCurrentGaitPhase() const { return iteration_; }
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

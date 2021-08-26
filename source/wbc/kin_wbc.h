@@ -8,7 +8,7 @@
 #include "wbc/task.h"
 #include "wbc/wbc.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 class KinWbc {
  public:
   using Ptr = std::unique_ptr<KinWbc>;
@@ -22,4 +22,4 @@ class KinWbc {
   bool _PseudoInverse(MatrixX &ret, MatrixX const &J, fpt_t threshold = 0.001);
   bool _BuildProjectionMatrix(MatrixX &ret, MatrixX const &J);
 };
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

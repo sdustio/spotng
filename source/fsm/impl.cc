@@ -7,7 +7,7 @@
 #include "fsm/state/locomotion.h"
 #include "fsm/state/recovery_stand.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 FiniteStateMachineImpl::FiniteStateMachineImpl(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                                model::Quadruped::SharedPtr const &mquad,
                                                drive::DriveCtrl::SharedPtr const &drictrl,
@@ -121,4 +121,4 @@ bool FiniteStateMachineImpl::PostCheckAndLimit() {
   return c1 && c2;
 }
 
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

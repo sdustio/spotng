@@ -8,9 +8,9 @@
 #include "mpc/gait_skd.h"
 #include "mpc/mpc.h"
 #include "mpc/qp_solver.h"
-#include "sdrobot/drive.h"
+#include "sdquadx/drive.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 
 class CMpc : public Mpc {
  public:
@@ -53,4 +53,4 @@ class CMpc : public Mpc {
 
   std::unordered_map<drive::Gait, GaitSkd::Ptr> gait_map_;
 };
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

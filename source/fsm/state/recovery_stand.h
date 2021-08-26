@@ -2,12 +2,12 @@
 
 #include <unordered_map>
 
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
   StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::SharedPtr const &drictrl,
@@ -47,4 +47,4 @@ class StateRecoveryStand : public StateCtrl {
 
   std::array<SdVector3f, 4> initial_jpos_;
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

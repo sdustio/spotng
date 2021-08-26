@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/types.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 class FootSwingTrajectory {
  public:
   FootSwingTrajectory();
@@ -58,4 +58,4 @@ class FootSwingTrajectory {
   SdVector3f p0_, pf_, p_, v_, a_;
   fpt_t height_ = 0;
 };
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc

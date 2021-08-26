@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class SafetyChecker {
  public:
   // Pre checks to make sure controls are safe to run
@@ -15,4 +15,4 @@ class SafetyChecker {
   bool CheckPDesFoot(leg::LegCtrl::SharedPtr const &legctrl);          // desired foot position is not too far
   bool CheckForceFeedForward(leg::LegCtrl::SharedPtr const &legctrl);  // desired feedforward forces are not too large
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

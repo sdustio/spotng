@@ -1,6 +1,6 @@
 #include "fsm/state/init.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 
 StateInit::StateInit(drive::DriveCtrl::SharedPtr const &drictrl)
     : state_trans_{{drive::State::Init, State::Init},
@@ -21,4 +21,4 @@ bool StateInit::OnExit() {
 bool StateInit::RunOnce() { return true; }
 
 TransitionData StateInit::Transition([[maybe_unused]] const State next) { return TransitionData{true}; }
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

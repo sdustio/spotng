@@ -2,13 +2,13 @@
 
 #include <unordered_map>
 
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 #include "wbc/wbc_ctrl.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class StateBalanceStand : public StateCtrl {
  public:
   StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
@@ -43,4 +43,4 @@ class StateBalanceStand : public StateCtrl {
   SdVector3f ini_body_rpy_;
   double body_weight_;
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

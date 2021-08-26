@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/leg.h"
+#include "sdquadx/leg.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 class LegCtrlImpl : public LegCtrl {
  public:
   explicit LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf);
@@ -27,4 +27,4 @@ class LegCtrlImpl : public LegCtrl {
   interface::ActuatorInterface::SharedPtr act_itf_;
 };
 
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

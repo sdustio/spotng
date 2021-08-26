@@ -2,7 +2,7 @@
 
 #include "math/algebra.h"
 
-namespace sdrobot::wbc {
+namespace sdquadx::wbc {
 using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
 using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
@@ -63,4 +63,4 @@ bool KinWbc::_BuildProjectionMatrix(MatrixX &ret, MatrixX const &J) {
 bool KinWbc::_PseudoInverse(MatrixX &ret, MatrixX const &J, fpt_t threshold) {
   return math::PseudoInverse(ret, J, threshold);
 }
-}  // namespace sdrobot::wbc
+}  // namespace sdquadx::wbc

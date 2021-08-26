@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "sdrobot/interface.h"
-#include "sdrobot/types.h"
+#include "sdquadx/interface.h"
+#include "sdquadx/types.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 namespace idx {
 constexpr inline int const fr = 0;  // Front Right
 constexpr inline int const fl = 1;  // Front Left
@@ -17,7 +17,7 @@ constexpr inline int const hl = 3;  // Hind Left
  * Data sent from the control algorithm to the legs.
  * 数据从控制算法发送到腿部。
  */
-struct SDROBOT_EXPORT Cmd {
+struct SDQUADX_EXPORT Cmd {
   SdVector3f tau_feed_forward = {};
   SdVector3f q_des = {};
   SdVector3f qd_des = {};
@@ -40,7 +40,7 @@ struct SDROBOT_EXPORT Cmd {
  * Data returned from the legs to the control code.
  * 从腿返回到控制代码的数据
  */
-struct SDROBOT_EXPORT Data {
+struct SDQUADX_EXPORT Data {
   SdVector3f q = {};             // 关节角度
   SdVector3f qd = {};            // 关节角速度
   SdVector3f p = {};             // 足端位置
@@ -54,7 +54,7 @@ struct SDROBOT_EXPORT Data {
 using Cmds = std::array<Cmd, 4>;
 using Datas = std::array<Data, 4>;
 
-class SDROBOT_EXPORT LegCtrl {
+class SDQUADX_EXPORT LegCtrl {
  public:
   using Ptr = std::unique_ptr<LegCtrl>;
   using SharedPtr = std::shared_ptr<LegCtrl>;
@@ -96,7 +96,7 @@ class SDROBOT_EXPORT LegCtrl {
   virtual bool SendCmdsToActuatorInterface() = 0;
 };
 
-class SDROBOT_EXPORT JPosInit {
+class SDQUADX_EXPORT JPosInit {
  public:
   using Ptr = std::unique_ptr<JPosInit>;
   using SharedPtr = std::shared_ptr<JPosInit>;
@@ -107,4 +107,4 @@ class SDROBOT_EXPORT JPosInit {
   virtual bool IsInitialized(LegCtrl::SharedPtr const &ctrl) = 0;
 };
 
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

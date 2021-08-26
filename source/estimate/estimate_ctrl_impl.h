@@ -3,9 +3,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "sdrobot/estimate.h"
+#include "sdquadx/estimate.h"
 
-namespace sdrobot::estimate {
+namespace sdquadx::estimate {
 
 class EstimateCtrlImpl : public EstimateCtrl {
  public:
@@ -24,4 +24,4 @@ class EstimateCtrlImpl : public EstimateCtrl {
   std::unordered_map<std::string, Estimator::SharedPtr> est_map_;
   State est_state_;
 };
-}  // namespace sdrobot::estimate
+}  // namespace sdquadx::estimate

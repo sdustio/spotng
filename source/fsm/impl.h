@@ -3,12 +3,12 @@
 #include <unordered_map>
 
 #include "fsm/safety_checker.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/fsm.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/fsm.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
   FiniteStateMachineImpl(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
@@ -43,4 +43,4 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   SafetyChecker safety_checker_;
   TransitionData transition_data_;
 };
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

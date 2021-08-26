@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdrobot/drive.h"
+#include "sdquadx/drive.h"
 
-namespace sdrobot::drive {
+namespace sdquadx::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
   explicit DriveCtrlImpl(fpt_t dt);
@@ -41,4 +41,4 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f avel_ = {};
 };
 
-}  // namespace sdrobot::drive
+}  // namespace sdquadx::drive

@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include "sdrobot/consts.h"
+#include "sdquadx/consts.h"
 
-namespace sdrobot::fsm {
+namespace sdquadx::fsm {
 bool SafetyChecker::CheckSafeOrientation(estimate::EstimateCtrl::SharedPtr const &estctrl) {
   auto const &state = estctrl->GetEstState();
   return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
@@ -112,4 +112,4 @@ bool SafetyChecker::CheckForceFeedForward(leg::LegCtrl::SharedPtr const &legctrl
   return check_safe;
 }
 
-}  // namespace sdrobot::fsm
+}  // namespace sdquadx::fsm

@@ -1,6 +1,6 @@
-#include "sdrobot/leg.h"
+#include "sdquadx/leg.h"
 
-namespace sdrobot::leg {
+namespace sdquadx::leg {
 void Cmd::Zero() {
   tau_feed_forward.fill(0.);
   force_feed_forward.fill(0.);
@@ -22,4 +22,4 @@ void Data::Zero() {
   tau_estimate.fill(0.);
   J.fill(0.);
 }
-}  // namespace sdrobot::leg
+}  // namespace sdquadx::leg

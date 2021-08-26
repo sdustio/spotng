@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdrobot/drive.h"
-#include "sdrobot/estimate.h"
-#include "sdrobot/leg.h"
-#include "sdrobot/model.h"
+#include "sdquadx/drive.h"
+#include "sdquadx/estimate.h"
+#include "sdquadx/leg.h"
+#include "sdquadx/model.h"
 #include "wbc/wbc.h"
 
-namespace sdrobot::mpc {
+namespace sdquadx::mpc {
 namespace opts {
 constexpr inline int const bonus_swing = 0;
 constexpr inline int const horizon_len = 10;
@@ -31,4 +31,4 @@ class Mpc {
                        estimate::EstimateCtrl::ConstSharedPtr const &estctrl) = 0;
 };
 
-}  // namespace sdrobot::mpc
+}  // namespace sdquadx::mpc
