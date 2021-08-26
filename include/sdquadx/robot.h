@@ -7,17 +7,17 @@
 #include "sdquadx/options.h"
 #include "sdquadx/sensor.h"
 
-namespace sdquadx {
-class SDQUADX_EXPORT Robot {
+namespace sdquadx::robot {
+class SDQUADX_EXPORT RobotCtrl {
  public:
-  using Ptr = std::unique_ptr<Robot>;
-  using SharedPtr = std::shared_ptr<Robot>;
-  using ConstSharedPtr = std::shared_ptr<Robot const>;
+  using Ptr = std::unique_ptr<RobotCtrl>;
+  using SharedPtr = std::shared_ptr<RobotCtrl>;
+  using ConstSharedPtr = std::shared_ptr<RobotCtrl const>;
 
   static bool Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
   static bool Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
 
-  virtual ~Robot() = default;
+  virtual ~RobotCtrl() = default;
 
   virtual bool UpdateImu(sensor::ImuData const &imu) = 0;
   virtual bool UpdateDriveTwist(drive::Twist const &twist) = 0;
@@ -28,4 +28,4 @@ class SDQUADX_EXPORT Robot {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace sdquadx
+}  // namespace sdquadx::robot

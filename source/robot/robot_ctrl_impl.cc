@@ -1,4 +1,4 @@
-#include "robot/robot_impl.h"
+#include "robot/robot_ctrl_impl.h"
 
 #include <memory>
 
@@ -12,9 +12,9 @@
 #include "leg/leg_ctrl_impl.h"
 #include "model/quadruped_impl.h"
 
-namespace sdquadx {
+namespace sdquadx::robot {
 
-RobotImpl::RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
+RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
     : opts_(opts),
       mquad_(std::make_shared<model::QuadrupedImpl>()),
       legctrl_(std::make_shared<leg::LegCtrlImpl>(act_itf)),
@@ -33,32 +33,32 @@ RobotImpl::RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPt
   fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, legctrl_, mquad_, drivectrl_, estctrl_);
 }
 
-bool RobotImpl::UpdateImu(sensor::ImuData const &imu) {
+bool RobotCtrlImpl::UpdateImu(sensor::ImuData const &imu) {
   std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
   return true;
 }
 
-bool RobotImpl::UpdateDriveTwist(drive::Twist const &twist) {
+bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) {
   drivectrl_->UpdateTwist(twist);
   return true;
 }
 
-bool RobotImpl::UpdateDriveState(drive::State const &state) {
+bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) {
   drivectrl_->UpdateState(state);
   return true;
 }
 
-bool RobotImpl::UpdateDriveGait(drive::Gait const &gait) {
+bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) {
   drivectrl_->UpdateGait(gait);
   return true;
 }
 
-bool RobotImpl::UpdateDriveStepHeight(fpt_t const height) {
+bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) {
   drivectrl_->UpdateStepHeight(height);
   return true;
 }
 
-bool RobotImpl::RunOnce() {
+bool RobotCtrlImpl::RunOnce() {
   legctrl_->UpdateDatasFromActuatorInterface();
   legctrl_->ZeroCmd();
 
@@ -74,13 +74,13 @@ bool RobotImpl::RunOnce() {
   return true;
 }
 
-bool Robot::Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
-  ret = std::make_unique<RobotImpl>(opts, act_itf);
+bool RobotCtrl::Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+  ret = std::make_unique<RobotCtrlImpl>(opts, act_itf);
   return true;
 }
 
-bool Robot::Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
-  ret = std::make_shared<RobotImpl>(opts, act_itf);
+bool RobotCtrl::Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+  ret = std::make_shared<RobotCtrlImpl>(opts, act_itf);
   return true;
 }
-}  // namespace sdquadx
+}  // namespace sdquadx::robot

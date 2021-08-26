@@ -3,7 +3,7 @@
 #include <qpOASES.hpp>
 #include <vector>
 
-#include "eigen/types.h"
+#include "common/eigen.h"
 #include "mpc/mpc.h"
 
 namespace sdquadx::mpc {

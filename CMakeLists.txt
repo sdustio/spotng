@@ -39,7 +39,7 @@ find_package(qpOASES REQUIRED)
 find_package(eiquadprog REQUIRED)
 
 set(LIB_SOURCES
-  source/eigen/types.cc
+  source/common/eigen.cc
   source/math/algebra.cc
   source/math/interpolate.cc
   source/dynamics/rotation.cc
@@ -71,7 +71,7 @@ set(LIB_SOURCES
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc
   source/fsm/state/locomotion.cc
-  source/robot/robot_impl.cc
+  source/robot/robot_ctrl_impl.cc
 )
 
 add_library(${PROJECT_NAME} SHARED)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "eigen/types.h"
+#include "common/eigen.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/leg.h"
 #include "sdquadx/model.h"

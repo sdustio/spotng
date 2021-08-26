@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "eigen/types.h"
+#include "common/eigen.h"
 #include "wbc/contact.h"
 #include "wbc/task.h"
 #include "wbc/wbc.h"

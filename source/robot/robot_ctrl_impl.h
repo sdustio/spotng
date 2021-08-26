@@ -5,10 +5,10 @@
 #include "sdquadx/model.h"
 #include "sdquadx/robot.h"
 
-namespace sdquadx {
-class RobotImpl : public Robot {
+namespace sdquadx::robot {
+class RobotCtrlImpl : public RobotCtrl {
  public:
-  RobotImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+  RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
   bool UpdateImu(sensor::ImuData const &imu) override;
   bool UpdateDriveTwist(drive::Twist const &twist) override;
   bool UpdateDriveState(drive::State const &state) override;
@@ -26,4 +26,4 @@ class RobotImpl : public Robot {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace sdquadx
+}  // namespace sdquadx::robot

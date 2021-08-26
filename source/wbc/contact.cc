@@ -1,6 +1,6 @@
 #include "wbc/contact.h"
 
-#include "eigen/types.h"
+#include "common/eigen.h"
 
 namespace sdquadx::wbc {
 
