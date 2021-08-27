@@ -5,7 +5,7 @@ using sdquadx::interface::ActuatorCmd;
 using sdquadx::interface::ActuatorData;
 using sdquadx::interface::ActuatorInterface;
 
-class EchoActuatorInterface : public ActuatorInterface {
+class EchoInterface : public ActuatorInterface {
  public:
   ActuatorData const &GetActuatorData() const override;
   ActuatorCmd &GetActuatorCmdForUpdate() override;

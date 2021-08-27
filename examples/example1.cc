@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "itf/echo_act_itf.h"
+#include "itf/echo_itf.h"
 #include "sdquadx/robot.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
@@ -10,7 +10,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
-  sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoActuatorInterface>();
+  sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoInterface>();
   /*....*/
 
   sdquadx::robot::RobotCtrl::Ptr robot;
@@ -41,7 +41,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
     if (i % 50 == 0) {
       printf("\n===================\niter: %zu\n", i);
-      std::dynamic_pointer_cast<EchoActuatorInterface>(itf)->PrintCmd();
+      std::dynamic_pointer_cast<EchoInterface>(itf)->PrintCmd();
     }
   }
 

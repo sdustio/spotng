@@ -1,15 +1,15 @@
-#include "itf/echo_act_itf.h"
+#include "itf/echo_itf.h"
 
-ActuatorData const &EchoActuatorInterface::GetActuatorData() const { return data_; }
+ActuatorData const &EchoInterface::GetActuatorData() const { return data_; }
 
-ActuatorCmd &EchoActuatorInterface::GetActuatorCmdForUpdate() { return cmd_; }
+ActuatorCmd &EchoInterface::GetActuatorCmdForUpdate() { return cmd_; }
 
-bool EchoActuatorInterface::UpdateActuatorCmd(ActuatorCmd const &cmd) {
+bool EchoInterface::UpdateActuatorCmd(ActuatorCmd const &cmd) {
   cmd_ = cmd;
   return true;
 }
 
-bool EchoActuatorInterface::RunOnce() {
+bool EchoInterface::RunOnce() {
   data_.q_abad = cmd_.q_des_abad;
   data_.q_hip = cmd_.q_des_hip;
   data_.q_knee = cmd_.q_des_knee;
@@ -21,7 +21,7 @@ bool EchoActuatorInterface::RunOnce() {
   return true;
 }
 
-bool EchoActuatorInterface::PrintCmd() const {
+bool EchoInterface::PrintCmd() const {
   printf("q_des_abad:\n");
   PrintArray4f(cmd_.q_des_abad);
   printf("q_des_hip:\n");
@@ -56,7 +56,7 @@ bool EchoActuatorInterface::PrintCmd() const {
   return true;
 }
 
-bool EchoActuatorInterface::PrintArray4f(SdVector4f const &arr) const {
+bool EchoInterface::PrintArray4f(SdVector4f const &arr) const {
   for (auto &&i : arr) printf("%3.f\t", i);
   printf("\n");
   return true;
