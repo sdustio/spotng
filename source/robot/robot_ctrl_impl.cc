@@ -37,25 +37,15 @@ bool RobotCtrlImpl::UpdateImu(sensor::ImuData const &imu) {
   return std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
 }
 
-bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) {
-  return drivectrl_->UpdateTwist(twist);
-}
+bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) { return drivectrl_->UpdateTwist(twist); }
 
-bool RobotCtrlImpl::UpdateDriveVarPose(drive::VarPose const &varpose) {
-  return drivectrl_->UpdateVarPose(varpose);
-}
+bool RobotCtrlImpl::UpdateDriveVarPose(drive::VarPose const &varpose) { return drivectrl_->UpdateVarPose(varpose); }
 
-bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) {
-  return drivectrl_->UpdateState(state);
-}
+bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) { return drivectrl_->UpdateState(state); }
 
-bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) {
-  return drivectrl_->UpdateGait(gait);
-}
+bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) { return drivectrl_->UpdateGait(gait); }
 
-bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) {
-  return drivectrl_->UpdateStepHeight(height);
-}
+bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) { return drivectrl_->UpdateStepHeight(height); }
 
 bool RobotCtrlImpl::RunOnce() {
   legctrl_->UpdateDatasFromActuatorInterface();
