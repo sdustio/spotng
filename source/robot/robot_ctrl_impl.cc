@@ -18,13 +18,13 @@ RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::
     : opts_(opts),
       mquad_(std::make_shared<model::QuadrupedImpl>()),
       legctrl_(std::make_shared<leg::LegCtrlImpl>(act_itf)),
-      jposinit_(std::make_shared<leg::JPosInitImpl>(opts.ctrl_dt_sec, opts.jpos_init_sec)),
-      drivectrl_(std::make_shared<drive::DriveCtrlImpl>(opts.drive_mode, opts.ctrl_dt_sec)),
+      jposinit_(std::make_shared<leg::JPosInitImpl>(opts.ctrl_sec, opts.jpos_init_sec)),
+      drivectrl_(std::make_shared<drive::DriveCtrlImpl>(opts.drive_mode, opts.ctrl_sec)),
       estctrl_(std::make_shared<estimate::EstimateCtrlImpl>()) {
   mquad_->ComputeFloatBaseModel(opts.gravity);
 
   estctrl_->AddEstimator("posvel",
-                         std::make_shared<estimate::PosVel>(opts.ctrl_dt_sec, opts.gravity, legctrl_, mquad_));
+                         std::make_shared<estimate::PosVel>(opts.ctrl_sec, opts.gravity, legctrl_, mquad_));
   estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
   auto est_contact = std::make_shared<estimate::Contact>();
   est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});

@@ -24,8 +24,8 @@ StateLocomotion::StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr co
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
-      mpc_(std::make_unique<mpc::CMpc>(opts.ctrl_dt_sec, opts.gravity,
-                                       30 / static_cast<int>(1000. * opts.ctrl_dt_sec))) {}
+      mpc_(std::make_unique<mpc::CMpc>(opts.ctrl_sec, opts.gravity,
+                                       30 / static_cast<int>(1000. * opts.ctrl_sec))) {}
 
 bool StateLocomotion::OnEnter() { return mpc_->Init(); }
 

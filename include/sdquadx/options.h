@@ -11,7 +11,7 @@ enum class DriveMode : uint8_t {
 struct SDQUADX_EXPORT Options {
   DriveMode drive_mode = DriveMode::kAuto;
 
-  fpt_t ctrl_dt_sec = 1.0 / (0.5 * 1'000);   // 0.5kHz
+  fpt_t ctrl_sec = 1.0 / (0.5 * 1'000);   // 0.5kHz
   fpt_t act_itf_sec = 1.0 / (0.04 * 1'000);  // 0.04kHz
 
   fpt_t jpos_init_sec = 3.;

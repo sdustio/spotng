@@ -6,7 +6,7 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   sdquadx::Options opts;
   opts.drive_mode = sdquadx::DriveMode::kManual;
-  opts.ctrl_dt_sec = 0.002;
+  opts.ctrl_sec = 0.002;
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
 
@@ -27,7 +27,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   robot->UpdateDriveTwist(drive_twist);
   /*...*/
 
-  unsigned cdt = 1000 * opts.ctrl_dt_sec;
+  unsigned cdt = 1000 * opts.ctrl_sec;
   unsigned adt = 1000 * opts.act_itf_sec;
 
   for (size_t i = 0; i < 10'000; i++) {
