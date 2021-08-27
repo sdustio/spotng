@@ -34,28 +34,27 @@ RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::
 }
 
 bool RobotCtrlImpl::UpdateImu(sensor::ImuData const &imu) {
-  std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
-  return true;
+  return std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
 }
 
 bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) {
-  drivectrl_->UpdateTwist(twist);
-  return true;
+  return drivectrl_->UpdateTwist(twist);
+}
+
+bool RobotCtrlImpl::UpdateDriveVarPos(drive::VarPos const &varpos) {
+  return drivectrl_->UpdateVarPos(varpos);
 }
 
 bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) {
-  drivectrl_->UpdateState(state);
-  return true;
+  return drivectrl_->UpdateState(state);
 }
 
 bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) {
-  drivectrl_->UpdateGait(gait);
-  return true;
+  return drivectrl_->UpdateGait(gait);
 }
 
 bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) {
-  drivectrl_->UpdateStepHeight(height);
-  return true;
+  return drivectrl_->UpdateStepHeight(height);
 }
 
 bool RobotCtrlImpl::RunOnce() {
@@ -69,9 +68,7 @@ bool RobotCtrlImpl::RunOnce() {
     fsm_->RunOnce();
   }
 
-  legctrl_->SendCmdsToActuatorInterface();
-
-  return true;
+  return legctrl_->SendCmdsToActuatorInterface();
 }
 
 bool RobotCtrl::Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {

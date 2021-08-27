@@ -12,12 +12,17 @@ enum class Gait : uint8_t { Trot, SlowTrot, FlyingTrot, Walk, Bound };
 struct SDQUADX_EXPORT Twist {
   fpt_t lvel_x = 0.;
   fpt_t lvel_y = 0.;
-  fpt_t lvel_z = 0.;      // reserved, unused
-  fpt_t avel_x = 0.;      // reserved, unused, roll vel
-  fpt_t avel_y = 0.;      // reserved, unused, pitch vel
-  fpt_t avel_z = 0.;      // yaw vel
-  fpt_t var_pitch = 0.;   // variant pitch
-  fpt_t var_height = 0.;  // variant height
+  fpt_t lvel_z = 0.;  // [reserved, unused]
+  fpt_t avel_x = 0.;  // [reserved, unused] roll vel
+  fpt_t avel_y = 0.;  // [reserved, unused] pitch vel
+  fpt_t avel_z = 0.;  // yaw vel
+};
+
+struct SDQUADX_EXPORT VarPos {
+  fpt_t roll = 0.;    // [reserved, unused] roll
+  fpt_t pitch = 0.;   // pitch
+  fpt_t yaw = 0.;     // [reserved, unused] yaw
+  fpt_t height = 0.;  // height
 };
 
 class SDQUADX_EXPORT DriveCtrl {
@@ -29,6 +34,7 @@ class SDQUADX_EXPORT DriveCtrl {
   virtual ~DriveCtrl() = default;
 
   virtual bool UpdateTwist(Twist const &twist) = 0;
+  virtual bool UpdateVarPos(VarPos const &varpos) = 0;
   virtual bool UpdateState(State const &state) = 0;
   virtual bool UpdateGait(Gait const &gait) = 0;
   virtual bool UpdateStepHeight(fpt_t const height) = 0;
