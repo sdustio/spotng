@@ -101,11 +101,7 @@ set_target_properties(${PROJECT_NAME}
     SOVERSION "${PROJECT_VERSION_MAJOR}"
 )
 
-if(WIN32 AND NOT CYGWIN)
-  set(INSTALL_CMAKEDIR CMake)
-else()
-  set(INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})
-endif()
+set(INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})
 
 install(
   TARGETS
