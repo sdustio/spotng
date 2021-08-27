@@ -41,8 +41,8 @@ bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) {
   return drivectrl_->UpdateTwist(twist);
 }
 
-bool RobotCtrlImpl::UpdateDriveVarPos(drive::VarPos const &varpos) {
-  return drivectrl_->UpdateVarPos(varpos);
+bool RobotCtrlImpl::UpdateDriveVarPose(drive::VarPose const &varpose) {
+  return drivectrl_->UpdateVarPose(varpose);
 }
 
 bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) {

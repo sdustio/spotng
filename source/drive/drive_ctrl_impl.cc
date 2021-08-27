@@ -12,11 +12,11 @@ bool DriveCtrlImpl::CmdtoDesData() {
            Deadband(twist_.lvel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY), 0};
 
   pos_ = {dt_ * lvel_[0], dt_ * lvel_[1],
-          Deadband(varpos_.height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
+          Deadband(varpose_.height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
 
   avel_ = {0., 0, Deadband(twist_.avel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
 
-  rpy_ = {0., Deadband(varpos_.pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP), dt_ * avel_[2]};
+  rpy_ = {0., Deadband(varpose_.pitch, consts::drive::kMinAngleP, consts::drive::kMaxAngleP), dt_ * avel_[2]};
 
   // TODO(Michael Ding) 根据 Drive Mode 进行参数修正。比如 自动档无视 state，
   // state 和 move 是否冲突等等
@@ -30,9 +30,9 @@ bool DriveCtrlImpl::UpdateTwist(Twist const &twist) {
   return true;
 }
 
-bool DriveCtrlImpl::UpdateVarPos(VarPos const &varpos) {
-  varpos_.height = varpos_.height * (1.0 - consts::drive::kFilter) + varpos.height * consts::drive::kFilter;
-  varpos_.pitch = varpos_.pitch * (1.0 - consts::drive::kFilter) + varpos.pitch * consts::drive::kFilter;
+bool DriveCtrlImpl::UpdateVarPose(VarPose const &varpose) {
+  varpose_.height = varpose_.height * (1.0 - consts::drive::kFilter) + varpose.height * consts::drive::kFilter;
+  varpose_.pitch = varpose_.pitch * (1.0 - consts::drive::kFilter) + varpose.pitch * consts::drive::kFilter;
   return true;
 }
 
