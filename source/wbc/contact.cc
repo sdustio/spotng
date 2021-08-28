@@ -5,7 +5,7 @@
 namespace sdquadx::wbc {
 
 Contact::Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_pt)
-    : robot_sys_(model), _contact_pt(contact_pt) {
+    : robot_sys_(model), contact_pt_(contact_pt) {
   fpt_t mu = 0.4;
 
   Eigen::Map<Eigen::Matrix<fpt_t, 6, 3>> Uf(Uf_.data());
@@ -27,12 +27,12 @@ Contact::Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact
 }
 
 bool Contact::_UpdateJc() {
-  Jc_ = robot_sys_->GetContactJacobians()[_contact_pt];
+  Jc_ = robot_sys_->GetContactJacobians()[contact_pt_];
   return true;
 }
 
 bool Contact::_UpdateJcDotQdot() {
-  JcDotQdot_ = robot_sys_->GetContactJacobiansdqd()[_contact_pt];
+  JcDotQdot_ = robot_sys_->GetContactJacobiansdqd()[contact_pt_];
   // pretty_print(JcDotQdot_, std::cout, "JcDotQdot");
   return true;
 }

@@ -43,7 +43,7 @@ class Contact {
   SdVector3f JcDotQdot_ = {};
 
   fpt_t _max_Fz = 1500.;
-  int _contact_pt;
+  int contact_pt_;
 };
 
 }  // namespace sdquadx::wbc
