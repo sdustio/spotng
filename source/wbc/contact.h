@@ -11,7 +11,7 @@ class Contact {
   using SharedPtr = std::shared_ptr<Contact>;
   using ConstSharedPtr = std::shared_ptr<Contact const>;
 
-  Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_pt);
+  Contact(model::FloatBaseModel::ConstSharedPtr const &model, int contact_idx);
 
   int GetDim() const { return 3; }
   int GetDimRFConstraint() const { return 6; }
@@ -43,7 +43,7 @@ class Contact {
   SdVector3f JcDotQdot_ = {};
 
   fpt_t _max_Fz = 1500.;
-  int contact_pt_;
+  int contact_idx_;
 };
 
 }  // namespace sdquadx::wbc

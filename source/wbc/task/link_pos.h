@@ -6,7 +6,7 @@ namespace sdquadx::wbc {
 class TaskLinkPos : public Task {
  public:
   TaskLinkPos(model::FloatBaseModel::ConstSharedPtr const &model, SdVector3f const &kp, SdVector3f const &kd,
-              int linkid, bool virtual_depend = true);
+              int contact_idx, bool virtual_depend = true);
 
  private:
   // Update op_cmd_
@@ -18,7 +18,7 @@ class TaskLinkPos : public Task {
   // Additional Update (defined in child classes)
   bool _AdditionalUpdate();
 
-  int link_idx_;
+  int contact_idx_;
   bool virtual_depend_;
 };
 

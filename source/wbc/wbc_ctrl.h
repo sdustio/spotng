@@ -12,17 +12,13 @@
 #include "wbc/wbic.h"
 
 namespace sdquadx::wbc {
-namespace linkid {
+
+namespace foot_contact_idx {
 constexpr inline int const fr = 9;   // Front Right Foot
 constexpr inline int const fl = 11;  // Front Left Foot
 constexpr inline int const hr = 13;  // Hind Right Foot
 constexpr inline int const hl = 15;  // Hind Left Foot
-
-constexpr inline int const fr_abd = 2;  // Front Right Abduction
-constexpr inline int const fl_abd = 0;  // Front Left Abduction
-constexpr inline int const hr_abd = 3;  // Hind Right Abduction
-constexpr inline int const hl_abd = 1;  // Hind Left Abduction
-}  // namespace linkid
+}  // namespace foot_contact_idx
 
 class WbcCtrl {
  public:
