@@ -23,8 +23,8 @@ bool TaskLinkPos::_UpdateCommand(SdVector3f const &pos_des, SdVector3f const &ve
 
   // Op acceleration command
   for (int i(0); i < 3; ++i) {
-    op_cmd_[i] =
-        Kp_[i] * pos_err_[i] + Kd_[i] * (vel_des_[i] - robot_sys_->GetGroundContactVel()[contact_idx_][i]) + acc_des_[i];
+    op_cmd_[i] = Kp_[i] * pos_err_[i] + Kd_[i] * (vel_des_[i] - robot_sys_->GetGroundContactVel()[contact_idx_][i]) +
+                 acc_des_[i];
   }
 
   return true;
