@@ -6,7 +6,7 @@
 #include "estimate/pos_vel.h"
 
 namespace sdquadx::estimate {
-EstimateCtrlImpl::EstimateCtrlImpl() { est_map_[""] = nullptr; }
+EstimateCtrlImpl::EstimateCtrlImpl() {}
 
 bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est) {
   if (est_map_.find(name) != est_map_.end()) return false;
@@ -16,7 +16,7 @@ bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPt
 
 Estimator::SharedPtr const &EstimateCtrlImpl::GetEstimator(std::string const &name) const {
   auto iter = est_map_.find(name);
-  if (iter == est_map_.end()) return est_map_.at("");
+  if (iter == est_map_.end()) return null_est_;
   return iter->second;
 }
 

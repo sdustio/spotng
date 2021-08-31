@@ -23,5 +23,6 @@ class EstimateCtrlImpl : public EstimateCtrl {
  private:
   std::unordered_map<std::string, Estimator::SharedPtr> est_map_;
   State est_state_;
+  Estimator::SharedPtr const null_est_;
 };
 }  // namespace sdquadx::estimate
