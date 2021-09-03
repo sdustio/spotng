@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/eigen.h"
+#include "externlib/eigen.h"
 
 namespace sdquadx::math {
 

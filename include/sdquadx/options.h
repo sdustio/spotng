@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "sdquadx/types.h"
 
 namespace sdquadx {
@@ -16,6 +18,10 @@ struct SDQUADX_EXPORT Options {
 
   fpt_t jpos_init_sec = 3.;
   fpt_t gravity = 9.81;  // gravity scalar
+
+  std::string log_level = "warn"; // debug, info, warn, error, critical
+  std::string log_target = "console"; // console, file
+  std::string log_filename = "log/out.log";
 
   SdVector3f kp_joint = {3, 3, 3};
   SdVector3f kd_joint = {1, 0.2, 0.2};

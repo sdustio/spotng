@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "common/eigen.h"
+#include "externlib/eigen.h"
 #include "sdquadx/consts.h"
 
 namespace sdquadx::leg {

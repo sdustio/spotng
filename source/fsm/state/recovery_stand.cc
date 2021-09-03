@@ -1,6 +1,6 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "common/eigen.h"
+#include "externlib/eigen.h"
 #include "estimate/contact.h"
 
 namespace sdquadx::fsm {

@@ -1,6 +1,6 @@
 #include "wbc/task/link_pos.h"
 
-#include "common/eigen.h"
+#include "externlib/eigen.h"
 
 namespace sdquadx::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;

@@ -37,9 +37,10 @@ option(BUILD_TESTING "Build examples.")
 find_package(Eigen3 REQUIRED)
 find_package(qpOASES REQUIRED)
 find_package(eiquadprog REQUIRED)
+find_package(spdlog REQUIRED)
 
 set(LIB_SOURCES
-  source/common/eigen.cc
+  source/externlib/eigen.cc
   source/math/algebra.cc
   source/math/interpolate.cc
   source/dynamics/rotation.cc
@@ -77,7 +78,7 @@ set(LIB_SOURCES
 add_library(${PROJECT_NAME} SHARED)
 target_sources(${PROJECT_NAME} PRIVATE ${LIB_SOURCES})
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog
+  PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
 )
 
 include(GenerateExportHeader)

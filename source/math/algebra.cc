@@ -1,7 +1,7 @@
 #include "math/algebra.h"
 
-#include <eigen3/Eigen/LU>
-#include <eigen3/Eigen/SVD>
+#include "eigen3/Eigen/LU"
+#include "eigen3/Eigen/SVD"
 
 namespace sdquadx::math {
 
