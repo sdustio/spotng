@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "spdlog/spdlog.h"
 #include "estimate/contact.h"
 
 namespace sdquadx::fsm {
@@ -21,6 +22,7 @@ StateBalanceStand::StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPt
       body_weight_(consts::model::kBodyMass * opts.gravity) {}
 
 bool StateBalanceStand::OnEnter() {
+  spdlog::debug("Enter State Balance Stand!!!");
   auto const &estdata = estctrl_->GetEstState();
 
   ini_body_pos_ = estdata.pos;

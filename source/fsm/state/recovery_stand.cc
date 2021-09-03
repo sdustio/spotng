@@ -2,6 +2,7 @@
 
 #include "estimate/contact.h"
 #include "externlib/eigen.h"
+#include "spdlog/spdlog.h"
 
 namespace sdquadx::fsm {
 namespace opts {
@@ -50,6 +51,7 @@ StateRecoveryStand::StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl,
 {}
 
 bool StateRecoveryStand::OnEnter() {
+  spdlog::debug("Enter State Recovery Stand!!!");
   iter_ = 0;
 
   // initial configuration, position

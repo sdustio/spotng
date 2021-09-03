@@ -1,5 +1,7 @@
 #include "fsm/state/init.h"
 
+#include "spdlog/spdlog.h"
+
 namespace sdquadx::fsm {
 
 StateInit::StateInit(drive::DriveCtrl::SharedPtr const &drictrl)
@@ -11,6 +13,7 @@ StateInit::StateInit(drive::DriveCtrl::SharedPtr const &drictrl)
 
 bool StateInit::OnEnter() {
   // nothing
+  spdlog::debug("Enter State Init!!!");
   return true;
 }
 bool StateInit::OnExit() {

@@ -5,6 +5,7 @@
 #include "drive/drive_ctrl_impl.h"
 #include "math/utils.h"
 #include "mpc/cmpc.h"
+#include "spdlog/spdlog.h"
 
 namespace sdquadx::fsm {
 namespace opts {
@@ -26,7 +27,10 @@ StateLocomotion::StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr co
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
       mpc_(std::make_unique<mpc::CMpc>(opts.ctrl_sec, opts.gravity, 30 / static_cast<int>(1000. * opts.ctrl_sec))) {}
 
-bool StateLocomotion::OnEnter() { return mpc_->Init(); }
+bool StateLocomotion::OnEnter() {
+  spdlog::debug("Enter State Locomotion!!!");
+  return mpc_->Init();
+}
 
 bool StateLocomotion::OnExit() { return true; }
 

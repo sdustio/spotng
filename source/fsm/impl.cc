@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "spdlog/spdlog.h"
 #include "fsm/state/balance_stand.h"
 #include "fsm/state/init.h"
 #include "fsm/state/locomotion.h"
@@ -38,6 +39,7 @@ StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State const sta
 bool FiniteStateMachineImpl::RunOnce() {
   // safetyPreCheck
   if (!PreCheck()) {
+    spdlog::debug("FSM PreCheck Faild!!!");
     opmode_ = OperatingMode::EStop;
   }
 
