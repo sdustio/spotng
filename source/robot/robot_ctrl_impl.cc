@@ -1,6 +1,8 @@
 #include "robot/robot_ctrl_impl.h"
 
 #include <memory>
+#include <unordered_map>
+#include <string>
 
 #include "drive/drive_ctrl_impl.h"
 #include "estimate/contact.h"
@@ -11,20 +13,27 @@
 #include "leg/jpos_init_impl.h"
 #include "leg/leg_ctrl_impl.h"
 #include "model/quadruped_impl.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
 
 namespace sdquadx::robot {
 
 RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
-    : opts_(opts),
-      mquad_(std::make_shared<model::QuadrupedImpl>()),
-      legctrl_(std::make_shared<leg::LegCtrlImpl>(act_itf)),
-      jposinit_(std::make_shared<leg::JPosInitImpl>(opts.ctrl_sec, opts.jpos_init_sec)),
-      drivectrl_(std::make_shared<drive::DriveCtrlImpl>(opts.drive_mode, opts.ctrl_sec)),
-      estctrl_(std::make_shared<estimate::EstimateCtrlImpl>()) {
-  mquad_->ComputeFloatBaseModel(opts.gravity);
+    : opts_(opts) {
+  ParseOptions();
 
-  estctrl_->AddEstimator("posvel",
-                         std::make_shared<estimate::PosVel>(opts.ctrl_sec, opts.gravity, legctrl_, mquad_));
+  mquad_ = std::make_shared<model::QuadrupedImpl>();
+  mquad_->ComputeFloatBaseModel(opts_.gravity);
+
+  legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
+
+  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_.ctrl_sec, opts_.jpos_init_sec);
+
+  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_.drive_mode, opts_.ctrl_sec);
+
+  estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
+  estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts_.ctrl_sec, opts_.gravity, legctrl_, mquad_));
   estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
   auto est_contact = std::make_shared<estimate::Contact>();
   est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
@@ -59,6 +68,28 @@ bool RobotCtrlImpl::RunOnce() {
   }
 
   return legctrl_->SendCmdsToActuatorInterface();
+}
+
+bool RobotCtrlImpl::ParseOptions() {
+  std::shared_ptr<spdlog::logger> logger;
+  auto logt = opts_.log_target;
+  if (logt == "console") {
+    logger = spdlog::stdout_color_mt("sdlogger");
+  } else if (logt == "file") {
+    auto fn = opts_.log_filename;
+    logger = spdlog::rotating_logger_mt("sdlogger", fn, 1048576, 3);  // max size 1mb
+  }
+
+  std::unordered_map<std::string, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},
+                                                                            {"info", spdlog::level::info},
+                                                                            {"warn", spdlog::level::warn},
+                                                                            {"err", spdlog::level::err},
+                                                                            {"critical", spdlog::level::critical}};
+  logger->set_level(loglevelmap[opts_.log_level]);
+
+  spdlog::set_default_logger(logger);
+
+  return true;
 }
 
 bool RobotCtrl::Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {

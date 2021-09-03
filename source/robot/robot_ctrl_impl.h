@@ -18,6 +18,8 @@ class RobotCtrlImpl : public RobotCtrl {
   bool RunOnce() override;
 
  private:
+  bool ParseOptions();
+
   Options const opts_;
   model::Quadruped::SharedPtr mquad_;
   leg::LegCtrl::SharedPtr legctrl_;

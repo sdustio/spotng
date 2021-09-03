@@ -9,6 +9,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   opts.ctrl_sec = 0.002;
   opts.act_itf_sec = 0.025;
   opts.jpos_init_sec = 0.1;
+  opts.log_level = "debug";
 
   sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoInterface>();
   /*....*/
