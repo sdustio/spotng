@@ -13,14 +13,14 @@ enum class DriveMode : uint8_t {
 struct SDQUADX_EXPORT Options {
   DriveMode drive_mode = DriveMode::kAuto;
 
-  fpt_t ctrl_sec = 1.0 / (0.5 * 1'000);   // 0.5kHz
+  fpt_t ctrl_sec = 1.0 / (0.5 * 1'000);      // 0.5kHz
   fpt_t act_itf_sec = 1.0 / (0.04 * 1'000);  // 0.04kHz
 
   fpt_t jpos_init_sec = 3.;
   fpt_t gravity = 9.81;  // gravity scalar
 
-  std::string log_level = "warn"; // debug, info, warn, err, critical
-  std::string log_target = "console"; // console, file
+  std::string log_level = "warn";      // debug, info, warn, err, critical
+  std::string log_target = "console";  // console, file
   std::string log_filename = "log/out.log";
 
   SdVector3f kp_joint = {3, 3, 3};
@@ -34,6 +34,9 @@ struct SDQUADX_EXPORT Options {
 
   SdVector3f kp_ori = {100, 100, 100};
   SdVector3f kd_ori = {10, 10, 10};
+
+  std::array<SdVector3f, 4> init_jpos = {0., -1.40335, 2.97414, 0., -1.40335, 2.97414,
+                                         0., -1.40335, 2.97414, 0., -1.40335, 2.97414};
 };
 
 }  // namespace sdquadx

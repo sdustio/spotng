@@ -3,10 +3,14 @@
 #include "sdquadx/consts.h"
 #include "sdquadx/leg.h"
 
-namespace sdquadx::leg {
+namespace sdquadx {
+
+namespace leg {
+
 class JPosInitImpl : public JPosInit {
  public:
-  JPosInitImpl(fpt_t dt, fpt_t end_time);
+  JPosInitImpl(fpt_t dt, fpt_t end_time, SdVector3f const &kp, SdVector3f const &kd,
+               std::array<SdVector3f, 4> const &jpos);
   bool IsInitialized(LegCtrl::SharedPtr const &legctrl) override;
 
  private:
@@ -17,6 +21,11 @@ class JPosInitImpl : public JPosInit {
   fpt_t curr_time_ = 0.0;
   bool first_visit_ = true;
 
+  SdVector3f kp_;
+  SdVector3f kd_;
+  std::array<fpt_t, consts::model::kNumActJoint> target_jpos_ = {};
   std::array<fpt_t, consts::model::kNumActJoint> ini_jpos_ = {};
 };
-}  // namespace sdquadx::leg
+}  // namespace leg
+
+}  // namespace sdquadx

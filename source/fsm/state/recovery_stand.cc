@@ -1,7 +1,7 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "externlib/eigen.h"
 #include "estimate/contact.h"
+#include "externlib/eigen.h"
 
 namespace sdquadx::fsm {
 namespace opts {

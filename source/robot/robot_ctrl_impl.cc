@@ -28,7 +28,8 @@ RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::
 
   legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
 
-  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_.ctrl_sec, opts_.jpos_init_sec);
+  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_.ctrl_sec, opts_.jpos_init_sec, opts.kp_joint, opts_.kd_joint,
+                                                  opts_.init_jpos);
 
   drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_.drive_mode, opts_.ctrl_sec);
 
@@ -58,7 +59,6 @@ bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) { return drivectrl
 
 bool RobotCtrlImpl::RunOnce() {
   legctrl_->UpdateDatasFromActuatorInterface();
-  legctrl_->ZeroCmd();
 
   estctrl_->RunOnce();
 

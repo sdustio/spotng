@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Eigen/Dense"
-
 #include "sdquadx/types.h"
 
 namespace sdquadx {
