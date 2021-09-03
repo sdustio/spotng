@@ -5,7 +5,7 @@
 #include "sdquadx/model.h"
 #include "sdquadx/robot.h"
 
-namespace sdquadx::robot {
+namespace sdquadx {
 class RobotCtrlImpl : public RobotCtrl {
  public:
   RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
@@ -29,4 +29,4 @@ class RobotCtrlImpl : public RobotCtrl {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace sdquadx::robot
+}  // namespace sdquadx

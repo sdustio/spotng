@@ -14,8 +14,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoInterface>();
   /*....*/
 
-  sdquadx::robot::RobotCtrl::Ptr robot;
-  sdquadx::robot::RobotCtrl::Build(robot, opts, itf);
+  sdquadx::RobotCtrl::Ptr robot;
+  sdquadx::RobotCtrl::Build(robot, opts, itf);
 
   sdquadx::sensor::ImuData imu_data;
   sdquadx::drive::Twist drive_twist;

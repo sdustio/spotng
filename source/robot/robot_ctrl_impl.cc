@@ -1,8 +1,8 @@
 #include "robot/robot_ctrl_impl.h"
 
 #include <memory>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 #include "drive/drive_ctrl_impl.h"
 #include "estimate/contact.h"
@@ -17,7 +17,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-namespace sdquadx::robot {
+namespace sdquadx {
 
 RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
     : opts_(opts) {
@@ -101,4 +101,4 @@ bool RobotCtrl::Build(SharedPtr &ret, Options const &opts, interface::ActuatorIn
   ret = std::make_shared<RobotCtrlImpl>(opts, act_itf);
   return true;
 }
-}  // namespace sdquadx::robot
+}  // namespace sdquadx

@@ -7,7 +7,7 @@
 #include "sdquadx/options.h"
 #include "sdquadx/sensor.h"
 
-namespace sdquadx::robot {
+namespace sdquadx {
 class SDQUADX_EXPORT RobotCtrl {
  public:
   using Ptr = std::unique_ptr<RobotCtrl>;
@@ -29,4 +29,4 @@ class SDQUADX_EXPORT RobotCtrl {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace sdquadx::robot
+}  // namespace sdquadx
