@@ -72,7 +72,7 @@ set(LIB_SOURCES
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc
   source/fsm/state/locomotion.cc
-  source/robot/robot_ctrl_impl.cc
+  source/robot/impl.cc
 )
 
 add_library(${PROJECT_NAME} SHARED)
