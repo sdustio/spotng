@@ -21,11 +21,10 @@ bool JPosInitImpl::IsInitialized(LegCtrl::SharedPtr const &ctrl) {
   if (curr_time_ < opts_->jpos_init_sec) {
     Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> jpos;
     Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y0(ini_jpos_.data());
-    Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> y1(target_jpos_.data());
     Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1> const> yf(target_jpos_.data());
     fpt_t t = curr_time_ / opts_->jpos_init_sec;
 
-    math::interpolate_quadratic_bezier(jpos, y0, y1, yf, t);
+    math::interpolate_linear(jpos, y0, yf, t);
 
     for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
       for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx) {

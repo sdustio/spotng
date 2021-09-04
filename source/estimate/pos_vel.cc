@@ -163,7 +163,7 @@ bool PosVel::RunOnce(State &ret) {
     // 处理后的
     ps.segment(i1, 3) = -p_f;                                   // 足端位置在世界坐标系描述
     vs.segment(i1, 3) = (1.0f - trust) * v0 + trust * (-dp_f);  // 足端速度在世界坐标系描述
-    pzs(i) = (1.0f - trust) * (p0(2) + p_f(2));
+    pzs(i) = (1.0 - trust) * (p0(2) + p_f(2));
   }
 
   Vector28 y;

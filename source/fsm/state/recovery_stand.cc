@@ -2,24 +2,24 @@
 
 #include "estimate/contact.h"
 #include "externlib/eigen.h"
+#include "math/interpolate.h"
+#include "sdquadx/consts.h"
 #include "spdlog/spdlog.h"
 
 namespace sdquadx::fsm {
-namespace opts {
-constexpr inline int const fold_ramp_iter = 1000;
-constexpr inline int const fold_settle_iter = 1000;
 
-constexpr inline int const standup_ramp_iter = 500;
-constexpr inline int const standup_settle_iter = 500;
+namespace params {
 
-// 0.5 kHz
-constexpr inline int const rollover_ramp_iter = 150;
-constexpr inline int const rollover_settle_iter = 150;
-// iteration setup
-// constexpr inline int const rollover_ramp_iter = 300;
-// constexpr inline int const rollover_settle_iter = 300;
+constexpr int const fold_ramp_iter = 1000;
+constexpr int const fold_settle_iter = 1000;
 
-}  // namespace opts
+constexpr int const standup_ramp_iter = 500;
+constexpr int const standup_settle_iter = 500;
+
+constexpr int const rollover_ramp_iter = 300;
+constexpr int const rollover_settle_iter = 300;
+
+}  // namespace params
 
 StateRecoveryStand::StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                        drive::DriveCtrl::SharedPtr const &drictrl,
@@ -51,9 +51,9 @@ bool StateRecoveryStand::OnEnter() {
 
   flag_ = Flag::FoldLegs;
   if (!UpsideDown()) {  // Proper orientation
-    if ((0.2 < body_height) && (body_height < 0.45)) {
-      // printf("[Recovery Balance] body height is %; Stand Up \n",
-      // body_height);
+    if ((consts::model::kBodyHeight < body_height) &&
+        (body_height < consts::model::kMaxLegLength + consts::model::kBodyHeight)) {
+      spdlog::debug(" body height is %3.f; Stand Up!!", body_height);
       flag_ = Flag::StandUp;
     }
   }
@@ -79,13 +79,13 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
   auto body_height = estctrl_->GetEstState().pos[2];
   bool something_wrong = false;
 
-  if (UpsideDown() || (body_height < 0.1)) {
+  if (UpsideDown() || (body_height < consts::model::kBodyHeight)) {
     something_wrong = true;
   }
 
-  if (curr_iter <= floor(opts::standup_ramp_iter * 0.7)) {
+  if (curr_iter <= floor(params::standup_ramp_iter * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(curr_iter, opts::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
+      SetJPosInterPts(curr_iter, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
     }
   } else if (something_wrong) {
     // If body height is too low because of some reason
@@ -112,16 +112,14 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
 
 bool StateRecoveryStand::FoldLegs(const int curr_iter) {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, opts::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i]);
+    SetJPosInterPts(curr_iter, params::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i]);
   }
-  if (curr_iter >= opts::fold_ramp_iter + opts::fold_settle_iter) {
-    if (UpsideDown()) {
+  if (curr_iter >= params::fold_ramp_iter + params::fold_settle_iter) {
+    if (UpsideDown())
       flag_ = Flag::RollOver;
-      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
-    } else {
+    else
       flag_ = Flag::StandUp;
-      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
-    }
+    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
     iter_ = -1;
   }
   return true;
@@ -129,10 +127,10 @@ bool StateRecoveryStand::FoldLegs(const int curr_iter) {
 
 bool StateRecoveryStand::RollOver(const int curr_iter) {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, opts::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i]);
+    SetJPosInterPts(curr_iter, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i]);
   }
 
-  if (curr_iter > opts::rollover_ramp_iter + opts::rollover_settle_iter) {
+  if (curr_iter > params::rollover_ramp_iter + params::rollover_settle_iter) {
     flag_ = Flag::FoldLegs;
     for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->rolling_jpos[i];
     iter_ = -1;
@@ -142,29 +140,11 @@ bool StateRecoveryStand::RollOver(const int curr_iter) {
 
 bool StateRecoveryStand::SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
                                          SdVector3f const &fin) {
-  double a = 0.;
-  double b = 1.;
-
-  // if we're done interpolating
-  if (curr_iter <= max_iter) {
-    b = curr_iter / max_iter;
-    a = 1. - b;
-  }
-
-  // compute setpoints
-  SdVector3f inter_pos;
-  ToEigenTp(inter_pos) = a * ToConstEigenTp(ini) + b * ToConstEigenTp(fin);
-
-  // do control
-  return JointPDControl(leg, inter_pos, SdVector3f{});
-}
-
-bool StateRecoveryStand::JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes) {
-  ToEigenTp(legctrl_->GetCmdsForUpdate()[leg].kp_joint).diagonal() = ToConstEigenTp(opts_->kp_st);
-  ToEigenTp(legctrl_->GetCmdsForUpdate()[leg].kd_joint).diagonal() = ToConstEigenTp(opts_->kd_st);
-
-  legctrl_->GetCmdsForUpdate()[leg].q_des = qDes;
-  legctrl_->GetCmdsForUpdate()[leg].qd_des = qdDes;
+  auto &cmd = legctrl_->GetCmdsForUpdate()[leg];
+  math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
+                           std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
+  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->kp_st);
+  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->kd_st);
   return true;
 }
 

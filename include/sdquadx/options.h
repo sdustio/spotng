@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include "sdquadx/consts.h"
 #include "sdquadx/types.h"
@@ -44,15 +44,15 @@ struct SDQUADX_EXPORT Options {
   SdVector3f kp_ori = {100, 100, 100};
   SdVector3f kd_ori = {10, 10, 10};
 
-  SdVector3f kp_st = {120, 120, 120};
-  SdVector3f kd_st = {4, 4, 4};
+  SdVector3f kp_st = {80, 80, 80};
+  SdVector3f kd_st = {1, 1, 1};
 
   JPosVectorf init_jpos = {-0., -1.40335, 2.97414, 0., -1.40335, 2.97414,
                            -0., -1.40335, 2.97414, 0., -1.40335, 2.97414};
+
   JPosVectorf fold_jpos = {-0., -1.4, 2.7, 0.0, -1.4, 2.7, -0.0, -1.4, 2.7, 0.0, -1.4, 2.7};
   JPosVectorf stand_jpos = {-0., -0.8, 1.6, 0., -0.8, 1.6, -0., -0.8, 1.6, 0., -0.8, 1.6};
   JPosVectorf rolling_jpos = {1.5, -1.6, 2.77, 1.3, -3.1, 2.77, 1.5, -1.6, 2.77, 1.3, -3.1, 2.77};
-
 };
 
 }  // namespace sdquadx

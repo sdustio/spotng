@@ -2,17 +2,17 @@
 
 #include <unordered_map>
 
-#include "sdquadx/options.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/leg.h"
 #include "sdquadx/model.h"
+#include "sdquadx/options.h"
 
 namespace sdquadx::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
-  StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::SharedPtr const &drictrl,
-                     estimate::EstimateCtrl::SharedPtr const &estctrl);
+  StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                     drive::DriveCtrl::SharedPtr const &drictrl, estimate::EstimateCtrl::SharedPtr const &estctrl);
 
   bool OnEnter() override;
   bool OnExit() override;
@@ -32,8 +32,6 @@ class StateRecoveryStand : public StateCtrl {
 
   bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
                        SdVector3f const &fin);
-
-  bool JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes);
 
   int iter_ = 0;
 

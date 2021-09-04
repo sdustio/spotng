@@ -1,6 +1,7 @@
 #include "drive/drive_ctrl_impl.h"
 
 #include "sdquadx/consts.h"
+#include "math/interpolate.h"
 
 namespace sdquadx::drive {
 DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
@@ -24,15 +25,17 @@ bool DriveCtrlImpl::CmdtoDesData() {
 }
 
 bool DriveCtrlImpl::UpdateTwist(Twist const &twist) {
-  twist_.lvel_x = twist_.lvel_x * (1.0 - consts::drive::kFilter) + twist.lvel_x * consts::drive::kFilter;
-  twist_.lvel_y = twist_.lvel_y * (1.0 - consts::drive::kFilter) + twist.lvel_y * consts::drive::kFilter;
-  twist_.avel_z = twist_.avel_z * (1.0 - consts::drive::kFilter) + twist.avel_z * consts::drive::kFilter;
+  math::interpolate_linear(twist_.lvel_x, twist_.lvel_x, twist.lvel_x, consts::drive::kFilter);
+  math::interpolate_linear(twist_.lvel_y, twist_.lvel_y, twist.lvel_y, consts::drive::kFilter);
+  math::interpolate_linear(twist_.lvel_z, twist_.lvel_z, twist.lvel_z, consts::drive::kFilter);
+
   return true;
 }
 
 bool DriveCtrlImpl::UpdateVarPose(VarPose const &varpose) {
-  varpose_.height = varpose_.height * (1.0 - consts::drive::kFilter) + varpose.height * consts::drive::kFilter;
-  varpose_.pitch = varpose_.pitch * (1.0 - consts::drive::kFilter) + varpose.pitch * consts::drive::kFilter;
+  math::interpolate_linear(varpose_.height, varpose_.height, varpose.height, consts::drive::kFilter);
+  math::interpolate_linear(varpose_.pitch, varpose_.pitch, varpose.pitch, consts::drive::kFilter);
+
   return true;
 }
 
