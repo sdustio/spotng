@@ -11,7 +11,7 @@
 namespace sdquadx::fsm {
 class StateBalanceStand : public StateCtrl {
  public:
-  StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+  StateBalanceStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                     model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                     estimate::EstimateCtrl::SharedPtr const &estctrl);
   bool OnEnter() override;

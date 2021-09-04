@@ -8,7 +8,7 @@
 namespace sdquadx {
 class RobotCtrlImpl : public RobotCtrl {
  public:
-  RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+  RobotCtrlImpl(Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
   bool UpdateImu(sensor::ImuData const &imu) override;
   bool UpdateDriveTwist(drive::Twist const &twist) override;
   bool UpdateDriveVarPose(drive::VarPose const &varpose) override;
@@ -18,9 +18,9 @@ class RobotCtrlImpl : public RobotCtrl {
   bool RunOnce() override;
 
  private:
-  bool ParseOptions();
+  bool ParseOptions(Options::SharedPtr const &opts);
 
-  Options const opts_;
+  Options::ConstSharedPtr opts_;
   model::Quadruped::SharedPtr mquad_;
   leg::LegCtrl::SharedPtr legctrl_;
   leg::JPosInit::SharedPtr jposinit_;

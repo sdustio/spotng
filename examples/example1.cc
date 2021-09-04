@@ -1,15 +1,16 @@
 #include <iostream>
+#include <memory>
 
 #include "itf/echo_itf.h"
 #include "sdquadx/robot.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
-  sdquadx::Options opts;
-  opts.drive_mode = sdquadx::DriveMode::kManual;
-  opts.ctrl_sec = 0.002;
-  opts.act_itf_sec = 0.025;
-  opts.jpos_init_sec = 0.1;
-  opts.log_level = "debug";
+  auto opts = std::make_shared<sdquadx::Options>();
+  opts->drive_mode = sdquadx::DriveMode::kManual;
+  opts->ctrl_sec = 0.002;
+  opts->act_itf_sec = 0.025;
+  opts->jpos_init_sec = 0.1;
+  opts->log_level = "debug";
 
   sdquadx::interface::ActuatorInterface::SharedPtr itf = std::make_shared<EchoInterface>();
   /*....*/
@@ -28,8 +29,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   robot->UpdateDriveTwist(drive_twist);
   /*...*/
 
-  unsigned cdt = 1000 * opts.ctrl_sec;
-  unsigned adt = 1000 * opts.act_itf_sec;
+  unsigned cdt = 1000 * opts->ctrl_sec;
+  unsigned adt = 1000 * opts->act_itf_sec;
 
   for (size_t i = 0; i < 10'000; i++) {
     if (i % cdt == 0) {

@@ -13,7 +13,7 @@ constexpr inline double const max_roll = 80.;   // 40;
 constexpr inline double const max_pitch = 80.;  // 40;
 }  // namespace opts
 
-StateLocomotion::StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                  model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                                  estimate::EstimateCtrl::SharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
@@ -25,7 +25,7 @@ StateLocomotion::StateLocomotion(Options const &opts, leg::LegCtrl::SharedPtr co
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
-      mpc_(std::make_unique<mpc::CMpc>(opts.ctrl_sec, opts.gravity, 30 / static_cast<int>(1000. * opts.ctrl_sec))) {}
+      mpc_(std::make_unique<mpc::CMpc>(opts->ctrl_sec, opts->gravity, 30 / static_cast<int>(1000. * opts->ctrl_sec))) {}
 
 bool StateLocomotion::OnEnter() {
   spdlog::debug("Enter State Locomotion!!!");

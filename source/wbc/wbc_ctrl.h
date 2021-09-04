@@ -26,7 +26,7 @@ class WbcCtrl {
   using SharedPtr = std::shared_ptr<WbcCtrl>;
   using ConstSharedPtr = std::shared_ptr<WbcCtrl const>;
 
-  WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options const &opts, double weight = 0.1);
+  WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options::ConstSharedPtr const &opts, double weight = 0.1);
   bool RunOnce(InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
                drive::DriveCtrl::ConstSharedPtr const &drivectrl,
                estimate::EstimateCtrl::ConstSharedPtr const &estctrl);

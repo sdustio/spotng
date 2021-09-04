@@ -24,12 +24,12 @@ struct SDQUADX_EXPORT Cmd {
   SdMatrix3f kp_joint = {};
   SdMatrix3f kd_joint = {};
 
-  // from mpc; aid coumpter above;
+  // from mpc; aid coumpte above;
   SdVector3f force_feed_forward = {};
   SdVector3f p_des = {};
   SdVector3f v_des = {};
 
-  // from mpc; aid coumpter above;
+  // from mpc; aid coumpte above;
   SdMatrix3f kp_cartesian = {};
   SdMatrix3f kd_cartesian = {};
 

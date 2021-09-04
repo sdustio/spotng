@@ -7,17 +7,17 @@
 namespace sdquadx::wbc {
 using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 
-WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options const &opts, double weight)
+WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options::ConstSharedPtr const &opts, double weight)
     : model_(model),
-      Kp_joint_(opts.kp_joint),
-      Kd_joint_(opts.kd_joint),
-      body_pos_task_(std::make_shared<TaskBodyPos>(model, opts.kp_body, opts.kd_body)),
-      body_ori_task_(std::make_shared<TaskBodyOri>(model, opts.kp_ori, opts.kd_ori)),
+      Kp_joint_(opts->kp_joint),
+      Kd_joint_(opts->kd_joint),
+      body_pos_task_(std::make_shared<TaskBodyPos>(model, opts->kp_body, opts->kd_body)),
+      body_ori_task_(std::make_shared<TaskBodyOri>(model, opts->kp_ori, opts->kd_ori)),
       foot_task_({
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, foot_contact_idx::fr),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, foot_contact_idx::fl),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, foot_contact_idx::hr),
-          std::make_shared<TaskLinkPos>(model, opts.kp_foot, opts.kd_foot, foot_contact_idx::hl),
+          std::make_shared<TaskLinkPos>(model, opts->kp_foot, opts->kd_foot, foot_contact_idx::fr),
+          std::make_shared<TaskLinkPos>(model, opts->kp_foot, opts->kd_foot, foot_contact_idx::fl),
+          std::make_shared<TaskLinkPos>(model, opts->kp_foot, opts->kd_foot, foot_contact_idx::hr),
+          std::make_shared<TaskLinkPos>(model, opts->kp_foot, opts->kd_foot, foot_contact_idx::hl),
       }),
       foot_contact_({
           std::make_shared<Contact>(model, foot_contact_idx::fr),

@@ -19,28 +19,27 @@
 
 namespace sdquadx {
 
-RobotCtrlImpl::RobotCtrlImpl(Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf)
-    : opts_(opts) {
-  ParseOptions();
+RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+  ParseOptions(opts);
 
   mquad_ = std::make_shared<model::QuadrupedImpl>();
-  mquad_->ComputeFloatBaseModel(opts_.gravity);
+  mquad_->ComputeFloatBaseModel(opts_->gravity);
 
   legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
 
-  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_.ctrl_sec, opts_.jpos_init_sec, opts.kp_joint, opts_.kd_joint,
-                                                  opts_.init_jpos);
+  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_);
 
-  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_.drive_mode, opts_.ctrl_sec);
+  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_->drive_mode, opts_->ctrl_sec);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
-  estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts_.ctrl_sec, opts_.gravity, legctrl_, mquad_));
+  estctrl_->AddEstimator("posvel",
+                         std::make_shared<estimate::PosVel>(opts_->ctrl_sec, opts_->gravity, legctrl_, mquad_));
   estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
   auto est_contact = std::make_shared<estimate::Contact>();
   est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
   estctrl_->AddEstimator("contact", est_contact);
 
-  fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, legctrl_, mquad_, drivectrl_, estctrl_);
+  fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts_, legctrl_, mquad_, drivectrl_, estctrl_);
 }
 
 bool RobotCtrlImpl::UpdateImu(sensor::ImuData const &imu) {
@@ -70,13 +69,13 @@ bool RobotCtrlImpl::RunOnce() {
   return legctrl_->SendCmdsToActuatorInterface();
 }
 
-bool RobotCtrlImpl::ParseOptions() {
+bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   std::shared_ptr<spdlog::logger> logger;
-  auto logt = opts_.log_target;
+  auto logt = opts->log_target;
   if (logt == "console") {
     logger = spdlog::stdout_color_mt("sdlogger");
   } else if (logt == "file") {
-    auto fn = opts_.log_filename;
+    auto fn = opts->log_filename;
     logger = spdlog::rotating_logger_mt("sdlogger", fn, 1048576, 3);  // max size 1mb
   }
 
@@ -85,19 +84,23 @@ bool RobotCtrlImpl::ParseOptions() {
                                                                             {"warn", spdlog::level::warn},
                                                                             {"err", spdlog::level::err},
                                                                             {"critical", spdlog::level::critical}};
-  logger->set_level(loglevelmap[opts_.log_level]);
+  logger->set_level(loglevelmap[opts->log_level]);
 
   spdlog::set_default_logger(logger);
+
+  opts_ = opts;
 
   return true;
 }
 
-bool RobotCtrl::Build(Ptr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+bool RobotCtrl::Build(Ptr &ret, Options::SharedPtr const &opts,
+                      interface::ActuatorInterface::SharedPtr const &act_itf) {
   ret = std::make_unique<RobotCtrlImpl>(opts, act_itf);
   return true;
 }
 
-bool RobotCtrl::Build(SharedPtr &ret, Options const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+bool RobotCtrl::Build(SharedPtr &ret, Options::SharedPtr const &opts,
+                      interface::ActuatorInterface::SharedPtr const &act_itf) {
   ret = std::make_shared<RobotCtrlImpl>(opts, act_itf);
   return true;
 }

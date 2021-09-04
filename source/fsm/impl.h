@@ -11,7 +11,7 @@
 namespace sdquadx::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
-  FiniteStateMachineImpl(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+  FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                          model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                          estimate::EstimateCtrl::SharedPtr const &estctrl);
 
@@ -43,4 +43,5 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   SafetyChecker safety_checker_;
   TransitionData transition_data_;
 };
+
 }  // namespace sdquadx::fsm

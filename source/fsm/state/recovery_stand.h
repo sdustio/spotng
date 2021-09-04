@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 
+#include "sdquadx/options.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/leg.h"
@@ -10,7 +11,7 @@
 namespace sdquadx::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
-  StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::SharedPtr const &drictrl,
+  StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::SharedPtr const &drictrl,
                      estimate::EstimateCtrl::SharedPtr const &estctrl);
 
   bool OnEnter() override;
@@ -41,10 +42,11 @@ class StateRecoveryStand : public StateCtrl {
 
   Flag flag_ = Flag::FoldLegs;
 
+  Options::ConstSharedPtr opts_;
   leg::LegCtrl::SharedPtr legctrl_;
   drive::DriveCtrl::ConstSharedPtr drictrl_;
   estimate::EstimateCtrl::ConstSharedPtr estctrl_;
 
-  std::array<SdVector3f, 4> initial_jpos_;
+  JPosVectorf initial_jpos_;
 };
 }  // namespace sdquadx::fsm

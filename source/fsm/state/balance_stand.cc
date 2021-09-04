@@ -7,7 +7,7 @@
 
 namespace sdquadx::fsm {
 
-StateBalanceStand::StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                      model::Quadruped::SharedPtr const &mquad,
                                      drive::DriveCtrl::SharedPtr const &drictrl,
                                      estimate::EstimateCtrl::SharedPtr const &estctrl)
@@ -19,7 +19,7 @@ StateBalanceStand::StateBalanceStand(Options const &opts, leg::LegCtrl::SharedPt
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.)),
-      body_weight_(consts::model::kBodyMass * opts.gravity) {}
+      body_weight_(consts::model::kBodyMass * opts->gravity) {}
 
 bool StateBalanceStand::OnEnter() {
   spdlog::debug("Enter State Balance Stand!!!");

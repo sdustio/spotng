@@ -19,22 +19,9 @@ constexpr inline int const rollover_settle_iter = 150;
 // constexpr inline int const rollover_ramp_iter = 300;
 // constexpr inline int const rollover_settle_iter = 300;
 
-// JPos
-constexpr inline std::array<SdVector3f, 4> const fold_jpos = {SdVector3f{-0.0, -1.4, 2.7}, SdVector3f{0.0, -1.4, 2.7},
-                                                              SdVector3f{-0.0, -1.4, 2.7}, SdVector3f{0.0, -1.4, 2.7}};
-constexpr inline std::array<SdVector3f, 4> const stand_jpos = {SdVector3f{0., -.8, 1.6}, SdVector3f{0., -.8, 1.6},
-                                                               SdVector3f{0., -.8, 1.6}, SdVector3f{0., -.8, 1.6}};
-constexpr inline std::array<SdVector3f, 4> const rolling_jpos = {
-    SdVector3f{1.5, -1.6, 2.77}, SdVector3f{1.3, -3.1, 2.77}, SdVector3f{1.5, -1.6, 2.77}, SdVector3f{1.3, -3.1, 2.77}};
-
-// 对角线矩阵，row major == column major
-constexpr inline SdMatrix3f const kp_mat = {80, 0, 0, 0, 80, 0, 0, 0, 80};
-constexpr inline SdMatrix3f const kd_mat = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-// kp_mat << 120, 0, 0, 0, 120, 0, 0, 0, 120;
-// kd_mat << 4, 0, 0, 0, 4, 0, 0, 0, 4;
 }  // namespace opts
 
-StateRecoveryStand::StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl,
+StateRecoveryStand::StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
                                        drive::DriveCtrl::SharedPtr const &drictrl,
                                        estimate::EstimateCtrl::SharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
@@ -44,6 +31,7 @@ StateRecoveryStand::StateRecoveryStand(leg::LegCtrl::SharedPtr const &legctrl,
       flag_dispatch_{{Flag::StandUp, &StateRecoveryStand::StandUp},
                      {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
                      {Flag::RollOver, &StateRecoveryStand::RollOver}},
+      opts_(opts),
       legctrl_(legctrl),
       drictrl_(drictrl),
       estctrl_(estctrl)
@@ -97,7 +85,7 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
 
   if (curr_iter <= floor(opts::standup_ramp_iter * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(curr_iter, opts::standup_ramp_iter, leg, initial_jpos_[leg], opts::stand_jpos[leg]);
+      SetJPosInterPts(curr_iter, opts::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
     }
   } else if (something_wrong) {
     // If body height is too low because of some reason
@@ -124,15 +112,15 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
 
 bool StateRecoveryStand::FoldLegs(const int curr_iter) {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, opts::fold_ramp_iter, i, initial_jpos_[i], opts::fold_jpos[i]);
+    SetJPosInterPts(curr_iter, opts::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i]);
   }
   if (curr_iter >= opts::fold_ramp_iter + opts::fold_settle_iter) {
     if (UpsideDown()) {
       flag_ = Flag::RollOver;
-      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts::fold_jpos[i];
+      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
     } else {
       flag_ = Flag::StandUp;
-      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts::fold_jpos[i];
+      for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
     }
     iter_ = -1;
   }
@@ -141,12 +129,12 @@ bool StateRecoveryStand::FoldLegs(const int curr_iter) {
 
 bool StateRecoveryStand::RollOver(const int curr_iter) {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, opts::rollover_ramp_iter, i, initial_jpos_[i], opts::rolling_jpos[i]);
+    SetJPosInterPts(curr_iter, opts::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i]);
   }
 
   if (curr_iter > opts::rollover_ramp_iter + opts::rollover_settle_iter) {
     flag_ = Flag::FoldLegs;
-    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts::rolling_jpos[i];
+    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->rolling_jpos[i];
     iter_ = -1;
   }
   return true;
@@ -172,8 +160,8 @@ bool StateRecoveryStand::SetJPosInterPts(int const curr_iter, int const max_iter
 }
 
 bool StateRecoveryStand::JointPDControl(int const leg, SdVector3f const &qDes, SdVector3f const &qdDes) {
-  legctrl_->GetCmdsForUpdate()[leg].kp_joint = opts::kp_mat;
-  legctrl_->GetCmdsForUpdate()[leg].kd_joint = opts::kd_mat;
+  ToEigenTp(legctrl_->GetCmdsForUpdate()[leg].kp_joint).diagonal() = ToConstEigenTp(opts_->kp_st);
+  ToEigenTp(legctrl_->GetCmdsForUpdate()[leg].kd_joint).diagonal() = ToConstEigenTp(opts_->kd_st);
 
   legctrl_->GetCmdsForUpdate()[leg].q_des = qDes;
   legctrl_->GetCmdsForUpdate()[leg].qd_des = qdDes;
