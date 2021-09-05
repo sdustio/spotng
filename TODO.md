@@ -5,4 +5,4 @@
 - 默认值可以 hardcode
 - feature
   - [ ] 自动档
-  - [ ] Init状态问题
+  - [ ] fsm 状态切换增加鲁棒性

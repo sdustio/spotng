@@ -46,11 +46,7 @@ bool FiniteStateMachineImpl::RunOnce() {
 
   // Run the robot control code if operating mode is not unsafe
   // 运行机器人控制代码，如果工作模式安全
-  if (opmode_ == OperatingMode::EStop) {
-    current_state_ctrl_ = GetStateCtrl(State::Init);
-    current_state_ctrl_->OnEnter();
-    next_state_ = current_state_ctrl_->GetState();
-  } else {
+  if (opmode_ != OperatingMode::EStop) {
     // 下面为状态机
     // Run normal controls if no transition is detected
     // 如果没有检测到过渡，则运行正常控件

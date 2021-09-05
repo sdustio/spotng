@@ -52,9 +52,6 @@ set(LIB_SOURCES
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
   source/estimate/contact.cc
-  source/leg/impl.cc
-  source/leg/leg_ctrl_impl.cc
-  source/leg/jpos_init_impl.cc
   source/mpc/gait_skd.cc
   source/mpc/foot_swing.cc
   source/mpc/qp_solver.cc
@@ -74,6 +71,7 @@ set(LIB_SOURCES
   source/fsm/state/locomotion.cc
   source/robot/robot_impl.cc
   source/robot/options_impl.cc
+  source/robot/leg_impl.cc
 )
 
 add_library(${PROJECT_NAME} SHARED)

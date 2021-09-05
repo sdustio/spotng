@@ -84,7 +84,7 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
     something_wrong = true;
   }
 
-  if (curr_iter <= floor(params::standup_ramp_iter * 0.7)) {
+  if (curr_iter <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
       SetJPosInterPts(curr_iter, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
     }

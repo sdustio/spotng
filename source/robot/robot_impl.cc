@@ -10,8 +10,7 @@
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 #include "fsm/impl.h"
-#include "leg/jpos_init_impl.h"
-#include "leg/leg_ctrl_impl.h"
+#include "robot/leg_impl.h"
 #include "model/quadruped_impl.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -26,8 +25,6 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Actuator
   mquad_->ComputeFloatBaseModel(opts_->gravity);
 
   legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
-
-  jposinit_ = std::make_shared<leg::JPosInitImpl>(opts_);
 
   drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_->drive_mode, opts_->ctrl_sec);
 
@@ -61,10 +58,8 @@ bool RobotCtrlImpl::RunOnce() {
 
   estctrl_->RunOnce();
 
-  if (jposinit_->IsInitialized(legctrl_)) {
-    drivectrl_->CmdtoDesData();
-    fsm_->RunOnce();
-  }
+  drivectrl_->CmdtoDesData();
+  fsm_->RunOnce();
 
   return legctrl_->SendCmdsToActuatorInterface();
 }

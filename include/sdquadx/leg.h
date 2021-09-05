@@ -96,15 +96,4 @@ class SDQUADX_EXPORT LegCtrl {
   virtual bool SendCmdsToActuatorInterface() = 0;
 };
 
-class SDQUADX_EXPORT JPosInit {
- public:
-  using Ptr = std::unique_ptr<JPosInit>;
-  using SharedPtr = std::shared_ptr<JPosInit>;
-  using ConstSharedPtr = std::shared_ptr<JPosInit const>;
-
-  virtual ~JPosInit() = default;
-
-  virtual bool IsInitialized(LegCtrl::SharedPtr const &ctrl) = 0;
-};
-
 }  // namespace sdquadx::leg

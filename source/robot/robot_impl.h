@@ -23,7 +23,6 @@ class RobotCtrlImpl : public RobotCtrl {
   Options::ConstSharedPtr opts_;
   model::Quadruped::SharedPtr mquad_;
   leg::LegCtrl::SharedPtr legctrl_;
-  leg::JPosInit::SharedPtr jposinit_;
   drive::DriveCtrl::SharedPtr drivectrl_;
   estimate::EstimateCtrl::SharedPtr estctrl_;
   fsm::FiniteStateMachine::SharedPtr fsm_;

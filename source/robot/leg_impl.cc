@@ -1,4 +1,4 @@
-#include "leg/leg_ctrl_impl.h"
+#include "robot/leg_impl.h"
 
 #include <cmath>
 
@@ -18,6 +18,28 @@ std::array<fpt_t, 4> const side_signs{-1.0, 1.0, -1.0, 1.0};
  */
 fpt_t GetSideSign(int leg) { return side_signs.at(leg); }
 }  // namespace
+
+void Cmd::Zero() {
+  tau_feed_forward.fill(0.);
+  force_feed_forward.fill(0.);
+  q_des.fill(0.);
+  qd_des.fill(0.);
+  p_des.fill(0.);
+  v_des.fill(0.);
+  kp_cartesian.fill(0.);
+  kd_cartesian.fill(0.);
+  kp_joint.fill(0.);
+  kd_joint.fill(0.);
+}
+
+void Data::Zero() {
+  q.fill(0.);
+  qd.fill(0.);
+  p.fill(0.);
+  v.fill(0.);
+  tau_estimate.fill(0.);
+  J.fill(0.);
+}
 
 LegCtrlImpl::LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf) : act_itf_(act_itf) {}
 
