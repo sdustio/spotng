@@ -4,7 +4,7 @@
 
 namespace sdquadx::math {
 
-bool illegal_coeft(fpt_t t){
+bool illegal_coeft(fpt_t t) {
   if (t < 1.e-12 || t - 1. > 1.e-12) return true;
   return false;
 }

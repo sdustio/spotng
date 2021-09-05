@@ -68,6 +68,7 @@ bool StateRecoveryStand::OnExit() {
 }
 
 bool StateRecoveryStand::RunOnce() {
+  spdlog::debug("will %d", flag_);
   (this->*flag_dispatch_[flag_])(iter_);
   iter_++;
   return true;
