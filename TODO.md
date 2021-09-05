@@ -1,11 +1,12 @@
-- 写死的常量分离出来
-  - [ ] quadruped_impl.cc
-  - 其他(调到哪里改到哪里)
-- 确认各种常量(是硬件相关的常量还是经验参数还是可变参数？如果是常量或者经验参数，数值应该是多少？如果是可变参数，默认值是多少？)
-- 默认值可以 hardcode
 - feature
   - [ ] 自动档
   - [ ] fsm 状态切换增加鲁棒性
     - EStop 的处理
     - PreCheck 内容
     - PostCheck 内容
+- 写死的常量分离出来
+  - [ ] quadruped_impl.cc
+  - 其他(调到哪里改到哪里)
+- 确认各种常量(是硬件相关的常量还是经验参数还是可变参数？如果是常量或者经验参数，数值应该是多少？如果是可变参数，默认值是多少？)
+  - 默认值可以 hardcode
+- [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
