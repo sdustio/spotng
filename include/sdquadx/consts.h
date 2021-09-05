@@ -32,7 +32,7 @@ namespace model {
 constexpr inline fpt_t const kBodyLength = 0.5 + 0.2 * 2;
 constexpr inline fpt_t const kBodyWidth = 0.175 * 2;
 constexpr inline fpt_t const kBodyHeight = 0.1 * 2;
-constexpr inline fpt_t const kBodyMass = 30.;
+constexpr inline fpt_t const kBodyMass = 32.;
 
 constexpr inline fpt_t const kAbadGearRatio = 7.5;
 constexpr inline fpt_t const kHipGearRatio = 7.5;

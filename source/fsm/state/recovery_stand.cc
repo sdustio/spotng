@@ -53,7 +53,7 @@ bool StateRecoveryStand::OnEnter() {
   if (!UpsideDown()) {  // Proper orientation
     if ((consts::model::kBodyHeight < body_height) &&
         (body_height < consts::model::kMaxLegLength + consts::model::kBodyHeight)) {
-      spdlog::debug(" body height is %3.f; Stand Up!!", body_height);
+      spdlog::debug(" body height is {}; Stand Up!!", body_height);
       flag_ = Flag::StandUp;
     }
   }
@@ -68,15 +68,14 @@ bool StateRecoveryStand::OnExit() {
 }
 
 bool StateRecoveryStand::RunOnce() {
-  spdlog::debug("will %d", flag_);
-  (this->*flag_dispatch_[flag_])(iter_);
-  iter_++;
+  if (iter_ < 0) return true;
+  (this->*flag_dispatch_[flag_])();
   return true;
 }
 
 TransitionData StateRecoveryStand::Transition([[maybe_unused]] const State next) { return TransitionData{true}; }
 
-bool StateRecoveryStand::StandUp(const int curr_iter) {
+bool StateRecoveryStand::StandUp() {
   auto body_height = estctrl_->GetEstState().pos[2];
   bool something_wrong = false;
 
@@ -84,10 +83,11 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
     something_wrong = true;
   }
 
-  if (curr_iter <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
+  if (iter_ <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(curr_iter, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
+      SetJPosInterPts(iter_, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg]);
     }
+    iter_++;
   } else if (something_wrong) {
     // If body height is too low because of some reason
     // even after the stand up motion is almost over
@@ -96,13 +96,13 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
       initial_jpos_[i] = legctrl_->GetDatas()[i].q;
     }
     flag_ = Flag::FoldLegs;
-    iter_ = -1;
+    iter_ = 0;
 
     // printf("[Recovery Balance - Warning] body height is still too low (%f) or
     // UpsideDown (%d); Folding legs \n",
     //        body_height, UpsideDown());
   } else {
-    iter_ = 0;
+    iter_ = -1;
   }
 
   auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
@@ -111,30 +111,31 @@ bool StateRecoveryStand::StandUp(const int curr_iter) {
   return true;
 }
 
-bool StateRecoveryStand::FoldLegs(const int curr_iter) {
+bool StateRecoveryStand::FoldLegs() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, params::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i]);
+    SetJPosInterPts(iter_, params::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i]);
   }
-  if (curr_iter >= params::fold_ramp_iter + params::fold_settle_iter) {
+  iter_++;
+  if (iter_ >= params::fold_ramp_iter + params::fold_settle_iter) {
     if (UpsideDown())
       flag_ = Flag::RollOver;
     else
       flag_ = Flag::StandUp;
     for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
-    iter_ = -1;
+    iter_ = 0;
   }
   return true;
 }
 
-bool StateRecoveryStand::RollOver(const int curr_iter) {
+bool StateRecoveryStand::RollOver() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(curr_iter, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i]);
+    SetJPosInterPts(iter_, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i]);
   }
-
-  if (curr_iter > params::rollover_ramp_iter + params::rollover_settle_iter) {
+  iter_++;
+  if (iter_ > params::rollover_ramp_iter + params::rollover_settle_iter) {
     flag_ = Flag::FoldLegs;
     for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->rolling_jpos[i];
-    iter_ = -1;
+    iter_ = 0;
   }
   return true;
 }

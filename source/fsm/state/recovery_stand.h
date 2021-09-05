@@ -26,9 +26,9 @@ class StateRecoveryStand : public StateCtrl {
   enum class Flag : uint8_t { StandUp, FoldLegs, RollOver };
   bool UpsideDown();
 
-  bool StandUp(const int curr_iter);
-  bool FoldLegs(const int curr_iter);
-  bool RollOver(const int curr_iter);
+  bool StandUp();
+  bool FoldLegs();
+  bool RollOver();
 
   bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
                        SdVector3f const &fin);
@@ -36,7 +36,7 @@ class StateRecoveryStand : public StateCtrl {
   int iter_ = 0;
 
   std::unordered_map<drive::State, State> state_trans_;
-  std::unordered_map<Flag, bool (StateRecoveryStand::*)(const int)> flag_dispatch_;
+  std::unordered_map<Flag, bool (StateRecoveryStand::*)()> flag_dispatch_;
 
   Flag flag_ = Flag::FoldLegs;
 
