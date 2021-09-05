@@ -14,7 +14,7 @@ FiniteStateMachineImpl::FiniteStateMachineImpl(Options::ConstSharedPtr const &op
                                                model::Quadruped::SharedPtr const &mquad,
                                                drive::DriveCtrl::SharedPtr const &drictrl,
                                                estimate::EstimateCtrl::SharedPtr const &estctrl)
-    : state_ctrls_{{State::Init, std::make_shared<StateInit>(drictrl)},
+    : state_ctrls_{{State::Init, std::make_shared<StateInit>(opts, legctrl, drictrl)},
                    {State::RecoveryStand, std::make_shared<StateRecoveryStand>(opts, legctrl, drictrl, estctrl)},
                    {State::Locomotion, std::make_shared<StateLocomotion>(opts, legctrl, mquad, drictrl, estctrl)},
                    {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl, mquad, drictrl, estctrl)}},

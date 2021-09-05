@@ -4,7 +4,8 @@
 
 namespace sdquadx::fsm {
 
-StateInit::StateInit(drive::DriveCtrl::SharedPtr const &drictrl)
+StateInit::StateInit(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                     drive::DriveCtrl::SharedPtr const &drictrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::RecoveryStand},
