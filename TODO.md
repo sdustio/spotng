@@ -1,3 +1,10 @@
+- recovery stand, 可能方向：
+  - 腿拉长
+  - 减少 body height
+  - 减少 roll over damping iter
+  - 增加 torque
+  - 两段控制
+  - del max stop in proto
 - feature
   - [ ] 自动档
   - [ ] fsm 状态切换增加鲁棒性
