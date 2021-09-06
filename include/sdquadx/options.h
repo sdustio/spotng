@@ -49,8 +49,8 @@ struct SDQUADX_EXPORT Options {
   SdVector3f kp_ori;
   SdVector3f kd_ori;
 
-  SdVector3f kp_st;
-  SdVector3f kd_st;
+  SdVector3f kp_joint_flip;
+  SdVector3f kd_joint_flip;
 
   JPosVectorf init_jpos;
 
