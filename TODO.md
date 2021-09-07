@@ -5,6 +5,7 @@
   - 增加 torque
   - 两段控制
   - del max stop in proto
+  - floor rotation 精度
 - feature
   - [ ] 自动档
   - [ ] fsm 状态切换增加鲁棒性

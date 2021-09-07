@@ -31,7 +31,7 @@ class StateRecoveryStand : public StateCtrl {
   bool RollOver();
 
   bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
-                       SdVector3f const &fin);
+                       SdVector3f const &fin, SdVector3f const &kp, SdVector3f const &kd);
 
   int iter_ = 0;
 
