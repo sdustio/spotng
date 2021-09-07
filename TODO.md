@@ -1,11 +1,8 @@
-- recovery stand, 可能方向：
-  - 腿拉长
-  - 减少 body height
-  - 减少 roll over damping iter
-  - 增加 torque
-  - 两段控制
-  - del max stop in proto
-  - floor rotation 精度
+- recovery stand
+  - 使用定义精确的 spot robot 测试
+    - 修改 spot proto，适配 ENU，适配关节坐标(0°腿朝下，转轴往左)
+    - 换 gazebo
+  - 提高 SdQuadX robot 的描述准确度 & 精度
 - feature
   - [ ] 自动档
   - [ ] fsm 状态切换增加鲁棒性
