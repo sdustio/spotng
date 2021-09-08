@@ -152,9 +152,6 @@ bool StateRecoveryStand::SetJPosInterPts(int const curr_iter, int const max_iter
   ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(kp);
   ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(kd);
 
-  spdlog::debug("State Recovery Set JPos!!\n Leg: {}\nFlag: {}\n qdes: {}, {}, {}", leg, flag_, cmd.q_des[0],
-                cmd.q_des[1], cmd.q_des[2]);
-
   return true;
 }
 
