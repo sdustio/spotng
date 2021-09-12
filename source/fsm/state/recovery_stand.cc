@@ -51,8 +51,8 @@ bool StateRecoveryStand::OnEnter() {
 
   flag_ = Flag::FoldLegs;
   if (!UpsideDown()) {  // Proper orientation
-    if ((consts::model::kBodyHeight < body_height) &&
-        (body_height < consts::model::kMaxLegLength + consts::model::kBodyHeight)) {
+    if ((opts_->model.body_height < body_height) &&
+        (body_height < consts::model::kMaxLegLength + opts_->model.body_height)) {
       spdlog::debug(" body height is {}; Stand Up!!", body_height);
       flag_ = Flag::StandUp;
     }
@@ -79,14 +79,14 @@ bool StateRecoveryStand::StandUp() {
   auto body_height = estctrl_->GetEstState().pos[2];
   bool something_wrong = false;
 
-  if (UpsideDown() || (body_height < consts::model::kBodyHeight)) {
+  if (UpsideDown() || (body_height < opts_->model.body_height)) {
     something_wrong = true;
   }
 
   if (iter_ <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(iter_, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->stand_jpos[leg],
-                      opts_->kp_joint, opts_->kd_joint);
+      SetJPosInterPts(iter_, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->model.jpos_stand[leg],
+                      opts_->model.kp_joint, opts_->model.kd_joint);
     }
     iter_++;
   } else if (something_wrong) {
@@ -114,8 +114,8 @@ bool StateRecoveryStand::StandUp() {
 
 bool StateRecoveryStand::FoldLegs() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(iter_, params::fold_ramp_iter, i, initial_jpos_[i], opts_->fold_jpos[i], opts_->kp_joint,
-                    opts_->kd_joint);
+    SetJPosInterPts(iter_, params::fold_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_fold[i],
+                    opts_->model.kp_joint, opts_->model.kd_joint);
   }
   iter_++;
   if (iter_ >= params::fold_ramp_iter + params::fold_settle_iter) {
@@ -123,7 +123,7 @@ bool StateRecoveryStand::FoldLegs() {
       flag_ = Flag::RollOver;
     else
       flag_ = Flag::StandUp;
-    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->fold_jpos[i];
+    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->model.jpos_fold[i];
     iter_ = 0;
   }
   return true;
@@ -131,13 +131,13 @@ bool StateRecoveryStand::FoldLegs() {
 
 bool StateRecoveryStand::RollOver() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(iter_, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->rolling_jpos[i],
-                    opts_->kp_joint_flip, opts_->kd_joint_flip);
+    SetJPosInterPts(iter_, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_rolling[i],
+                    opts_->model.kp_joint_flip, opts_->model.kd_joint_flip);
   }
   iter_++;
   if (iter_ > params::rollover_ramp_iter + params::rollover_settle_iter) {
     flag_ = Flag::FoldLegs;
-    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->rolling_jpos[i];
+    for (int i = 0; i < consts::model::kNumLeg; ++i) initial_jpos_[i] = opts_->model.jpos_rolling[i];
     iter_ = 0;
   }
   return true;

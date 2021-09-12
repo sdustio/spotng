@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "sdquadx/consts.h"
+#include "sdquadx/options.h"
 #include "sdquadx/types.h"
 
 namespace sdquadx::model {
@@ -54,9 +55,9 @@ class SDQUADX_EXPORT Quadruped {
 
   virtual ~Quadruped() = default;
 
-  virtual bool ComputeFloatBaseModel(fpt_t g) = 0;  // gravity
+  virtual bool ComputeFloatBaseModel() = 0;  // gravity
   virtual FloatBaseModel::SharedPtr const &GetFloatBaseModel() const = 0;
 
-  virtual bool CalcHipLocation(SdVector3f &ret, int const leg) const = 0;
+  virtual bool CalcAbadLocation(SdVector3f &ret, int const leg) const = 0;
 };
 }  // namespace sdquadx::model

@@ -6,7 +6,7 @@ namespace sdquadx::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
   explicit DriveCtrlImpl(fpt_t dt);
-  DriveCtrlImpl(DriveMode mode, fpt_t dt);
+  DriveCtrlImpl(options::DriveMode mode, fpt_t dt);
 
   bool UpdateTwist(Twist const &twist) override;
   bool UpdateVarPose(VarPose const &varpose) override;
@@ -29,7 +29,7 @@ class DriveCtrlImpl : public DriveCtrl {
  private:
   fpt_t Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal);
 
-  DriveMode mode_;
+  options::DriveMode mode_;
   fpt_t dt_;
   Twist twist_;
   VarPose varpose_;

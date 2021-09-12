@@ -114,7 +114,7 @@ bool PosVel::RunOnce(State &ret) {
   for (int i = 0; i < consts::model::kNumLeg; i++) {
     int i1 = 3 * i;
     SdVector3f _ph;
-    quad_->CalcHipLocation(_ph, i);  // hip positions relative to CoM 相对于CoM的髋位置
+    quad_->CalcAbadLocation(_ph, i);  // hip positions relative to CoM 相对于CoM的髋位置
     Eigen::Map<Vector3> ph(_ph.data());
 
     Eigen::Map<Vector3 const> datap(datas[i].p.data());

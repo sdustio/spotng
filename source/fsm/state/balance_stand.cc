@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "spdlog/spdlog.h"
 #include "estimate/contact.h"
+#include "spdlog/spdlog.h"
 
 namespace sdquadx::fsm {
 
@@ -19,7 +19,7 @@ StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, leg::L
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.)),
-      body_weight_(consts::model::kBodyMass * opts->gravity) {}
+      body_weight_(opts->model.mass_body * opts->gravity) {}
 
 bool StateBalanceStand::OnEnter() {
   spdlog::debug("Enter State Balance Stand!!!");

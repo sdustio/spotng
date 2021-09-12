@@ -1,11 +1,12 @@
 #pragma once
 
 #include "sdquadx/leg.h"
+#include "sdquadx/options.h"
 
 namespace sdquadx::leg {
 class LegCtrlImpl : public LegCtrl {
  public:
-  explicit LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf);
+  LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf, Options::ConstSharedPtr const &opts);
 
   Datas const &GetDatas() const override;
 
@@ -25,6 +26,7 @@ class LegCtrlImpl : public LegCtrl {
   Datas datas_;
   Cmds cmds_;
   interface::ActuatorInterface::SharedPtr act_itf_;
+  Options::ConstSharedPtr opts_;
 };
 
 }  // namespace sdquadx::leg

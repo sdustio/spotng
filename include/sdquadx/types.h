@@ -18,4 +18,6 @@ using SdMatrix6f = std::array<fpt_t, 6 * 6>;
 
 using SdVectorXf = std::vector<fpt_t>;
 using SdMatrixXf = std::vector<fpt_t>;
+
+using JPosVectorf = std::array<SdVector3f, 4>;
 }  // namespace sdquadx

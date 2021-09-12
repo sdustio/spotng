@@ -88,7 +88,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
 
   for (int i = 0; i < 4; i++) {
     SdVector3f loc;
-    quad->CalcHipLocation(loc, i);
+    quad->CalcAbadLocation(loc, i);
     ToEigenTp(p_foot_[i]) =
         pos + rot_mat.transpose() * (ToConstEigenTp(loc) + ToConstEigenTp(legctrl->GetDatas()[i].p));
   }
@@ -137,7 +137,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
     }
 
     SdVector3f loc;
-    quad->CalcHipLocation(loc, i);
+    quad->CalcAbadLocation(loc, i);
     Vector3 pRobotFrame = ToConstEigenTp(loc) + offset;
 
     pRobotFrame[1] += interleave_y[i] * v_abs * interleave_gain;
@@ -204,7 +204,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, leg::LegCtrl::SharedPtr const &legctrl,
       // Stance foot damping
       auto &leg_cmds = legctrl->GetCmdsForUpdate();
       SdVector3f loc;
-      quad->CalcHipLocation(loc, foot);
+      quad->CalcAbadLocation(loc, foot);
       ToEigenTp(leg_cmds[foot].p_des) =
           rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetPosition()) - pos) - ToConstEigenTp(loc);
       ToEigenTp(leg_cmds[foot].v_des) = rot_mat * (ToConstEigenTp(foot_swing_trajs_[foot].GetVelocity()) - lvel);

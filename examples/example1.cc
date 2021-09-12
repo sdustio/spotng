@@ -24,7 +24,7 @@ void RunRobot(sdquadx::RobotCtrl::Ptr const &robot, sdquadx::interface::Actuator
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   auto opts = std::make_shared<sdquadx::Options>();
-  opts->drive_mode = sdquadx::DriveMode::kManual;
+  opts->drive_mode = sdquadx::options::DriveMode::kManual;
   opts->ctrl_sec = 0.002;
   opts->act_itf_sec = 0.025;
   opts->jpos_init_sec = 0.1;

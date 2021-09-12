@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "externlib/eigen.h"
-#include "sdquadx/consts.h"
 
 namespace sdquadx::leg {
 
@@ -41,7 +40,8 @@ void Data::Zero() {
   J.fill(0.);
 }
 
-LegCtrlImpl::LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf) : act_itf_(act_itf) {}
+LegCtrlImpl::LegCtrlImpl(interface::ActuatorInterface::SharedPtr const &act_itf, Options::ConstSharedPtr const &opts)
+    : act_itf_(act_itf), opts_(opts) {}
 
 Datas const &LegCtrlImpl::GetDatas() const { return datas_; }
 
@@ -63,10 +63,10 @@ void LegCtrlImpl::ZeroCmd() {
 }
 
 bool LegCtrlImpl::ComputeLegJacobianAndPosition(int leg) {
-  fpt_t l1 = consts::model::kAbadLinkLength;
-  fpt_t l2 = consts::model::kHipLinkLength;
-  fpt_t l3 = consts::model::kKneeLinkLength;
-  fpt_t l4 = consts::model::kKneeLinkYOffset;
+  fpt_t l1 = opts_->model.link_length_abad;
+  fpt_t l2 = opts_->model.link_length_hip;
+  fpt_t l3 = opts_->model.link_length_knee;
+  fpt_t l4 = opts_->model.link_yoffset_knee;
   fpt_t side_sign = GetSideSign(leg);  // also check bounds
 
   auto const &q = datas_[leg].q;

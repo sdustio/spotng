@@ -4,9 +4,9 @@
 #include "math/interpolate.h"
 
 namespace sdquadx::drive {
-DriveCtrlImpl::DriveCtrlImpl(DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
+DriveCtrlImpl::DriveCtrlImpl(options::DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
 
-DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(DriveMode::kAuto, dt) {}
+DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(options::DriveMode::kAuto, dt) {}
 
 bool DriveCtrlImpl::CmdtoDesData() {
   lvel_ = {Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),

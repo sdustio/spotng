@@ -21,10 +21,10 @@ namespace sdquadx {
 RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
   ParseOptions(opts);
 
-  mquad_ = std::make_shared<model::QuadrupedImpl>();
-  mquad_->ComputeFloatBaseModel(opts_->gravity);
+  mquad_ = std::make_shared<model::QuadrupedImpl>(opts_);
+  mquad_->ComputeFloatBaseModel();
 
-  legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf);
+  legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf, opts_);
 
   drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_->drive_mode, opts_->ctrl_sec);
 

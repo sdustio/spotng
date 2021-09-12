@@ -29,24 +29,7 @@ constexpr inline fpt_t const kDefaultStepHeight = 0.15;
 }  // namespace drive
 
 namespace model {
-constexpr inline fpt_t const kBodyLength = 0.5 + 0.2 * 2;
-constexpr inline fpt_t const kBodyWidth = 0.175 * 2;
-constexpr inline fpt_t const kBodyHeight = 0.1 * 2;
-constexpr inline fpt_t const kBodyMass = 32.;
-
-constexpr inline fpt_t const kAbadGearRatio = 7.5;
-constexpr inline fpt_t const kHipGearRatio = 7.5;
-constexpr inline fpt_t const kKneeGearRatio = 9.33;
-
-constexpr inline fpt_t const kAbadLinkLength = 0.135;
-constexpr inline fpt_t const kHipLinkLength = 0.3;
-constexpr inline fpt_t const kKneeLinkLength = 0.3;
-
-constexpr inline fpt_t const kKneeLinkYOffset = 0.0;
 constexpr inline fpt_t const kMaxLegLength = 0.55;  //?
-
-constexpr inline fpt_t const kJointDamping = 0.01;
-constexpr inline fpt_t const kJointDryFriction = 0.2;
 
 constexpr inline int const kNumActJoint = 12;
 constexpr inline int const kNumQ = 19;
@@ -67,7 +50,7 @@ constexpr inline fpt_t const kIMUProcessNoiseVelocity = 0.02;
 }  // namespace noise
 
 namespace interface {
-constexpr inline fpt_t const kMaxTorque = 24.0;
+constexpr inline fpt_t const kMaxTorque = 40.0;
 constexpr inline fpt_t const kMaxAngle = 1.0472;  // 60 degrees (should be changed)
 constexpr inline fpt_t const kMaxLateralForce = 350.;
 constexpr inline fpt_t const kMaxVerticalForce = 350.;
