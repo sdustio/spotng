@@ -22,7 +22,7 @@ StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, leg::L
       body_weight_(opts->model.mass_body * opts->gravity) {}
 
 bool StateBalanceStand::OnEnter() {
-  spdlog::debug("Enter State Balance Stand!!!");
+  spdlog::info("Enter State Balance Stand!!!");
   auto const &estdata = estctrl_->GetEstState();
 
   ini_body_pos_ = estdata.pos;
@@ -53,6 +53,9 @@ TransitionData StateBalanceStand::Transition(const State next) {
 }
 
 bool StateBalanceStand::Step() {
+  for (auto &cmd : legctrl_->GetCmdsForUpdate())
+    cmd.Zero();
+
   wbc_data_.body_pos_des = ini_body_pos_;
   wbc_data_.body_lvel_des.fill(0.);
   wbc_data_.body_acc_des.fill(0.);

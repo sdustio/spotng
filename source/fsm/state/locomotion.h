@@ -29,7 +29,7 @@ class StateLocomotion : public StateCtrl {
 
  private:
   // Parses contact specific controls to the leg controller
-  bool LocomotionControlStep();
+  bool Step();
 
   bool locomotionSafe();
 

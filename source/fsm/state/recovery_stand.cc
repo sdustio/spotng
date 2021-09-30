@@ -39,7 +39,7 @@ StateRecoveryStand::StateRecoveryStand(Options::ConstSharedPtr const &opts, leg:
 {}
 
 bool StateRecoveryStand::OnEnter() {
-  spdlog::debug("Enter State Recovery Stand!!!");
+  spdlog::info("Enter State Recovery Stand!!!");
   iter_ = 0;
 
   // initial configuration, position
@@ -53,7 +53,7 @@ bool StateRecoveryStand::OnEnter() {
   if (!UpsideDown()) {  // Proper orientation
     if ((opts_->model.body_height < body_height) &&
         (body_height < consts::model::kMaxLegLength + opts_->model.body_height)) {
-      spdlog::debug(" body height is {}; Stand Up!!", body_height);
+      spdlog::info(" body height is {}; Stand Up!!", body_height);
       flag_ = Flag::StandUp;
     }
   }

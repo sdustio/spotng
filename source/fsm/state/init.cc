@@ -22,7 +22,7 @@ StateInit::StateInit(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPt
 
 bool StateInit::OnEnter() {
   // nothing
-  spdlog::debug("Enter State Init!!!");
+  spdlog::info("Enter State Init!!!");
   iter_ = 0;
 
   // initial configuration, position
@@ -57,8 +57,6 @@ bool StateInit::SetJPosInterPts(int const curr_iter, int const max_iter, int con
                            std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
   ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->model.kp_joint);
   ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->model.kd_joint);
-
-  spdlog::debug("State Init Set JPos!!\n Leg: {}\n qdes: {}, {}, {}", leg, cmd.q_des[0], cmd.q_des[1], cmd.q_des[2]);
 
   return true;
 }

@@ -28,7 +28,7 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCt
       mpc_(std::make_unique<mpc::CMpc>(opts->ctrl_sec, opts->gravity, 30 / static_cast<int>(1000. * opts->ctrl_sec))) {}
 
 bool StateLocomotion::OnEnter() {
-  spdlog::debug("Enter State Locomotion!!!");
+  spdlog::info("Enter State Locomotion!!!");
   return mpc_->Init();
 }
 
@@ -36,12 +36,12 @@ bool StateLocomotion::OnExit() { return true; }
 
 bool StateLocomotion::RunOnce() {
   // Call the locomotion control logic for this iteration
-  return LocomotionControlStep();
+  return Step();
 }
 
 TransitionData StateLocomotion::Transition(const State next) {
   if (next == State::BalanceStand) {
-    LocomotionControlStep();
+    Step();
   }
 
   return TransitionData{true};
@@ -58,11 +58,12 @@ State StateLocomotion::CheckTransition() {
 }
 
 // Parses contact specific controls to the leg controller
-bool StateLocomotion::LocomotionControlStep() {
+bool StateLocomotion::Step() {
   // StateEstimate<T> stateEstimate = this->_data->_stateEstimator->getResult();
 
   // Contact state logic
   // estimateContact();
+  for (auto &cmd : legctrl_->GetCmdsForUpdate()) cmd.Zero();
 
   mpc_->RunOnce(wbc_data_, legctrl_, mquad_, drictrl_, estctrl_);
 
@@ -75,14 +76,12 @@ bool StateLocomotion::locomotionSafe() {
   auto const &seResult = estctrl_->GetEstState();
 
   if (std::fabs(seResult.rpy[0]) > math::DegToRad(opts::max_roll)) {
-    // printf("Unsafe locomotion: roll is %.3f degrees (max %.3f)\n",
-    // math::RadToDeg(seResult.rpy[0]), max_roll);
+    spdlog::warn("Unsafe locomotion: roll is {} degrees (max {})", math::RadToDeg(seResult.rpy[0]), opts::max_roll);
     return false;
   }
 
   if (std::fabs(seResult.rpy[1]) > math::DegToRad(opts::max_pitch)) {
-    // printf("Unsafe locomotion: pitch is %.3f degrees (max %.3f)\n",
-    // math::RadToDeg(seResult.rpy[1]), max_pitch);
+    spdlog::warn("Unsafe locomotion: pitch is {} degrees (max {})", math::RadToDeg(seResult.rpy[1]), opts::max_pitch);
     return false;
   }
 
@@ -90,22 +89,19 @@ bool StateLocomotion::locomotionSafe() {
     auto const &leg_data = legctrl_->GetDatas()[leg];
 
     if (leg_data.p[2] > 0) {
-      // printf("Unsafe locomotion: leg %d is above hip (%.3f m)\n", leg,
-      // leg_data.p[2]);
+      spdlog::warn("Unsafe locomotion: leg {} is above hip ({} m)", leg, leg_data.p[2]);
       return false;
     }
 
     if (std::fabs(leg_data.p[1] > 0.28)) {  // 0.18))
-      // printf("Unsafe locomotion: leg %d's y-position is bad (%.3f m)\n", leg,
-      // leg_data.p[1]);
+      spdlog::warn("Unsafe locomotion: leg {}'s y-position is bad ({} m)", leg, leg_data.p[1]);
       return false;
     }
 
     auto v_leg = ToConstEigenTp(leg_data.v).norm();
 
     if (std::fabs(v_leg) > 19.) {
-      // printf("Unsafe locomotion: leg %d is moving too quickly (%.3f m/s)\n",
-      // leg, v_leg);
+      spdlog::warn("Unsafe locomotion: leg {} is moving too quickly ({} m/s)", leg, v_leg);
       return false;
     }
   }

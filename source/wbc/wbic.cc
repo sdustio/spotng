@@ -1,6 +1,7 @@
 #include "wbc/wbic.h"
 
 #include <eiquadprog/eiquadprog-fast.hpp>
+#include "spdlog/spdlog.h"
 
 #include "math/algebra.h"
 
@@ -30,7 +31,7 @@ bool Wbic::UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv
 bool Wbic::MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
                       std::vector<Contact::ConstSharedPtr> const &contact_list) {
   if (!b_updatesetting_) {
-    printf("[Wanning] WBIC setting is not done\n");
+    spdlog::warn("[Wanning] WBIC setting is not done\n");
   }
 
   Eigen::Map<Sv_t> Sv(Sv_.data());
@@ -230,9 +231,9 @@ bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &
 
   for (int i = 0; i < 12; i++) {
     if (fabs(ret[i]) > 24) {
-      printf("!!!!!!!!danger!!!!! WBC torque num %d\tout the limitation: %f.2f ", i, ret[i]);
+      spdlog::warn("!!!!!!!!danger!!!!! WBC torque num {}\tout the limitation: {} ", i, ret[i]);
       ret[i] = ret[i] / fabs(ret[i]) * consts::interface::kMaxTorque;
-      printf("  edit to %f.2f\n", ret[i]);
+      spdlog::warn(" edit to {}\n", ret[i]);
     }
   }
   return true;

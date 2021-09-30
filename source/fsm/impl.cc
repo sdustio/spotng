@@ -40,7 +40,7 @@ StateCtrl::SharedPtr const &FiniteStateMachineImpl::GetStateCtrl(State const sta
 bool FiniteStateMachineImpl::RunOnce() {
   // safetyPreCheck
   if (!PreCheck()) {
-    spdlog::debug("FSM PreCheck Faild!!!");
+    spdlog::warn("FSM PreCheck Faild!!!");
     opmode_ = OperatingMode::EStop;
   }
 

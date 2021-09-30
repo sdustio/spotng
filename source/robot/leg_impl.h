@@ -27,6 +27,7 @@ class LegCtrlImpl : public LegCtrl {
   Cmds cmds_;
   interface::ActuatorInterface::SharedPtr act_itf_;
   Options::ConstSharedPtr opts_;
+  unsigned iter_ = 0;
 };
 
 }  // namespace sdquadx::leg

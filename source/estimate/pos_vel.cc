@@ -1,6 +1,7 @@
 #include "estimate/pos_vel.h"
 
 #include "sdquadx/consts.h"
+#include "spdlog/spdlog.h"
 
 namespace sdquadx::estimate {
 PosVel::PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl,
@@ -151,7 +152,7 @@ bool PosVel::RunOnce(State &ret) {
     // fptype high_suspect_number(1000);
     fpt_t high_suspect_number = 100.;
 
-    // printf("Trust %d: %.3f\n", i, trust);
+    spdlog::trace("Trust {}: {}", i, trust);
     // 摆动腿和支撑腿刚触地，即将离地时状态，测量噪声协方差增大
     Q.block<3, 3>(qindex, qindex) = (1. + (1. - trust) * high_suspect_number) * Q.block<3, 3>(qindex, qindex);  // p
 
