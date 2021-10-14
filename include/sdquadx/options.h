@@ -67,8 +67,8 @@ struct SDQUADX_EXPORT Model {
   SdVector3f kp_joint;
   SdVector3f kd_joint;
 
-  SdVector3f kp_joint_flip;
-  SdVector3f kd_joint_flip;
+  SdVector3f kp_jpos;
+  SdVector3f kd_jpos;
 
   JPosVectorf jpos_init;
   JPosVectorf jpos_fold;

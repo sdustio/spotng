@@ -85,8 +85,7 @@ bool StateRecoveryStand::StandUp() {
 
   if (iter_ <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(iter_, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->model.jpos_stand[leg],
-                      opts_->model.kp_joint, opts_->model.kd_joint);
+      SetJPosInterPts(iter_, params::standup_ramp_iter, leg, initial_jpos_[leg], opts_->model.jpos_stand[leg]);
     }
     iter_++;
   } else if (something_wrong) {
@@ -114,8 +113,7 @@ bool StateRecoveryStand::StandUp() {
 
 bool StateRecoveryStand::FoldLegs() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(iter_, params::fold_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_fold[i],
-                    opts_->model.kp_joint, opts_->model.kd_joint);
+    SetJPosInterPts(iter_, params::fold_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_fold[i]);
   }
   iter_++;
   if (iter_ >= params::fold_ramp_iter + params::fold_settle_iter) {
@@ -131,8 +129,7 @@ bool StateRecoveryStand::FoldLegs() {
 
 bool StateRecoveryStand::RollOver() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(iter_, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_rolling[i],
-                    opts_->model.kp_joint_flip, opts_->model.kd_joint_flip);
+    SetJPosInterPts(iter_, params::rollover_ramp_iter, i, initial_jpos_[i], opts_->model.jpos_rolling[i]);
   }
   iter_++;
   if (iter_ > params::rollover_ramp_iter + params::rollover_settle_iter) {
@@ -144,13 +141,13 @@ bool StateRecoveryStand::RollOver() {
 }
 
 bool StateRecoveryStand::SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
-                                         SdVector3f const &fin, SdVector3f const &kp, SdVector3f const &kd) {
+                                         SdVector3f const &fin) {
   auto &cmd = legctrl_->GetCmdsForUpdate()[leg];
   math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
                            std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
 
-  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(kp);
-  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(kd);
+  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->model.kp_jpos);
+  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->model.kd_jpos);
 
   return true;
 }

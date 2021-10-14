@@ -55,8 +55,8 @@ bool StateInit::SetJPosInterPts(int const curr_iter, int const max_iter, int con
   auto &cmd = legctrl_->GetCmdsForUpdate()[leg];
   math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
                            std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
-  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->model.kp_joint);
-  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->model.kd_joint);
+  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->model.kp_jpos);
+  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->model.kd_jpos);
 
   return true;
 }
