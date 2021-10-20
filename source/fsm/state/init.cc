@@ -40,7 +40,7 @@ bool StateInit::OnExit() {
 bool StateInit::RunOnce() {
   if (iter_ < 0) return true;
   for (int i = 0; i < consts::model::kNumLeg; ++i)
-    SetJPosInterPts(iter_, params::ramp_iter, i, initial_jpos_[i], opts_->model.jpos_init[i]);
+    SetJPosInterPts(iter_, params::ramp_iter, i, initial_jpos_[i], opts_->ctrl.jpos_init[i]);
   iter_++;
   if (iter_ >= params::ramp_iter + params::settle_iter) {
     iter_ = -1;
@@ -55,8 +55,8 @@ bool StateInit::SetJPosInterPts(int const curr_iter, int const max_iter, int con
   auto &cmd = legctrl_->GetCmdsForUpdate()[leg];
   math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
                            std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
-  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->model.kp_jpos);
-  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->model.kd_jpos);
+  ToEigenTp(cmd.kp_joint).diagonal() = ToConstEigenTp(opts_->ctrl.kp_jpos);
+  ToEigenTp(cmd.kd_joint).diagonal() = ToConstEigenTp(opts_->ctrl.kd_jpos);
 
   return true;
 }

@@ -9,15 +9,15 @@ using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::
 
 WbcCtrl::WbcCtrl(model::FloatBaseModel::SharedPtr const &model, Options::ConstSharedPtr const &opts, double weight)
     : model_(model),
-      Kp_joint_(opts->model.kp_joint),
-      Kd_joint_(opts->model.kd_joint),
-      body_pos_task_(std::make_shared<TaskBodyPos>(model, opts->model.kp_body, opts->model.kd_body)),
-      body_ori_task_(std::make_shared<TaskBodyOri>(model, opts->model.kp_ori, opts->model.kd_ori)),
+      Kp_joint_(opts->ctrl.kp_joint),
+      Kd_joint_(opts->ctrl.kd_joint),
+      body_pos_task_(std::make_shared<TaskBodyPos>(model, opts->ctrl.kp_body, opts->ctrl.kd_body)),
+      body_ori_task_(std::make_shared<TaskBodyOri>(model, opts->ctrl.kp_ori, opts->ctrl.kd_ori)),
       foot_task_({
-          std::make_shared<TaskLinkPos>(model, opts->model.kp_foot, opts->model.kd_foot, foot_contact_idx::fr),
-          std::make_shared<TaskLinkPos>(model, opts->model.kp_foot, opts->model.kd_foot, foot_contact_idx::fl),
-          std::make_shared<TaskLinkPos>(model, opts->model.kp_foot, opts->model.kd_foot, foot_contact_idx::hr),
-          std::make_shared<TaskLinkPos>(model, opts->model.kp_foot, opts->model.kd_foot, foot_contact_idx::hl),
+          std::make_shared<TaskLinkPos>(model, opts->ctrl.kp_foot, opts->ctrl.kd_foot, foot_contact_idx::fr),
+          std::make_shared<TaskLinkPos>(model, opts->ctrl.kp_foot, opts->ctrl.kd_foot, foot_contact_idx::fl),
+          std::make_shared<TaskLinkPos>(model, opts->ctrl.kp_foot, opts->ctrl.kd_foot, foot_contact_idx::hr),
+          std::make_shared<TaskLinkPos>(model, opts->ctrl.kp_foot, opts->ctrl.kd_foot, foot_contact_idx::hl),
       }),
       foot_contact_({
           std::make_shared<Contact>(model, foot_contact_idx::fr),

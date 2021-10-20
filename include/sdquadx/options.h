@@ -54,6 +54,10 @@ struct SDQUADX_EXPORT Model {
   SdMatrix3f inertia_abad;
   SdMatrix3f inertia_hip;
   SdMatrix3f inertia_knee;
+};
+
+struct SDQUADX_EXPORT Ctrl {
+  Ctrl();
 
   SdVector3f kp_body;
   SdVector3f kd_body;
@@ -101,6 +105,7 @@ struct SDQUADX_EXPORT Options {
   std::string log_filename;
 
   options::Model model;
+  options::Ctrl ctrl;
 };
 
 }  // namespace sdquadx
