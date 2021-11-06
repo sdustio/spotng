@@ -43,44 +43,44 @@ bool QuadrupedImpl::ComputeFloatBaseModel() {
   // locations
 
   // rotor inertia if the rotor is oriented so it spins around the z-axis
-  Eigen::Map<dynamics::RotationalInertia const> rotorRotationalInertiaZ(opts_->model.inertia_rotor_z.data());
+  Eigen::Map<dynamics::InertiaTensor const> rotorInertiaTensorZ(opts_->model.inertia_rotor_z.data());
 
   Matrix3 RY;
   dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y, consts::math::kPI / 2);
   Matrix3 RX;
   dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X, consts::math::kPI / 2);
 
-  dynamics::RotationalInertia rotorRotationalInertiaX = RY * rotorRotationalInertiaZ * RY.transpose();
-  dynamics::RotationalInertia rotorRotationalInertiaY = RX * rotorRotationalInertiaZ * RX.transpose();
+  dynamics::InertiaTensor rotorInertiaTensorX = RY * rotorInertiaTensorZ * RY.transpose();
+  dynamics::InertiaTensor rotorInertiaTensorY = RX * rotorInertiaTensorZ * RX.transpose();
   Eigen::Map<Vector3 const> rotorCOM(opts_->model.com_rotor.data());
 
   dynamics::SpatialInertia abad_rotor_spatial_inertia, hip_rotor_spatial_inertia, knee_rotor_spatial_inertia;
-  dynamics::BuildSpatialInertia(abad_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorRotationalInertiaX);
-  dynamics::BuildSpatialInertia(hip_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorRotationalInertiaY);
+  dynamics::BuildSpatialInertia(abad_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorInertiaTensorX);
+  dynamics::BuildSpatialInertia(hip_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorInertiaTensorY);
   knee_rotor_spatial_inertia = hip_rotor_spatial_inertia;
 
   // spatial inertias
-  Eigen::Map<dynamics::RotationalInertia const> abadRotationalInertia(opts_->model.inertia_abad.data());
-  Eigen::Map<Vector3 const> abadCOM(opts_->model.com_abad_l.data());  // LEFT
+  Eigen::Map<dynamics::InertiaTensor const> abadInertiaTensor(opts_->model.inertia_abad.data());
+  Eigen::Map<Vector3 const> abadCOM(opts_->model.com_abad_fl.data());  // LEFT
   dynamics::SpatialInertia abad_spatial_inertia;
-  dynamics::BuildSpatialInertia(abad_spatial_inertia, opts_->model.mass_abad, abadCOM, abadRotationalInertia);
+  dynamics::BuildSpatialInertia(abad_spatial_inertia, opts_->model.mass_abad, abadCOM, abadInertiaTensor);
 
-  Eigen::Map<dynamics::RotationalInertia const> hipRotationalInertia(opts_->model.inertia_hip.data());
-  Eigen::Map<Vector3 const> hipCOM(opts_->model.inertia_hip.data());  // LEFT
+  Eigen::Map<dynamics::InertiaTensor const> hipInertiaTensor(opts_->model.inertia_hip.data());
+  Eigen::Map<Vector3 const> hipCOM(opts_->model.com_hip_fl.data());  // LEFT
   dynamics::SpatialInertia hip_spatial_inertia;
-  dynamics::BuildSpatialInertia(hip_spatial_inertia, opts_->model.mass_hip, hipCOM, hipRotationalInertia);
+  dynamics::BuildSpatialInertia(hip_spatial_inertia, opts_->model.mass_hip, hipCOM, hipInertiaTensor);
 
-  Eigen::Map<dynamics::RotationalInertia const> kneeRotationalInertiaRotated(opts_->model.inertia_knee.data());
-  dynamics::RotationalInertia kneeRotationalInertia;
-  kneeRotationalInertia = RY * kneeRotationalInertiaRotated * RY.transpose();
-  Eigen::Map<Vector3 const> kneeCOM(opts_->model.com_knee_l.data());
+  Eigen::Map<dynamics::InertiaTensor const> kneeInertiaTensorRotated(opts_->model.inertia_knee.data());
+  dynamics::InertiaTensor kneeInertiaTensor;
+  kneeInertiaTensor = RY * kneeInertiaTensorRotated * RY.transpose();
+  Eigen::Map<Vector3 const> kneeCOM(opts_->model.com_knee_fl.data());
   dynamics::SpatialInertia knee_spatial_inertia;
-  dynamics::BuildSpatialInertia(knee_spatial_inertia, opts_->model.mass_knee, kneeCOM, kneeRotationalInertia);
+  dynamics::BuildSpatialInertia(knee_spatial_inertia, opts_->model.mass_knee, kneeCOM, kneeInertiaTensor);
 
-  Eigen::Map<dynamics::RotationalInertia const> bodyRotationalInertia(opts_->model.inertia_body.data());
+  Eigen::Map<dynamics::InertiaTensor const> bodyInertiaTensor(opts_->model.inertia_body.data());
   Eigen::Map<Vector3 const> bodyCOM(opts_->model.com_body.data());
   dynamics::SpatialInertia body_spatial_inertia;
-  dynamics::BuildSpatialInertia(body_spatial_inertia, opts_->model.mass_body, bodyCOM, bodyRotationalInertia);
+  dynamics::BuildSpatialInertia(body_spatial_inertia, opts_->model.mass_body, bodyCOM, bodyInertiaTensor);
 
   auto model = std::make_shared<FloatBaseModelImpl>();
   // we assume the cheetah's body (not including rotors) can be modeled as a
@@ -88,7 +88,7 @@ bool QuadrupedImpl::ComputeFloatBaseModel() {
   // 我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
   Vector3 bodyDims(opts_->model.body_length, opts_->model.body_width, opts_->model.body_height);
 
-  // model->addBase(_bodyMass, Vector3(0,0,0), BuildRotationalInertia(_bodyMass,
+  // model->addBase(_bodyMass, Vector3(0,0,0), BuildInertiaTensor(_bodyMass,
   // bodyDims));
   model->AddBase(body_spatial_inertia);
   // add contact for the cheetah's body

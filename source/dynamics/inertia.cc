@@ -5,7 +5,7 @@
 
 namespace sdquadx::dynamics {
 bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
-                         Eigen::Ref<RotationalInertia const> const &inertia) {
+                         Eigen::Ref<InertiaTensor const> const &inertia) {
   Matrix3 cSkew;
   math::VecToSkewMat(cSkew, com);  // 质心向量转反对称矩阵
 
@@ -27,8 +27,8 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, 
 
 bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<SpatialInertia const> const &si,
                                  CoordinateAxis const axis) {
-  PseudoRotationalInertia P;
-  SpatialInertiaToPseudoRotationalInertia(P, si);
+  PseudoInertiaTensor P;
+  SpatialInertiaToPseudoInertiaTensor(P, si);
   Matrix4 X = Matrix4::Identity();
   if (axis == CoordinateAxis::X)
     X(0, 0) = -1;
@@ -37,11 +37,11 @@ bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<Spat
   else if (axis == CoordinateAxis::Z)
     X(2, 2) = -1;
   P = X * P * X;
-  PseudoRotationalInertiaToSpatialInertia(ret, P);
+  PseudoInertiaTensorToSpatialInertia(ret, P);
   return true;
 }
 
-bool SpatialInertiaToPseudoRotationalInertia(Eigen::Ref<PseudoRotationalInertia> ret,
+bool SpatialInertiaToPseudoInertiaTensor(Eigen::Ref<PseudoInertiaTensor> ret,
                                              Eigen::Ref<SpatialInertia const> const &si) {
   Vector3 h;
   math::MatToSkewVec(h, si.topRightCorner<3, 3>());
@@ -54,8 +54,8 @@ bool SpatialInertiaToPseudoRotationalInertia(Eigen::Ref<PseudoRotationalInertia>
   return true;
 }
 
-bool PseudoRotationalInertiaToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
-                                             Eigen::Ref<PseudoRotationalInertia const> const &P) {
+bool PseudoInertiaTensorToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
+                                             Eigen::Ref<PseudoInertiaTensor const> const &P) {
   fpt_t m = P(3, 3);
   Matrix3 Ibar = P.topLeftCorner<3, 3>().trace() * Matrix3::Identity() - P.topLeftCorner<3, 3>();
   ret.topLeftCorner<3, 3>() = Ibar;
@@ -76,7 +76,7 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> co
   return true;
 }
 
-bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fpt_t const mass,
+bool BuildInertiaTensor(Eigen::Ref<InertiaTensor> ret, fpt_t const mass,
                             Eigen::Ref<Vector3 const> const &dims) {
   ret = Matrix3::Identity() * dims.norm() * dims.norm();
   for (int i = 0; i < 3; i++) ret(i, i) -= dims(i) * dims(i);
@@ -109,7 +109,7 @@ bool SpatialInertiaToMassProperties(Eigen::Ref<MassProperties> ret, Eigen::Ref<S
   return true;
 }
 
-bool SpatialInertiaToRotationalInertia(Eigen::Ref<RotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si) {
+bool SpatialInertiaToInertiaTensor(Eigen::Ref<InertiaTensor> ret, Eigen::Ref<SpatialInertia const> const &si) {
   fpt_t m;
   MassFromSpatialInertia(m, si);
   Matrix3 mcSkew = si.topRightCorner<3, 3>();

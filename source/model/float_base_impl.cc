@@ -193,7 +193,7 @@ bool FloatBaseModelImpl::AddBase(Eigen::Ref<dynamics::SpatialInertia const> cons
 }
 
 bool FloatBaseModelImpl::AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
-                                 dynamics::RotationalInertia const &I) {
+                                 dynamics::InertiaTensor const &I) {
   Matrix6 IS;
   dynamics::BuildSpatialInertia(IS, mass, com, I);
   return AddBase(IS);

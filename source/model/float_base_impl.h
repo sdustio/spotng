@@ -38,7 +38,7 @@ class FloatBaseModelImpl : public FloatBaseModel {
    * @param com  Center of mass of the floating body
    * @param I    Rotational inertia of the floating body
    */
-  bool AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com, dynamics::RotationalInertia const &I);
+  bool AddBase(fpt_t const mass, Eigen::Ref<Vector3 const> const &com, dynamics::InertiaTensor const &I);
 
   /*!
    * Add a ground contact point to a model

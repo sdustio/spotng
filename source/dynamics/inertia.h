@@ -11,14 +11,14 @@ namespace sdquadx::dynamics {
  * @param mass Mass of the box
  * @param dims Dimensions of the box
  */
-bool BuildRotationalInertia(Eigen::Ref<RotationalInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &dims);
+bool BuildInertiaTensor(Eigen::Ref<InertiaTensor> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &dims);
 
 /*!
  * Construct spatial inertia from mass, center of mass, and 3x3 rotational
  * inertia 从质量、质心和3 * 3的转动惯性来构造空间惯量
  */
 bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
-                         Eigen::Ref<RotationalInertia const> const &inertia);
+                         Eigen::Ref<InertiaTensor const> const &inertia);
 
 /*!
  * Build spatial coordinate transformation from rotation and translation
@@ -39,8 +39,8 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, 
  *   Wensing, Kim, Slotine
  *由伪惯性构造空间惯性。这是描述在线性矩阵不等式的物理一致的惯性参数识别:一个统计角度的质量分布，由温辛，金，斯洛廷
  */
-bool PseudoRotationalInertiaToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
-                                             Eigen::Ref<PseudoRotationalInertia const> const &P);
+bool PseudoInertiaTensorToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
+                                             Eigen::Ref<PseudoInertiaTensor const> const &P);
 
 /*!
  * Convert to 4x4 pseudo-inertia matrix.  This is described in
@@ -48,7 +48,7 @@ bool PseudoRotationalInertiaToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
  *   Identification: A Statistical Perspective on the Mass Distribution, by
  *   Wensing, Kim, Slotine
  */
-bool SpatialInertiaToPseudoRotationalInertia(Eigen::Ref<PseudoRotationalInertia> ret,
+bool SpatialInertiaToPseudoInertiaTensor(Eigen::Ref<PseudoInertiaTensor> ret,
                                              Eigen::Ref<SpatialInertia const> const &si);
 
 /*!
@@ -66,7 +66,7 @@ bool SpatialInertiaToMassProperties(Eigen::Ref<MassProperties> ret, Eigen::Ref<S
 /*!
  * Get 3x3 rotational inertia 得到3 * 3的转动惯量
  */
-bool SpatialInertiaToRotationalInertia(Eigen::Ref<RotationalInertia> ret, Eigen::Ref<SpatialInertia const> const &si);
+bool SpatialInertiaToInertiaTensor(Eigen::Ref<InertiaTensor> ret, Eigen::Ref<SpatialInertia const> const &si);
 
 /*!
  * Get mass 得到质量

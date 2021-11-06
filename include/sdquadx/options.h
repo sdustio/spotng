@@ -45,9 +45,9 @@ struct SDQUADX_EXPORT Model {
 
   SdVector3f com_body;
   SdVector3f com_rotor;
-  SdVector3f com_abad_l;
-  SdVector3f com_hip_l;
-  SdVector3f com_knee_l;
+  SdVector3f com_abad_fl;
+  SdVector3f com_hip_fl;
+  SdVector3f com_knee_fl;
 
   SdMatrix3f inertia_body;
   SdMatrix3f inertia_rotor_z;

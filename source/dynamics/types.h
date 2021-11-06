@@ -26,8 +26,8 @@ using SpatialXform = Matrix6;
 // 10x1 Vector
 using MassProperties = Eigen::Matrix<fpt_t, 10, 1>;
 
-using RotationalInertia = Matrix3;  // InertiaMat
+using InertiaTensor = Matrix3;  // InertiaMat
 
-using PseudoRotationalInertia = Matrix4;  // PseudoInertiaMat
+using PseudoInertiaTensor = Matrix4;  // PseudoInertiaMat
 
 }  // namespace sdquadx::dynamics
