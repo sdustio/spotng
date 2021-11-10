@@ -9,11 +9,11 @@ Model::Model()
       body_width(0.132),
       body_height(0.099),
 
-      mass_body(28.),
+      mass_body(25.),
       mass_rotor(0.),
-      mass_abad(0.5),
-      mass_hip(0.55),
-      mass_knee(0.05),
+      mass_abad(2.),
+      mass_hip(1.),
+      mass_knee(1.),
 
       gear_ratio_abad(1),
       gear_ratio_hip(1),
@@ -24,7 +24,7 @@ Model::Model()
       link_length_knee(0.284),
       link_yoffset_knee(0.),
 
-      location_abad_fl({0.34, 0.066, 0.}),
+      location_abad_fl({0.39, 0.066, 0.}),
       location_abad_rotor_fl({0.34, 0.066, 0.}),
       location_hip_fl({0., 0.093, 0.}),
       location_hip_rotor_fl({0., 0.093, 0.}),
@@ -33,15 +33,15 @@ Model::Model()
 
       com_body({0., 0., 0.}),
       com_rotor({0., 0., 0.}),
-      com_abad_fl({0., 0., 0.}),
-      com_hip_fl({0., -0.048, -0.01}),
-      com_knee_fl({0., 0, -0.142}),
+      com_abad_fl({0., 0.021, 0.}),
+      com_hip_fl({0., 0., -0.142}),
+      com_knee_fl({0., 0., -0.142}),
 
-      inertia_body({0.169167, 0, 0, 0, 1.91333, 0, 0, 0, 2.03583}),
+      inertia_body({0.0567188, 0, 0, 0, 0.721252, 0, 0, 0, 0.737133}),
       inertia_rotor_z({0, 0, 0, 0, 0, 0, 0, 0, 0}),
-      inertia_abad({8.46875e-4, 0., 0., 0., 1.225e-3, 0., 0., 0., 8.46875e-4}),
-      inertia_hip({8.46875e-4, 0., 0., 0., 1.225e-3, 0., 0., 0., 8.46875e-4}),
-      inertia_knee({3.76667e-3, 0., 0., 0., 3.85417e-4, 0., 0., 0., 1.20833e-5}) {}
+      inertia_abad({0.002426, 0., 0., 0., 0.0025, 0., 0., 0., 0.002426}),
+      inertia_hip({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}),
+      inertia_knee({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}) {}
 
 Ctrl::Ctrl()
     : kp_body({100., 100., 100.}),

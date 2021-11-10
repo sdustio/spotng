@@ -50,7 +50,7 @@ bool QPSolver::SolveQP(fpt_t const x_drag, SdVector3f const &pos, SdVector3f con
   auto yc = cos(yaw);
   auto ys = sin(yaw);
   R_yaw << yc, -ys, 0, ys, yc, 0, 0, 0, 1;
-  I_body.diagonal() << .07, 0.26, 0.242;
+  I_body.diagonal() << .07, 0.26, 0.242; //TODO read from options
 
   Vector3 rpy;
   dynamics::QuatToRPY(rpy, ToConstEigenTp(ori));

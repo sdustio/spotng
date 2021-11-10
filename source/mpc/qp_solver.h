@@ -27,7 +27,7 @@ class QPSolver {
   fpt_t dt_;
   fpt_t mu_;
   fpt_t f_max_;
-  fpt_t m_ = 10.5;
+  fpt_t m_ = 10.5; // TODO 不能写死
 
   std::array<fpt_t, (13 * opts::horizon_len) * 13> A_qp_;
   std::array<fpt_t, (13 * opts::horizon_len) * (12 * opts::horizon_len)> B_qp_;
