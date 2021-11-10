@@ -41,23 +41,10 @@ bool QuadrupedImpl::ComputeFloatBaseModel() {
   if (model_) return false;
 
   // locations
-
-  // rotor inertia if the rotor is oriented so it spins around the z-axis
-  Eigen::Map<dynamics::InertiaTensor const> rotorInertiaTensorZ(opts_->model.inertia_rotor_z.data());
-
   Matrix3 RY;
   dynamics::CoordinateRot(RY, dynamics::CoordinateAxis::Y, consts::math::kPI / 2);
   Matrix3 RX;
   dynamics::CoordinateRot(RX, dynamics::CoordinateAxis::X, consts::math::kPI / 2);
-
-  dynamics::InertiaTensor rotorInertiaTensorX = RY * rotorInertiaTensorZ * RY.transpose();
-  dynamics::InertiaTensor rotorInertiaTensorY = RX * rotorInertiaTensorZ * RX.transpose();
-  Eigen::Map<Vector3 const> rotorCOM(opts_->model.com_rotor.data());
-
-  dynamics::SpatialInertia abad_rotor_spatial_inertia, hip_rotor_spatial_inertia, knee_rotor_spatial_inertia;
-  dynamics::BuildSpatialInertia(abad_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorInertiaTensorX);
-  dynamics::BuildSpatialInertia(hip_rotor_spatial_inertia, opts_->model.mass_rotor, rotorCOM, rotorInertiaTensorY);
-  knee_rotor_spatial_inertia = hip_rotor_spatial_inertia;
 
   // spatial inertias
   Eigen::Map<dynamics::InertiaTensor const> abadInertiaTensor(opts_->model.inertia_abad.data());
@@ -100,8 +87,8 @@ bool QuadrupedImpl::ComputeFloatBaseModel() {
 
   Matrix3 I3 = Matrix3::Identity();
 
-  Vector3 location, rotor_location;
-  dynamics::SpatialInertia spatial_inertia, rotor_spatial_inertia;
+  Vector3 location;
+  dynamics::SpatialInertia spatial_inertia;
 
   // loop over 4 legs
   for (int leg_id = 0; leg_id < consts::model::kNumLeg; leg_id++) {
@@ -115,17 +102,10 @@ bool QuadrupedImpl::ComputeFloatBaseModel() {
     FlipWithSideSigns(location, ToConstEigenTp(opts_->model.location_abad_fl), leg_id);
     dynamics::BuildSpatialXform(xtree_abad, I3, location);
 
-    Matrix6 xtree_abad_rotor;
-    FlipWithSideSigns(rotor_location, ToConstEigenTp(opts_->model.location_abad_rotor_fl), leg_id);
-    dynamics::BuildSpatialXform(xtree_abad_rotor, I3, rotor_location);
-
     if (side_sign < 0) {
       dynamics::SpatialInertiaFlipAlongAxis(spatial_inertia, abad_spatial_inertia, dynamics::CoordinateAxis::Y);
-      dynamics::SpatialInertiaFlipAlongAxis(rotor_spatial_inertia, abad_rotor_spatial_inertia,
-                                            dynamics::CoordinateAxis::Y);
     } else {
       spatial_inertia = abad_spatial_inertia;
-      rotor_spatial_inertia = abad_rotor_spatial_inertia;
     }
     model->AddBody(spatial_inertia, rotor_spatial_inertia, opts_->model.gear_ratio_abad, base_id,
                    dynamics::JointType::Revolute, dynamics::CoordinateAxis::X, xtree_abad, xtree_abad_rotor);

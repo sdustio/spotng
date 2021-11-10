@@ -59,14 +59,11 @@ class FloatBaseModelImpl : public FloatBaseModel {
   /*!
    * Add a body
    * @param inertia The inertia of the body
-   * @param rotor_inertia The inertia of the rotor the body is connected to
-   * @param gear_ratio The gear ratio between the body and the rotor
    * @param parent The parent body, which is also assumed to be the body the
    * rotor is connected to
    * @param joint_type The type of joint (prismatic or revolute)
    * @param joint_axis The joint axis (X,Y,Z), in the parent's frame
    * @param Xtree  The coordinate transformation from parent to this body
-   * @param Xrot  The coordinate transformation from parent to this body's rotor
    * @return The body's ID (can be used as the parent)
    */
   int AddBody(Eigen::Ref<dynamics::SpatialInertia const> const &inertia,

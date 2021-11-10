@@ -22,14 +22,9 @@ struct SDQUADX_EXPORT Model {
   fpt_t body_height;
 
   fpt_t mass_body;
-  fpt_t mass_rotor;
   fpt_t mass_abad;
   fpt_t mass_hip;
   fpt_t mass_knee;
-
-  fpt_t gear_ratio_abad;
-  fpt_t gear_ratio_hip;
-  fpt_t gear_ratio_knee;
 
   fpt_t link_length_abad;
   fpt_t link_length_hip;
@@ -37,20 +32,15 @@ struct SDQUADX_EXPORT Model {
   fpt_t link_yoffset_knee;
 
   SdVector3f location_abad_fl;
-  SdVector3f location_abad_rotor_fl;
   SdVector3f location_hip_fl;
-  SdVector3f location_hip_rotor_fl;
   SdVector3f location_knee_fl;
-  SdVector3f location_knee_rotor_fl;
 
   SdVector3f com_body;
-  SdVector3f com_rotor;
   SdVector3f com_abad_fl;
   SdVector3f com_hip_fl;
   SdVector3f com_knee_fl;
 
   SdMatrix3f inertia_body;
-  SdMatrix3f inertia_rotor_z;
   SdMatrix3f inertia_abad;
   SdMatrix3f inertia_hip;
   SdMatrix3f inertia_knee;
