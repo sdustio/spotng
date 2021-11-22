@@ -5,7 +5,7 @@ namespace sdquadx {
 namespace options {
 
 Model::Model()
-    : body_length(0.68),
+    : body_length(0.58),
       body_width(0.132),
       body_height(0.099),
 
@@ -17,9 +17,8 @@ Model::Model()
       link_length_abad(0.093),
       link_length_hip(0.284),
       link_length_knee(0.284),
-      link_yoffset_knee(0.),
 
-      location_abad_fl({0.39, 0.066, 0.}),
+      location_abad_fl({0.34, 0.066, 0.}),
       location_hip_fl({0., 0.093, 0.}),
       location_knee_fl({0., 0., -0.284}),
 
@@ -48,11 +47,19 @@ Ctrl::Ctrl()
       kp_jpos({120., 120., 120.}),
       kd_jpos({1., 1., 1.}),
 
-      jpos_init({-0., -1.40335, 2.97414, 0., -1.40335, 2.97414, -0., -1.40335, 2.97414, 0., -1.40335, 2.97414}),
+      jpos_init({-0., 1.40335, -2.97414, 0., 1.40335, -2.97414, -0., 1.40335, -2.97414, 0., 1.40335, -2.97414}),
 
-      jpos_fold({-0., -1.4, 2.7, 0.0, -1.4, 2.7, -0.0, -1.4, 2.7, 0.0, -1.4, 2.7}),
-      jpos_stand({-0., -0.8, 1.6, 0., -0.8, 1.6, -0., -0.8, 1.6, 0., -0.8, 1.6}),
-      jpos_rolling({1.5, -1.6, 2.77, 1.3, -3.1, 2.77, 1.5, -1.6, 2.77, 1.3, -3.1, 2.77}) {}
+      jpos_fold({-0., 1.4, -2.7, 0.0, 1.4, -2.7, -0.0, 1.4, -2.7, 0.0, 1.4, -2.7}),
+      jpos_stand({-0., 0.8, -1.6, 0., 0.8, -1.6, -0., 0.8, -1.6, 0., 0.8, -1.6}),
+      jpos_rolling({1.5, 1.6, -2.77, 1.3, 3.1, -2.77, 1.5, 1.6, -2.77, 1.3, 3.1, -2.77}) {}
+
+Estimate::Estimate()
+    : process_noise_pimu(0.02),
+      process_noise_vimu(0.02),
+      process_noise_pfoot(0.002),
+      sensor_noise_pfoot(0.001),
+      sensor_noise_vfoot(0.1),
+      sensor_noise_zfoot(0.001) {}
 
 }  // namespace options
 
@@ -64,6 +71,8 @@ Options::Options()
 
       jpos_init_sec(3.),
       gravity(9.81),
+      rfmu(0.4),
+      rfmax(1500),
 
       log_level("warn"),
       log_target("console"),

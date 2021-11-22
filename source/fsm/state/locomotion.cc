@@ -6,11 +6,12 @@
 #include "math/utils.h"
 #include "mpc/cmpc.h"
 #include "spdlog/spdlog.h"
+#include "wbc/wbic.h"
 
 namespace sdquadx::fsm {
-namespace opts {
-constexpr inline double const max_roll = 80.;   // 40;
-constexpr inline double const max_pitch = 80.;  // 40;
+namespace params {
+constexpr inline fpt_t const max_roll = 80.;   // 40;
+constexpr inline fpt_t const max_pitch = 80.;  // 40;
 }  // namespace opts
 
 StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
@@ -24,12 +25,11 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCt
       mquad_(mquad),
       drictrl_(drictrl),
       estctrl_(estctrl),
-      wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts)),
-      mpc_(std::make_unique<mpc::CMpc>(opts->ctrl_sec, opts->gravity, 30 / static_cast<int>(1000. * opts->ctrl_sec))) {}
+      wbc_(std::make_unique<wbc::Wbic>(opts, mquad)),
+      mpc_(std::make_unique<mpc::CMpc>(opts, mquad)) {}
 
 bool StateLocomotion::OnEnter() {
   spdlog::info("Enter State Locomotion!!!");
-  return mpc_->Init();
 }
 
 bool StateLocomotion::OnExit() { return true; }
@@ -65,9 +65,9 @@ bool StateLocomotion::Step() {
   // estimateContact();
   for (auto &cmd : legctrl_->GetCmdsForUpdate()) cmd.Zero();
 
-  mpc_->RunOnce(wbc_data_, legctrl_, mquad_, drictrl_, estctrl_);
+  mpc_->RunOnce(wbc_data_, estctrl_->GetEstState(), drictrl_, legctrl_);
 
-  wbc_->RunOnce(wbc_data_, legctrl_, drictrl_, estctrl_);
+  wbc_->RunOnce(wbc_data_, estctrl_->GetEstState(), legctrl_);
 
   return true;
 }
@@ -75,30 +75,30 @@ bool StateLocomotion::Step() {
 bool StateLocomotion::locomotionSafe() {
   auto const &seResult = estctrl_->GetEstState();
 
-  if (std::fabs(seResult.rpy[0]) > math::DegToRad(opts::max_roll)) {
-    spdlog::warn("Unsafe locomotion: roll is {} degrees (max {})", math::RadToDeg(seResult.rpy[0]), opts::max_roll);
+  if (std::fabs(seResult.rpy[0]) > math::DegToRad(params::max_roll)) {
+    spdlog::warn("Unsafe locomotion: roll is {} degrees (max {})", math::RadToDeg(seResult.rpy[0]), params::max_roll);
     return false;
   }
 
-  if (std::fabs(seResult.rpy[1]) > math::DegToRad(opts::max_pitch)) {
-    spdlog::warn("Unsafe locomotion: pitch is {} degrees (max {})", math::RadToDeg(seResult.rpy[1]), opts::max_pitch);
+  if (std::fabs(seResult.rpy[1]) > math::DegToRad(params::max_pitch)) {
+    spdlog::warn("Unsafe locomotion: pitch is {} degrees (max {})", math::RadToDeg(seResult.rpy[1]), params::max_pitch);
     return false;
   }
 
   for (int leg = 0; leg < 4; leg++) {
     auto const &leg_data = legctrl_->GetDatas()[leg];
 
-    if (leg_data.p[2] > 0) {
-      spdlog::warn("Unsafe locomotion: leg {} is above hip ({} m)", leg, leg_data.p[2]);
+    if (seResult.foot_pos_robot[leg][2] > 0) {
+      spdlog::warn("Unsafe locomotion: leg {} is above hip ({} m)", leg, seResult.foot_pos_robot[leg][2]);
       return false;
     }
 
-    if (std::fabs(leg_data.p[1] > 0.28)) {  // 0.18))
-      spdlog::warn("Unsafe locomotion: leg {}'s y-position is bad ({} m)", leg, leg_data.p[1]);
+    if (std::fabs(seResult.foot_pos_robot[leg][1] > 0.346)) {  // 0.18))
+      spdlog::warn("Unsafe locomotion: leg {}'s y-position is bad ({} m)", leg, seResult.foot_pos_robot[leg][1]);
       return false;
     }
 
-    auto v_leg = ToConstEigenTp(leg_data.v).norm();
+    auto v_leg = ToConstEigenTp(seResult.foot_vel_robot[leg]).norm();
 
     if (std::fabs(v_leg) > 19.) {
       spdlog::warn("Unsafe locomotion: leg {} is moving too quickly ({} m/s)", leg, v_leg);

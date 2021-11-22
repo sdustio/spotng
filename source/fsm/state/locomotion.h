@@ -7,13 +7,14 @@
 #include "sdquadx/fsm.h"
 #include "sdquadx/leg.h"
 #include "sdquadx/model.h"
-#include "wbc/wbc_ctrl.h"
+#include "wbc/wbc.h"
 
 namespace sdquadx::fsm {
 class StateLocomotion : public StateCtrl {
  public:
-  StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl, model::Quadruped::SharedPtr const &mquad,
-                  drive::DriveCtrl::SharedPtr const &drictrl, estimate::EstimateCtrl::SharedPtr const &estctrl);
+  StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+                  model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
+                  estimate::EstimateCtrl::SharedPtr const &estctrl);
   bool OnEnter() override;
   bool OnExit() override;
   bool RunOnce() override;
@@ -40,7 +41,7 @@ class StateLocomotion : public StateCtrl {
   drive::DriveCtrl::ConstSharedPtr drictrl_;
   estimate::EstimateCtrl::ConstSharedPtr estctrl_;
 
-  wbc::WbcCtrl::Ptr wbc_;
+  wbc::Wbc::Ptr wbc_;
   wbc::InData wbc_data_;
   mpc::Mpc::Ptr mpc_;
 };

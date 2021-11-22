@@ -40,7 +40,7 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, 
  *由伪惯性构造空间惯性。这是描述在线性矩阵不等式的物理一致的惯性参数识别:一个统计角度的质量分布，由温辛，金，斯洛廷
  */
 bool PseudoInertiaTensorToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
-                                             Eigen::Ref<PseudoInertiaTensor const> const &P);
+                                         Eigen::Ref<PseudoInertiaTensor const> const &P);
 
 /*!
  * Convert to 4x4 pseudo-inertia matrix.  This is described in
@@ -49,7 +49,7 @@ bool PseudoInertiaTensorToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
  *   Wensing, Kim, Slotine
  */
 bool SpatialInertiaToPseudoInertiaTensor(Eigen::Ref<PseudoInertiaTensor> ret,
-                                             Eigen::Ref<SpatialInertia const> const &si);
+                                         Eigen::Ref<SpatialInertia const> const &si);
 
 /*!
  * Convert mass property vector to spatial inertia

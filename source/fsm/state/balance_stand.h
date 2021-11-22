@@ -6,7 +6,7 @@
 #include "sdquadx/fsm.h"
 #include "sdquadx/leg.h"
 #include "sdquadx/model.h"
-#include "wbc/wbc_ctrl.h"
+#include "wbc/wbc.h"
 
 namespace sdquadx::fsm {
 class StateBalanceStand : public StateCtrl {
@@ -36,7 +36,7 @@ class StateBalanceStand : public StateCtrl {
   drive::DriveCtrl::ConstSharedPtr drictrl_;
   estimate::EstimateCtrl::ConstSharedPtr estctrl_;
 
-  wbc::WbcCtrl::Ptr wbc_;
+  wbc::Wbc::Ptr wbc_;
   wbc::InData wbc_data_;
 
   SdVector3f ini_body_pos_;

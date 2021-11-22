@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "sdquadx/consts.h"
 #include "sdquadx/types.h"
 
 namespace sdquadx::interface {
@@ -27,7 +28,7 @@ struct SDQUADX_EXPORT ActuatorCmd {
   SdVector4f tau_hip_ff = {};
   SdVector4f tau_knee_ff = {};
 
-  std::array<std::uint8_t, 4> flags = {};
+  std::array<std::uint8_t, consts::model::kNumLeg> flags = {};
 };
 
 struct SDQUADX_EXPORT ActuatorData {
@@ -39,7 +40,7 @@ struct SDQUADX_EXPORT ActuatorData {
   SdVector4f qd_hip = {};
   SdVector4f qd_knee = {};
 
-  std::array<std::uint8_t, 4> flags = {};
+  std::array<std::uint8_t, consts::model::kNumLeg> flags = {};
   std::uint8_t driver_status = 0;
 };
 

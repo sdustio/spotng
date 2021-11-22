@@ -1,109 +1,181 @@
 #include "wbc/wbic.h"
 
-#include <eiquadprog/eiquadprog-fast.hpp>
-#include "spdlog/spdlog.h"
-
+#include "eiquadprog/eiquadprog-fast.hpp"
+#include "externlib/eigen.h"
 #include "math/algebra.h"
+#include "wbc/contact.h"
+#include "wbc/task/body_ori.h"
+#include "wbc/task/body_pos.h"
+#include "wbc/task/foot_contact.h"
+#include "wbc/task/foot_pos.h"
 
 namespace sdquadx::wbc {
-using Matrix18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
-using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
+
 using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1>;
+using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
+using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
 
-Wbic::Wbic(double weight) {
-  W_floating_.fill(weight);
-  W_rf_.fill(1.);
-
-  Eigen::Map<Sv_t> Sv(Sv_.data());
-  Sv.block<6, 6>(0, 0).setIdentity();
+namespace params {
+constexpr fpt_t const kSigmaThreshold = 0.0001;
 }
 
-bool Wbic::UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv, model::GeneralFTp const &cori,
-                         model::GeneralFTp const &grav) {
-  A_ = A;
-  Ainv_ = Ainv;
-  cori_ = cori;
-  grav_ = grav;
-  b_updatesetting_ = true;
-  return true;
+Wbic::Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr const &quad, double weight)
+    : opts_(opts),
+      mquad_(quad),
+      body_pos_task_(std::make_shared<TaskBodyPos>(opts->ctrl.kp_body, opts->ctrl.kd_body)),
+      body_ori_task_(std::make_shared<TaskBodyOri>(opts->ctrl.kp_ori, opts->ctrl.kd_ori)),
+      foot_task_({
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::fr),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::fl),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::hr),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::hl),
+      }),
+      foot_contact_({
+          std::make_shared<TaskFootContact>(mquad_, leg::idx::fr),
+          std::make_shared<TaskFootContact>(mquad_, leg::idx::fl),
+          std::make_shared<TaskFootContact>(mquad_, leg::idx::hr),
+          std::make_shared<TaskFootContact>(mquad_, leg::idx::hl),
+      }),
+      weight_q_(weight) {}
+
+bool Wbic::RunOnce(InData const &wbcdata, estimate::State const &estdata, leg::LegCtrl::SharedPtr const &legctrl) {
+  mquad_->UpdateDynamics(estdata, legctrl->GetDatas());
+
+  // Task & Contact Update
+  _ContactTaskUpdate(wbcdata, estdata);
+
+  // WBC Computation
+  _ComputeWBC();
+  return _UpdateLegCMD(legctrl);
 }
 
-bool Wbic::MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
-                      std::vector<Contact::ConstSharedPtr> const &contact_list) {
-  if (!b_updatesetting_) {
-    spdlog::warn("[Wanning] WBIC setting is not done\n");
-  }
-
-  Eigen::Map<Sv_t> Sv(Sv_.data());
-  Eigen::Map<Matrix18> A(A_.data());
-  Eigen::Map<Matrix18> Ainv(Ainv_.data());
-  Eigen::Map<Vector18> cori(cori_.data());
-  Eigen::Map<Vector18> grav(grav_.data());
-
+bool Wbic::_ComputeWBC() {
+  // QP ret
   VectorX z;
   // Cost
   MatrixX G;
   VectorX g0;
-
   // Equality
   MatrixX CE;
   VectorX ce0;
-
   // Inequality
   MatrixX CI;
   VectorX ci0;
 
-  MatrixX Uf;
-  VectorX Uf_ieq_vec;
+  // ====
+  Vector18 delta_q = Vector18::Zero();
+  Vector18 qd = Vector18::Zero();
+  Vector18 qdd = Vector18::Zero();
 
-  MatrixX Jc;  //  , num_qdot_
-  VectorX JcDotQdot;
-  VectorX Fr_des;
+  VectorX Fr;
+  MatrixX Jc;
+  VectorX Jcdqd;
 
-  /*
-   * resize G, g0, CE, ce0, CI, ci0
-   * resize Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des
-   */
-  _SetQPSize(G, g0, CE, ce0, CI, ci0, Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des, contact_list);
+  MatrixX Ca;
+  VectorX ca_l;
 
-  _SetCost(G);
+  MatrixX Nc = MatrixX::Identity(consts::model::kDimConfig, consts::model::kDimConfig);
 
-  VectorX qddot_pre;
-  MatrixX Npre;
+  int const rfi = 3;
+  int const Ufi = 6;
+  int const dim_rf = contact_list_.size() * rfi;
+  int const dim_Uf = contact_list_.size() * Ufi;
+  int const dim_opt = consts::model::kDimFloating + dim_rf;
 
-  if (dim_rf_ > 0) {
-    MatrixX JcBar;
+  if (dim_rf > 0) {
+    Jc.resize(dim_rf, consts::model::kDimConfig);
+    Jcdqd.resize(dim_rf);
 
-    // Contact Setting
-    _ContactBuilding(Uf, Uf_ieq_vec, Jc, JcDotQdot, Fr_des, contact_list);
+    Fr.resize(dim_rf);
 
-    // Set inequality constraints
-    _SetInEqualityConstraint(CI, ci0, Uf, Uf_ieq_vec, Fr_des);
-    _WeightedInverse(JcBar, Jc, Ainv);
-    qddot_pre = JcBar * (-JcDotQdot);
-    Npre = Matrix18::Identity() - JcBar * Jc;
+    Ca = MatrixX::Zero(dim_Uf, dim_rf);
+    ca_l = VectorX::Zero(dim_Uf);
+
+    auto num_rfrows = 0;
+    auto num_Ufrows = 0;
+    auto rfmu = opts_->rfmu;
+    auto rfmax = opts_->rfmax;
+
+    for (auto const &ci : contact_list_) {
+      Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jc_i(ci->GetTaskJacobian().data());
+      Jc.block(num_rfrows, 0, rfi, consts::model::kDimConfig) = Jc_i;
+      Jcdqd.segment(num_rfrows, rfi) = ToConstEigenTp(ci->GetTaskJacobianDotQdot());
+
+      Fr.segment(num_rfrows, rfi) = ToConstEigenTp(ci->GetXddCmd());
+
+      BuildContactConstraintMat(Ca.block(num_Ufrows, num_rfrows, Ufi, rfi), rfmu);
+      BuildContactConstraintUpperBoundVec(ca_l.segment(num_Ufrows, Ufi), rfmax);
+
+      num_rfrows += rfi;
+      num_Ufrows += Ufi;
+    }
+
+    MatrixX Jc_pinv(Jc.cols(), Jc.rows());
+    math::PseudoInverse(Jc_pinv, Jc, params::kSigmaThreshold);
+    qdd = Jc_pinv * (-Jcdqd);
+
+    Nc = MatrixX::Identity(Jc.cols(), Jc.cols()) - Jc_pinv * Jc;
   } else {
-    qddot_pre = VectorX::Zero(consts::model::kDimConfig);
-    Npre = Matrix18::Identity();
+    qdd = Vector18::Zero();
+    Nc = MatrixX::Identity(consts::model::kDimConfig, consts::model::kDimConfig);
   }
 
-  // Task
-  for (auto const &task : task_list) {
-    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jt(task->GetTaskJacobian().data());
-    auto JtDotQdot = ToConstEigenTp(task->GetTaskJacobianDotQdot());
-    auto xddot = ToConstEigenTp(task->GetCommand());
+  MatrixX Jt, N_nx;
+  for (auto const &task : task_list_) {
+    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> Jt_i(task->GetTaskJacobian().data());
+    Jt = Jt_i * Nc;
+    MatrixX Jt_pinv(Jt.cols(), Jt.rows());
+    math::PseudoInverse(Jt_pinv, Jt, params::kSigmaThreshold);
 
-    MatrixX JtBar, JtPre;
+    delta_q = delta_q + Jt_pinv * (ToConstEigenTp(task->GetXError()) - Jt_i * delta_q);
+    qd = qd + Jt_pinv * (ToConstEigenTp(task->GetXdDes()) - Jt_i * qd);
+    qdd = qdd +
+          Jt_pinv * (ToConstEigenTp(task->GetXddCmd()) - ToConstEigenTp(task->GetTaskJacobianDotQdot()) - Jt_i * qdd);
 
-    JtPre = Jt * Npre;
-    _WeightedInverse(JtBar, JtPre, Ainv);
-
-    qddot_pre += JtBar * (xddot - JtDotQdot - Jt * qddot_pre);
-    Npre = Npre * (Matrix18::Identity() - JtBar * JtPre);
+    // _BuildProjectionMatrix(N_nx, Jt);
+    Nc = Nc * (MatrixX::Identity(consts::model::kDimConfig, consts::model::kDimConfig) - Jt_pinv * Jt);
   }
 
-  // Set equality constraints
-  _SetEqualityConstraint(CE, ce0, Jc, Fr_des, qddot_pre);
+  auto const &dyndata = mquad_->GetDynamicsData();
+
+  // Build G, g0
+  G = MatrixX::Zero(dim_opt, dim_opt);
+  g0 = VectorX::Zero(dim_opt);
+  G.block(0, 0, consts::model::kDimFloating, consts::model::kDimFloating) =
+      MatrixX::Identity(consts::model::kDimFloating, consts::model::kDimFloating) * weight_q_ * 0.5;
+  G.block(consts::model::kDimFloating, consts::model::kDimFloating, dim_rf, dim_rf) =
+      MatrixX::Identity(dim_rf, dim_rf) * weight_f_ * 0.5;
+
+  // Build CE, ce0
+  CE = MatrixX::Zero(consts::model::kDimFloating, dim_opt);
+  ce0 = VectorX(consts::model::kDimFloating);
+
+  MatrixX Sf = MatrixX::Zero(6, consts::model::kDimConfig);
+  Sf.block(0, 0, consts::model::kDimFloating, consts::model::kDimFloating).setIdentity();
+
+  Eigen::Map<Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig> const> Mm(dyndata.M.data());
+  Eigen::Map<Vector18 const> Cc(dyndata.Cc.data());
+  Eigen::Map<Vector18 const> Cg(dyndata.Cg.data());
+
+  CE.block(0, 0, consts::model::kDimFloating, consts::model::kDimFloating) =
+      Mm.block(0, 0, consts::model::kDimFloating, consts::model::kDimFloating);
+  if (dim_rf > 0) {
+    CE.block(0, consts::model::kDimFloating, consts::model::kDimFloating, dim_rf) = -Sf * Jc.transpose();
+    ce0 = Sf * (Mm * qdd + Cc + Cg - Jc.transpose() * Fr);
+  } else {
+    ce0 = Sf * (Mm * qdd + Cc + Cg);
+  }
+
+  // Build CI, ci0
+  if (dim_rf > 0) {
+    CI = MatrixX::Zero(dim_Uf, dim_opt);
+    ci0 = VectorX::Zero(dim_Uf);
+    CI.block(0, consts::model::kDimFloating, dim_Uf, dim_rf) = Ca;
+    ci0.segment(0, dim_Uf) = Ca * Fr - ca_l;
+  } else {
+    CI = MatrixX::Zero(1, dim_opt);
+    ci0 = VectorX::Zero(1);
+  }
 
   // Optimization
   auto n = g0.size();
@@ -121,160 +193,72 @@ bool Wbic::MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const 
   qp_.reset(n, m, p);
   qp_.solve_quadprog(G, g0, CE, ce0, CI, ci0, z);
 
-  // pretty_print(qddot_pre, std::cout, "qddot_cmd");
-  for (int i(0); i < consts::model::kDimFloating; ++i) qddot_pre[i] += z[i];
-
+  for (int i = 0; i < consts::model::kDimFloating; i++) qdd[i] += z[i];
   for (int i = 0; i < consts::model::kDimConfig; i++) {
-    if (fabs(qddot_pre[i]) > 99999.) {
-      qddot_pre = VectorX::Zero(consts::model::kDimConfig);
-    }
+    if (fabs(qdd[i]) > 99999.) qdd = VectorX::Zero(consts::model::kDimConfig);
   }
-
-  _GetSolution(ret, qddot_pre, z, Fr_des, Jc);
-  return true;
-}
-
-bool Wbic::_WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv, fpt_t threshold) {
-  MatrixX lambda(J * Winv * J.transpose());
-  MatrixX lambda_inv(lambda.cols(), lambda.rows());
-  math::PseudoInverse(lambda_inv, lambda, threshold);
-  ret = Winv * J.transpose() * lambda_inv;
-  return true;
-}
-
-bool Wbic::_ContactBuilding(MatrixX &Uf, VectorX &Uf_ieq_vec,
-                            MatrixX &Jc,  //  , num_qdot_
-                            VectorX &JcDotQdot, VectorX &Fr_des,
-                            std::vector<Contact::ConstSharedPtr> const &contact_list) {
-  int dim_accumul_rf = 0, dim_accumul_uf = 0;
-
-  for (size_t i = 0; i < contact_list.size(); i++) {
-    Eigen::Map<Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig> const> _Jc(
-        contact_list[i]->GetContactJacobian().data());
-
-    auto dim_new_rf = contact_list[i]->GetDim();
-    auto dim_new_uf = contact_list[i]->GetDimRFConstraint();
-
-    Jc.block(dim_accumul_rf, 0, dim_new_rf, consts::model::kDimConfig) = _Jc;
-    JcDotQdot.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetJcDotQdot());
-
-    Eigen::Map<Eigen::Matrix<fpt_t, 6, 3> const> _Uf(contact_list[i]->GetRFConstraintMtx().data());
-
-    Uf.block(dim_accumul_uf, dim_accumul_rf, dim_new_uf, dim_new_rf) = _Uf;
-    Uf_ieq_vec.segment(dim_accumul_uf, dim_new_uf) = ToConstEigenTp(contact_list[i]->GetRFConstraintVec());
-
-    Fr_des.segment(dim_accumul_rf, dim_new_rf) = ToConstEigenTp(contact_list[i]->GetRFdes());
-    dim_accumul_rf += dim_new_rf;
-    dim_accumul_uf += dim_new_uf;
-  }
-  return true;
-}
-
-bool Wbic::_SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc, VectorX const &Fr_des,
-                                  Vector18 const &qddot) {
-  Eigen::Map<Sv_t> Sv(Sv_.data());
-  Eigen::Map<Matrix18> A(A_.data());
-  Eigen::Map<Vector18> cori(cori_.data());
-  Eigen::Map<Vector18> grav(grav_.data());
-  if (dim_rf_ > 0) {
-    CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
-        A.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating);
-    CE.block(0, consts::model::kDimFloating, dim_eq_cstr_, dim_rf_) = -Sv * Jc.transpose();
-    ce0 = -Sv * (A * qddot + cori + grav - Jc.transpose() * Fr_des);
-  } else {
-    CE.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating) =
-        A.block(0, 0, dim_eq_cstr_, consts::model::kDimFloating);
-    ce0 = -Sv * (A * qddot + cori + grav);
-  }
-
-  return true;
-}
-
-bool Wbic::_SetInEqualityConstraint(MatrixX &CI, VectorX &ci0, MatrixX const &Uf, VectorX const &Uf_ieq_vec,
-                                    VectorX const &Fr_des) {
-  CI.block(0, consts::model::kDimFloating, dim_Uf_, dim_rf_) = Uf;
-  ci0 = Uf_ieq_vec - Uf * Fr_des;
-  return true;
-}
-
-bool Wbic::_SetCost(MatrixX &G) {
-  // Set Cost
-  int idx_offset = 0;
-  for (int i = 0; i < consts::model::kDimFloating; ++i) {
-    G((i + idx_offset), (i + idx_offset)) = 0.5 * W_floating_[i];
-  }
-  idx_offset += consts::model::kDimFloating;
-  for (int i = 0; i < dim_rf_; ++i) {
-    G((i + idx_offset), (i + idx_offset)) = 0.5 * W_rf_[i];
-  }
-  return true;
-}
-
-bool Wbic::_GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &z, VectorX const &Fr_des,
-                        MatrixX const &Jc) {
-  Eigen::Map<Matrix18> A(A_.data());
-  Eigen::Map<Vector18> cori(cori_.data());
-  Eigen::Map<Vector18> grav(grav_.data());
-
   Vector18 tot_tau;
-  if (dim_rf_ > 0) {
-    VectorX _Fr(dim_rf_);
+  if (dim_rf > 0) {
     // get Reaction forces
-    for (int i(0); i < dim_rf_; ++i) _Fr[i] = z[i + consts::model::kDimFloating] + Fr_des[i];
-    tot_tau = A * qddot + cori + grav - Jc.transpose() * _Fr;
+    for (int i = 0; i < dim_rf; ++i) Fr[i] = Fr[i] + z[i + consts::model::kDimFloating];
+    tot_tau = Mm * qdd + Cc + Cg - Jc.transpose() * Fr;
   } else {
-    tot_tau = A * qddot + cori + grav;
+    tot_tau = Mm * qdd + Cc + Cg;
   }
 
-  Eigen::Map<Vector12> _ret(ret.data());
-  _ret = tot_tau.tail(consts::model::kNumActJoint);
+  // For Leg Cmd
+  for (int i = 0; i < consts::model::kNumActJoint; ++i) {
+    q_cmd_[i] = dyndata.q[i] + delta_q[i + 6];
+    qd_cmd_[i] = qd[i + 6];
+    tau_ff_[i] = tot_tau[i + 6];
+  }
 
-  for (int i = 0; i < 12; i++) {
-    if (fabs(ret[i]) > 24) {
-      spdlog::warn("!!!!!!!!danger!!!!! WBC torque num {}\tout the limitation: {} ", i, ret[i]);
-      ret[i] = ret[i] / fabs(ret[i]) * consts::interface::kMaxTorque;
-      spdlog::warn(" edit to {}\n", ret[i]);
+  return true;
+}
+
+bool Wbic::_UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl) {
+  auto &cmds = legctrl->GetCmdsForUpdate();
+
+  for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
+    for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx) {
+      cmds[leg].tau_feed_forward[jidx] = tau_ff_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].q_des[jidx] = q_cmd_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].qd_des[jidx] = qd_cmd_[consts::model::kNumLegJoint * leg + jidx];
+
+      cmds[leg].kp_joint[jidx * consts::model::kNumLegJoint + jidx] = opts_->ctrl.kp_joint[jidx];
+      cmds[leg].kd_joint[jidx * consts::model::kNumLegJoint + jidx] = opts_->ctrl.kd_joint[jidx];
     }
   }
   return true;
 }
 
-bool Wbic::_SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, MatrixX &CI, VectorX &ci0, MatrixX &Uf,
-                      VectorX &Uf_ieq_vec, MatrixX &Jc, VectorX &JcDotQdot, VectorX &Fr_des,
-                      std::vector<Contact::ConstSharedPtr> const &contact_list) {
-  // Dimension
-  dim_rf_ = 0;
-  dim_Uf_ = 0;  // Dimension of inequality constraint
-  for (size_t i = 0; i < contact_list.size(); ++i) {
-    dim_rf_ += contact_list[i]->GetDim();
-    dim_Uf_ += contact_list[i]->GetDimRFConstraint();
+bool Wbic::_ContactTaskUpdate(InData const &wbcdata, estimate::State const &estdata) {
+  // Wash out the previous setup
+  _CleanUp();
+
+  body_ori_task_->UpdateTask(estdata, wbcdata.body_rpy_des, wbcdata.body_avel_des, SdVector3f{});
+  body_pos_task_->UpdateTask(estdata, wbcdata.body_pos_des, wbcdata.body_lvel_des, wbcdata.body_acc_des);
+
+  task_list_.push_back(body_ori_task_);
+  task_list_.push_back(body_pos_task_);
+
+  for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
+    if (wbcdata.contact_state[leg] > 0.) {  // Contact
+      foot_contact_[leg]->UpdateTask(estdata, SdVector3f{}, SdVector3f{}, wbcdata.Fr_des[leg]);
+      contact_list_.push_back(foot_contact_[leg]);
+    } else {  // No Contact (swing)
+      foot_task_[leg]->UpdateTask(estdata, wbcdata.foot_pos_des[leg], wbcdata.foot_lvel_des[leg],
+                                  wbcdata.foot_acc_des[leg]);
+      // zero_vec3);
+      task_list_.push_back(foot_task_[leg]);
+    }
   }
+  return true;
+}
 
-  dim_opt_ = consts::model::kDimFloating + dim_rf_;
-  dim_eq_cstr_ = consts::model::kDimFloating;
-
-  // Matrix Setting
-  G = MatrixX::Zero(dim_opt_, dim_opt_);
-  g0 = VectorX::Zero(dim_opt_);
-
-  // Eigen Matrix Setting
-  CE = MatrixX::Zero(dim_eq_cstr_, dim_opt_);
-  ce0 = VectorX(dim_eq_cstr_);
-  if (dim_rf_ > 0) {
-    CI = MatrixX::Zero(dim_Uf_, dim_opt_);
-    ci0 = VectorX::Zero(dim_Uf_);
-
-    Jc = MatrixX(dim_rf_, consts::model::kDimConfig);
-    JcDotQdot = VectorX(dim_rf_);
-    Fr_des = VectorX(dim_rf_);
-
-    Uf = MatrixX(dim_Uf_, dim_rf_);
-    Uf.setZero();
-    Uf_ieq_vec = VectorX(dim_Uf_);
-  } else {
-    CI = MatrixX::Zero(1, dim_opt_);
-    ci0 = VectorX::Zero(1);
-  }
+bool Wbic::_CleanUp() {
+  contact_list_.clear();
+  task_list_.clear();
   return true;
 }
 

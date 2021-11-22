@@ -15,7 +15,8 @@ class SDQUADX_EXPORT RobotCtrl {
   using ConstSharedPtr = std::shared_ptr<RobotCtrl const>;
 
   static bool Build(Ptr &ret, Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
-  static bool Build(SharedPtr &ret, Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
+  static bool Build(SharedPtr &ret, Options::SharedPtr const &opts,
+                    interface::ActuatorInterface::SharedPtr const &act_itf);
 
   virtual ~RobotCtrl() = default;
 

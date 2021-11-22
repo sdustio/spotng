@@ -10,8 +10,8 @@
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 #include "fsm/impl.h"
-#include "robot/leg_impl.h"
 #include "model/quadruped_impl.h"
+#include "robot/leg_impl.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
@@ -22,19 +22,17 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Actuator
   ParseOptions(opts);
 
   mquad_ = std::make_shared<model::QuadrupedImpl>(opts_);
-  mquad_->ComputeFloatBaseModel();
 
   legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf, opts_);
 
   drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_->drive_mode, opts_->ctrl_sec);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
-  estctrl_->AddEstimator("posvel",
-                         std::make_shared<estimate::PosVel>(opts_->ctrl_sec, opts_->gravity, legctrl_, mquad_));
-  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
   auto est_contact = std::make_shared<estimate::Contact>();
   est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
   estctrl_->AddEstimator("contact", est_contact);
+  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
+  estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts_, legctrl_));
 
   fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts_, legctrl_, mquad_, drivectrl_, estctrl_);
 }

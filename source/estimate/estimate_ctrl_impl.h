@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "sdquadx/estimate.h"
 
@@ -21,7 +22,9 @@ class EstimateCtrlImpl : public EstimateCtrl {
   bool RemoveAllEstimators() override;
 
  private:
-  std::unordered_map<std::string, Estimator::SharedPtr> est_map_;
+  std::size_t num_ests_ = 0;
+  std::vector<Estimator::SharedPtr> ests_;
+  std::unordered_map<std::string, std::size_t> ests_map_;
   State est_state_;
   Estimator::SharedPtr const null_est_;
 };

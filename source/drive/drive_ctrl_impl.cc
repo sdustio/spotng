@@ -1,7 +1,7 @@
 #include "drive/drive_ctrl_impl.h"
 
-#include "sdquadx/consts.h"
 #include "math/interpolate.h"
+#include "sdquadx/consts.h"
 
 namespace sdquadx::drive {
 DriveCtrlImpl::DriveCtrlImpl(options::DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}

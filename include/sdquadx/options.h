@@ -29,7 +29,6 @@ struct SDQUADX_EXPORT Model {
   fpt_t link_length_abad;
   fpt_t link_length_hip;
   fpt_t link_length_knee;
-  fpt_t link_yoffset_knee;
 
   SdVector3f location_abad_fl;
   SdVector3f location_hip_fl;
@@ -70,6 +69,17 @@ struct SDQUADX_EXPORT Ctrl {
   JPosVectorf jpos_rolling;
 };
 
+struct SDQUADX_EXPORT Estimate {
+  Estimate();
+
+  fpt_t process_noise_pimu;
+  fpt_t process_noise_vimu;
+  fpt_t process_noise_pfoot;
+  fpt_t sensor_noise_pfoot;
+  fpt_t sensor_noise_vfoot;
+  fpt_t sensor_noise_zfoot;
+};
+
 }  // namespace options
 
 struct SDQUADX_EXPORT Options {
@@ -88,6 +98,9 @@ struct SDQUADX_EXPORT Options {
   // gravity scalar
   fpt_t gravity;
 
+  fpt_t rfmu;
+  fpt_t rfmax;
+
   // debug, info, warn, err, critical
   std::string log_level;
   // console, file
@@ -96,6 +109,7 @@ struct SDQUADX_EXPORT Options {
 
   options::Model model;
   options::Ctrl ctrl;
+  options::Estimate estimate;
 };
 
 }  // namespace sdquadx

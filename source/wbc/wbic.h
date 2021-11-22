@@ -3,69 +3,37 @@
 #include <memory>
 #include <vector>
 
-#include "externlib/eigen.h"
-#include "wbc/contact.h"
 #include "wbc/task.h"
 #include "wbc/wbc.h"
 
 namespace sdquadx::wbc {
-class Wbic {
+class Wbic : public Wbc {
  public:
-  using Ptr = std::unique_ptr<Wbic>;
-  using Shared = std::shared_ptr<Wbic>;
-
-  explicit Wbic(fpt_t weight);
-
-  bool UpdateSetting(model::MassMatTp const &A, model::MassMatTp const &Ainv, model::GeneralFTp const &cori,
-                     model::GeneralFTp const &grav);
-
-  bool MakeTorque(SdVector12f &ret, std::vector<Task::ConstSharedPtr> const &task_list,
-                  std::vector<Contact::ConstSharedPtr> const &contact_list);
+  Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr const &quad, fpt_t weight = 0.1);
+  bool RunOnce(InData const &wbcdata, estimate::State const &estdata, leg::LegCtrl::SharedPtr const &legctrl) override;
 
  private:
-  /* 为了方便阅读，拆分 MakeTorque 为多个私有方法。
-   * 这些私有方法在接口上不是必须的，仅仅为了阅读。
-   * 所以这些私有方法的参数使用了Eigen数据类型作为参数，并且没有使用Eigen::Ref，完全是为了方便。
-   * 同样，为了定义这些私有方法，只能将 using Vector18
-   * 提到这里的位置（本应该在cpp中）。
-   */
-  using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
+  bool _ContactTaskUpdate(InData const &wbcdata, estimate::State const &estdata);
+  bool _ComputeWBC();
+  bool _UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl);
+  bool _CleanUp();
 
-  bool _SetQPSize(MatrixX &G, VectorX &g0, MatrixX &CE, VectorX &ce0, MatrixX &CI, VectorX &ci0, MatrixX &Uf,
-                  VectorX &Uf_ieq_vec, MatrixX &Jc, VectorX &JcDotQdot, VectorX &Fr_des,
-                  std::vector<Contact::ConstSharedPtr> const &contact_list);
+  Options::ConstSharedPtr const opts_;
+  model::Quadruped::SharedPtr const mquad_;
 
-  bool _ContactBuilding(MatrixX &Uf, VectorX &Uf_ieq_vec,
-                        MatrixX &Jc,  //  , num_qdot_
-                        VectorX &JcDotQdot, VectorX &Fr_des, std::vector<Contact::ConstSharedPtr> const &contact_list);
-  bool _SetEqualityConstraint(MatrixX &CE, VectorX &ce0, MatrixX const &Jc, VectorX const &Fr_des,
-                              Vector18 const &qddot);
-  bool _SetInEqualityConstraint(MatrixX &CI, VectorX &ci0, MatrixX const &Uf, VectorX const &Uf_ieq_vec,
-                                VectorX const &Fr_des);
+  std::vector<Task::ConstSharedPtr> task_list_;
+  std::vector<Task::ConstSharedPtr> contact_list_;
 
-  bool _SetCost(MatrixX &G);
+  Task::SharedPtr body_pos_task_;
+  Task::SharedPtr body_ori_task_;
+  std::array<Task::SharedPtr, consts::model::kNumLeg> foot_task_;
+  std::array<Task::SharedPtr, consts::model::kNumLeg> foot_contact_;
 
-  bool _GetSolution(SdVector12f &ret, Vector18 const &qddot, VectorX const &z, VectorX const &Fr_des,
-                    MatrixX const &Jc);
+  SdVector12f tau_ff_;
+  SdVector12f q_cmd_;
+  SdVector12f qd_cmd_;
 
-  bool _WeightedInverse(MatrixX &ret, MatrixX const &J, MatrixX const &Winv, fpt_t threshold = 0.0001);
-
-  std::array<fpt_t, 6 *consts::model::kDimConfig> Sv_ = {};  // Virtual joint
-  model::MassMatTp A_;
-  model::MassMatTp Ainv_;
-  model::GeneralFTp cori_;
-  model::GeneralFTp grav_;
-
-  bool b_updatesetting_ = false;
-
-  int dim_opt_;
-  int dim_eq_cstr_;  // equality constraints
-
-  int dim_rf_;
-  int dim_Uf_;
-
-  // Input
-  SdVector6f W_floating_;
-  SdVector18f W_rf_;
+  fpt_t const weight_q_;
+  fpt_t const weight_f_ = 1.;
 };
 }  // namespace sdquadx::wbc

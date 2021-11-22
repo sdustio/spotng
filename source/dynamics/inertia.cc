@@ -42,7 +42,7 @@ bool SpatialInertiaFlipAlongAxis(Eigen::Ref<SpatialInertia> ret, Eigen::Ref<Spat
 }
 
 bool SpatialInertiaToPseudoInertiaTensor(Eigen::Ref<PseudoInertiaTensor> ret,
-                                             Eigen::Ref<SpatialInertia const> const &si) {
+                                         Eigen::Ref<SpatialInertia const> const &si) {
   Vector3 h;
   math::MatToSkewVec(h, si.topRightCorner<3, 3>());
   Matrix3 Ibar = si.topLeftCorner<3, 3>();
@@ -55,7 +55,7 @@ bool SpatialInertiaToPseudoInertiaTensor(Eigen::Ref<PseudoInertiaTensor> ret,
 }
 
 bool PseudoInertiaTensorToSpatialInertia(Eigen::Ref<SpatialInertia> ret,
-                                             Eigen::Ref<PseudoInertiaTensor const> const &P) {
+                                         Eigen::Ref<PseudoInertiaTensor const> const &P) {
   fpt_t m = P(3, 3);
   Matrix3 Ibar = P.topLeftCorner<3, 3>().trace() * Matrix3::Identity() - P.topLeftCorner<3, 3>();
   ret.topLeftCorner<3, 3>() = Ibar;
@@ -76,8 +76,7 @@ bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, Eigen::Ref<RotMat const> co
   return true;
 }
 
-bool BuildInertiaTensor(Eigen::Ref<InertiaTensor> ret, fpt_t const mass,
-                            Eigen::Ref<Vector3 const> const &dims) {
+bool BuildInertiaTensor(Eigen::Ref<InertiaTensor> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &dims) {
   ret = Matrix3::Identity() * dims.norm() * dims.norm();
   for (int i = 0; i < 3; i++) ret(i, i) -= dims(i) * dims(i);
   ret = ret * mass / 12;

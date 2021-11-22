@@ -3,13 +3,12 @@
 #include "externlib/eigen.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/leg.h"
-#include "sdquadx/model.h"
+#include "sdquadx/options.h"
 
 namespace sdquadx::estimate {
 class PosVel : public Estimator {
  public:
-  PosVel(fpt_t dt, fpt_t gravity, leg::LegCtrl::ConstSharedPtr const &legctrl,
-         model::Quadruped::ConstSharedPtr const &quad);
+  PosVel(Options::ConstSharedPtr const &opts, leg::LegCtrl::ConstSharedPtr const &legctrl);
   bool RunOnce(State &ret) override;
 
  private:
@@ -19,10 +18,10 @@ class PosVel : public Estimator {
   using Matrix18 = Eigen::Matrix<fpt_t, 18, 18>;
   using Matrix28 = Eigen::Matrix<fpt_t, 28, 28>;
 
-  fpt_t dt_;
-  fpt_t gravity_;
+  bool CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg);
+
+  Options::ConstSharedPtr const opts_;
   leg::LegCtrl::ConstSharedPtr const legctrl_;
-  model::Quadruped::ConstSharedPtr const quad_;
 
   std::array<fpt_t, 18> xhat_;     // 状态估计值 [p v p1 p2 p3 p4] 世界坐标下
   std::array<fpt_t, 12> ps_;       // 储存状态p

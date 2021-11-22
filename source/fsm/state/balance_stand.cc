@@ -4,6 +4,7 @@
 
 #include "estimate/contact.h"
 #include "spdlog/spdlog.h"
+#include "wbc/wbic.h"
 
 namespace sdquadx::fsm {
 
@@ -18,8 +19,10 @@ StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, leg::L
       legctrl_(legctrl),
       drictrl_(drictrl),
       estctrl_(estctrl),
-      wbc_(std::make_unique<wbc::WbcCtrl>(mquad->GetFloatBaseModel(), opts, 1000.)),
-      body_weight_(opts->model.mass_body * opts->gravity) {}
+      wbc_(std::make_unique<wbc::Wbic>(opts, mquad, 1000.)),
+      body_weight_((opts->model.mass_body +
+                    (opts->model.mass_abad + opts->model.mass_hip + opts->model.mass_knee) * consts::model::kNumLeg) *
+                   opts->gravity) {}
 
 bool StateBalanceStand::OnEnter() {
   spdlog::info("Enter State Balance Stand!!!");
@@ -33,17 +36,17 @@ bool StateBalanceStand::OnEnter() {
   //   ini_body_pos_[2]=0.26;
 
   ini_body_rpy_ = estdata.rpy;
+
+  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
+  est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
+
   return true;
 }
 
 bool StateBalanceStand::OnExit() { /* do nothing*/
   return true;
 }
-bool StateBalanceStand::RunOnce() {
-  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
-  est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
-  return Step();
-}
+bool StateBalanceStand::RunOnce() { return Step(); }
 
 TransitionData StateBalanceStand::Transition(const State next) {
   if (next == State::Locomotion) {
@@ -53,8 +56,7 @@ TransitionData StateBalanceStand::Transition(const State next) {
 }
 
 bool StateBalanceStand::Step() {
-  for (auto &cmd : legctrl_->GetCmdsForUpdate())
-    cmd.Zero();
+  for (auto &cmd : legctrl_->GetCmdsForUpdate()) cmd.Zero();
 
   wbc_data_.body_pos_des = ini_body_pos_;
   wbc_data_.body_lvel_des.fill(0.);
@@ -74,10 +76,10 @@ bool StateBalanceStand::Step() {
     wbc_data_.foot_lvel_des[i].fill(0.);
     wbc_data_.foot_acc_des[i].fill(0.);
     wbc_data_.Fr_des[i].fill(0.);
-    wbc_data_.Fr_des[i][2] = body_weight_ / 4.;
-    wbc_data_.contact_state[i] = true;
+    wbc_data_.Fr_des[i][2] = body_weight_ / consts::model::kNumLeg;
+    wbc_data_.contact_state[i] = 1.;
   }
 
-  return wbc_->RunOnce(wbc_data_, legctrl_, drictrl_, estctrl_);
+  return wbc_->RunOnce(wbc_data_, estctrl_->GetEstState(), legctrl_);
 }
 }  // namespace sdquadx::fsm

@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "sdquadx/consts.h"
 #include "sdquadx/interface.h"
 #include "sdquadx/types.h"
 
@@ -24,15 +25,6 @@ struct SDQUADX_EXPORT Cmd {
   SdMatrix3f kp_joint = {};
   SdMatrix3f kd_joint = {};
 
-  // from mpc; aid coumpte above;
-  SdVector3f force_feed_forward = {};
-  SdVector3f p_des = {};
-  SdVector3f v_des = {};
-
-  // from mpc; aid coumpte above;
-  SdMatrix3f kp_cartesian = {};
-  SdMatrix3f kd_cartesian = {};
-
   void Zero();
 };
 
@@ -41,18 +33,15 @@ struct SDQUADX_EXPORT Cmd {
  * 从腿返回到控制代码的数据
  */
 struct SDQUADX_EXPORT Data {
-  SdVector3f q = {};             // 关节角度
-  SdVector3f qd = {};            // 关节角速度
-  SdVector3f p = {};             // 足端位置
-  SdVector3f v = {};             // 足端速度
-  SdMatrix3f J = {};             // 雅可比
+  SdVector3f q = {};   // 关节角度
+  SdVector3f qd = {};  // 关节角速度
   SdVector3f tau_estimate = {};  // 估计力矩反馈
 
   void Zero();
 };
 
-using Cmds = std::array<Cmd, 4>;
-using Datas = std::array<Data, 4>;
+using Cmds = std::array<Cmd, consts::model::kNumLeg>;
+using Datas = std::array<Data, consts::model::kNumLeg>;
 
 class SDQUADX_EXPORT LegCtrl {
  public:
@@ -75,13 +64,6 @@ class SDQUADX_EXPORT LegCtrl {
    * 腿部控制命令清零，应运行在任何控制代码之前，否则控制代码混乱，控制命令不会改变，腿部不会记忆上次命令
    */
   virtual void ZeroCmd() = 0;
-
-  /*!
-   * Compute the position of the foot and its Jacobian.  This is done in the
-   * local leg coordinate system. If J/p are NULL, the calculation will be
-   * skipped.
-   */
-  virtual bool ComputeLegJacobianAndPosition(int leg) = 0;
 
   /*!
    * Update the "leg data" from Actuator Interface

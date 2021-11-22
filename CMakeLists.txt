@@ -45,8 +45,8 @@ set(LIB_SOURCES
   source/math/interpolate.cc
   source/dynamics/rotation.cc
   source/dynamics/inertia.cc
+  source/model/float_base.cc
   source/model/quadruped_impl.cc
-  source/model/float_base_impl.cc
   source/drive/drive_ctrl_impl.cc
   source/estimate/estimate_ctrl_impl.cc
   source/estimate/orientation.cc
@@ -58,11 +58,9 @@ set(LIB_SOURCES
   source/mpc/cmpc.cc
   source/wbc/task/body_ori.cc
   source/wbc/task/body_pos.cc
-  source/wbc/task/link_pos.cc
-  source/wbc/contact.cc
+  source/wbc/task/foot_pos.cc
+  source/wbc/task/foot_contact.cc
   source/wbc/wbic.cc
-  source/wbc/kin_wbc.cc
-  source/wbc/wbc_ctrl.cc
   source/fsm/impl.cc
   source/fsm/safety_checker.cc
   source/fsm/state/init.cc

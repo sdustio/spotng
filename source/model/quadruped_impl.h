@@ -1,18 +1,21 @@
 #pragma once
 
+#include "model/float_base.h"
 #include "sdquadx/model.h"
 
 namespace sdquadx::model {
 class QuadrupedImpl : public Quadruped {
  public:
-  QuadrupedImpl(Options::ConstSharedPtr const &opts) : opts_(opts) {}
-  bool ComputeFloatBaseModel() override;
-  FloatBaseModel::SharedPtr const &GetFloatBaseModel() const override;
+  QuadrupedImpl(Options::ConstSharedPtr const &opts) : opts_(opts) { BuildFBModel(); }
 
-  bool CalcAbadLocation(SdVector3f &ret, int const leg) const override;
+  bool UpdateDynamics(estimate::State const &estdata, leg::Datas const &legdata) override;
+  DynamicsData const &GetDynamicsData() const override { return data_; }
 
  private:
+  bool BuildFBModel();
+
   Options::ConstSharedPtr opts_;
-  FloatBaseModel::SharedPtr model_;
+  FBModel::SharedPtr fbmodel_;
+  DynamicsData data_;
 };
 }  // namespace sdquadx::model

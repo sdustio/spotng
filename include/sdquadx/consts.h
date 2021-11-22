@@ -6,6 +6,7 @@ namespace sdquadx::consts {
 namespace math {
 constexpr inline fpt_t const kZeroEpsilon = 1.e-12;
 constexpr inline fpt_t const kPI = 3.14159265358979323846;
+constexpr inline fpt_t const kBigNum = 5e10;
 }  // namespace math
 
 namespace drive {
@@ -39,15 +40,6 @@ constexpr inline int const kDimConfig = 18;
 constexpr inline int const kDimFloating = 6;
 
 }  // namespace model
-
-namespace noise {
-constexpr inline fpt_t const kFootHeightSensorNoise = 0.001;
-constexpr inline fpt_t const kFootProcessNoisePosition = 0.002;
-constexpr inline fpt_t const kFootSensorNoisePosition = 0.001;
-constexpr inline fpt_t const kFootSensorNoiseVelocity = 0.1;
-constexpr inline fpt_t const kIMUProcessNoisePosition = 0.02;
-constexpr inline fpt_t const kIMUProcessNoiseVelocity = 0.02;
-}  // namespace noise
 
 namespace interface {
 constexpr inline fpt_t const kMaxTorque = 40.0;

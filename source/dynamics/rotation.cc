@@ -234,9 +234,9 @@ bool SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3) {
     return true;
   }
   ret[0] = cos(theta / 2.);
-  ret[1] = so3[0] / theta * sin(theta / 2.);
-  ret[2] = so3[1] / theta * sin(theta / 2.);
-  ret[3] = so3[2] / theta * sin(theta / 2.);
+  ret[1] = so3[0] / theta * std::sin(theta / 2.);
+  ret[2] = so3[1] / theta * std::sin(theta / 2.);
+  ret[3] = so3[2] / theta * std::sin(theta / 2.);
   return true;
 }
 }  // namespace sdquadx::dynamics
