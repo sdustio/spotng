@@ -3,12 +3,10 @@
 #include "dynamics/rotation.h"
 
 namespace sdquadx::estimate {
-bool Orientation::UpdateImu(sensor::ImuData const &imu) {
-  imu_ = imu;
-  return true;
-}
+Orientation::Orientation(interface::Imu::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Orientation::RunOnce(State &ret) {
+  itf_->SendImuData(imu_);
   // 复制四元数值
   ret.ori = imu_.quat;
 

@@ -2,17 +2,18 @@
 
 #include <unordered_map>
 
+#include "fsm/legctrl.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
-#include "sdquadx/leg.h"
 #include "sdquadx/model.h"
 #include "sdquadx/options.h"
 
 namespace sdquadx::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
-  StateRecoveryStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-                     drive::DriveCtrl::SharedPtr const &drictrl, estimate::EstimateCtrl::SharedPtr const &estctrl);
+  StateRecoveryStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
+                     drive::DriveCtrl::ConstSharedPtr const &drictrl,
+                     estimate::EstimateCtrl::ConstSharedPtr const &estctrl);
 
   bool OnEnter() override;
   bool OnExit() override;
@@ -30,7 +31,7 @@ class StateRecoveryStand : public StateCtrl {
   bool FoldLegs();
   bool RollOver();
 
-  bool SetJPosInterPts(int const curr_iter, int const max_iter, int const leg, SdVector3f const &ini,
+  bool SetJPosInterPts(interface::LegCmd &cmd, int const curr_iter, int const max_iter, SdVector3f const &ini,
                        SdVector3f const &fin);
 
   int iter_ = 0;
@@ -40,10 +41,10 @@ class StateRecoveryStand : public StateCtrl {
 
   Flag flag_ = Flag::FoldLegs;
 
-  Options::ConstSharedPtr opts_;
-  leg::LegCtrl::SharedPtr legctrl_;
-  drive::DriveCtrl::ConstSharedPtr drictrl_;
-  estimate::EstimateCtrl::ConstSharedPtr estctrl_;
+  Options::ConstSharedPtr const opts_;
+  LegCtrl::SharedPtr const legctrl_;
+  drive::DriveCtrl::ConstSharedPtr const drictrl_;
+  estimate::EstimateCtrl::ConstSharedPtr const estctrl_;
 
   JPosVectorf initial_jpos_;
 };

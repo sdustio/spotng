@@ -67,8 +67,6 @@ Options::Options()
     : drive_mode(options::DriveMode::kAuto),
 
       ctrl_sec(1.0 / (0.5 * 1'000)),      // 0.5kH
-      act_itf_sec(1.0 / (0.04 * 1'000)),  // 0.04kH
-
       jpos_init_sec(3.),
       gravity(9.81),
       rfmu(0.4),

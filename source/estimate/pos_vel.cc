@@ -14,8 +14,7 @@ std::array<fpt_t, consts::model::kNumLeg> const kSignLR = {-1., 1., -1., 1.};
 std::array<fpt_t, consts::model::kNumLeg> const kSignFH = {1., 1., -1., -1.};
 }  // namespace
 
-PosVel::PosVel(Options::ConstSharedPtr const &opts, leg::LegCtrl::ConstSharedPtr const &legctrl)
-    : opts_(opts), legctrl_(legctrl) {
+PosVel::PosVel(Options::ConstSharedPtr const &opts) : opts_(opts) {
   xhat_.fill(0.);
   ps_.fill(0.);
   vs_.fill(0.);
@@ -110,7 +109,7 @@ bool PosVel::RunOnce(State &ret) {
 
   // 构成状态变量等
   for (int i = 0; i < consts::model::kNumLeg; i++) {
-    CalcFootPosVelRobot(ret.foot_pos_robot[i], ret.foot_vel_robot[i], i);
+    CalcFootPosVelRobot(ret.foot_pos_robot[i], ret.foot_vel_robot[i], i, ret);
     auto p_rel = ToConstEigenTp(ret.foot_pos_robot[i]);
     auto pd_rel = ToConstEigenTp(ret.foot_vel_robot[i]);
     auto p_f = ToEigenTp(ret.foot_pos[i]);
@@ -202,9 +201,7 @@ bool PosVel::RunOnce(State &ret) {
   return true;
 }
 
-bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg) {
-  auto const &datas = legctrl_->GetDatas();
-
+bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg, State const &data) {
   fpt_t l1 = opts_->model.link_length_abad;
   fpt_t l2 = opts_->model.link_length_hip;
   fpt_t l3 = opts_->model.link_length_knee;
@@ -213,7 +210,7 @@ bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg) {
   fpt_t sign_lr = kSignLR[leg];
   fpt_t sign_fh = kSignFH[leg];
 
-  auto const &q = datas[leg].q;
+  auto const &q = data.q[leg];
   fpt_t s1 = std::sin(q[0]);
   fpt_t s2 = std::sin(q[1]);
   fpt_t s3 = std::sin(q[2]);
@@ -241,7 +238,7 @@ bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg) {
   J(2, 1) = l3 * c1 * s23 + l2 * c1 * s2;
   J(2, 2) = l3 * c1 * s23;
 
-  ToEigenTp(vel) = J * ToConstEigenTp(datas[leg].qd);
+  ToEigenTp(vel) = J * ToConstEigenTp(data.qd[leg]);
   return true;
 }
 }  // namespace sdquadx::estimate

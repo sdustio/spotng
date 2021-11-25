@@ -21,6 +21,8 @@ struct SDQUADX_EXPORT State {
   SdVector3f avel = {};                                          // 世界坐标角速度
   SdVector3f acc_robot = {};                                     // 机身坐标加速度
   SdVector3f acc = {};                                           // 世界坐标加速度
+  std::array<SdVector3f, consts::model::kNumLeg> q = {};         // 关节角度
+  std::array<SdVector3f, consts::model::kNumLeg> qd = {};        // 关节转速
   std::array<SdVector3f, consts::model::kNumLeg> foot_pos = {};  // 世界坐标系足底位置
   std::array<SdVector3f, consts::model::kNumLeg> foot_pos_robot = {};  // 世界坐标系足底速度
   std::array<SdVector3f, consts::model::kNumLeg> foot_vel = {};        // 机身坐标系足底位置

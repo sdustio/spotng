@@ -49,6 +49,7 @@ set(LIB_SOURCES
   source/model/quadruped_impl.cc
   source/drive/drive_ctrl_impl.cc
   source/estimate/estimate_ctrl_impl.cc
+  source/estimate/joints.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
   source/estimate/contact.cc
@@ -62,14 +63,12 @@ set(LIB_SOURCES
   source/wbc/task/foot_contact.cc
   source/wbc/wbic.cc
   source/fsm/impl.cc
-  source/fsm/safety_checker.cc
   source/fsm/state/init.cc
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc
   source/fsm/state/locomotion.cc
   source/robot/robot_impl.cc
   source/robot/options_impl.cc
-  source/robot/leg_impl.cc
 )
 
 add_library(${PROJECT_NAME} SHARED)

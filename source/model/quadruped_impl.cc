@@ -5,7 +5,6 @@
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
 #include "sdquadx/consts.h"
-#include "sdquadx/leg.h"
 
 namespace sdquadx::model {
 
@@ -16,16 +15,16 @@ namespace {
  */
 bool FlipWithSideSigns(Eigen::Ref<Vector3> ret, Eigen::Ref<Vector3 const> const &v, int const leg_id) {
   switch (leg_id) {
-    case leg::idx::fr:
+    case consts::legidx::fr:
       ret << v[0], -v[1], v[2];
       break;
-    case leg::idx::fl:
+    case consts::legidx::fl:
       ret << v[0], v[1], v[2];
       break;
-    case leg::idx::hr:
+    case consts::legidx::hr:
       ret << -v[0], -v[1], v[2];
       break;
-    case leg::idx::hl:
+    case consts::legidx::hl:
       ret << -v[0], v[1], v[2];
       break;
     default:
@@ -137,7 +136,7 @@ bool QuadrupedImpl::BuildFBModel() {
   return true;
 }
 
-bool QuadrupedImpl::UpdateDynamics(estimate::State const &estdata, leg::Datas const &legdata) {
+bool QuadrupedImpl::UpdateDynamics(estimate::State const &estdata) {
   auto &fbstate = fbmodel_->GetStateForUpdate();
 
   fbstate.rot_mat = estdata.rot_mat;
@@ -147,8 +146,8 @@ bool QuadrupedImpl::UpdateDynamics(estimate::State const &estdata, leg::Datas co
     fbstate.gvel_robot[i] = estdata.avel_robot[i];
     fbstate.gvel_robot[i + 3] = estdata.lvel_robot[i];
     for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
-      data_.q[3 * leg + i] = fbstate.q[3 * leg + i] = legdata[leg].q[i];
-      data_.qd[3 * leg + i] = fbstate.qd[3 * leg + i] = legdata[leg].qd[i];
+      data_.q[3 * leg + i] = fbstate.q[3 * leg + i] = estdata.q[leg][i];
+      data_.qd[3 * leg + i] = fbstate.qd[3 * leg + i] = estdata.qd[leg][i];
     }
   }
   fbmodel_->ComputeContactJacobians(data_);

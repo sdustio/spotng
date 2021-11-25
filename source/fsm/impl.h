@@ -2,16 +2,17 @@
 
 #include <unordered_map>
 
-#include "fsm/safety_checker.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
-#include "sdquadx/leg.h"
+#include "sdquadx/interface.h"
 #include "sdquadx/model.h"
+
+#include "fsm/legctrl.h"
 
 namespace sdquadx::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
-  FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+  FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, interface::Leg::SharedPtr const &legitf,
                          model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
                          estimate::EstimateCtrl::SharedPtr const &estctrl);
 
@@ -25,14 +26,11 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
    * Passive state and Normal operation mode.
    */
   bool PreCheck();
-  bool PostCheckAndLimit();
+  bool PostCheck();
+
+  LegCtrl::SharedPtr legctrl_;
 
   std::unordered_map<State, StateCtrl::SharedPtr> state_ctrls_;
-
-  leg::LegCtrl::SharedPtr legctrl_;
-  model::Quadruped::SharedPtr mquad_;
-  drive::DriveCtrl::SharedPtr drictrl_;
-  estimate::EstimateCtrl::SharedPtr estctrl_;
 
   StateCtrl::SharedPtr current_state_ctrl_;
   StateCtrl::SharedPtr next_state_ctrl_;
@@ -40,7 +38,6 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   State next_state_;
   OperatingMode opmode_;
 
-  SafetyChecker safety_checker_;
   TransitionData transition_data_;
 };
 

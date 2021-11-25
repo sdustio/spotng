@@ -10,12 +10,12 @@ namespace sdquadx::wbc {
 class Wbic : public Wbc {
  public:
   Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr const &quad, fpt_t weight = 0.1);
-  bool RunOnce(InData const &wbcdata, estimate::State const &estdata, leg::LegCtrl::SharedPtr const &legctrl) override;
+  bool RunOnce(interface::LegCmds &cmds, InData const &wbcdata, estimate::State const &estdata) override;
 
  private:
   bool _ContactTaskUpdate(InData const &wbcdata, estimate::State const &estdata);
   bool _ComputeWBC();
-  bool _UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl);
+  bool _UpdateLegCMD(interface::LegCmds &cmds);
   bool _CleanUp();
 
   Options::ConstSharedPtr const opts_;

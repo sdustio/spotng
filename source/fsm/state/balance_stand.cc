@@ -8,10 +8,10 @@
 
 namespace sdquadx::fsm {
 
-StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
+StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
                                      model::Quadruped::SharedPtr const &mquad,
-                                     drive::DriveCtrl::SharedPtr const &drictrl,
-                                     estimate::EstimateCtrl::SharedPtr const &estctrl)
+                                     drive::DriveCtrl::ConstSharedPtr const &drictrl,
+                                     estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::Locomotion},
@@ -46,17 +46,26 @@ bool StateBalanceStand::OnEnter() {
 bool StateBalanceStand::OnExit() { /* do nothing*/
   return true;
 }
-bool StateBalanceStand::RunOnce() { return Step(); }
+
+State StateBalanceStand::CheckTransition() {
+  if (!SafeCheck()) return State::RecoveryStand;
+  return state_trans_[drictrl_->GetState()];
+}
+
+bool StateBalanceStand::SafeCheck() {
+  auto const &state = estctrl_->GetEstState();
+  return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
+}
 
 TransitionData StateBalanceStand::Transition(const State next) {
   if (next == State::Locomotion) {
-    Step();
+    RunOnce();
   }
   return TransitionData{true};
 }
 
-bool StateBalanceStand::Step() {
-  for (auto &cmd : legctrl_->GetCmdsForUpdate()) cmd.Zero();
+bool StateBalanceStand::RunOnce() {
+  legctrl_->ZeroCmds();
 
   wbc_data_.body_pos_des = ini_body_pos_;
   wbc_data_.body_lvel_des.fill(0.);
@@ -80,6 +89,6 @@ bool StateBalanceStand::Step() {
     wbc_data_.contact_state[i] = 1.;
   }
 
-  return wbc_->RunOnce(wbc_data_, estctrl_->GetEstState(), legctrl_);
+  return wbc_->RunOnce(legctrl_->cmds, wbc_data_, estctrl_->GetEstState());
 }
 }  // namespace sdquadx::fsm

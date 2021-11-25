@@ -10,18 +10,16 @@
 
 namespace sdquadx::fsm {
 FiniteStateMachineImpl::FiniteStateMachineImpl(Options::ConstSharedPtr const &opts,
-                                               leg::LegCtrl::SharedPtr const &legctrl,
+                                               interface::Leg::SharedPtr const &legitf,
                                                model::Quadruped::SharedPtr const &mquad,
                                                drive::DriveCtrl::SharedPtr const &drictrl,
                                                estimate::EstimateCtrl::SharedPtr const &estctrl)
-    : state_ctrls_{{State::Init, std::make_shared<StateInit>(opts, legctrl, drictrl)},
-                   {State::RecoveryStand, std::make_shared<StateRecoveryStand>(opts, legctrl, drictrl, estctrl)},
-                   {State::Locomotion, std::make_shared<StateLocomotion>(opts, legctrl, mquad, drictrl, estctrl)},
-                   {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl, mquad, drictrl, estctrl)}},
-      legctrl_(legctrl),
-      mquad_(mquad),
-      drictrl_(drictrl),
-      estctrl_(estctrl) {
+    : legctrl_(std::make_shared<LegCtrl>(legitf)) {
+  state_ctrls_ = {{State::Init, std::make_shared<StateInit>(opts, legctrl_, drictrl, estctrl)},
+                  {State::RecoveryStand, std::make_shared<StateRecoveryStand>(opts, legctrl_, drictrl, estctrl)},
+                  {State::Locomotion, std::make_shared<StateLocomotion>(opts, legctrl_, mquad, drictrl, estctrl)},
+                  {State::BalanceStand, std::make_shared<StateBalanceStand>(opts, legctrl_, mquad, drictrl, estctrl)}};
+
   // Initialize a new Fsm State with the control data
   current_state_ctrl_ = GetStateCtrl(State::Init);
 
@@ -74,7 +72,7 @@ bool FiniteStateMachineImpl::RunOnce() {
       transition_data_ = current_state_ctrl_->Transition(next_state_);
 
       // Check the robot state for safe operation
-      PostCheckAndLimit();
+      PostCheck();
 
       // Run the state transition
       if (transition_data_.done) {  // 状态转换完成 延时到
@@ -94,30 +92,16 @@ bool FiniteStateMachineImpl::RunOnce() {
       // 非转换状态 会进行检查 即任何状态下进行检查并限制
       // Check the robot state for safe operation
       // 检查机器人状态，确保操作安全，并限制
-      PostCheckAndLimit();
+      PostCheck();
     }
+    legctrl_->RunOnce();
   }
 
   return true;
 }
 
-bool FiniteStateMachineImpl::PreCheck() {
-  if (current_state_ctrl_->NeedCheckSafeOrientation() && drictrl_->GetState() != State::RecoveryStand) {
-    return safety_checker_.CheckSafeOrientation(estctrl_);
-  }
-  return true;
-}
+bool FiniteStateMachineImpl::PreCheck() { return true; }
 
-bool FiniteStateMachineImpl::PostCheckAndLimit() {
-  bool c1 = true;
-  bool c2 = true;
-  if (current_state_ctrl_->NeedCheckPDesFoot()) {
-    c1 = safety_checker_.CheckPDesFoot(legctrl_);
-  }
-  if (current_state_ctrl_->NeedCheckForceFeedForward()) {
-    c2 = safety_checker_.CheckForceFeedForward(legctrl_);
-  }
-  return c1 && c2;
-}
+bool FiniteStateMachineImpl::PostCheck() { return true; }
 
 }  // namespace sdquadx::fsm

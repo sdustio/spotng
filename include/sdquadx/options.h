@@ -92,8 +92,6 @@ struct SDQUADX_EXPORT Options {
   options::DriveMode drive_mode;
 
   fpt_t ctrl_sec;
-  fpt_t act_itf_sec;
-
   fpt_t jpos_init_sec;
   // gravity scalar
   fpt_t gravity;

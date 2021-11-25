@@ -6,7 +6,7 @@ foreach(elem ${EXAMPLE_NAMES})
   add_executable(${elem})
   target_sources(${elem} PRIVATE
       ${elem}.cc
-      itf/echo_itf.cc
+      itf/impl.cc
     )
   target_include_directories(${elem} PRIVATE
     ${CMAKE_BINARY_DIR}/include

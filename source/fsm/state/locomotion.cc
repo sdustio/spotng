@@ -12,17 +12,17 @@ namespace sdquadx::fsm {
 namespace params {
 constexpr inline fpt_t const max_roll = 80.;   // 40;
 constexpr inline fpt_t const max_pitch = 80.;  // 40;
-}  // namespace opts
+}  // namespace params
 
-StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCtrl::SharedPtr const &legctrl,
-                                 model::Quadruped::SharedPtr const &mquad, drive::DriveCtrl::SharedPtr const &drictrl,
-                                 estimate::EstimateCtrl::SharedPtr const &estctrl)
+StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
+                                 model::Quadruped::SharedPtr const &mquad,
+                                 drive::DriveCtrl::ConstSharedPtr const &drictrl,
+                                 estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::Locomotion},
                    {drive::State::BalanceStand, State::BalanceStand}},
       legctrl_(legctrl),
-      mquad_(mquad),
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::Wbic>(opts, mquad)),
@@ -30,49 +30,38 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, leg::LegCt
 
 bool StateLocomotion::OnEnter() {
   spdlog::info("Enter State Locomotion!!!");
+  return true;
 }
 
 bool StateLocomotion::OnExit() { return true; }
 
-bool StateLocomotion::RunOnce() {
-  // Call the locomotion control logic for this iteration
-  return Step();
-}
-
 TransitionData StateLocomotion::Transition(const State next) {
   if (next == State::BalanceStand) {
-    Step();
+    RunOnce();
   }
 
   return TransitionData{true};
 }
 
 State StateLocomotion::CheckTransition() {
-  if (locomotionSafe()) {
-    return state_trans_[drictrl_->GetState()];
-  }
-
-  std::dynamic_pointer_cast<drive::DriveCtrlImpl>(std::const_pointer_cast<drive::DriveCtrl>(drictrl_))
-      ->UpdateState(drive::State::RecoveryStand);
-  return State::RecoveryStand;
+  if (!SafeCheck()) return State::RecoveryStand;
+  return state_trans_[drictrl_->GetState()];
 }
 
 // Parses contact specific controls to the leg controller
-bool StateLocomotion::Step() {
-  // StateEstimate<T> stateEstimate = this->_data->_stateEstimator->getResult();
-
+bool StateLocomotion::RunOnce() {
   // Contact state logic
   // estimateContact();
-  for (auto &cmd : legctrl_->GetCmdsForUpdate()) cmd.Zero();
+  legctrl_->ZeroCmds();
 
-  mpc_->RunOnce(wbc_data_, estctrl_->GetEstState(), drictrl_, legctrl_);
+  mpc_->RunOnce(legctrl_->cmds, wbc_data_, estctrl_->GetEstState(), drictrl_);
 
-  wbc_->RunOnce(wbc_data_, estctrl_->GetEstState(), legctrl_);
+  wbc_->RunOnce(legctrl_->cmds, wbc_data_, estctrl_->GetEstState());
 
   return true;
 }
 
-bool StateLocomotion::locomotionSafe() {
+bool StateLocomotion::SafeCheck() {
   auto const &seResult = estctrl_->GetEstState();
 
   if (std::fabs(seResult.rpy[0]) > math::DegToRad(params::max_roll)) {
@@ -86,8 +75,6 @@ bool StateLocomotion::locomotionSafe() {
   }
 
   for (int leg = 0; leg < 4; leg++) {
-    auto const &leg_data = legctrl_->GetDatas()[leg];
-
     if (seResult.foot_pos_robot[leg][2] > 0) {
       spdlog::warn("Unsafe locomotion: leg {} is above hip ({} m)", leg, seResult.foot_pos_robot[leg][2]);
       return false;

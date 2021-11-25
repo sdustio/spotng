@@ -5,7 +5,6 @@
 
 #include "sdquadx/consts.h"
 #include "sdquadx/estimate.h"
-#include "sdquadx/leg.h"
 #include "sdquadx/options.h"
 #include "sdquadx/types.h"
 
@@ -19,8 +18,8 @@ struct SDQUADX_EXPORT DynamicsData {
   MassMatTp M;
   GeneralFTp Cc;
   GeneralFTp Cg;
-  std::array<fpt_t, consts::model::kNumActJoint> q;
-  std::array<fpt_t, consts::model::kNumActJoint> qd;
+  std::array<fpt_t, consts::model::kNumJoint> q;
+  std::array<fpt_t, consts::model::kNumJoint> qd;
   std::array<ContactJacobTp, consts::model::kNumLeg> Jc;
   std::array<SdVector3f, consts::model::kNumLeg> Jcdqd;
 
@@ -35,7 +34,7 @@ class SDQUADX_EXPORT Quadruped {
 
   virtual ~Quadruped() = default;
 
-  virtual bool UpdateDynamics(estimate::State const &estdata, leg::Datas const &legdata) = 0;
+  virtual bool UpdateDynamics(estimate::State const &estdata) = 0;
   virtual DynamicsData const &GetDynamicsData() const = 0;
 };
 }  // namespace sdquadx::model

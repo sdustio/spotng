@@ -25,9 +25,6 @@ bool OffsetDurationGait::CalcContactState(SdVector4f &ret) const {
       ret[i] = ret[i] / durationsd_[i];
     }
   }
-
-  // printf("contact state: %.3f %.3f %.3f %.3f\n", progress[0], progress[1],
-  // progress[2], progress[3]);
   return true;
 }
 

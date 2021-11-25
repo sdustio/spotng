@@ -46,13 +46,6 @@ class SDQUADX_EXPORT StateCtrl {
 
   // Return State Enum
   virtual State GetState() const = 0;
-
-  // Pre controls safety checks
-  virtual bool NeedCheckSafeOrientation() const { return false; }
-
-  // Post control safety checks
-  virtual bool NeedCheckPDesFoot() const { return false; }
-  virtual bool NeedCheckForceFeedForward() const { return false; }
 };
 
 class SDQUADX_EXPORT FiniteStateMachine {

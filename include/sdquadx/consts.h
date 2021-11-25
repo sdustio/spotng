@@ -9,6 +9,13 @@ constexpr inline fpt_t const kPI = 3.14159265358979323846;
 constexpr inline fpt_t const kBigNum = 5e10;
 }  // namespace math
 
+namespace legidx {
+constexpr inline int const fr = 0;  // Front Right
+constexpr inline int const fl = 1;  // Front Left
+constexpr inline int const hr = 2;  // Hind Right
+constexpr inline int const hl = 3;  // Hind Left
+}  // namespace legidx
+
 namespace drive {
 constexpr inline fpt_t const kMaxAngleR = 0.4;
 constexpr inline fpt_t const kMinAngleR = -0.4;
@@ -32,7 +39,7 @@ constexpr inline fpt_t const kDefaultStepHeight = 0.15;
 namespace model {
 constexpr inline fpt_t const kMaxLegLength = 0.55;  //?
 
-constexpr inline int const kNumActJoint = 12;
+constexpr inline int const kNumJoint = 12;
 constexpr inline int const kNumQ = 19;
 constexpr inline int const kNumLeg = 4;
 constexpr inline int const kNumLegJoint = 3;

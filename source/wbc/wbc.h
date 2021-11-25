@@ -2,12 +2,12 @@
 
 #include "sdquadx/consts.h"
 #include "sdquadx/estimate.h"
-#include "sdquadx/leg.h"
 #include "sdquadx/model.h"
 #include "sdquadx/types.h"
+#include "sdquadx/interface.h"
 
 namespace sdquadx::wbc {
-using SdVector12f = std::array<fpt_t, consts::model::kNumActJoint>;
+using SdVector12f = std::array<fpt_t, consts::model::kNumJoint>;
 using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
 struct InData {
@@ -33,7 +33,7 @@ class Wbc {
   using ConstSharedPtr = std::shared_ptr<Wbc const>;
 
   virtual ~Wbc() = default;
-  virtual bool RunOnce(InData const &, estimate::State const &, leg::LegCtrl::SharedPtr const &) = 0;
+  virtual bool RunOnce(interface::LegCmds &, InData const &, estimate::State const &) = 0;
 };
 
 }  // namespace sdquadx::wbc

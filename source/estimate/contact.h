@@ -9,7 +9,7 @@ class Contact : public Estimator {
   bool RunOnce(State &ret) override;
 
  private:
-  SdVector4f contact_;
+  SdVector4f contact_ = {0.5, 0.5, 0.5, 0.5};
 };
 
 }  // namespace sdquadx::estimate

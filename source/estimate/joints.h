@@ -1,8 +1,11 @@
 #pragma once
 
+#include <array>
+
+#include "sdquadx/consts.h"
 #include "sdquadx/estimate.h"
-#include "sdquadx/sensor.h"
 #include "sdquadx/interface.h"
+#include "sdquadx/sensor.h"
 
 namespace sdquadx::estimate {
 /*!
@@ -12,16 +15,14 @@ namespace sdquadx::estimate {
  * rpy，加速度(世界，身体)从vector nav IMU数据
  * 实际用
  */
-class Orientation : public Estimator {
+class Joints : public Estimator {
  public:
-  explicit Orientation(interface::Imu::ConstSharedPtr const &itf);
+  explicit Joints(interface::Leg::ConstSharedPtr const &itf);
   bool RunOnce(State &ret) override;
 
  private:
-  interface::Imu::ConstSharedPtr const itf_;
-  bool b_first_visit_ = true;
-  SdVector4f ori_ini_inv_;
-  sensor::ImuData imu_;
+  interface::Leg::ConstSharedPtr const itf_;
+  std::array<sensor::LegData, consts::model::kNumLeg> legdatas_;
 };
 
 }  // namespace sdquadx::estimate

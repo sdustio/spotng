@@ -14,13 +14,13 @@ class SDQUADX_EXPORT RobotCtrl {
   using SharedPtr = std::shared_ptr<RobotCtrl>;
   using ConstSharedPtr = std::shared_ptr<RobotCtrl const>;
 
-  static bool Build(Ptr &ret, Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf);
-  static bool Build(SharedPtr &ret, Options::SharedPtr const &opts,
-                    interface::ActuatorInterface::SharedPtr const &act_itf);
+  static bool Build(Ptr &ret, Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                    interface::Imu::SharedPtr const &imu_itf);
+  static bool Build(SharedPtr &ret, Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                    interface::Imu::SharedPtr const &imu_itf);
 
   virtual ~RobotCtrl() = default;
 
-  virtual bool UpdateImu(sensor::ImuData const &imu) = 0;
   virtual bool UpdateDriveTwist(drive::Twist const &twist) = 0;
   virtual bool UpdateDriveVarPose(drive::VarPose const &varpose) = 0;
   virtual bool UpdateDriveState(drive::State const &state) = 0;

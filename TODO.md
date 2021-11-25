@@ -16,3 +16,4 @@
 
 - fbmodel vector -> array
 - drive_mode opt -> drive(类似gait，增加函数更改 drive_mode)
+- contact est 更新问题

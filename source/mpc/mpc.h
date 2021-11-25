@@ -4,7 +4,6 @@
 
 #include "sdquadx/drive.h"
 #include "sdquadx/estimate.h"
-#include "sdquadx/leg.h"
 #include "sdquadx/model.h"
 #include "wbc/wbc.h"
 
@@ -25,7 +24,7 @@ class Mpc {
   using ConstSharedPtr = std::shared_ptr<Mpc const>;
 
   virtual ~Mpc() = default;
-  virtual bool RunOnce(wbc::InData &, estimate::State const &, leg::LegCtrl::SharedPtr const &) = 0;
+  virtual bool RunOnce(interface::LegCmds &, wbc::InData &, estimate::State const &, drive::DriveCtrl::ConstSharedPtr const &) = 0;
 };
 
 }  // namespace sdquadx::mpc

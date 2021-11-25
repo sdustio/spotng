@@ -11,7 +11,7 @@
 
 namespace sdquadx::wbc {
 
-using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumActJoint, 1>;
+using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumJoint, 1>;
 using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
 using Sv_t = Eigen::Matrix<fpt_t, 6, consts::model::kDimConfig>;
 
@@ -25,28 +25,28 @@ Wbic::Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr cons
       body_pos_task_(std::make_shared<TaskBodyPos>(opts->ctrl.kp_body, opts->ctrl.kd_body)),
       body_ori_task_(std::make_shared<TaskBodyOri>(opts->ctrl.kp_ori, opts->ctrl.kd_ori)),
       foot_task_({
-          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::fr),
-          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::fl),
-          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::hr),
-          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, leg::idx::hl),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::fr),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::fl),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::hr),
+          std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::hl),
       }),
       foot_contact_({
-          std::make_shared<TaskFootContact>(mquad_, leg::idx::fr),
-          std::make_shared<TaskFootContact>(mquad_, leg::idx::fl),
-          std::make_shared<TaskFootContact>(mquad_, leg::idx::hr),
-          std::make_shared<TaskFootContact>(mquad_, leg::idx::hl),
+          std::make_shared<TaskFootContact>(mquad_, consts::legidx::fr),
+          std::make_shared<TaskFootContact>(mquad_, consts::legidx::fl),
+          std::make_shared<TaskFootContact>(mquad_, consts::legidx::hr),
+          std::make_shared<TaskFootContact>(mquad_, consts::legidx::hl),
       }),
       weight_q_(weight) {}
 
-bool Wbic::RunOnce(InData const &wbcdata, estimate::State const &estdata, leg::LegCtrl::SharedPtr const &legctrl) {
-  mquad_->UpdateDynamics(estdata, legctrl->GetDatas());
+bool Wbic::RunOnce(interface::LegCmds &cmds, InData const &wbcdata, estimate::State const &estdata) {
+  mquad_->UpdateDynamics(estdata);
 
   // Task & Contact Update
   _ContactTaskUpdate(wbcdata, estdata);
 
   // WBC Computation
   _ComputeWBC();
-  return _UpdateLegCMD(legctrl);
+  return _UpdateLegCMD(cmds);
 }
 
 bool Wbic::_ComputeWBC() {
@@ -207,7 +207,7 @@ bool Wbic::_ComputeWBC() {
   }
 
   // For Leg Cmd
-  for (int i = 0; i < consts::model::kNumActJoint; ++i) {
+  for (int i = 0; i < consts::model::kNumJoint; ++i) {
     q_cmd_[i] = dyndata.q[i] + delta_q[i + 6];
     qd_cmd_[i] = qd[i + 6];
     tau_ff_[i] = tot_tau[i + 6];
@@ -216,17 +216,14 @@ bool Wbic::_ComputeWBC() {
   return true;
 }
 
-bool Wbic::_UpdateLegCMD(leg::LegCtrl::SharedPtr const &legctrl) {
-  auto &cmds = legctrl->GetCmdsForUpdate();
-
+bool Wbic::_UpdateLegCMD(interface::LegCmds &cmds) {
   for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
     for (int jidx(0); jidx < consts::model::kNumLegJoint; ++jidx) {
-      cmds[leg].tau_feed_forward[jidx] = tau_ff_[consts::model::kNumLegJoint * leg + jidx];
+      cmds[leg].tau[jidx] = tau_ff_[consts::model::kNumLegJoint * leg + jidx];
       cmds[leg].q_des[jidx] = q_cmd_[consts::model::kNumLegJoint * leg + jidx];
       cmds[leg].qd_des[jidx] = qd_cmd_[consts::model::kNumLegJoint * leg + jidx];
-
-      cmds[leg].kp_joint[jidx * consts::model::kNumLegJoint + jidx] = opts_->ctrl.kp_joint[jidx];
-      cmds[leg].kd_joint[jidx * consts::model::kNumLegJoint + jidx] = opts_->ctrl.kd_joint[jidx];
+      cmds[leg].kp_joint = opts_->ctrl.kp_joint;
+      cmds[leg].kd_joint = opts_->ctrl.kd_joint;
     }
   }
   return true;

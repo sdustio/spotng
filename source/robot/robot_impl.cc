@@ -6,39 +6,33 @@
 
 #include "drive/drive_ctrl_impl.h"
 #include "estimate/contact.h"
+#include "estimate/joints.h"
 #include "estimate/estimate_ctrl_impl.h"
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 #include "fsm/impl.h"
 #include "model/quadruped_impl.h"
-#include "robot/leg_impl.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
 namespace sdquadx {
 
-RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::ActuatorInterface::SharedPtr const &act_itf) {
+RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                             interface::Imu::ConstSharedPtr const &imu_itf) {
   ParseOptions(opts);
 
-  mquad_ = std::make_shared<model::QuadrupedImpl>(opts_);
+  mquad_ = std::make_shared<model::QuadrupedImpl>(opts);
 
-  legctrl_ = std::make_shared<leg::LegCtrlImpl>(act_itf, opts_);
-
-  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts_->drive_mode, opts_->ctrl_sec);
+  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts->drive_mode, opts->ctrl_sec);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
-  auto est_contact = std::make_shared<estimate::Contact>();
-  est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
-  estctrl_->AddEstimator("contact", est_contact);
-  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>());
-  estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts_, legctrl_));
+  estctrl_->AddEstimator("joints", std::make_shared<estimate::Joints>(leg_itf));
+  estctrl_->AddEstimator("contact", std::make_shared<estimate::Contact>());
+  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>(imu_itf));
+  estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts));
 
-  fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts_, legctrl_, mquad_, drivectrl_, estctrl_);
-}
-
-bool RobotCtrlImpl::UpdateImu(sensor::ImuData const &imu) {
-  return std::dynamic_pointer_cast<estimate::Orientation>(estctrl_->GetEstimator("ori"))->UpdateImu(imu);
+  fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, leg_itf, mquad_, drivectrl_, estctrl_);
 }
 
 bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) { return drivectrl_->UpdateTwist(twist); }
@@ -52,14 +46,10 @@ bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) { return drivectrl_
 bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) { return drivectrl_->UpdateStepHeight(height); }
 
 bool RobotCtrlImpl::RunOnce() {
-  legctrl_->UpdateDatasFromActuatorInterface();
-
   estctrl_->RunOnce();
 
   drivectrl_->CmdtoDesData();
-  fsm_->RunOnce();
-
-  return legctrl_->SendCmdsToActuatorInterface();
+  return fsm_->RunOnce();
 }
 
 bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
@@ -86,15 +76,15 @@ bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   return true;
 }
 
-bool RobotCtrl::Build(Ptr &ret, Options::SharedPtr const &opts,
-                      interface::ActuatorInterface::SharedPtr const &act_itf) {
-  ret = std::make_unique<RobotCtrlImpl>(opts, act_itf);
+bool RobotCtrl::Build(Ptr &ret, Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                      interface::Imu::SharedPtr const &imu_itf) {
+  ret = std::make_unique<RobotCtrlImpl>(opts, leg_itf, imu_itf);
   return true;
 }
 
-bool RobotCtrl::Build(SharedPtr &ret, Options::SharedPtr const &opts,
-                      interface::ActuatorInterface::SharedPtr const &act_itf) {
-  ret = std::make_shared<RobotCtrlImpl>(opts, act_itf);
+bool RobotCtrl::Build(SharedPtr &ret, Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                      interface::Imu::SharedPtr const &imu_itf) {
+  ret = std::make_shared<RobotCtrlImpl>(opts, leg_itf, imu_itf);
   return true;
 }
 }  // namespace sdquadx
