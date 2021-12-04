@@ -13,10 +13,16 @@ Model::Model()
       mass_abad(2.),
       mass_hip(1.),
       mass_knee(1.),
+      mass_total(41.),
 
       link_length_abad(0.093),
       link_length_hip(0.284),
       link_length_knee(0.284),
+
+      basic_locomotion_height(0.4),
+      fast_locomotion_height(0.36),
+      foot_offsetx(-0.02),
+      foot_offsety(-0.02),
 
       location_abad_fl({0.34, 0.066, 0.}),
       location_hip_fl({0., 0.093, 0.}),
@@ -30,10 +36,19 @@ Model::Model()
       inertia_body({0.0567188, 0, 0, 0, 0.721252, 0, 0, 0, 0.737133}),
       inertia_abad({0.002426, 0., 0., 0., 0.0025, 0., 0., 0., 0.002426}),
       inertia_hip({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}),
-      inertia_knee({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}) {}
+      inertia_knee({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}),
+      inertia_total({0.07487, 0, 0, 0, 2.1566, 0, 0, 0, 2.1775}) {}
 
 Ctrl::Ctrl()
-    : kp_body({100., 100., 100.}),
+    : mpc_iters(15),  // 30ms, 30/ctrl_sec * 1000
+      mpc_horizon_len(12),
+      mpc_x_drag(3),
+      mpc_weights({1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2, 0}),
+
+      footskd_bonus_swing(0.),
+      footskd_vkp(.1),
+
+      kp_body({100., 100., 100.}),
       kd_body({10., 10., 20.}),
 
       kp_foot({500., 500., 500.}),
@@ -66,8 +81,9 @@ Estimate::Estimate()
 Options::Options()
     : drive_mode(options::DriveMode::kAuto),
 
-      ctrl_sec(1.0 / (0.5 * 1'000)),      // 0.5kH
+      ctrl_sec(1.0 / (0.5 * 1'000)),  // 0.5kH
       jpos_init_sec(3.),
+
       gravity(9.81),
       rfmu(0.4),
       rfmax(1500),

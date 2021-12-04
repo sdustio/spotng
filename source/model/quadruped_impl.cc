@@ -71,7 +71,6 @@ bool QuadrupedImpl::BuildFBModel() {
 
   const int base_id = 5;
   int body_id = base_id;
-  int side_sign = -1;
 
   Matrix3 I3 = Matrix3::Identity();
 
@@ -80,6 +79,7 @@ bool QuadrupedImpl::BuildFBModel() {
 
   // loop over 4 legs
   for (int leg_id = 0; leg_id < consts::model::kNumLeg; leg_id++) {
+    int side_sign = consts::model::kSignLR[leg_id];
     // Ab/Ad joint
     //  int addBody(const SpatialInertia& inertia, const SpatialInertia&
     //  rotorInertia, fptype gearRatio,
@@ -126,8 +126,6 @@ bool QuadrupedImpl::BuildFBModel() {
                    xtree_knee);
 
     model->AddFoot(body_id, Vector3(0, 0, -opts_->model.link_length_knee));
-
-    side_sign *= -1;
   }
 
   model->UpdateGravity({0, 0, -opts_->gravity});

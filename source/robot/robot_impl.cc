@@ -37,7 +37,7 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
 
 bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) { return drivectrl_->UpdateTwist(twist); }
 
-bool RobotCtrlImpl::UpdateDriveVarPose(drive::VarPose const &varpose) { return drivectrl_->UpdateVarPose(varpose); }
+bool RobotCtrlImpl::UpdateDrivePose(drive::Pose const &varpose) { return drivectrl_->UpdatePose(varpose); }
 
 bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) { return drivectrl_->UpdateState(state); }
 

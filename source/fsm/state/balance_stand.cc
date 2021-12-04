@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "estimate/contact.h"
 #include "spdlog/spdlog.h"
 #include "wbc/wbic.h"
 
@@ -20,9 +19,9 @@ StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, LegCtr
       drictrl_(drictrl),
       estctrl_(estctrl),
       wbc_(std::make_unique<wbc::Wbic>(opts, mquad, 1000.)),
-      body_weight_((opts->model.mass_body +
-                    (opts->model.mass_abad + opts->model.mass_hip + opts->model.mass_knee) * consts::model::kNumLeg) *
-                   opts->gravity) {}
+      body_weight_(opts->model.mass_total * opts->gravity) {
+  estcontact_ = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
+}
 
 bool StateBalanceStand::OnEnter() {
   spdlog::info("Enter State Balance Stand!!!");
@@ -37,8 +36,7 @@ bool StateBalanceStand::OnEnter() {
 
   ini_body_rpy_ = estdata.rpy;
 
-  auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
-  est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
+  estcontact_->UpdateContact({0.5, 0.5, 0.5, 0.5});
 
   return true;
 }

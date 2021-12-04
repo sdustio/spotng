@@ -2,8 +2,8 @@
 
 #include <unordered_map>
 
+#include "estimate/contact.h"
 #include "fsm/legctrl.h"
-#include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/model.h"
 #include "wbc/wbc.h"
@@ -38,6 +38,8 @@ class StateBalanceStand : public StateCtrl {
 
   SdVector3f ini_body_pos_;
   SdVector3f ini_body_rpy_;
-  double body_weight_;
+  fpt_t body_weight_;
+
+  std::shared_ptr<estimate::Contact> estcontact_;
 };
 }  // namespace sdquadx::fsm

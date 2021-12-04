@@ -2,8 +2,8 @@
 
 #include <unordered_map>
 
+#include "estimate/contact.h"
 #include "fsm/legctrl.h"
-#include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/model.h"
 #include "sdquadx/options.h"
@@ -47,5 +47,7 @@ class StateRecoveryStand : public StateCtrl {
   estimate::EstimateCtrl::ConstSharedPtr const estctrl_;
 
   JPosVectorf initial_jpos_;
+
+  std::shared_ptr<estimate::Contact> estcontact_;
 };
 }  // namespace sdquadx::fsm

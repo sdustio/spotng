@@ -2,7 +2,7 @@
 
 #include "sdquadx/types.h"
 
-namespace sdquadx::mpc {
+namespace sdquadx::skd {
 class FootSwingTrajectory {
  public:
   FootSwingTrajectory();
@@ -15,6 +15,8 @@ class FootSwingTrajectory {
     return true;
   }
 
+  SdVector3f const &GetInitialPosition() const { return p0_; }
+
   /*!
    * Set the desired final position of the foot
    * @param pf : the final foot posiiton
@@ -23,6 +25,8 @@ class FootSwingTrajectory {
     pf_ = pf;
     return true;
   }
+
+  SdVector3f const &GetFinalPosition() const { return pf_; }
 
   /*!
    * Set the maximum height of the swing
@@ -33,6 +37,8 @@ class FootSwingTrajectory {
     height_ = h;
     return true;
   }
+
+  fpt_t GetHeight() const { return height_; }
 
   /*!
    * Get the foot position at the current point along the swing
@@ -58,4 +64,4 @@ class FootSwingTrajectory {
   SdVector3f p0_, pf_, p_, v_, a_;
   fpt_t height_ = 0;
 };
-}  // namespace sdquadx::mpc
+}  // namespace sdquadx::skd

@@ -9,7 +9,7 @@ class DriveCtrlImpl : public DriveCtrl {
   DriveCtrlImpl(options::DriveMode mode, fpt_t dt);
 
   bool UpdateTwist(Twist const &twist) override;
-  bool UpdateVarPose(VarPose const &varpose) override;
+  bool UpdatePose(Pose const &pose) override;
   bool UpdateState(State const &state) override;
   bool UpdateGait(Gait const &gait) override;
   bool UpdateStepHeight(fpt_t const height) override;
@@ -32,7 +32,7 @@ class DriveCtrlImpl : public DriveCtrl {
   options::DriveMode mode_;
   fpt_t dt_;
   Twist twist_;
-  VarPose varpose_;
+  Pose pose_;
 
   fpt_t step_height_ = 0.1;
   State state_ = State::Init;

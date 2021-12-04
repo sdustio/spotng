@@ -22,7 +22,7 @@ class SDQUADX_EXPORT RobotCtrl {
   virtual ~RobotCtrl() = default;
 
   virtual bool UpdateDriveTwist(drive::Twist const &twist) = 0;
-  virtual bool UpdateDriveVarPose(drive::VarPose const &varpose) = 0;
+  virtual bool UpdateDrivePose(drive::Pose const &varpose) = 0;
   virtual bool UpdateDriveState(drive::State const &state) = 0;
   virtual bool UpdateDriveGait(drive::Gait const &gait) = 0;
   virtual bool UpdateDriveStepHeight(fpt_t const height) = 0;

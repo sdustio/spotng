@@ -53,9 +53,10 @@ set(LIB_SOURCES
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
   source/estimate/contact.cc
-  source/mpc/gait_skd.cc
-  source/mpc/foot_swing.cc
-  source/mpc/qp_solver.cc
+  source/skd/od_gait.cc
+  source/skd/state_des.cc
+  source/skd/foot_swing.cc
+  source/mpc/qp.cc
   source/mpc/cmpc.cc
   source/wbc/task/body_ori.cc
   source/wbc/task/body_pos.cc
@@ -63,6 +64,7 @@ set(LIB_SOURCES
   source/wbc/task/foot_contact.cc
   source/wbc/wbic.cc
   source/fsm/impl.cc
+  source/fsm/legctrl.cc
   source/fsm/state/init.cc
   source/fsm/state/balance_stand.cc
   source/fsm/state/recovery_stand.cc

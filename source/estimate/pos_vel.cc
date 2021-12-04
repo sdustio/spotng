@@ -9,11 +9,6 @@ namespace params {
 constexpr inline fpt_t const kBigNumber = 100;
 }  // namespace params
 
-namespace {
-std::array<fpt_t, consts::model::kNumLeg> const kSignLR = {-1., 1., -1., 1.};
-std::array<fpt_t, consts::model::kNumLeg> const kSignFH = {1., 1., -1., -1.};
-}  // namespace
-
 PosVel::PosVel(Options::ConstSharedPtr const &opts) : opts_(opts) {
   xhat_.fill(0.);
   ps_.fill(0.);
@@ -131,7 +126,6 @@ bool PosVel::RunOnce(State &ret) {
     fpt_t phase = fmin(ret.contact[i], 1.);
 
     // 脚i的测量协方差在摆动过程中被提高到一个很高的值，因此在这个融合过程中，摆动腿的测量值被有效地忽略了
-    // fptype trust_window = fptype(0.25);
     fpt_t trust_window = 0.2;
 
     // trust 一般为1
@@ -207,8 +201,8 @@ bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg, Stat
   fpt_t l3 = opts_->model.link_length_knee;
   fpt_t hx = opts_->model.location_abad_fl[0];
   fpt_t hy = opts_->model.location_abad_fl[1];
-  fpt_t sign_lr = kSignLR[leg];
-  fpt_t sign_fh = kSignFH[leg];
+  fpt_t sign_fh = consts::model::kSignFH[leg];
+  fpt_t sign_lr = consts::model::kSignLR[leg];
 
   auto const &q = data.q[leg];
   fpt_t s1 = std::sin(q[0]);

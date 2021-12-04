@@ -25,10 +25,16 @@ struct SDQUADX_EXPORT Model {
   fpt_t mass_abad;
   fpt_t mass_hip;
   fpt_t mass_knee;
+  fpt_t mass_total;
 
   fpt_t link_length_abad;
   fpt_t link_length_hip;
   fpt_t link_length_knee;
+
+  fpt_t basic_locomotion_height;
+  fpt_t fast_locomotion_height;
+  fpt_t foot_offsetx;
+  fpt_t foot_offsety;
 
   SdVector3f location_abad_fl;
   SdVector3f location_hip_fl;
@@ -43,10 +49,19 @@ struct SDQUADX_EXPORT Model {
   SdMatrix3f inertia_abad;
   SdMatrix3f inertia_hip;
   SdMatrix3f inertia_knee;
+  SdMatrix3f inertia_total;
 };
 
 struct SDQUADX_EXPORT Ctrl {
   Ctrl();
+
+  int mpc_iters;
+  int mpc_horizon_len;
+  int mpc_x_drag;
+  std::array<fpt_t, 13> mpc_weights;
+
+  fpt_t footskd_bonus_swing;
+  fpt_t footskd_vkp;
 
   SdVector3f kp_body;
   SdVector3f kd_body;

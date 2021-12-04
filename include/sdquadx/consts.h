@@ -21,6 +21,8 @@ constexpr inline fpt_t const kMaxAngleR = 0.4;
 constexpr inline fpt_t const kMinAngleR = -0.4;
 constexpr inline fpt_t const kMaxAngleP = 0.4;
 constexpr inline fpt_t const kMinAngleP = -0.4;
+constexpr inline fpt_t const kMaxAngleY = 0.4;
+constexpr inline fpt_t const kMinAngleY = -0.4;
 constexpr inline fpt_t const kMaxVelX = 3.0;
 constexpr inline fpt_t const kMinVelX = -3.0;
 constexpr inline fpt_t const kMaxVelY = 2.0;
@@ -45,6 +47,9 @@ constexpr inline int const kNumLeg = 4;
 constexpr inline int const kNumLegJoint = 3;
 constexpr inline int const kDimConfig = 18;
 constexpr inline int const kDimFloating = 6;
+
+constexpr inline std::array<fpt_t, kNumLeg> const kSignLR = {-1., 1., -1., 1.};
+constexpr inline std::array<fpt_t, kNumLeg> const kSignFH = {1., 1., -1., -1.};
 
 }  // namespace model
 

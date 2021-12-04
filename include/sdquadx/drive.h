@@ -18,10 +18,10 @@ struct SDQUADX_EXPORT Twist {
   fpt_t avel_z = 0.;  // yaw vel
 };
 
-struct SDQUADX_EXPORT VarPose {
-  fpt_t roll = 0.;    // [reserved, unused] roll
+struct SDQUADX_EXPORT Pose {
+  fpt_t roll = 0.;    // roll
   fpt_t pitch = 0.;   // pitch
-  fpt_t yaw = 0.;     // [reserved, unused] yaw
+  fpt_t yaw = 0.;     // yaw
   fpt_t height = 0.;  // height
 };
 
@@ -34,7 +34,7 @@ class SDQUADX_EXPORT DriveCtrl {
   virtual ~DriveCtrl() = default;
 
   virtual bool UpdateTwist(Twist const &twist) = 0;
-  virtual bool UpdateVarPose(VarPose const &varpose) = 0;
+  virtual bool UpdatePose(Pose const &varpose) = 0;
   virtual bool UpdateState(State const &state) = 0;
   virtual bool UpdateGait(Gait const &gait) = 0;
   virtual bool UpdateStepHeight(fpt_t const height) = 0;

@@ -1,6 +1,5 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "estimate/contact.h"
 #include "externlib/eigen.h"
 #include "math/interpolate.h"
 #include "sdquadx/consts.h"
@@ -32,8 +31,11 @@ StateRecoveryStand::StateRecoveryStand(Options::ConstSharedPtr const &opts, LegC
                      {Flag::FoldLegs, &StateRecoveryStand::FoldLegs},
                      {Flag::RollOver, &StateRecoveryStand::RollOver}},
       opts_(opts),
+      legctrl_(legctrl),
       drictrl_(drictrl),
-      estctrl_(estctrl) {}
+      estctrl_(estctrl) {
+  estcontact_ = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
+}
 
 bool StateRecoveryStand::OnEnter() {
   spdlog::info("Enter State Recovery Stand!!!");
@@ -78,7 +80,8 @@ bool StateRecoveryStand::StandUp() {
 
   if (iter_ <= floor((params::standup_ramp_iter + params::standup_settle_iter) * 0.7)) {
     for (int leg = 0; leg < consts::model::kNumLeg; ++leg) {
-      SetJPosInterPts(legctrl_->cmds[leg], iter_, params::standup_ramp_iter, initial_jpos_[leg], opts_->ctrl.jpos_stand[leg]);
+      SetJPosInterPts(legctrl_->cmds[leg], iter_, params::standup_ramp_iter, initial_jpos_[leg],
+                      opts_->ctrl.jpos_stand[leg]);
     }
     iter_++;
   } else if (something_wrong) {
@@ -94,8 +97,7 @@ bool StateRecoveryStand::StandUp() {
     //        body_height, UpsideDown());
   } else {
     iter_ = -1;
-    auto est_contact = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
-    est_contact->UpdateContact({0.5, 0.5, 0.5, 0.5});
+    estcontact_->UpdateContact({0.5, 0.5, 0.5, 0.5});
   }
   return true;
 }
@@ -118,7 +120,8 @@ bool StateRecoveryStand::FoldLegs() {
 
 bool StateRecoveryStand::RollOver() {
   for (int i = 0; i < consts::model::kNumLeg; ++i) {
-    SetJPosInterPts(legctrl_->cmds[i], iter_, params::rollover_ramp_iter, initial_jpos_[i], opts_->ctrl.jpos_rolling[i]);
+    SetJPosInterPts(legctrl_->cmds[i], iter_, params::rollover_ramp_iter, initial_jpos_[i],
+                    opts_->ctrl.jpos_rolling[i]);
   }
   iter_++;
   if (iter_ > params::rollover_ramp_iter + params::rollover_settle_iter) {

@@ -11,7 +11,7 @@ class RobotCtrlImpl : public RobotCtrl {
  public:
   RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf, interface::Imu::ConstSharedPtr const &imu_itf);
   bool UpdateDriveTwist(drive::Twist const &twist) override;
-  bool UpdateDriveVarPose(drive::VarPose const &varpose) override;
+  bool UpdateDrivePose(drive::Pose const &varpose) override;
   bool UpdateDriveState(drive::State const &state) override;
   bool UpdateDriveGait(drive::Gait const &gait) override;
   bool UpdateDriveStepHeight(fpt_t const height) override;

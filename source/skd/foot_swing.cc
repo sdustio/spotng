@@ -1,8 +1,8 @@
-#include "mpc/foot_swing.h"
+#include "skd/foot_swing.h"
 
 #include "math/interpolate.h"
 
-namespace sdquadx::mpc {
+namespace sdquadx::skd {
 FootSwingTrajectory::FootSwingTrajectory() {
   p0_.fill(0.);
   pf_.fill(0.);
