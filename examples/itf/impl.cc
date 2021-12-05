@@ -1,7 +1,7 @@
 #include "itf/impl.h"
 
 namespace sdquadx::interface {
-bool LegImpl::SendLegData(sensor::LegData &data, [[maybe_unused]] int const leg) const {
+bool LegImpl::ReadTo(sensor::LegData &data, [[maybe_unused]] int const leg) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // q: 关节角
     data.q[0] = data_.q_abad[leg];
@@ -15,7 +15,7 @@ bool LegImpl::SendLegData(sensor::LegData &data, [[maybe_unused]] int const leg)
   }
   return true;
 }
-bool LegImpl::ReceiveLegCmds(LegCmds const &cmds) {
+bool LegImpl::WriteFrom(LegCmds const &cmds) {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // tauFF 获得从控制器来的力矩
     auto const &tff = cmds[leg].tau;
@@ -100,7 +100,7 @@ bool LegImpl::PrintArray4f(SdVector4f const &arr) const {
   return true;
 }
 
-bool ImuImpl::SendImuData(sensor::ImuData &data) const {
+bool ImuImpl::ReadTo(sensor::ImuData &data) const {
   data = imu_;
   return true;
 }

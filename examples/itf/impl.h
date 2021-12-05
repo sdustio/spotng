@@ -42,8 +42,8 @@ struct JointsData {
 
 class LegImpl : public Leg {
  public:
-  bool SendLegData(sensor::LegData &data, int const leg) const override;
-  bool ReceiveLegCmds(LegCmds const &cmds) override;
+  bool ReadTo(sensor::LegData &data, int const leg) const override;
+  bool WriteFrom(LegCmds const &cmds) override;
   bool RunOnce() override;  // return true if ok
   bool PrintCmd() const;
 
@@ -56,7 +56,7 @@ class LegImpl : public Leg {
 
 class ImuImpl : public Imu {
  public:
-  bool SendImuData(sensor::ImuData &data) const override;
+  bool ReadTo(sensor::ImuData &data) const override;
   bool RunOnce() override;
 
  private:

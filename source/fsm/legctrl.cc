@@ -3,7 +3,7 @@
 namespace sdquadx::fsm {
 LegCtrl::LegCtrl(interface::Leg::SharedPtr const &itf) : itf_(itf) {}
 
-bool LegCtrl::RunOnce() { return itf_->ReceiveLegCmds(cmds); }
+bool LegCtrl::RunOnce() { return itf_->WriteFrom(cmds); }
 
 void LegCtrl::ZeroCmds() {
   for (auto &cmd : cmds) {

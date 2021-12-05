@@ -27,8 +27,8 @@ class SDQUADX_EXPORT Leg {
   using ConstSharedPtr = std::shared_ptr<Leg const>;
 
   virtual ~Leg() = default;
-  virtual bool SendLegData(sensor::LegData &data, int const leg) const = 0;
-  virtual bool ReceiveLegCmds(LegCmds const &cmds) = 0;
+  virtual bool ReadTo(sensor::LegData &data, int const leg) const = 0;
+  virtual bool WriteFrom(LegCmds const &cmds) = 0;
   virtual bool RunOnce() = 0;  // return true if ok
 };
 
@@ -39,7 +39,7 @@ class SDQUADX_EXPORT Imu {
   using ConstSharedPtr = std::shared_ptr<Imu const>;
 
   virtual ~Imu() = default;
-  virtual bool SendImuData(sensor::ImuData &data) const = 0;
+  virtual bool ReadTo(sensor::ImuData &data) const = 0;
   virtual bool RunOnce() = 0;  // return true if ok
 };
 }  // namespace sdquadx::interface

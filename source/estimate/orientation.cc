@@ -6,7 +6,7 @@ namespace sdquadx::estimate {
 Orientation::Orientation(interface::Imu::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Orientation::RunOnce(State &ret) {
-  itf_->SendImuData(imu_);
+  itf_->ReadTo(imu_);
   // 复制四元数值
   ret.ori = imu_.quat;
 
