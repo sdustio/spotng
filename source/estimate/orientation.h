@@ -1,8 +1,8 @@
 #pragma once
 
 #include "sdquadx/estimate.h"
-#include "sdquadx/sensor.h"
 #include "sdquadx/interface.h"
+#include "sdquadx/sensor.h"
 
 namespace sdquadx::estimate {
 /*!

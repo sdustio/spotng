@@ -2,12 +2,11 @@
 
 #include <unordered_map>
 
+#include "fsm/legctrl.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/interface.h"
 #include "sdquadx/model.h"
-
-#include "fsm/legctrl.h"
 
 namespace sdquadx::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {

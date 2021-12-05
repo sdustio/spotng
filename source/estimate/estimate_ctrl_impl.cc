@@ -12,7 +12,7 @@ bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPt
   if (ests_map_.find(name) != ests_map_.end()) return false;
   ests_.push_back(est);
   ests_map_[name] = num_ests_;
-  num_ests_ ++;
+  num_ests_++;
   return true;
 }
 
@@ -36,7 +36,8 @@ bool EstimateCtrlImpl::RemoveEstimator(std::string const &name) {
   auto iter = ests_map_.find(name);
   if (iter == ests_map_.end()) return false;
   ests_.erase(ests_.begin() + iter->second);
-  return ests_map_.erase(name); }
+  return ests_map_.erase(name);
+}
 
 bool EstimateCtrlImpl::RemoveAllEstimators() {
   ests_.clear();

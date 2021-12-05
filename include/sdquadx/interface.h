@@ -1,12 +1,12 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <memory>
-#include <array>
 
 #include "sdquadx/consts.h"
-#include "sdquadx/types.h"
 #include "sdquadx/sensor.h"
+#include "sdquadx/types.h"
 
 namespace sdquadx::interface {
 

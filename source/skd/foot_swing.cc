@@ -47,4 +47,4 @@ bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase, fpt_t 
 
   return true;
 }
-}  // namespace sdquadx::mpc
+}  // namespace sdquadx::skd

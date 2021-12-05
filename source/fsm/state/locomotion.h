@@ -2,15 +2,15 @@
 
 #include <unordered_map>
 
+#include "estimate/contact.h"
 #include "fsm/legctrl.h"
 #include "mpc/mpc.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
 #include "sdquadx/model.h"
-#include "wbc/wbc.h"
 #include "skd/gait.h"
 #include "skd/state_des.h"
-#include "estimate/contact.h"
+#include "wbc/wbc.h"
 
 namespace sdquadx::fsm {
 class StateLocomotion : public StateCtrl {

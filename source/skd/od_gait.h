@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "skd/gait.h"
 
 namespace sdquadx::skd {
@@ -7,8 +10,8 @@ using SdVector4i = std::array<int, consts::model::kNumLeg>;
 
 class OffsetDurationGait : public Gait {
  public:
-  OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations,
-                     fpt_t dt, std::string const &name);
+  OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations, fpt_t dt,
+                     std::string const &name);
 
   bool SetCurrentIter(int iter) override;
 
@@ -31,4 +34,4 @@ class OffsetDurationGait : public Gait {
   std::array<int, 4> progress_;
   std::vector<int> stance_states_;
 };
-}
+}  // namespace sdquadx::skd

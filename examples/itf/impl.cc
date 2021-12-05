@@ -1,7 +1,7 @@
 #include "itf/impl.h"
 
 namespace sdquadx::interface {
-bool LegImpl::SendLegData(sensor::LegData &data, int const leg) const {
+bool LegImpl::SendLegData(sensor::LegData &data, [[maybe_unused]] int const leg) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // q: 关节角
     data.q[0] = data_.q_abad[leg];

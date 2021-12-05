@@ -1,12 +1,12 @@
 #include "mpc/cmpc.h"
 
 #include <cmath>
-#include <unsupported/Eigen/MatrixFunctions>
 
 #include "dynamics/rotation.h"
 #include "estimate/contact.h"
 #include "math/algebra.h"
 #include "skd/od_gait.h"
+#include "unsupported/Eigen/MatrixFunctions"
 
 namespace sdquadx::mpc {
 

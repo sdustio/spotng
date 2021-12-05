@@ -2,9 +2,9 @@
 
 #include "sdquadx/consts.h"
 #include "sdquadx/estimate.h"
+#include "sdquadx/interface.h"
 #include "sdquadx/model.h"
 #include "sdquadx/types.h"
-#include "sdquadx/interface.h"
 
 namespace sdquadx::wbc {
 using SdVector12f = std::array<fpt_t, consts::model::kNumJoint>;
