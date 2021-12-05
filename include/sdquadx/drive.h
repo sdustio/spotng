@@ -5,6 +5,9 @@
 #include "sdquadx/options.h"
 
 namespace sdquadx::drive {
+
+enum class Mode : uint8_t { Auto, Manual };
+
 enum class State : uint8_t { Init, RecoveryStand, Locomotion, BalanceStand };
 
 enum class Gait : uint8_t { Trot, SlowTrot, FlyingTrot, Walk, Bound };
@@ -33,6 +36,7 @@ class SDQUADX_EXPORT DriveCtrl {
 
   virtual ~DriveCtrl() = default;
 
+  virtual bool UpdateMode(Mode const &mode) = 0;
   virtual bool UpdateTwist(Twist const &twist) = 0;
   virtual bool UpdatePose(Pose const &varpose) = 0;
   virtual bool UpdateState(State const &state) = 0;

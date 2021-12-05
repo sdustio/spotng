@@ -3,9 +3,10 @@
 #include <memory>
 
 #include "sdquadx/drive.h"
+#include "sdquadx/estimate.h"
 #include "sdquadx/interface.h"
+#include "sdquadx/model.h"
 #include "sdquadx/options.h"
-#include "sdquadx/sensor.h"
 
 namespace sdquadx {
 class SDQUADX_EXPORT RobotCtrl {
@@ -21,11 +22,9 @@ class SDQUADX_EXPORT RobotCtrl {
 
   virtual ~RobotCtrl() = default;
 
-  virtual bool UpdateDriveTwist(drive::Twist const &twist) = 0;
-  virtual bool UpdateDrivePose(drive::Pose const &varpose) = 0;
-  virtual bool UpdateDriveState(drive::State const &state) = 0;
-  virtual bool UpdateDriveGait(drive::Gait const &gait) = 0;
-  virtual bool UpdateDriveStepHeight(fpt_t const height) = 0;
+  virtual drive::DriveCtrl::SharedPtr const &GetDriveCtrl() = 0;
+  virtual estimate::State const &GetEstimatState() const = 0;
+  virtual model::DynamicsData const &GetDynamicsData() const = 0;
 
   virtual bool RunOnce() = 0;
 };

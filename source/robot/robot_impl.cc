@@ -6,8 +6,8 @@
 
 #include "drive/drive_ctrl_impl.h"
 #include "estimate/contact.h"
-#include "estimate/joints.h"
 #include "estimate/estimate_ctrl_impl.h"
+#include "estimate/joints.h"
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 #include "fsm/impl.h"
@@ -24,7 +24,7 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
 
   mquad_ = std::make_shared<model::QuadrupedImpl>(opts);
 
-  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts->drive_mode, opts->ctrl_sec);
+  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts->ctrl_sec);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
   estctrl_->AddEstimator("joints", std::make_shared<estimate::Joints>(leg_itf));
@@ -35,15 +35,9 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
   fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, leg_itf, mquad_, drivectrl_, estctrl_);
 }
 
-bool RobotCtrlImpl::UpdateDriveTwist(drive::Twist const &twist) { return drivectrl_->UpdateTwist(twist); }
-
-bool RobotCtrlImpl::UpdateDrivePose(drive::Pose const &varpose) { return drivectrl_->UpdatePose(varpose); }
-
-bool RobotCtrlImpl::UpdateDriveState(drive::State const &state) { return drivectrl_->UpdateState(state); }
-
-bool RobotCtrlImpl::UpdateDriveGait(drive::Gait const &gait) { return drivectrl_->UpdateGait(gait); }
-
-bool RobotCtrlImpl::UpdateDriveStepHeight(fpt_t const height) { return drivectrl_->UpdateStepHeight(height); }
+drive::DriveCtrl::SharedPtr const &RobotCtrlImpl::GetDriveCtrl() { return drivectrl_; }
+estimate::State const &RobotCtrlImpl::GetEstimatState() const { return estctrl_->GetEstState(); }
+model::DynamicsData const &RobotCtrlImpl::GetDynamicsData() const { return mquad_->GetDynamicsData(); }
 
 bool RobotCtrlImpl::RunOnce() {
   estctrl_->RunOnce();

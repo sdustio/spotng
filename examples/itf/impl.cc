@@ -44,6 +44,7 @@ bool LegImpl::ReceiveLegCmds(LegCmds const &cmds) {
 
     cmd_.flags[leg] = 1;
   }
+  return true;
 }
 
 bool LegImpl::RunOnce() {

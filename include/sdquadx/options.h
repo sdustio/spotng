@@ -9,10 +9,6 @@
 namespace sdquadx {
 
 namespace options {
-enum class DriveMode : uint8_t {
-  kAuto,
-  kManual,
-};
 
 struct SDQUADX_EXPORT Model {
   Model();
@@ -103,8 +99,6 @@ struct SDQUADX_EXPORT Options {
   using ConstSharedPtr = std::shared_ptr<Options const>;
 
   Options();
-
-  options::DriveMode drive_mode;
 
   fpt_t ctrl_sec;
   fpt_t jpos_init_sec;

@@ -8,5 +8,3 @@
     - PostCheck 内容
 - [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
 - fbmodel vector -> array
-- drive_mode opt -> drive(类似gait，增加函数更改 drive_mode)
-- read options from config file

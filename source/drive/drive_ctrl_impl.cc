@@ -4,9 +4,7 @@
 #include "sdquadx/consts.h"
 
 namespace sdquadx::drive {
-DriveCtrlImpl::DriveCtrlImpl(options::DriveMode mode, fpt_t dt) : mode_(mode), dt_(dt) {}
-
-DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : DriveCtrlImpl(options::DriveMode::kAuto, dt) {}
+DriveCtrlImpl::DriveCtrlImpl(fpt_t dt) : dt_(dt) {}
 
 bool DriveCtrlImpl::CmdtoDesData() {
   lvel_ = {Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
@@ -39,6 +37,11 @@ bool DriveCtrlImpl::UpdatePose(Pose const &pose) {
   math::interpolate_linear(pose_.pitch, pose_.pitch, pose.pitch, consts::drive::kFilter);
   math::interpolate_linear(pose_.yaw, pose_.yaw, pose.yaw, consts::drive::kFilter);
 
+  return true;
+}
+
+bool DriveCtrlImpl::UpdateMode(Mode const &mode) {
+  mode_ = mode;
   return true;
 }
 

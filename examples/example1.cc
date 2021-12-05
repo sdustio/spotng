@@ -4,9 +4,8 @@
 #include "itf/impl.h"
 #include "sdquadx/robot.h"
 
-using namespace sdquadx;
-
-void RunRobot(sdquadx::RobotCtrl::Ptr const &robot, std::shared_ptr<interface::LegImpl> const &legitf,
+namespace sdquadx {
+void RunRobot(RobotCtrl::Ptr const &robot, std::shared_ptr<interface::LegImpl> const &legitf,
               std::shared_ptr<interface::ImuImpl> const &imuitf, int const cdt, int const itf_dt, int const iters) {
   for (int i = 0; i < iters; i++) {
     if (i % cdt == 0) {
@@ -26,9 +25,8 @@ void RunRobot(sdquadx::RobotCtrl::Ptr const &robot, std::shared_ptr<interface::L
   }
 }
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
-  auto opts = std::make_shared<sdquadx::Options>();
-  opts->drive_mode = sdquadx::options::DriveMode::kManual;
+void RunExample() {
+  auto opts = std::make_shared<Options>();
   opts->ctrl_sec = 0.002;
   opts->jpos_init_sec = 0.1;
   opts->log_level = "debug";
@@ -39,26 +37,33 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   auto leg_itf = std::make_shared<interface::LegImpl>();
   auto imu_itf = std::make_shared<interface::ImuImpl>();
 
-  sdquadx::RobotCtrl::Ptr robot;
-  sdquadx::RobotCtrl::Build(robot, opts, leg_itf, imu_itf);
+  RobotCtrl::Ptr robot;
+  RobotCtrl::Build(robot, opts, leg_itf, imu_itf);
 
-  sdquadx::drive::Twist drive_twist;
+  drive::Twist drive_twist;
+  auto drive_ctrl = robot->GetDriveCtrl();
 
   // State Init
   RunRobot(robot, leg_itf, imu_itf, cdt, itf_dt, 10'000);
 
   // State Recovery Stand
-  robot->UpdateDriveState(sdquadx::drive::State::RecoveryStand);
+  drive_ctrl->UpdateState(drive::State::RecoveryStand);
   RunRobot(robot, leg_itf, imu_itf, cdt, itf_dt, 2000);
   RunRobot(robot, leg_itf, imu_itf, cdt, itf_dt, 100);
   RunRobot(robot, leg_itf, imu_itf, cdt, itf_dt, 2000);
 
   /*...*/
-  robot->UpdateDriveGait(sdquadx::drive::Gait::Trot);
-  robot->UpdateDriveState(sdquadx::drive::State::Locomotion);
+  drive_ctrl->UpdateMode(drive::Mode::Manual);
+  drive_ctrl->UpdateGait(drive::Gait::Trot);
+  drive_ctrl->UpdateState(drive::State::Locomotion);
   drive_twist.lvel_x = 1.5;
-  robot->UpdateDriveTwist(drive_twist);
+  drive_ctrl->UpdateTwist(drive_twist);
   /*...*/
+}
 
+}  // namespace sdquadx
+
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
+  sdquadx::RunExample();
   return 0;
 }

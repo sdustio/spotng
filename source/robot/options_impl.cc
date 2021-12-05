@@ -79,9 +79,7 @@ Estimate::Estimate()
 }  // namespace options
 
 Options::Options()
-    : drive_mode(options::DriveMode::kAuto),
-
-      ctrl_sec(1.0 / (0.5 * 1'000)),  // 0.5kH
+    : ctrl_sec(1.0 / (0.5 * 1'000)),  // 0.5kH
       jpos_init_sec(3.),
 
       gravity(9.81),

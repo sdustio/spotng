@@ -1,20 +1,18 @@
-#include "sdquadx/robot.h"
-
-#include "sdquadx/drive.h"
-#include "sdquadx/estimate.h"
 #include "sdquadx/fsm.h"
-#include "sdquadx/model.h"
 #include "sdquadx/interface.h"
+#include "sdquadx/model.h"
+#include "sdquadx/robot.h"
 
 namespace sdquadx {
 class RobotCtrlImpl : public RobotCtrl {
  public:
-  RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf, interface::Imu::ConstSharedPtr const &imu_itf);
-  bool UpdateDriveTwist(drive::Twist const &twist) override;
-  bool UpdateDrivePose(drive::Pose const &varpose) override;
-  bool UpdateDriveState(drive::State const &state) override;
-  bool UpdateDriveGait(drive::Gait const &gait) override;
-  bool UpdateDriveStepHeight(fpt_t const height) override;
+  RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
+                interface::Imu::ConstSharedPtr const &imu_itf);
+
+  drive::DriveCtrl::SharedPtr const &GetDriveCtrl() override;
+  estimate::State const &GetEstimatState() const override;
+  model::DynamicsData const &GetDynamicsData() const override;
+
   bool RunOnce() override;
 
  private:
@@ -26,7 +24,6 @@ class RobotCtrlImpl : public RobotCtrl {
   drive::DriveCtrl::SharedPtr drivectrl_;
   estimate::EstimateCtrl::SharedPtr estctrl_;
   fsm::FiniteStateMachine::SharedPtr fsm_;
-
 };
 
 }  // namespace sdquadx

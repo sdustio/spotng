@@ -10,7 +10,8 @@ constexpr int const ramp_iter = 500;
 constexpr int const settle_iter = 500;
 }  // namespace params
 
-StateInit::StateInit(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl, drive::DriveCtrl::ConstSharedPtr const &drictrl,
+StateInit::StateInit(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
+                     drive::DriveCtrl::ConstSharedPtr const &drictrl,
                      estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
     : state_trans_{{drive::State::Init, State::Init},
                    {drive::State::RecoveryStand, State::RecoveryStand},
