@@ -6,7 +6,7 @@
 
 #include "drive/drive_ctrl_impl.h"
 #include "estimate/contact.h"
-#include "estimate/estimate_ctrl_impl.h"
+#include "estimate/impl.h"
 #include "estimate/joints.h"
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"

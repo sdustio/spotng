@@ -48,7 +48,7 @@ set(LIB_SOURCES
   source/model/float_base.cc
   source/model/quadruped_impl.cc
   source/drive/drive_ctrl_impl.cc
-  source/estimate/estimate_ctrl_impl.cc
+  source/estimate/impl.cc
   source/estimate/joints.cc
   source/estimate/orientation.cc
   source/estimate/pos_vel.cc
