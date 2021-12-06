@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sdquadx/consts.h"
 #include "sdquadx/types.h"
 
 namespace sdquadx::sensor {
@@ -13,4 +14,6 @@ struct SDQUADX_EXPORT LegData {
   SdVector3f q = {};   // 关节角度
   SdVector3f qd = {};  // 关节角速度
 };
+using LegDatas = std::array<LegData, consts::model::kNumLeg>;
+
 }  // namespace sdquadx::sensor

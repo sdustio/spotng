@@ -22,7 +22,7 @@ class Joints : public Estimator {
 
  private:
   interface::Leg::ConstSharedPtr const itf_;
-  std::array<sensor::LegData, consts::model::kNumLeg> legdatas_;
+  sensor::LegDatas legdatas_;
 };
 
 }  // namespace sdquadx::estimate

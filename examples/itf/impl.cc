@@ -1,17 +1,17 @@
 #include "itf/impl.h"
 
 namespace sdquadx::interface {
-bool LegImpl::ReadTo(sensor::LegData &data, [[maybe_unused]] int const leg) const {
+bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // q: 关节角
-    data.q[0] = data_.q_abad[leg];
-    data.q[1] = data_.q_hip[leg];
-    data.q[2] = data_.q_knee[leg];
+    data[leg].q[0] = data_.q_abad[leg];
+    data[leg].q[1] = data_.q_hip[leg];
+    data[leg].q[2] = data_.q_knee[leg];
 
     // qd 关节角速度
-    data.qd[0] = data_.qd_abad[leg];
-    data.qd[1] = data_.qd_hip[leg];
-    data.qd[2] = data_.qd_knee[leg];
+    data[leg].qd[0] = data_.qd_abad[leg];
+    data[leg].qd[1] = data_.qd_hip[leg];
+    data[leg].qd[2] = data_.qd_knee[leg];
   }
   return true;
 }

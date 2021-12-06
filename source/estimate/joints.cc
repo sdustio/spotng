@@ -4,8 +4,8 @@ namespace sdquadx::estimate {
 Joints::Joints(interface::Leg::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Joints::RunOnce(State &ret) {
+  itf_->ReadTo(legdatas_);
   for (size_t leg = 0; leg < consts::model::kNumLeg; leg++) {
-    itf_->ReadTo(legdatas_[leg], leg);
     ret.q[leg] = legdatas_[leg].q;
     ret.qd[leg] = legdatas_[leg].qd;
   }
