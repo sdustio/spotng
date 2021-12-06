@@ -46,7 +46,7 @@ class StateRecoveryStand : public StateCtrl {
   drive::DriveCtrl::ConstSharedPtr const drictrl_;
   estimate::EstimateCtrl::ConstSharedPtr const estctrl_;
 
-  JPosVectorf initial_jpos_;
+  std::array<SdVector3f, consts::model::kNumLeg> initial_jpos_;
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };

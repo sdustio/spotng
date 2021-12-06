@@ -74,10 +74,10 @@ struct SDQUADX_EXPORT Ctrl {
   SdVector3f kp_jpos;
   SdVector3f kd_jpos;
 
-  JPosVectorf jpos_init;
-  JPosVectorf jpos_fold;
-  JPosVectorf jpos_stand;
-  JPosVectorf jpos_rolling;
+  std::array<SdVector3f, consts::model::kNumLeg> jpos_init;
+  std::array<SdVector3f, consts::model::kNumLeg> jpos_fold;
+  std::array<SdVector3f, consts::model::kNumLeg> jpos_stand;
+  std::array<SdVector3f, consts::model::kNumLeg> jpos_rolling;
 };
 
 struct SDQUADX_EXPORT Estimate {

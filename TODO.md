@@ -1,5 +1,5 @@
 - wbc
-  - webots proto 加 joint limit(可能需要加 transform)
+  - webots proto 加 joint limit
 - feature
   - [ ] 自动档
   - [ ] fsm 状态切换增加鲁棒性
@@ -8,3 +8,4 @@
     - PostCheck 内容
 - [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
 - fbmodel vector -> array
+- 可以爬坡(接受 pitch 参数)
