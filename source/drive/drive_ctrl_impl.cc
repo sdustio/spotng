@@ -10,7 +10,7 @@ bool DriveCtrlImpl::CmdtoDesData() {
   lvel_ = {Deadband(twist_.lvel_x, consts::drive::kMinVelX, consts::drive::kMaxVelX),
            Deadband(twist_.lvel_y, consts::drive::kMinVelY, consts::drive::kMaxVelY), 0};
 
-  pos_ = {0., 0., Deadband(pose_.height, consts::drive::kMinVarHeight, consts::drive::kMaxVarHeight)};
+  pos_ = {0., 0., pose_.height};
 
   avel_ = {0., 0, Deadband(twist_.avel_z, consts::drive::kMinRateY, consts::drive::kMaxRateY)};
 
