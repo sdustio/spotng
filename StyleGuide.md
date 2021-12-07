@@ -18,7 +18,7 @@
 ## Eigen
 
 - 类成员不使用 Eigen对象
-- size(row * col) > 36，使用 dynamic matrix
+- size(row * col) > 36，使用 dynamic matrix(不包括 Map)
 - 声明(定义) dynamic matrix：
 ```cpp
 // Prefer

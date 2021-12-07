@@ -1,4 +1,4 @@
-#include "externlib/eigen.h"
+#include "utils/eigen.h"
 
 namespace sdquadx {
 Eigen::Ref<Vector3> ToEigenTp(SdVector3f &v) {

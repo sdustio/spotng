@@ -40,7 +40,8 @@ find_package(eiquadprog REQUIRED)
 find_package(spdlog REQUIRED)
 
 set(LIB_SOURCES
-  source/externlib/eigen.cc
+  source/utils/eigen.cc
+  source/utils/debug.cc
   source/math/algebra.cc
   source/math/interpolate.cc
   source/dynamics/rotation.cc
@@ -92,6 +93,11 @@ target_include_directories(${PROJECT_NAME}
   PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source>
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  $<$<STREQUAL:$<UPPER_CASE:${CMAKE_BUILD_TYPE}>,DEBUG>:DEBUG_MODE>
+)
+
 set_target_properties(${PROJECT_NAME}
   PROPERTIES
     POSITION_INDEPENDENT_CODE 1

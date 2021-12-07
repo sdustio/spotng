@@ -1,6 +1,6 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "externlib/eigen.h"
+#include "utils/eigen.h"
 #include "math/interpolate.h"
 #include "sdquadx/consts.h"
 #include "spdlog/spdlog.h"

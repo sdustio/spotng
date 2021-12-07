@@ -1,13 +1,18 @@
 #include "wbc/wbic.h"
 
 #include "eiquadprog/eiquadprog-fast.hpp"
-#include "externlib/eigen.h"
 #include "math/algebra.h"
+#include "spdlog/spdlog.h"
+#include "utils/eigen.h"
 #include "wbc/contact.h"
 #include "wbc/task/body_ori.h"
 #include "wbc/task/body_pos.h"
 #include "wbc/task/foot_contact.h"
 #include "wbc/task/foot_pos.h"
+
+#ifdef DEBUG_MODE
+#include "utils/debug.h"
+#endif
 
 namespace sdquadx::wbc {
 
@@ -39,6 +44,22 @@ Wbic::Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr cons
       weight_q_(weight) {}
 
 bool Wbic::RunOnce(interface::LegCmds &cmds, InData const &wbcdata, estimate::State const &estdata) {
+#ifdef DEBUG_MODE
+  spdlog::debug("WBC InData:");
+  DebugVector("Body Pos Des", wbcdata.body_pos_des);
+  DebugVector("Body Lvel Des", wbcdata.body_lvel_des);
+  DebugVector("Body Acc Des", wbcdata.body_acc_des);
+  DebugVector("Body RPY Des", wbcdata.body_rpy_des);
+  DebugVector("Body Avel Des", wbcdata.body_avel_des);
+  DebugVector("Foot Contact State", wbcdata.contact_state);
+  for (int i = 0; i < consts::model::kNumLeg; i++) {
+    DebugVector("Pos Des of foot " + std::to_string(i), wbcdata.foot_pos_des[i]);
+    DebugVector("Lvel Des of foot " + std::to_string(i), wbcdata.foot_lvel_des[i]);
+    DebugVector("Acc Des of foot " + std::to_string(i), wbcdata.foot_acc_des[i]);
+    DebugVector("Fr Des of foot " + std::to_string(i), wbcdata.Fr_des[i]);
+  }
+#endif
+
   mquad_->UpdateDynamics(estdata);
 
   // Task & Contact Update

@@ -1,9 +1,25 @@
 #include "fsm/legctrl.h"
 
+#include "spdlog/spdlog.h"
+
+#ifdef DEBUG_MODE
+#include "utils/debug.h"
+#endif
+
 namespace sdquadx::fsm {
 LegCtrl::LegCtrl(interface::Leg::SharedPtr const &itf) : itf_(itf) {}
 
-bool LegCtrl::RunOnce() { return itf_->WriteFrom(cmds); }
+bool LegCtrl::RunOnce() {
+#ifdef DEBUG_MODE
+  spdlog::debug("Leg Cmds:");
+  for (int i = 0; i < consts::model::kNumLeg; i++) {
+    DebugVector("q of leg " + std::to_string(i), cmds[i].q_des);
+    DebugVector("qd of leg " + std::to_string(i), cmds[i].qd_des);
+    DebugVector("tau of leg " + std::to_string(i), cmds[i].tau);
+  }
+#endif
+  return itf_->WriteFrom(cmds);
+}
 
 void LegCtrl::ZeroCmds() {
   for (auto &cmd : cmds) {

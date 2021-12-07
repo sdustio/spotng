@@ -1,4 +1,4 @@
-#include "externlib/eigen.h"
+#include "utils/eigen.h"
 #include "sdquadx/consts.h"
 
 namespace sdquadx::wbc {

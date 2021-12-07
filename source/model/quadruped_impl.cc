@@ -5,6 +5,11 @@
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
 #include "sdquadx/consts.h"
+#include "spdlog/spdlog.h"
+
+#ifdef DEBUG_MODE
+#include "utils/debug.h"
+#endif
 
 namespace sdquadx::model {
 
@@ -59,15 +64,15 @@ bool QuadrupedImpl::BuildFBModel() {
   dynamics::SpatialInertia body_spatial_inertia;
   dynamics::BuildSpatialInertia(body_spatial_inertia, opts_->model.mass_body, bodyCOM, bodyInertiaTensor);
 
-  auto model = std::make_shared<FBModel>();
+  fbmodel_ = std::make_shared<FBModel>();
   // we assume the cheetah's body (not including rotors) can be modeled as a
   // uniformly distributed box.
   // 我们假设猎豹的身体(不包括转子)可以被建模为一个均匀分布的盒子。
   Vector3 bodyDims(opts_->model.body_length, opts_->model.body_width, opts_->model.body_height);
 
-  // model->addBase(_bodyMass, Vector3(0,0,0), BuildInertiaTensor(_bodyMass,
+  // fbmodel_->addBase(_bodyMass, Vector3(0,0,0), BuildInertiaTensor(_bodyMass,
   // bodyDims));
-  model->AddBase(body_spatial_inertia);
+  fbmodel_->AddBase(body_spatial_inertia);
 
   const int base_id = 5;
   int body_id = base_id;
@@ -95,7 +100,7 @@ bool QuadrupedImpl::BuildFBModel() {
     } else {
       spatial_inertia = abad_spatial_inertia;
     }
-    model->AddBody(spatial_inertia, base_id, dynamics::JointType::Revolute, dynamics::CoordinateAxis::X, xtree_abad);
+    fbmodel_->AddBody(spatial_inertia, base_id, dynamics::JointType::Revolute, dynamics::CoordinateAxis::X, xtree_abad);
 
     // Hip Joint
     body_id++;
@@ -109,7 +114,8 @@ bool QuadrupedImpl::BuildFBModel() {
       spatial_inertia = hip_spatial_inertia;
     }
 
-    model->AddBody(spatial_inertia, body_id - 1, dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y, xtree_hip);
+    fbmodel_->AddBody(spatial_inertia, body_id - 1, dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y,
+                      xtree_hip);
 
     // Knee Joint
     body_id++;
@@ -122,15 +128,13 @@ bool QuadrupedImpl::BuildFBModel() {
       spatial_inertia = knee_spatial_inertia;
     }
 
-    model->AddBody(spatial_inertia, body_id - 1, dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y,
-                   xtree_knee);
+    fbmodel_->AddBody(spatial_inertia, body_id - 1, dynamics::JointType::Revolute, dynamics::CoordinateAxis::Y,
+                      xtree_knee);
 
-    model->AddFoot(body_id, Vector3(0, 0, -opts_->model.link_length_knee));
+    fbmodel_->AddFoot(body_id, Vector3(0, 0, -opts_->model.link_length_knee));
   }
 
-  model->UpdateGravity({0, 0, -opts_->gravity});
-
-  fbmodel_ = std::static_pointer_cast<FBModel>(model);
+  fbmodel_->UpdateGravity({0, 0, -opts_->gravity});
   return true;
 }
 
@@ -152,6 +156,11 @@ bool QuadrupedImpl::UpdateDynamics(estimate::State const &estdata) {
   fbmodel_->ComputeGeneralizedGravityForce(data_);
   fbmodel_->ComputeGeneralizedCoriolisForce(data_);
   fbmodel_->ComputeGeneralizedMassMatrix(data_);
+
+#ifdef DEBUG_MODE
+  spdlog::debug("float base model dynamics data");
+#endif
+
   return true;
 }
 

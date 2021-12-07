@@ -4,6 +4,11 @@
 
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
+#include "spdlog/spdlog.h"
+
+#ifdef DEBUG_MODE
+#include "utils/debug.h"
+#endif
 
 namespace sdquadx::estimate {
 EstimateCtrlImpl::EstimateCtrlImpl() {}
@@ -27,6 +32,20 @@ bool EstimateCtrlImpl::RunOnce() {
   for (auto const &est : ests_) {
     ret = ret && est->RunOnce(est_state_);
   }
+
+#ifdef DEBUG_MODE
+  spdlog::debug("estimated state");
+  for (int i = 0; i < consts::model::kNumLeg; i++) {
+    DebugVector("q of leg " + std::to_string(i), est_state_.q[i]);
+    DebugVector("qd of leg " + std::to_string(i), est_state_.qd[i]);
+  }
+  DebugVector("Contact", est_state_.contact);
+  DebugVector("Rpy", est_state_.rpy);
+  DebugVector("Gyro", est_state_.avel_robot);
+  DebugVector("Acc", est_state_.acc_robot);
+  DebugVector("Pos", est_state_.pos);
+  DebugVector("Vel", est_state_.lvel);
+#endif
   return ret;
 }
 

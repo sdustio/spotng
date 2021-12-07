@@ -1,6 +1,6 @@
 #include "wbc/task/foot_contact.h"
 
-#include "externlib/eigen.h"
+#include "utils/eigen.h"
 
 namespace sdquadx::wbc {
 

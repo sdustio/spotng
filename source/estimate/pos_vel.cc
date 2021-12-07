@@ -1,7 +1,6 @@
 #include "estimate/pos_vel.h"
 
 #include "sdquadx/consts.h"
-#include "spdlog/spdlog.h"
 
 namespace sdquadx::estimate {
 

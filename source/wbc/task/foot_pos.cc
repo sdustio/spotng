@@ -1,6 +1,6 @@
 #include "wbc/task/foot_pos.h"
 
-#include "externlib/eigen.h"
+#include "utils/eigen.h"
 
 namespace sdquadx::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;

@@ -53,7 +53,7 @@ bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
     logger = spdlog::stdout_color_mt("sdlogger");
   } else if (logt == "file") {
     auto fn = opts->log_filename;
-    logger = spdlog::rotating_logger_mt("sdlogger", fn, 1048576, 3);  // max size 1mb
+    logger = spdlog::rotating_logger_mt("sdlogger", fn, 1073741824, 3);  // max size 1GiB
   }
 
   std::unordered_map<std::string, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},

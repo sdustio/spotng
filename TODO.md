@@ -7,6 +7,10 @@
     - PreCheck 内容
     - PostCheck 内容
 - [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
+- 预申请空间(Eigen::Map) 代替 动态内存申请(Eigen::MatrixX/VectorX)
+  - wbc
+  - mpc
+  - pos_vel est
 - fbmodel vector -> array
 - 可以爬坡(接受 pitch 参数)
 - 重构仿真和实体程序
