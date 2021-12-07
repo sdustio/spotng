@@ -9,3 +9,9 @@
 - [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
 - fbmodel vector -> array
 - 可以爬坡(接受 pitch 参数)
+- 重构仿真和实体程序
+  - sdnova
+    - sdnova_controller
+    - sdnova_webots
+    - sdnova_driver
+  - sdnova_ros2(暂时)
