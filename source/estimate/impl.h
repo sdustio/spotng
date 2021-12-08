@@ -10,7 +10,7 @@ namespace sdquadx::estimate {
 
 class EstimateCtrlImpl : public EstimateCtrl {
  public:
-  EstimateCtrlImpl();
+  EstimateCtrlImpl() = default;
   bool AddEstimator(std::string const &name, Estimator::SharedPtr const &est) override;
   Estimator::SharedPtr const &GetEstimator(std::string const &name) const override;
 

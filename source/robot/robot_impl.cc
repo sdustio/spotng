@@ -27,9 +27,9 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
   drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts->ctrl_sec);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
+  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>(imu_itf));
   estctrl_->AddEstimator("joints", std::make_shared<estimate::Joints>(leg_itf));
   estctrl_->AddEstimator("contact", std::make_shared<estimate::Contact>());
-  estctrl_->AddEstimator("ori", std::make_shared<estimate::Orientation>(imu_itf));
   estctrl_->AddEstimator("posvel", std::make_shared<estimate::PosVel>(opts));
 
   fsm_ = std::make_shared<fsm::FiniteStateMachineImpl>(opts, leg_itf, mquad_, drivectrl_, estctrl_);

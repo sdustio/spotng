@@ -11,8 +11,6 @@
 #endif
 
 namespace sdquadx::estimate {
-EstimateCtrlImpl::EstimateCtrlImpl() {}
-
 bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est) {
   if (ests_map_.find(name) != ests_map_.end()) return false;
   ests_.push_back(est);
