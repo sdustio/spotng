@@ -27,13 +27,11 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f const &GetAvelDes() const override;
 
  private:
-  fpt_t Deadband(fpt_t v, fpt_t minVal, fpt_t maxVal);
-
   fpt_t dt_;
   Twist twist_;
   Pose pose_;
 
-  fpt_t step_height_ = 0.1;
+  fpt_t step_height_ = 0.15;
 
   Mode mode_ = Mode::Auto;
   State state_ = State::Init;

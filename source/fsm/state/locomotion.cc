@@ -10,10 +10,6 @@
 #include "wbc/wbic.h"
 
 namespace sdquadx::fsm {
-namespace params {
-constexpr inline fpt_t const max_roll = 80.;   // 40;
-constexpr inline fpt_t const max_pitch = 80.;  // 40;
-}  // namespace params
 
 StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
                                  model::Quadruped::SharedPtr const &mquad,
@@ -96,13 +92,15 @@ bool StateLocomotion::RunOnce() {
 bool StateLocomotion::SafeCheck() {
   auto const &seResult = estctrl_->GetEstState();
 
-  if (std::fabs(seResult.rpy[0]) > math::DegToRad(params::max_roll)) {
-    spdlog::warn("Unsafe locomotion: roll is {} degrees (max {})", math::RadToDeg(seResult.rpy[0]), params::max_roll);
+  if (std::fabs(seResult.rpy[0]) > opts_->model.max_body_roll) {
+    spdlog::warn("Unsafe locomotion: roll is {} degrees (max {})", math::RadToDeg(seResult.rpy[0]),
+                 opts_->model.max_body_roll);
     return false;
   }
 
-  if (std::fabs(seResult.rpy[1]) > math::DegToRad(params::max_pitch)) {
-    spdlog::warn("Unsafe locomotion: pitch is {} degrees (max {})", math::RadToDeg(seResult.rpy[1]), params::max_pitch);
+  if (std::fabs(seResult.rpy[1]) > opts_->model.max_body_pitch) {
+    spdlog::warn("Unsafe locomotion: pitch is {} degrees (max {})", math::RadToDeg(seResult.rpy[1]),
+                 opts_->model.max_body_pitch);
     return false;
   }
 

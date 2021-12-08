@@ -37,11 +37,16 @@ Model::Model()
       inertia_abad({0.002426, 0., 0., 0., 0.0025, 0., 0., 0., 0.002426}),
       inertia_hip({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}),
       inertia_knee({0.00679633, 0., 0., 0., 0.00682342, 0., 0., 0., 0.000177083}),
-      inertia_total({0.07487, 0, 0, 0, 2.1566, 0, 0, 0, 2.1775}) {}
+      inertia_total({0.07487, 0, 0, 0, 2.1566, 0, 0, 0, 2.1775}),
+
+      max_com_height(0.55),
+      max_body_roll(0.785),
+      max_body_pitch(0.96),
+      max_body_yaw(0.785) {}
 
 Ctrl::Ctrl()
     : mpc_iters(15),  // 30ms, 30/ctrl_sec * 1000
-      mpc_horizon_len(12),
+      mpc_horizon_len(10),
       mpc_x_drag(3),
       mpc_weights({1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2, 0}),
 

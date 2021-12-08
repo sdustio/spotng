@@ -46,6 +46,11 @@ struct SDQUADX_EXPORT Model {
   SdMatrix3f inertia_hip;
   SdMatrix3f inertia_knee;
   SdMatrix3f inertia_total;
+
+  fpt_t max_com_height;
+  fpt_t max_body_roll;
+  fpt_t max_body_pitch;
+  fpt_t max_body_yaw;
 };
 
 struct SDQUADX_EXPORT Ctrl {

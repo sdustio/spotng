@@ -29,6 +29,7 @@ class StateBalanceStand : public StateCtrl {
 
   std::unordered_map<drive::State, State> state_trans_;
 
+  Options::ConstSharedPtr const opts_;
   LegCtrl::SharedPtr const legctrl_;
   drive::DriveCtrl::ConstSharedPtr const drictrl_;
   estimate::EstimateCtrl::ConstSharedPtr const estctrl_;

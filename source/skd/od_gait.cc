@@ -17,17 +17,17 @@ bool OffsetDurationGait::SetCurrentIter(int iter) {
   iter_ = iter % iters_p_;
 
   for (auto j = 0; j < 4; j++) {
-    progress_[j] = iter - iters_o_[j];
+    progress_[j] = iter_ - iters_o_[j];
     if (progress_[j] < 0) progress_[j] += iters_p_;
   }
-  // update mpc_table
-  std::array<int, 4> progress;
+  // update future gait status vector
+  std::array<int, 4> pg;
   for (auto i = 0; i < iters_p_; i++) {
-    int iter = (i + iter_ + 1) % iters_p_;
+    int ni = (i + iter_ + 1) % iters_p_;
     for (auto j = 0; j < 4; j++) {
-      progress[j] = iter - iters_o_[j];
-      if (progress[j] < 0) progress[j] += iters_p_;
-      if (progress[j] <= iters_d_[j])
+      pg[j] = ni - iters_o_[j];
+      if (pg[j] < 0) pg[j] += iters_p_;
+      if (pg[j] <= iters_d_[j])
         stance_states_[i * 4 + j] = 1;
       else
         stance_states_[i * 4 + j] = 0;
@@ -41,7 +41,7 @@ bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
     if (progress_[i] > iters_d_[i]) {
       ret[i] = 0.;
     } else {
-      ret[i] = progress_[i] / iters_d_[i];
+      ret[i] = static_cast<fpt_t>(progress_[i]) / static_cast<fpt_t>(iters_d_[i]);
     }
   }
   return true;
@@ -50,7 +50,7 @@ bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
 bool OffsetDurationGait::CalcSwingPhase(SdVector4f &ret) const {
   for (size_t i = 0; i < ret.size(); i++) {
     if (progress_[i] > iters_d_[i]) {
-      ret[i] = (progress_[i] - iters_d_[i]) / (iters_p_ - iters_d_[i]);
+      ret[i] = static_cast<fpt_t>(progress_[i] - iters_d_[i]) / static_cast<fpt_t>(iters_p_ - iters_d_[i]);
     } else {
       ret[i] = 0.;
     }
