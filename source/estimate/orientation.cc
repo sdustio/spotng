@@ -37,6 +37,8 @@ bool Orientation::RunOnce(State &ret) {
   ret.acc_robot = imu_.acc;  // 得机体坐标加速度
 
   ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.acc_robot);  // 得世界坐标加速度
+
+  ret.success = true;
   return true;
 }
 

@@ -15,6 +15,7 @@ bool Joints::RunOnce(State &ret) {
     ret.q[leg] = legdatas_[leg].q;
     ret.qd[leg] = legdatas_[leg].qd;
   }
+  ret.success = true;
   return true;
 }
 bool Joints::InterfaceValid() {
