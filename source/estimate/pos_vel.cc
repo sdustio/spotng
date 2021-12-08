@@ -67,6 +67,8 @@ PosVel::PosVel(Options::ConstSharedPtr const &opts) : opts_(opts) {
 }
 
 bool PosVel::RunOnce(State &ret) {
+  if (!ret.success) return false;
+
   Eigen::Map<Vector18> xhat(xhat_.data());
   Eigen::Map<Vector12> ps(ps_.data());
   Eigen::Map<Vector12> vs(vs_.data());

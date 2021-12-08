@@ -21,6 +21,7 @@ class Joints : public Estimator {
   bool RunOnce(State &ret) override;
 
  private:
+  bool InterfaceValid();
   interface::Leg::ConstSharedPtr const itf_;
   sensor::LegDatas legdatas_;
 };

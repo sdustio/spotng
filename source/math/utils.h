@@ -14,6 +14,8 @@ T Square(T a) {
   return a * a;
 }
 
+bool HasNaN(fpt_t const* begin, fpt_t const* end);
+
 /*!
  * Convert radians to degrees 转化弧度到度数
  */

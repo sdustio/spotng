@@ -44,6 +44,7 @@ set(LIB_SOURCES
   source/utils/debug.cc
   source/math/algebra.cc
   source/math/interpolate.cc
+  source/math/utils.cc
   source/dynamics/rotation.cc
   source/dynamics/inertia.cc
   source/model/float_base.cc

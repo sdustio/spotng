@@ -18,6 +18,7 @@ class Orientation : public Estimator {
   bool RunOnce(State &ret) override;
 
  private:
+  bool InterfaceValid();
   interface::Imu::ConstSharedPtr const itf_;
   bool b_first_visit_ = true;
   SdVector4f ori_ini_inv_;

@@ -1,15 +1,18 @@
 #include "estimate/orientation.h"
 
 #include "dynamics/rotation.h"
+#include "math/utils.h"
 
 namespace sdquadx::estimate {
 Orientation::Orientation(interface::Imu::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Orientation::RunOnce(State &ret) {
-  itf_->ReadTo(imu_);
-  // 复制四元数值
-  ret.ori = imu_.quat;
+  if (!InterfaceValid()) {
+    ret.success = false;
+    return false;
+  }
 
+  ret.ori = imu_.quat;
   auto ori = ToEigenTp(ret.ori);
   auto ori_ini_inv = ToEigenTp(ori_ini_inv_);
 
@@ -34,6 +37,15 @@ bool Orientation::RunOnce(State &ret) {
   ret.acc_robot = imu_.acc;  // 得机体坐标加速度
 
   ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.acc_robot);  // 得世界坐标加速度
+  return true;
+}
+
+bool Orientation::InterfaceValid() {
+  itf_->ReadTo(imu_);
+
+  if (math::HasNaN(imu_.quat.cbegin(), imu_.quat.cend())) return false;
+  if (math::HasNaN(imu_.gyro.cbegin(), imu_.gyro.cend())) return false;
+  if (math::HasNaN(imu_.acc.cbegin(), imu_.acc.cend())) return false;
   return true;
 }
 }  // namespace sdquadx::estimate

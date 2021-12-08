@@ -7,7 +7,7 @@ namespace sdquadx::sensor {
 struct SDQUADX_EXPORT ImuData {
   SdVector3f acc = {};
   SdVector3f gyro = {};
-  SdVector4f quat = {};  // w, x, y, z
+  SdVector4f quat = {1.};  // w, x, y, z
 };
 
 struct SDQUADX_EXPORT LegData {

@@ -27,6 +27,7 @@ struct SDQUADX_EXPORT State {
   std::array<SdVector3f, consts::model::kNumLeg> foot_pos_robot = {};  // 世界坐标系足底速度
   std::array<SdVector3f, consts::model::kNumLeg> foot_vel = {};        // 机身坐标系足底位置
   std::array<SdVector3f, consts::model::kNumLeg> foot_vel_robot = {};  // 机身坐标系足底位置
+  bool success = false;                                                // 状态估计成功
 };
 
 class SDQUADX_EXPORT Estimator {
