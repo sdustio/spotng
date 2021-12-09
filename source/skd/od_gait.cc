@@ -41,7 +41,7 @@ bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
     if (progress_[i] > iters_d_[i]) {
       ret[i] = 0.;
     } else {
-      ret[i] = static_cast<fpt_t>(progress_[i]) / static_cast<fpt_t>(iters_d_[i]);
+      ret[i] = (0.001 + progress_[i]) / (0.001 + iters_d_[i]);
     }
   }
   return true;
@@ -50,7 +50,7 @@ bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
 bool OffsetDurationGait::CalcSwingPhase(SdVector4f &ret) const {
   for (size_t i = 0; i < ret.size(); i++) {
     if (progress_[i] > iters_d_[i]) {
-      ret[i] = static_cast<fpt_t>(progress_[i] - iters_d_[i]) / static_cast<fpt_t>(iters_p_ - iters_d_[i]);
+      ret[i] = (0.001 + progress_[i] - iters_d_[i]) / (0.001 + iters_p_ - iters_d_[i]);
     } else {
       ret[i] = 0.;
     }

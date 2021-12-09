@@ -73,16 +73,16 @@ bool StateBalanceStand::RunOnce() {
 
   auto const &rpy_des = drictrl_->GetRpyDes();
   for (size_t i = 0; i < rpy_des.size(); i++) wbc_data_.body_rpy_des[i] += rpy_des[i];
-  if (std::fabs(wbc_data_.body_rpy_des[0]) > opts_->model.max_body_roll)
-    wbc_data_.body_rpy_des[0] *= opts_->model.max_body_roll / std::abs(wbc_data_.body_rpy_des[0]);
-  if (std::fabs(wbc_data_.body_rpy_des[1]) > opts_->model.max_body_pitch)
-    wbc_data_.body_rpy_des[1] *= opts_->model.max_body_pitch / std::abs(wbc_data_.body_rpy_des[1]);
-  if (std::fabs(wbc_data_.body_rpy_des[2]) > opts_->model.max_body_yaw)
-    wbc_data_.body_rpy_des[2] *= opts_->model.max_body_yaw / std::abs(wbc_data_.body_rpy_des[2]);
+  wbc_data_.body_rpy_des[0] =
+      std::fmin(std::fmax(wbc_data_.body_rpy_des[0], -opts_->model.max_body_roll), opts_->model.max_body_roll);
+  wbc_data_.body_rpy_des[1] =
+      std::fmin(std::fmax(wbc_data_.body_rpy_des[1], -opts_->model.max_body_pitch), opts_->model.max_body_pitch);
+  wbc_data_.body_rpy_des[2] =
+      std::fmin(std::fmax(wbc_data_.body_rpy_des[2], -opts_->model.max_body_yaw), opts_->model.max_body_yaw);
 
   // Height
   wbc_data_.body_pos_des[2] += drictrl_->GetPosDes()[2];
-  if (wbc_data_.body_pos_des[2] > opts_->model.max_com_height) wbc_data_.body_pos_des[2] = opts_->model.max_com_height;
+  wbc_data_.body_pos_des[2] = std::fmin(wbc_data_.body_pos_des[2], opts_->model.max_com_height);
 
   wbc_data_.body_avel_des.fill(0.);
 

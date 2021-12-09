@@ -2,12 +2,11 @@
 
 #include <cmath>
 
+#include "sdquadx/consts.h"
+
 namespace sdquadx::math {
 
-bool illegal_coeft(fpt_t t) {
-  if (t < 1.e-12 || t - 1. > 1.e-12) return true;
-  return false;
-}
+bool illegal_coeft(fpt_t t) { return t < consts::math::kZeroEpsilon || t > 1. - consts::math::kZeroEpsilon; }
 
 bool interpolate_linear(fpt_t &ret, fpt_t const y0, fpt_t const yf, fpt_t const t) {
   if (illegal_coeft(t)) return false;

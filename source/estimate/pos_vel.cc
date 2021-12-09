@@ -91,10 +91,9 @@ bool PosVel::RunOnce(State &ret) {
   int rindex2 = 0;
   int rindex3 = 0;
   // 重力向量
-  Vector3 g(0, 0, -opts_->gravity);
   Matrix3 Rbod = rot_mat.transpose();  // 机身到世界的变换矩阵
   // 输入量a 世界下
-  Vector3 acc = ToConstEigenTp(ret.acc) + g;
+  Vector3 acc = ToConstEigenTp(ret.acc) + Vector3(0, 0, -opts_->gravity);
 
   // std::cout << "A WORLD\n" << acc << "\n";
   Vector4 pzs = Vector4::Zero();
@@ -124,7 +123,7 @@ bool PosVel::RunOnce(State &ret) {
     fpt_t trust = 1.;  // 支撑: 1，摆动: 0
 
     // 获取接触状态 在整个支撑过程百分比(从0到1)  完成后为0
-    fpt_t phase = fmin(ret.contact[i], 1.);
+    fpt_t phase = std::fmin(ret.contact[i], 1.);
 
     // 脚i的测量协方差在摆动过程中被提高到一个很高的值，因此在这个融合过程中，摆动腿的测量值被有效地忽略了
     fpt_t trust_window = 0.2;

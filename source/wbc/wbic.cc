@@ -261,7 +261,7 @@ bool Wbic::_ContactTaskUpdate(InData const &wbcdata, estimate::State const &estd
   task_list_.push_back(body_pos_task_);
 
   for (int leg(0); leg < consts::model::kNumLeg; ++leg) {
-    if (wbcdata.contact_state[leg] > 0.) {  // Contact
+    if (wbcdata.contact_state[leg] > consts::math::kZeroEpsilon) {  // Contact
       foot_contact_[leg]->UpdateTask(estdata, SdVector3f{}, SdVector3f{}, wbcdata.Fr_des[leg]);
       contact_list_.push_back(foot_contact_[leg]);
     } else {  // No Contact (swing)
