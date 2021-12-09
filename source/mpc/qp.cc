@@ -12,8 +12,6 @@ bool near_zero(fpt_t a) { return (a < .01 && a > -.01); }
 bool near_one(fpt_t a) { return near_zero(a - 1); }
 }  // namespace
 
-using QPMatrixX = Eigen::Matrix<fpt_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
 QpData::QpData(int horizon_len)
     : qsoln_(12 * horizon_len),
 
@@ -81,6 +79,8 @@ void QpSolver::Reset() {
 }
 
 bool QpSolver::Solve(QpData &data) {
+  Reset();
+
   int nWSR = 100;
   auto const num_constraints = 20 * horizon_len_;
   auto const num_variables = 12 * horizon_len_;
