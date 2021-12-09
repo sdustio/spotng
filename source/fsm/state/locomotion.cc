@@ -28,17 +28,17 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::S
       wbc_(std::make_unique<wbc::Wbic>(opts, mquad)) {
   auto dt_mpc = opts->ctrl_sec * opts->ctrl.mpc_iters;
   gait_skds_[drive::Gait::Trot] = std::make_shared<skd::OffsetDurationGait>(
-      opts->ctrl.mpc_horizon_len, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Trot");
+      10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Trot");
   gait_skds_[drive::Gait::SlowTrot] = std::make_shared<skd::OffsetDurationGait>(
-      static_cast<int>(opts->ctrl.mpc_horizon_len * 1.2), skd::SdVector4i{0, 6, 6, 0}, skd::SdVector4i{6, 6, 6, 6},
+      12, skd::SdVector4i{0, 6, 6, 0}, skd::SdVector4i{6, 6, 6, 6},
       dt_mpc, "SlowTrot");
   gait_skds_[drive::Gait::FlyingTrot] = std::make_shared<skd::OffsetDurationGait>(
-      opts->ctrl.mpc_horizon_len, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{4, 4, 4, 4}, dt_mpc, "FlyingTrot");
+      10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{4, 4, 4, 4}, dt_mpc, "FlyingTrot");
   gait_skds_[drive::Gait::Walk] = std::make_shared<skd::OffsetDurationGait>(
-      static_cast<int>(opts->ctrl.mpc_horizon_len * 1.6), skd::SdVector4i{0, 8, 4, 12}, skd::SdVector4i{12, 12, 12, 12},
+      16, skd::SdVector4i{0, 8, 4, 12}, skd::SdVector4i{12, 12, 12, 12},
       dt_mpc, "Walk");
   gait_skds_[drive::Gait::Bound] = std::make_shared<skd::OffsetDurationGait>(
-      opts->ctrl.mpc_horizon_len, skd::SdVector4i{5, 5, 0, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Bound");
+      10, skd::SdVector4i{5, 5, 0, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Bound");
 
   estcontact_ = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
 }
