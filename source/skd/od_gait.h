@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include "skd/gait.h"
 
@@ -19,7 +18,7 @@ class OffsetDurationGait : public Gait {
   bool CalcSwingPhase(SdVector4f &ret) const override;
   fpt_t GetCurrentStanceTime(int leg) const override;
   fpt_t GetCurrentSwingTime(int leg) const override;
-  std::vector<int> const &GetNextPeriodStanceStates() const override;
+  PredStanceVector const &GetNextPeriodStanceStates() const override;
 
  private:
   int const iters_p_;
@@ -31,7 +30,7 @@ class OffsetDurationGait : public Gait {
   fpt_t swing_;
 
   int iter_;
-  std::array<int, 4> progress_;
-  std::vector<int> stance_states_;
+  SdVector4i progress_;
+  PredStanceVector stance_states_ = {};
 };
 }  // namespace sdquadx::skd

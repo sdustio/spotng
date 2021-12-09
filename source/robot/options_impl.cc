@@ -46,7 +46,6 @@ Model::Model()
 
 Ctrl::Ctrl()
     : mpc_iters(15),  // 30ms, 30/(ctrl_sec * 1000)
-      mpc_horizon_len(10),
       mpc_x_drag(3),
       mpc_weights({1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2, 0}),
 

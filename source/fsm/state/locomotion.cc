@@ -7,6 +7,7 @@
 #include "mpc/cmpc.h"
 #include "skd/od_gait.h"
 #include "spdlog/spdlog.h"
+#include "utils/eigen.h"
 #include "wbc/wbic.h"
 
 namespace sdquadx::fsm {
@@ -30,13 +31,11 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::S
   gait_skds_[drive::Gait::Trot] = std::make_shared<skd::OffsetDurationGait>(
       10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Trot");
   gait_skds_[drive::Gait::SlowTrot] = std::make_shared<skd::OffsetDurationGait>(
-      12, skd::SdVector4i{0, 6, 6, 0}, skd::SdVector4i{6, 6, 6, 6},
-      dt_mpc, "SlowTrot");
+      12, skd::SdVector4i{0, 6, 6, 0}, skd::SdVector4i{6, 6, 6, 6}, dt_mpc, "SlowTrot");
   gait_skds_[drive::Gait::FlyingTrot] = std::make_shared<skd::OffsetDurationGait>(
       10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{4, 4, 4, 4}, dt_mpc, "FlyingTrot");
   gait_skds_[drive::Gait::Walk] = std::make_shared<skd::OffsetDurationGait>(
-      16, skd::SdVector4i{0, 8, 4, 12}, skd::SdVector4i{12, 12, 12, 12},
-      dt_mpc, "Walk");
+      16, skd::SdVector4i{0, 8, 4, 12}, skd::SdVector4i{12, 12, 12, 12}, dt_mpc, "Walk");
   gait_skds_[drive::Gait::Bound] = std::make_shared<skd::OffsetDurationGait>(
       10, skd::SdVector4i{5, 5, 0, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Bound");
 

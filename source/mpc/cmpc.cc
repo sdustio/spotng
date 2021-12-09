@@ -10,30 +10,22 @@
 
 namespace sdquadx::mpc {
 
-CMpc::CMpc(Options::ConstSharedPtr const &opts)
-    : opts_(opts),
-      dt_(opts->ctrl_sec * opts->ctrl.mpc_iters),
-      qp_data_(opts->ctrl.mpc_horizon_len),
-      qp_solver_(opts->ctrl.mpc_horizon_len) {}
+CMpc::CMpc(Options::ConstSharedPtr const &opts) : opts_(opts), dt_(opts->ctrl_sec * opts->ctrl.mpc_iters) {}
 
-bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::vector<int> const &st_states) {
-  auto const horizon_len = opts_->ctrl.mpc_horizon_len;
-  auto const num_constraints = 20 * horizon_len;
-  auto const num_variables = 12 * horizon_len;
-
+bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::PredStanceVector const &st_states) {
   qp_data_.Zero();
 
-  Eigen::Map<MatrixX> A_qp(qp_data_.A_qp_.data(), 13 * horizon_len, 13);
-  Eigen::Map<MatrixX> B_qp(qp_data_.B_qp_.data(), 13 * horizon_len, 12 * horizon_len);
-  Eigen::Map<MatrixX> S(qp_data_.S_.data(), 13 * horizon_len, 13 * horizon_len);
-  Eigen::Map<MatrixX> eye_12h(qp_data_.eye_12h_.data(), 12 * horizon_len, 12 * horizon_len);
-  Eigen::Map<VectorX> x_0(qp_data_.x_0_.data(), 13, 1);
-  Eigen::Map<VectorX> X_d(qp_data_.X_d_.data(), 13 * horizon_len, 1);
-  Eigen::Map<MatrixX> qH(qp_data_.qH_.data(), num_variables, num_variables);
-  Eigen::Map<MatrixX> qA(qp_data_.qA_.data(), num_constraints, num_variables);
-  Eigen::Map<VectorX> qub(qp_data_.qub_.data(), num_constraints, 1);
-  Eigen::Map<VectorX> qlb(qp_data_.qlb_.data(), num_constraints, 1);
-  Eigen::Map<VectorX> qg(qp_data_.qg_.data(), num_variables, 1);
+  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, 13>> A_qp(qp_data_.A_qp.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, kNumVariables>> B_qp(qp_data_.B_qp_.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, kDimXD>> S(qp_data_.S.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, kNumVariables>> eye_12h(qp_data_.eye_12h.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, 13, 1>> x_0(qp_data_.x_0_.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, 1>> X_d(qp_data_.X_d.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, kNumVariables>> qH(qp_data_.qH.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumConstraints, kNumVariables>> qA(qp_data_.qA.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumConstraints, 1>> qub(qp_data_.qub.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumConstraints, 1>> qlb(qp_data_.qlb.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, 1>> qg(qp_data_.qg.data());
 
   X_d[0] = wbcdata.body_rpy_des[0];
   X_d[1] = wbcdata.body_rpy_des[1];
@@ -49,7 +41,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::ve
   X_d[11] = wbcdata.body_lvel_des[2];
   X_d[12] = -opts_->gravity;  // or 0.
 
-  for (int i = 1; i < horizon_len; i++) {
+  for (int i = 1; i < kPredLength; i++) {
     for (int j = 0; j < 13; j++) X_d[13 * i + j] = X_d[13 * (i - 1) + j];
     X_d[13 * i + 2] += dt_ * wbcdata.body_avel_des[2];
     X_d[13 * i + 3] += dt_ * wbcdata.body_lvel_des[0];
@@ -105,13 +97,13 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::ve
 
   MatrixX powerMats[20];  // 20 是预留长度 shape: 13 x 13
   powerMats[0].setIdentity(13, 13);
-  for (int i = 1; i < horizon_len + 1; i++) {
+  for (int i = 1; i < kPredLength + 1; i++) {
     powerMats[i] = Adt * powerMats[i - 1];
   }
 
-  for (int r = 0; r < horizon_len; r++) {
+  for (int r = 0; r < kPredLength; r++) {
     A_qp.block<13, 13>(13 * r, 0) = powerMats[r + 1];  // Adt.pow(r+1);
-    for (int c = 0; c < horizon_len; c++) {
+    for (int c = 0; c < kPredLength; c++) {
       if (r >= c) {
         int a_num = r - c;
         B_qp.block<13, 12>(13 * r, 12 * c) = powerMats[a_num] /*Adt.pow(a_num)*/ * Bdt;
@@ -120,10 +112,10 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::ve
   }
 
   Eigen::Map<Eigen::Matrix<fpt_t, 13, 1> const> weights(opts_->ctrl.mpc_weights.data());
-  S.diagonal() = weights.replicate(horizon_len, 1);
+  S.diagonal() = weights.replicate(kPredLength, 1);
 
   int k = 0;
-  for (int i = 0; i < horizon_len; i++) {
+  for (int i = 0; i < kPredLength; i++) {
     for (int j = 0; j < consts::model::kNumLeg; j++) {
       qub(5 * k + 0) = consts::math::kBigNum;
       qub(5 * k + 1) = consts::math::kBigNum;
@@ -137,7 +129,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::ve
   fpt_t rep_mu = 1. / (opts_->rfmu + 1.e-12);
   Eigen::Matrix<fpt_t, 5, 3> f_block;
   f_block << rep_mu, 0, 1., -rep_mu, 0, 1., 0, rep_mu, 1., 0, -rep_mu, 1., 0, 0, 1.;
-  for (int i = 0; i < horizon_len * 4; i++) {
+  for (int i = 0; i < kPredLength * 4; i++) {
     qA.block<5, 3>(i * 5, i * 3) = f_block;
   }
   qH = 2 * (B_qp.transpose() * S * B_qp + alpha * eye_12h);
@@ -145,7 +137,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::ve
 
   qp_solver_.Solve(qp_data_);
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
-    for (int axis = 0; axis < 3; axis++) wbcdata.Fr_des[leg][axis] = qp_data_.qsoln_[leg * 3 + axis];
+    for (int axis = 0; axis < 3; axis++) wbcdata.Fr_des[leg][axis] = qp_data_.qsoln[leg * 3 + axis];
   }
   return true;
 }

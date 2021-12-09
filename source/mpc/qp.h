@@ -1,51 +1,56 @@
 #pragma once
+#include <array>
 #include <qpOASES.hpp>
-#include <vector>
 
-#include "sdquadx/types.h"
+#include "sdquadx/consts.h"
 
 namespace sdquadx::mpc {
+
+using consts::ctrl::kPredLength;
+constexpr inline int const kDimXD = 13 * kPredLength;
+constexpr inline int const kNumConstraints = 20 * kPredLength;
+constexpr inline int const kNumVariables = 12 * kPredLength;
+
 struct QpData {
-  QpData(int horizon_len);
+  QpData();
   void Zero();
-  std::vector<fpt_t> qsoln_;
+  std::array<fpt_t, kNumVariables> qsoln = {};
 
-  std::vector<fpt_t> A_qp_;
-  std::vector<fpt_t> B_qp_;
-  std::vector<fpt_t> S_;
-  std::vector<fpt_t> eye_12h_;
-  std::vector<fpt_t> x_0_;
-  std::vector<fpt_t> X_d_;
+  std::array<fpt_t, (kDimXD * 13)> A_qp = {};
+  std::array<fpt_t, (kDimXD * kNumVariables)> B_qp_ = {};
+  std::array<fpt_t, (kDimXD * kDimXD)> S = {};
+  std::array<fpt_t, (kNumVariables * kNumVariables)> eye_12h = {};
+  std::array<fpt_t, 13> x_0_ = {};
+  std::array<fpt_t, kDimXD> X_d = {};
 
-  std::vector<fpt_t> qH_;
-  std::vector<fpt_t> qA_;
-  std::vector<fpt_t> qub_;
-  std::vector<fpt_t> qlb_;
-  std::vector<fpt_t> qg_;
+  std::array<fpt_t, (kNumVariables * kNumVariables)> qH = {};
+  std::array<fpt_t, (kNumConstraints * kNumVariables)> qA = {};
+  std::array<fpt_t, kNumConstraints> qub = {};
+  std::array<fpt_t, kNumConstraints> qlb = {};
+  std::array<fpt_t, kNumVariables> qg = {};
 };
 
 class QpSolver {
  public:
-  QpSolver(int horizon_len);
+  QpSolver() = default;
   bool Solve(QpData &data);
 
  private:
   void Reset();
-  int const horizon_len_;
 
-  std::vector<char> var_elim_;
-  std::vector<char> con_elim_;
+  std::array<int, kNumVariables> var_elim_ = {};
+  std::array<int, kNumConstraints> con_elim_ = {};
 
-  std::vector<int> var_ind_;
-  std::vector<int> con_ind_;
+  std::array<int, kNumVariables> var_ind_ = {};
+  std::array<int, kNumConstraints> con_ind_ = {};
 
-  std::vector<qpOASES::real_t> H_red_;
-  std::vector<qpOASES::real_t> A_red_;
-  std::vector<qpOASES::real_t> ub_red_;
-  std::vector<qpOASES::real_t> lb_red_;
-  std::vector<qpOASES::real_t> g_red_;
+  std::array<qpOASES::real_t, (kNumVariables * kNumVariables)> H_red_ = {};
+  std::array<qpOASES::real_t, kNumConstraints *kNumVariables> A_red_ = {};
+  std::array<qpOASES::real_t, kNumConstraints> ub_red_ = {};
+  std::array<qpOASES::real_t, kNumConstraints> lb_red_ = {};
+  std::array<qpOASES::real_t, kNumVariables> g_red_ = {};
 
-  std::vector<qpOASES::real_t> qsoln_red_;
+  std::array<qpOASES::real_t, kNumVariables> qsoln_red_ = {};
 };
 
 }  // namespace sdquadx::mpc

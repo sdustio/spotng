@@ -1,13 +1,13 @@
 #pragma once
 
+#include <array>
 #include <memory>
-#include <string>
-#include <vector>
 
-#include "dynamics/types.h"
 #include "sdquadx/consts.h"
 
 namespace sdquadx::skd {
+
+using PredStanceVector = std::array<int, consts::ctrl::kPredLength * consts::model::kNumLeg>;
 
 class Gait {
  public:
@@ -22,6 +22,6 @@ class Gait {
   virtual bool CalcSwingPhase(SdVector4f &ret) const = 0;
   virtual fpt_t GetCurrentStanceTime(int leg) const = 0;
   virtual fpt_t GetCurrentSwingTime(int leg) const = 0;
-  virtual std::vector<int> const &GetNextPeriodStanceStates() const = 0;
+  virtual PredStanceVector const &GetNextPeriodStanceStates() const = 0;
 };
 }  // namespace sdquadx::skd

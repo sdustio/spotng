@@ -11,7 +11,6 @@
   - wbc
   - mpc
   - pos_vel est
-- 除fbmode 以外，vector -> array
 - 可以爬坡(接受 pitch 参数)
 - 重构仿真和实体程序
   - sdnova

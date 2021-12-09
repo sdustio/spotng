@@ -6,6 +6,7 @@
 #include "sdquadx/estimate.h"
 #include "sdquadx/model.h"
 #include "wbc/wbc.h"
+#include "skd/gait.h"
 
 namespace sdquadx::mpc {
 namespace params {
@@ -21,7 +22,7 @@ class Mpc {
   using ConstSharedPtr = std::shared_ptr<Mpc const>;
 
   virtual ~Mpc() = default;
-  virtual bool RunOnce(wbc::InData &, estimate::State const &, std::vector<int> const &) = 0;
+  virtual bool RunOnce(wbc::InData &, estimate::State const &, skd::PredStanceVector const &) = 0;
 };
 
 }  // namespace sdquadx::mpc

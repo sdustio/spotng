@@ -31,4 +31,8 @@ constexpr inline std::array<fpt_t, kNumLeg> const kSignFH = {1., 1., -1., -1.};
 
 }  // namespace model
 
+namespace ctrl {
+constexpr inline int const kPredLength = 10;
+}  // namespace ctrl
+
 }  // namespace sdquadx::consts

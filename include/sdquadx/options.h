@@ -57,7 +57,6 @@ struct SDQUADX_EXPORT Ctrl {
   Ctrl();
 
   int mpc_iters;
-  int mpc_horizon_len;
   int mpc_x_drag;
   std::array<fpt_t, 13> mpc_weights;
 

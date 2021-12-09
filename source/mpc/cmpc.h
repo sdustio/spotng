@@ -14,7 +14,7 @@ namespace sdquadx::mpc {
 class CMpc : public Mpc {
  public:
   CMpc(Options::ConstSharedPtr const &opts);
-  bool RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, std::vector<int> const &st_states) override;
+  bool RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::PredStanceVector const &st_states) override;
 
  private:
   Options::ConstSharedPtr const opts_;
