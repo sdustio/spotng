@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <unordered_map>
 
 #include "estimate/contact.h"
@@ -47,7 +48,7 @@ class StateLocomotion : public StateCtrl {
   wbc::InData wbc_data_;
 
   std::unordered_map<drive::Gait, skd::Gait::SharedPtr> gait_skds_;
-  long long iter_counter_ = 0;
+  std::int64_t iter_counter_ = 0;
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };

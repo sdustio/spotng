@@ -12,6 +12,9 @@
 
 namespace sdquadx::fsm {
 
+using V4i = skd::SdVector4i;
+using GaitSkd = skd::OffsetDurationGait;
+
 StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
                                  model::Quadruped::SharedPtr const &mquad,
                                  drive::DriveCtrl::ConstSharedPtr const &drictrl,
@@ -27,17 +30,17 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::S
       state_des_(std::make_unique<skd::StateDes>(opts)),
       mpc_(std::make_unique<mpc::CMpc>(opts)),
       wbc_(std::make_unique<wbc::Wbic>(opts, mquad)) {
-  auto dt_mpc = opts->ctrl_sec * opts->ctrl.mpc_iters;
-  gait_skds_[drive::Gait::Trot] = std::make_shared<skd::OffsetDurationGait>(
-      10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Trot");
-  gait_skds_[drive::Gait::SlowTrot] = std::make_shared<skd::OffsetDurationGait>(
-      12, skd::SdVector4i{0, 6, 6, 0}, skd::SdVector4i{6, 6, 6, 6}, dt_mpc, "SlowTrot");
-  gait_skds_[drive::Gait::FlyingTrot] = std::make_shared<skd::OffsetDurationGait>(
-      10, skd::SdVector4i{0, 5, 5, 0}, skd::SdVector4i{4, 4, 4, 4}, dt_mpc, "FlyingTrot");
-  gait_skds_[drive::Gait::Walk] = std::make_shared<skd::OffsetDurationGait>(
-      16, skd::SdVector4i{0, 8, 4, 12}, skd::SdVector4i{12, 12, 12, 12}, dt_mpc, "Walk");
-  gait_skds_[drive::Gait::Bound] = std::make_shared<skd::OffsetDurationGait>(
-      10, skd::SdVector4i{5, 5, 0, 0}, skd::SdVector4i{5, 5, 5, 5}, dt_mpc, "Bound");
+  auto s = opts->ctrl.mpc_iters;
+  gait_skds_[drive::Gait::Trot] = std::make_shared<GaitSkd>(10 * s, V4i{0 * s, 5 * s, 5 * s, 0 * s},
+                                                            V4i{5 * s, 5 * s, 5 * s, 5 * s}, opts->ctrl_sec, "Trot");
+  gait_skds_[drive::Gait::SlowTrot] = std::make_shared<GaitSkd>(
+      12 * s, V4i{0 * s, 6 * s, 6 * s, 0 * s}, V4i{6 * s, 6 * s, 6 * s, 6 * s}, opts->ctrl_sec, "SlowTrot");
+  gait_skds_[drive::Gait::FlyingTrot] = std::make_shared<GaitSkd>(
+      10 * s, V4i{0 * s, 5 * s, 5 * s, 0 * s}, V4i{4 * s, 4 * s, 4 * s, 4 * s}, opts->ctrl_sec, "FlyingTrot");
+  gait_skds_[drive::Gait::Walk] = std::make_shared<GaitSkd>(
+      16 * s, V4i{0 * s, 8 * s, 4 * s, 12 * s}, V4i{12 * s, 12 * s, 12 * s, 12 * s}, opts->ctrl_sec, "Walk");
+  gait_skds_[drive::Gait::Bound] = std::make_shared<GaitSkd>(10 * s, V4i{5 * s, 5 * s, 0 * s, 0 * s},
+                                                             V4i{5 * s, 5 * s, 5 * s, 5 * s}, opts->ctrl_sec, "Bound");
 
   estcontact_ = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
 }
@@ -71,7 +74,7 @@ bool StateLocomotion::RunOnce() {
   legctrl_->ZeroCmds();
 
   auto const &gait_skd = gait_skds_[drictrl_->GetGait()];
-  gait_skd->SetCurrentIter(iter_counter_ / opts_->ctrl.mpc_iters);
+  gait_skd->SetCurrentIter(iter_counter_);
 
   state_des_->RunOnce(wbc_data_, estctrl_->GetEstState(), drictrl_, gait_skd);
 

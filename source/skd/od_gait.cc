@@ -8,7 +8,7 @@ OffsetDurationGait::OffsetDurationGait(int const period_iters, SdVector4i const 
   stance_ = durations[0] * dt;
   swing_ = (period_iters - durations[0]) * dt;
 }
-bool OffsetDurationGait::SetCurrentIter(int iter) {
+bool OffsetDurationGait::SetCurrentIter(std::int64_t iter) {
   iter_ = iter % iters_p_;
 
   for (auto j = 0; j < 4; j++) {

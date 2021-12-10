@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <memory>
 
 #include "sdquadx/consts.h"
@@ -17,7 +18,7 @@ class Gait {
 
   virtual ~Gait() = default;
 
-  virtual bool SetCurrentIter(int iter) = 0;
+  virtual bool SetCurrentIter(std::int64_t iter) = 0;
   virtual bool CalcStancePhase(SdVector4f &ret) const = 0;
   virtual bool CalcSwingPhase(SdVector4f &ret) const = 0;
   virtual fpt_t GetCurrentStanceTime(int leg) const = 0;

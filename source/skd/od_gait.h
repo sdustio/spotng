@@ -12,7 +12,7 @@ class OffsetDurationGait : public Gait {
   OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations, fpt_t dt,
                      std::string const &name);
 
-  bool SetCurrentIter(int iter) override;
+  bool SetCurrentIter(std::int64_t iter) override;
 
   bool CalcStancePhase(SdVector4f &ret) const override;
   bool CalcSwingPhase(SdVector4f &ret) const override;

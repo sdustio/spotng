@@ -19,9 +19,9 @@ Model::Model()
       link_length_hip(0.284),
       link_length_knee(0.284),
 
-      basic_locomotion_height(0.34),
-      fast_locomotion_height(0.28),
-      foot_offsetx(-0.02),
+      basic_locomotion_height(0.4),
+      fast_locomotion_height(0.34),
+      foot_offsetx(-0.03),
       foot_offsety(-0.02),
 
       location_abad_fl({0.34, 0.066, 0.}),
