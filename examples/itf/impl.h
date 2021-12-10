@@ -45,7 +45,6 @@ class LegImpl : public Leg {
   bool ReadTo(sensor::LegDatas &data) const override;
   bool WriteFrom(LegCmds const &cmds) override;
   bool RunOnce() override;  // return true if ok
-  bool PrintCmd() const;
 
  private:
   bool PrintArray4f(SdVector4f const &) const;

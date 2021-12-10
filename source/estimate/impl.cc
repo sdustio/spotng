@@ -42,8 +42,8 @@ bool EstimateCtrlImpl::RunOnce() {
   for (int i = 0; i < consts::model::kNumLeg; i++) {
     DebugVector("q of leg " + std::to_string(i), est_state_.q[i]);
     DebugVector("qd of leg " + std::to_string(i), est_state_.qd[i]);
-    DebugVector("Pos Des of foot " + std::to_string(i), est_state_.foot_pos[i]);
-    DebugVector("Lvel Des of foot " + std::to_string(i), est_state_.foot_vel[i]);
+    DebugVector("pos of foot " + std::to_string(i), est_state_.foot_pos[i]);
+    DebugVector("vel of foot " + std::to_string(i), est_state_.foot_vel[i]);
   }
 #endif
   return ret;

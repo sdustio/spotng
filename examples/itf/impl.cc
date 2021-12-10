@@ -59,57 +59,11 @@ bool LegImpl::RunOnce() {
   return true;
 }
 
-bool LegImpl::PrintCmd() const {
-  printf("q_des_abad:\n");
-  PrintArray4f(cmd_.q_des_abad);
-  printf("q_des_hip:\n");
-  PrintArray4f(cmd_.q_des_hip);
-  printf("q_des_knee:\n");
-  PrintArray4f(cmd_.q_des_knee);
-  printf("qd_des_abad:\n");
-  PrintArray4f(cmd_.qd_des_abad);
-  printf("qd_des_hip:\n");
-  PrintArray4f(cmd_.qd_des_hip);
-  printf("qd_des_knee:\n");
-  PrintArray4f(cmd_.qd_des_knee);
-  printf("kp_abad:\n");
-  PrintArray4f(cmd_.kp_abad);
-  printf("kp_hip:\n");
-  PrintArray4f(cmd_.kp_hip);
-  printf("kp_knee:\n");
-  PrintArray4f(cmd_.kp_knee);
-  printf("kd_abad:\n");
-  PrintArray4f(cmd_.kd_abad);
-  printf("kd_hip:\n");
-  PrintArray4f(cmd_.kd_hip);
-  printf("kd_knee:\n");
-  PrintArray4f(cmd_.kd_knee);
-  printf("tau_abad_ff:\n");
-  PrintArray4f(cmd_.tau_abad_ff);
-  printf("tau_hip_ff:\n");
-  PrintArray4f(cmd_.tau_hip_ff);
-  printf("tau_knee_ff:\n");
-  PrintArray4f(cmd_.tau_knee_ff);
-
-  return true;
-}
-
-bool LegImpl::PrintArray4f(SdVector4f const &arr) const {
-  for (auto &&i : arr) printf("%3.f\t", i);
-  printf("\n");
-  return true;
-}
-
 bool ImuImpl::ReadTo(sensor::ImuData &data) const {
   data = imu_;
   return true;
 }
 
-bool ImuImpl::RunOnce() {
-  imu_.acc = {0., 0., 0.};
-  imu_.gyro = {0., 0., 1.};
-  imu_.quat = {0, 0, 0.247404, 0.9689124};
-  return true;
-}
+bool ImuImpl::RunOnce() { return true; }
 
 }  // namespace sdquadx::interface
