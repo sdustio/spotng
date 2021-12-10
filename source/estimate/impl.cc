@@ -33,16 +33,18 @@ bool EstimateCtrlImpl::RunOnce() {
 
 #ifdef DEBUG_MODE
   spdlog::debug("!!![Estimated State]");
-  for (int i = 0; i < consts::model::kNumLeg; i++) {
-    DebugVector("q of leg " + std::to_string(i), est_state_.q[i]);
-    DebugVector("qd of leg " + std::to_string(i), est_state_.qd[i]);
-  }
   DebugVector("Contact", est_state_.contact);
   DebugVector("Rpy", est_state_.rpy);
   DebugVector("Gyro", est_state_.avel_robot);
   DebugVector("Acc", est_state_.acc_robot);
   DebugVector("Pos", est_state_.pos);
   DebugVector("Vel", est_state_.lvel);
+  for (int i = 0; i < consts::model::kNumLeg; i++) {
+    DebugVector("q of leg " + std::to_string(i), est_state_.q[i]);
+    DebugVector("qd of leg " + std::to_string(i), est_state_.qd[i]);
+    DebugVector("Pos Des of foot " + std::to_string(i), est_state_.foot_pos[i]);
+    DebugVector("Lvel Des of foot " + std::to_string(i), est_state_.foot_vel[i]);
+  }
 #endif
   return ret;
 }
