@@ -31,7 +31,7 @@ class DriveCtrlImpl : public DriveCtrl {
   Twist twist_;
   Pose pose_;
 
-  fpt_t step_height_ = 0.15;
+  fpt_t step_height_ = 0.05;
 
   Mode mode_ = Mode::Auto;
   State state_ = State::Init;

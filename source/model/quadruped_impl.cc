@@ -158,7 +158,7 @@ bool QuadrupedImpl::UpdateDynamics(estimate::State const &estdata) {
   fbmodel_->ComputeGeneralizedMassMatrix(data_);
 
 #ifdef DEBUG_MODE
-  spdlog::debug("float base model dynamics data");
+  spdlog::debug("!!![Float base model dynamics data]");
 #endif
 
   return true;

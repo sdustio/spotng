@@ -45,7 +45,7 @@ Wbic::Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr cons
 
 bool Wbic::RunOnce(interface::LegCmds &cmds, InData const &wbcdata, estimate::State const &estdata) {
 #ifdef DEBUG_MODE
-  spdlog::debug("WBC InData:");
+  spdlog::debug("!!![WBC InData]");
   DebugVector("Body Pos Des", wbcdata.body_pos_des);
   DebugVector("Body Lvel Des", wbcdata.body_lvel_des);
   DebugVector("Body Acc Des", wbcdata.body_acc_des);

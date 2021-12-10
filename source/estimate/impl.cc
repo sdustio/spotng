@@ -32,7 +32,7 @@ bool EstimateCtrlImpl::RunOnce() {
   }
 
 #ifdef DEBUG_MODE
-  spdlog::debug("estimated state");
+  spdlog::debug("!!![Estimated State]");
   for (int i = 0; i < consts::model::kNumLeg; i++) {
     DebugVector("q of leg " + std::to_string(i), est_state_.q[i]);
     DebugVector("qd of leg " + std::to_string(i), est_state_.qd[i]);

@@ -76,51 +76,6 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
     } else {
       swing_time_remaining_[i] -= opts_->ctrl_sec;
     }
-    // if(first_swing_[i]) {
-    // foot_swing_trajs_[i].UpdateHeight(.05);
-
-    foot_swing_trajs_[i].UpdateHeight(drivectrl->GetStepHeight());  // .125);
-
-    fpt_t sign_fh = consts::model::kSignFH[i];
-    fpt_t sign_lr = consts::model::kSignLR[i];
-
-    fpt_t hx = opts_->model.location_abad_fl[0];
-    fpt_t hy = opts_->model.location_abad_fl[1];
-    fpt_t l1 = opts_->model.link_length_abad;
-
-    Vector3 pos_hip_robot(sign_fh * hx, sign_lr * (hy + l1), 0.);
-    Vector3 offset(0, sign_lr * opts_->model.foot_offsety, 0);
-
-    if (i > 1) offset[0] = opts_->model.foot_offsetx;  // 0.02;//
-    if (drivectrl->GetGait() == drive::Gait::Walk) {   // walk gait
-      if (i < 2) offset(1) = sign_lr * 0.085 * (1 - fabs(lvel_des_robot[0]) / 2.0);
-    }
-    pos_hip_robot += offset;
-
-    fpt_t stance_time = gait_skd->GetCurrentStanceTime(i);
-    Matrix3 _rot;
-    dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des[2] * stance_time / 2);
-
-    Vector3 Pf = pos + rot_mat.transpose() * (lvel_des_robot * swing_time_remaining_[i] + _rot * pos_hip_robot);
-
-    // Using the estimated velocity is correct
-    // Vector3 lvel_des = estdata.rot_mat.transpose() * lvel_des_robot;
-    fpt_t pfx_rel = lvel[0] * (.5 + opts_->ctrl.footskd_bonus_swing) * stance_time +
-                    opts_->ctrl.footskd_vkp * (lvel[0] - lvel_des[0]) +
-                    (0.5 * pos[2] / opts_->gravity) * (lvel[1] * avel_des[2]);
-
-    if (fabs(pfx_rel) > params::kMaxFootPosRel) printf("!!!!!!!!!!!!!!!!out of the max step\n");
-
-    fpt_t pfy_rel = lvel[1] * .5 * stance_time /* * dt_mpc_ */ + opts_->ctrl.footskd_vkp * (lvel[1] - lvel_des[1]) +
-                    (0.5 * pos[2] / opts_->gravity) * (-lvel[0] * avel_des[2]);
-    pfx_rel = std::fmin(std::fmax(pfx_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
-    pfy_rel = std::fmin(std::fmax(pfy_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
-    Pf[0] += pfx_rel;
-    Pf[1] += pfy_rel;
-    // TODO(Michael) 估计俯仰角
-    // Pf[2] = -0.01;
-    Pf[2] = 0.0;
-    foot_swing_trajs_[i].UpdateFinalPosition({Pf[0], Pf[1], Pf[2]});
 
     fpt_t swingState = swingStates[i];
     if (swingState > consts::math::kZeroEpsilon) {  // foot is in swing
@@ -128,6 +83,48 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
         first_swing_[i] = false;
         foot_swing_trajs_[i].UpdateInitialPosition(estdata.foot_pos[i]);
       }
+
+      foot_swing_trajs_[i].UpdateHeight(drivectrl->GetStepHeight());  // .125);
+      fpt_t sign_fh = consts::model::kSignFH[i];
+      fpt_t sign_lr = consts::model::kSignLR[i];
+
+      fpt_t hx = opts_->model.location_abad_fl[0];
+      fpt_t hy = opts_->model.location_abad_fl[1];
+      fpt_t l1 = opts_->model.link_length_abad;
+
+      Vector3 pos_hip_robot(sign_fh * hx, sign_lr * (hy + l1), 0.);
+      Vector3 offset(0, sign_lr * opts_->model.foot_offsety, 0);
+
+      if (i > 1) offset[0] = opts_->model.foot_offsetx;  // 0.02;//
+      if (drivectrl->GetGait() == drive::Gait::Walk) {   // walk gait
+        if (i < 2) offset(1) = sign_lr * 0.085 * (1 - fabs(lvel_des_robot[0]) / 2.0);
+      }
+      pos_hip_robot += offset;
+
+      fpt_t stance_time = gait_skd->GetCurrentStanceTime(i);
+      Matrix3 _rot;
+      dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des[2] * stance_time / 2);
+
+      Vector3 Pf = pos + rot_mat.transpose() * (lvel_des_robot * swing_time_remaining_[i] + _rot * pos_hip_robot);
+
+      // Using the estimated velocity is correct
+      // Vector3 lvel_des = estdata.rot_mat.transpose() * lvel_des_robot;
+      fpt_t pfx_rel = lvel[0] * (.5 + opts_->ctrl.footskd_bonus_swing) * stance_time +
+                      opts_->ctrl.footskd_vkp * (lvel[0] - lvel_des[0]) +
+                      (0.5 * pos[2] / opts_->gravity) * (lvel[1] * avel_des[2]);
+
+      if (fabs(pfx_rel) > params::kMaxFootPosRel) printf("!!!!!!!!!!!!!!!!out of the max step\n");
+
+      fpt_t pfy_rel = lvel[1] * .5 * stance_time /* * dt_mpc_ */ + opts_->ctrl.footskd_vkp * (lvel[1] - lvel_des[1]) +
+                      (0.5 * pos[2] / opts_->gravity) * (-lvel[0] * avel_des[2]);
+      pfx_rel = std::fmin(std::fmax(pfx_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
+      pfy_rel = std::fmin(std::fmax(pfy_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
+      Pf[0] += pfx_rel;
+      Pf[1] += pfy_rel;
+      // TODO(Michael) 估计俯仰角
+      // Pf[2] = -0.01;
+      Pf[2] = 0.0;
+      foot_swing_trajs_[i].UpdateFinalPosition({Pf[0], Pf[1], Pf[2]});
 
       foot_swing_trajs_[i].ComputeSwingTrajectoryBezier(swingState, swing_times_[i]);
 

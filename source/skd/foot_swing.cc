@@ -1,6 +1,11 @@
 #include "skd/foot_swing.h"
 
 #include "math/interpolate.h"
+#include "spdlog/spdlog.h"
+
+#ifdef DEBUG_MODE
+#include "utils/debug.h"
+#endif
 
 namespace sdquadx::skd {
 FootSwingTrajectory::FootSwingTrajectory() {
@@ -44,6 +49,12 @@ bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase, fpt_t 
   p_[2] = zp;
   v_[2] = zv;
   a_[2] = za;
+
+#ifdef DEBUG_MODE
+  spdlog::debug("!!![Foot Swing]");
+  spdlog::debug("Step Height: {}", height_);
+  DebugVector("Final Des", pf_);
+#endif
 
   return true;
 }
