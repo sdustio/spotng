@@ -30,17 +30,22 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::S
       state_des_(std::make_unique<skd::StateDes>(opts)),
       mpc_(std::make_unique<mpc::CMpc>(opts)),
       wbc_(std::make_unique<wbc::Wbic>(opts, mquad)) {
-  auto s = opts->ctrl.mpc_iters;
-  gait_skds_[drive::Gait::Trot] = std::make_shared<GaitSkd>(10 * s, V4i{0 * s, 5 * s, 5 * s, 0 * s},
-                                                            V4i{5 * s, 5 * s, 5 * s, 5 * s}, opts->ctrl_sec, "Trot");
-  gait_skds_[drive::Gait::SlowTrot] = std::make_shared<GaitSkd>(
-      12 * s, V4i{0 * s, 6 * s, 6 * s, 0 * s}, V4i{6 * s, 6 * s, 6 * s, 6 * s}, opts->ctrl_sec, "SlowTrot");
-  gait_skds_[drive::Gait::FlyingTrot] = std::make_shared<GaitSkd>(
-      10 * s, V4i{0 * s, 5 * s, 5 * s, 0 * s}, V4i{4 * s, 4 * s, 4 * s, 4 * s}, opts->ctrl_sec, "FlyingTrot");
-  gait_skds_[drive::Gait::Walk] = std::make_shared<GaitSkd>(
-      16 * s, V4i{0 * s, 8 * s, 4 * s, 12 * s}, V4i{12 * s, 12 * s, 12 * s, 12 * s}, opts->ctrl_sec, "Walk");
-  gait_skds_[drive::Gait::Bound] = std::make_shared<GaitSkd>(10 * s, V4i{5 * s, 5 * s, 0 * s, 0 * s},
-                                                             V4i{5 * s, 5 * s, 5 * s, 5 * s}, opts->ctrl_sec, "Bound");
+  auto scale = opts->ctrl.mpc_iters;
+  gait_skds_[drive::Gait::Trot] =
+      std::make_shared<GaitSkd>(10 * scale, V4i{0 * scale, 5 * scale, 5 * scale, 0 * scale},
+                                V4i{5 * scale, 5 * scale, 5 * scale, 5 * scale}, opts->ctrl_sec, "Trot");
+  gait_skds_[drive::Gait::SlowTrot] =
+      std::make_shared<GaitSkd>(12 * scale, V4i{0 * scale, 6 * scale, 6 * scale, 0 * scale},
+                                V4i{6 * scale, 6 * scale, 6 * scale, 6 * scale}, opts->ctrl_sec, "SlowTrot");
+  gait_skds_[drive::Gait::FlyingTrot] =
+      std::make_shared<GaitSkd>(10 * scale, V4i{0 * scale, 5 * scale, 5 * scale, 0 * scale},
+                                V4i{4 * scale, 4 * scale, 4 * scale, 4 * scale}, opts->ctrl_sec, "FlyingTrot");
+  gait_skds_[drive::Gait::Walk] =
+      std::make_shared<GaitSkd>(16 * scale, V4i{0 * scale, 8 * scale, 4 * scale, 12 * scale},
+                                V4i{12 * scale, 12 * scale, 12 * scale, 12 * scale}, opts->ctrl_sec, "Walk");
+  gait_skds_[drive::Gait::Bound] =
+      std::make_shared<GaitSkd>(10 * scale, V4i{5 * scale, 5 * scale, 0 * scale, 0 * scale},
+                                V4i{5 * scale, 5 * scale, 5 * scale, 5 * scale}, opts->ctrl_sec, "Bound");
 
   estcontact_ = std::dynamic_pointer_cast<estimate::Contact>(estctrl_->GetEstimator("contact"));
 }

@@ -9,4 +9,4 @@ cmake --build $(pwd)/build --target install -- -j4
 
 ## Usage
 
-see /examples
+see /test/example.cc

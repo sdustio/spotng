@@ -162,5 +162,20 @@ install(
 )
 
 if(BUILD_TESTING)
-  add_subdirectory(examples)
+  add_executable(testmain)
+  target_sources(testmain PRIVATE
+      test/main.cc
+      test/example.cc
+      test/itf/impl.cc
+      ${LIB_SOURCES}
+  )
+  target_include_directories(testmain PRIVATE
+    ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/source
+    ${CMAKE_SOURCE_DIR}/test
+    )
+  target_link_libraries(testmain
+    PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
+  )
 endif()

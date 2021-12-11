@@ -1,8 +1,9 @@
 #include "sdquadx/interface.h"
 
+namespace sdquadx::interface {
+
 using sdquadx::SdVector4f;
 
-namespace sdquadx::interface {
 struct JointsCmd {
   SdVector4f q_des_abad = {};
   SdVector4f q_des_hip = {};
@@ -47,8 +48,6 @@ class LegImpl : public Leg {
   bool RunOnce() override;  // return true if ok
 
  private:
-  bool PrintArray4f(SdVector4f const &) const;
-
   JointsData data_;
   JointsCmd cmd_;
 };

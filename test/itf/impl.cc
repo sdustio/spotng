@@ -1,6 +1,10 @@
 #include "itf/impl.h"
 
+#include "math/utils.h"
+#include "spdlog/spdlog.h"
+
 namespace sdquadx::interface {
+
 bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // q: 关节角
@@ -16,14 +20,16 @@ bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   return true;
 }
 bool LegImpl::WriteFrom(LegCmds const &cmds) {
+  bool ret = true;
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
-    // tauFF 获得从控制器来的力矩
-    auto const &tff = cmds[leg].tau;
-
     // set command: 命令设置 设置力矩
-    cmd_.tau_abad_ff[leg] = tff[0];
-    cmd_.tau_hip_ff[leg] = tff[1];
-    cmd_.tau_knee_ff[leg] = tff[2];
+    if (math::HasNaN(cmds[leg].tau.cbegin(), cmds[leg].tau.cend())) {
+      spdlog::error("leg {} tau error!!!!", leg);
+      ret = false;
+    }
+    cmd_.tau_abad_ff[leg] = cmds[leg].tau[0];
+    cmd_.tau_hip_ff[leg] = cmds[leg].tau[1];
+    cmd_.tau_knee_ff[leg] = cmds[leg].tau[2];
 
     // joint space pd
     cmd_.kp_abad[leg] = cmds[leg].kp_joint[0];
@@ -34,17 +40,26 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
     cmd_.kd_hip[leg] = cmds[leg].kd_joint[1];
     cmd_.kd_knee[leg] = cmds[leg].kd_joint[2];
 
+    if (math::HasNaN(cmds[leg].q_des.cbegin(), cmds[leg].q_des.cend())) {
+      spdlog::error("leg {} q_des!!!!", leg);
+
+      ret = false;
+    }
     cmd_.q_des_abad[leg] = cmds[leg].q_des[0];
     cmd_.q_des_hip[leg] = cmds[leg].q_des[1];
     cmd_.q_des_knee[leg] = cmds[leg].q_des[2];
 
+    if (math::HasNaN(cmds[leg].qd_des.cbegin(), cmds[leg].qd_des.cend())) {
+      spdlog::error("leg {} qd_des error!!!!", leg);
+      ret = false;
+    }
     cmd_.qd_des_abad[leg] = cmds[leg].qd_des[0];
     cmd_.qd_des_hip[leg] = cmds[leg].qd_des[1];
     cmd_.qd_des_knee[leg] = cmds[leg].qd_des[2];
 
     cmd_.flags[leg] = 1;
   }
-  return true;
+  return ret;
 }
 
 bool LegImpl::RunOnce() {
