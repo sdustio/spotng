@@ -219,6 +219,11 @@ bool QuatIntegrateImplicit(Eigen::Ref<Quat> ret, Eigen::Ref<Quat const> const &q
  */
 bool QuatToSO3(Eigen::Ref<Vector3> ret, Eigen::Ref<Quat const> const &q) {
   fpt_t theta = 2. * std::acos(q[0]);
+  if (fabs(theta) < 1.e-6) {
+    ret.setZero();
+    return true;
+  }
+
   ret[0] = theta * q[1] / std::sin(theta / 2.);
   ret[1] = theta * q[2] / std::sin(theta / 2.);
   ret[2] = theta * q[3] / std::sin(theta / 2.);

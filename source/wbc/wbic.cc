@@ -95,7 +95,7 @@ bool Wbic::_ComputeWBC() {
   MatrixX Ca;
   VectorX ca_l;
 
-  MatrixX Nc = MatrixX::Identity(consts::model::kDimConfig, consts::model::kDimConfig);
+  MatrixX Nc;
 
   int const rfi = 3;
   int const Ufi = 6;
