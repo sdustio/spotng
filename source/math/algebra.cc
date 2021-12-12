@@ -41,7 +41,7 @@ bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inm
   int const nrows(svd.singularValues().rows());
   MatrixX invS;
   invS = MatrixX::Zero(nrows, nrows);
-  for (int ii(0); ii < nrows; ++ii) {
+  for (int ii = 0; ii < nrows; ++ii) {
     if (svd.singularValues().coeff(ii) > sigma_threshold) {
       invS.coeffRef(ii, ii) = 1.0 / svd.singularValues().coeff(ii);
     } else {

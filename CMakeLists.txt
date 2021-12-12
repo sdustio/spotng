@@ -174,7 +174,10 @@ if(BUILD_TESTING)
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/source
     ${CMAKE_SOURCE_DIR}/test
-    )
+  )
+  target_compile_definitions(testmain PRIVATE
+    DEBUG_MODE
+  )
   target_link_libraries(testmain
     PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
   )

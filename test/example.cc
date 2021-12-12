@@ -5,12 +5,17 @@
 #include "sdquadx/robot.h"
 
 namespace sdquadx::test {
+
+int ctrl_iter = 0;
+
 void RunRobot(RobotCtrl::Ptr const &robot, std::shared_ptr<interface::LegImpl> const &legitf,
               std::shared_ptr<interface::ImuImpl> const &imuitf, int const ctrl_dt, int const itf_dt,
               int const total_dt) {
   for (int i = 0; i < total_dt; i++) {
     if (i % ctrl_dt == 0) {
       robot->RunOnce();
+      ctrl_iter++;
+      printf("!!!![Iteration %d]\n", ctrl_iter);
     }
 
     if (i % itf_dt == 0) {

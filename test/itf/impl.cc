@@ -1,7 +1,7 @@
 #include "itf/impl.h"
 
 #include "math/utils.h"
-#include "spdlog/spdlog.h"
+#include "utils/debug.h"
 
 namespace sdquadx::interface {
 
@@ -24,7 +24,7 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     // set command: 命令设置 设置力矩
     if (math::HasNaN(cmds[leg].tau.cbegin(), cmds[leg].tau.cend())) {
-      spdlog::error("leg {} tau error!!!!", leg);
+      DebugVector("!!!!tau error, leg " + std::to_string(leg), cmds[leg].tau);
       ret = false;
     }
     cmd_.tau_abad_ff[leg] = cmds[leg].tau[0];
@@ -41,8 +41,7 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
     cmd_.kd_knee[leg] = cmds[leg].kd_joint[2];
 
     if (math::HasNaN(cmds[leg].q_des.cbegin(), cmds[leg].q_des.cend())) {
-      spdlog::error("leg {} q_des!!!!", leg);
-
+      DebugVector("!!!!q_des error, leg " + std::to_string(leg), cmds[leg].q_des);
       ret = false;
     }
     cmd_.q_des_abad[leg] = cmds[leg].q_des[0];
@@ -50,7 +49,7 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
     cmd_.q_des_knee[leg] = cmds[leg].q_des[2];
 
     if (math::HasNaN(cmds[leg].qd_des.cbegin(), cmds[leg].qd_des.cend())) {
-      spdlog::error("leg {} qd_des error!!!!", leg);
+      DebugVector("!!!!qd_des error, leg " + std::to_string(leg), cmds[leg].qd_des);
       ret = false;
     }
     cmd_.qd_des_abad[leg] = cmds[leg].qd_des[0];
