@@ -131,7 +131,7 @@ bool FBModel::ComputeContactJacobians(DynamicsData &ret) {
     dynamics::SpatialToLinearAcceleration(Jcdqd_k, ac, vc);
 
     // rows for linear velcoity in the world
-    Eigen::Matrix3Xd Xout = Xc.bottomRows<3>();
+    Matrix3x6 Xout = Xc.bottomRows<3>();
 
     // from tips to base
     while (i > 5) {

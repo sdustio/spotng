@@ -14,11 +14,8 @@ using Matrix4 = Eigen::Matrix<fpt_t, 4, 4>;
 using Matrix6 = Eigen::Matrix<fpt_t, 6, 6>;
 using MatrixX = Eigen::Matrix<fpt_t, Eigen::Dynamic, Eigen::Dynamic>;
 
-// 3x4 Matrix
-using Matrix3x4 = Eigen::Matrix<fpt_t, 3, 4>;
-
-// 2x3 Matrix
-using Matrix2x3 = Eigen::Matrix<fpt_t, 2, 3>;
+// 3x6 Matrix
+using Matrix3x6 = Eigen::Matrix<fpt_t, 3, 6>;
 
 Eigen::Ref<Vector3> ToEigenTp(SdVector3f &v);
 Eigen::Ref<Matrix3> ToEigenTp(SdMatrix3f &m);
