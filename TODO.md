@@ -1,21 +1,21 @@
-- wbc
-  - webots proto 加 joint limit
-- feature
-  - [ ] 自动档
-  - [ ] fsm 状态切换增加鲁棒性
-    - EStop 的处理
-    - PreCheck 内容
-    - PostCheck 内容
-- [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
 - 预申请空间(Eigen::Map) 代替 动态内存申请(Eigen::MatrixX/VectorX)
   - wbc
   - mpc
   - pos_vel est
-- 可以爬坡(接受 pitch 参数)
 - 重构仿真和实体程序
-  - sdnova
+  - sdnova_ros2(暂时)
+  - sdnova_webots(暂时)
+  - sdnova(未来)
     - sdnova_controller
     - sdnova_webots
     - sdnova_driver
-  - sdnova_ros2(暂时)
-- 各种保护措施(例如rpy des, height des等参数最终数值的阈值保护)
+- webots proto 加 joint limit
+- [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
+- feature
+  - 可以爬坡(接受 pitch 参数)
+  - [ ] 自动档
+  - [ ] 各种保护措施(例如rpy des, height des等参数最终数值的阈值保护)
+  - [ ] fsm 状态切换增加鲁棒性
+    - EStop 的处理
+    - PreCheck 内容
+    - PostCheck 内容

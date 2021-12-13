@@ -52,14 +52,15 @@ Ctrl::Ctrl()
       footskd_bonus_swing(0.),
       footskd_vkp(.1),
 
-      kp_body({100., 100., 100.}),
-      kd_body({10., 10., 20.}),
+      kp_bodypos({100., 100., 100.}),
+      kd_bodypos({10., 10., 20.}),
+
+      kp_bodyori({100., 100., 100.}),
+      kd_bodyori({10., 10., 10.}),
 
       kp_foot({500., 500., 500.}),
       kd_foot({60., 60., 60.}),
 
-      kp_ori({100., 100., 100.}),
-      kd_ori({10., 10., 10.}),
       kp_joint({3., 3., 3.}),
       kd_joint({1., 0.2, 0.2}),
 

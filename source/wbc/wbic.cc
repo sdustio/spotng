@@ -27,8 +27,8 @@ constexpr fpt_t const kSigmaThreshold = 0.0001;
 Wbic::Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr const &quad, double weight)
     : opts_(opts),
       mquad_(quad),
-      body_pos_task_(std::make_shared<TaskBodyPos>(opts->ctrl.kp_body, opts->ctrl.kd_body)),
-      body_ori_task_(std::make_shared<TaskBodyOri>(opts->ctrl.kp_ori, opts->ctrl.kd_ori)),
+      body_pos_task_(std::make_shared<TaskBodyPos>(opts->ctrl.kp_bodypos, opts->ctrl.kd_bodypos)),
+      body_ori_task_(std::make_shared<TaskBodyOri>(opts->ctrl.kp_bodyori, opts->ctrl.kd_bodyori)),
       foot_task_({
           std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::fr),
           std::make_shared<TaskFootPos>(opts->ctrl.kp_foot, opts->ctrl.kd_foot, mquad_, consts::legidx::fl),

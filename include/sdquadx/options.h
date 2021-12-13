@@ -63,14 +63,14 @@ struct SDQUADX_EXPORT Ctrl {
   fpt_t footskd_bonus_swing;
   fpt_t footskd_vkp;
 
-  SdVector3f kp_body;
-  SdVector3f kd_body;
+  SdVector3f kp_bodypos;
+  SdVector3f kd_bodypos;
+
+  SdVector3f kp_bodyori;
+  SdVector3f kd_bodyori;
 
   SdVector3f kp_foot;
   SdVector3f kd_foot;
-
-  SdVector3f kp_ori;
-  SdVector3f kd_ori;
 
   SdVector3f kp_joint;
   SdVector3f kd_joint;
