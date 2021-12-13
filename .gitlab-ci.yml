@@ -21,4 +21,4 @@ build:
 test:
   stage: test
   script:
-    - $CMAKE_BUILD/examples/example1
+    - $CMAKE_BUILD/testmain
