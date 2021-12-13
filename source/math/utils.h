@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cmath>
 
 #include "sdquadx/consts.h"
@@ -14,7 +15,14 @@ T Square(T a) {
   return a * a;
 }
 
-bool HasNaN(fpt_t const* begin, fpt_t const* end);
+template <typename T>
+bool HasNaN(T begin, T end) {
+  while (begin != end) {
+    if (std::isnan(*begin)) return true;
+    begin++;
+  }
+  return false;
+}
 
 /*!
  * Convert radians to degrees 转化弧度到度数

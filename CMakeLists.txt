@@ -44,7 +44,6 @@ set(LIB_SOURCES
   source/utils/debug.cc
   source/math/algebra.cc
   source/math/interpolate.cc
-  source/math/utils.cc
   source/dynamics/rotation.cc
   source/dynamics/inertia.cc
   source/model/float_base.cc
@@ -167,18 +166,13 @@ if(BUILD_TESTING)
       test/main.cc
       test/example.cc
       test/itf/impl.cc
-      ${LIB_SOURCES}
   )
   target_include_directories(testmain PRIVATE
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/source
     ${CMAKE_SOURCE_DIR}/test
   )
-  target_compile_definitions(testmain PRIVATE
-    DEBUG_MODE
-  )
   target_link_libraries(testmain
-    PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
+    PRIVATE ${PROJECT_NAME}
   )
 endif()

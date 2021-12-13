@@ -1,8 +1,5 @@
 #include "itf/impl.h"
 
-#include "math/utils.h"
-#include "utils/debug.h"
-
 namespace sdquadx::interface {
 
 bool LegImpl::ReadTo(sensor::LegDatas &data) const {
@@ -20,13 +17,7 @@ bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   return true;
 }
 bool LegImpl::WriteFrom(LegCmds const &cmds) {
-  bool ret = true;
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
-    // set command: 命令设置 设置力矩
-    if (math::HasNaN(cmds[leg].tau.cbegin(), cmds[leg].tau.cend())) {
-      DebugVector("!!!!tau error, leg " + std::to_string(leg), cmds[leg].tau);
-      ret = false;
-    }
     cmd_.tau_abad_ff[leg] = cmds[leg].tau[0];
     cmd_.tau_hip_ff[leg] = cmds[leg].tau[1];
     cmd_.tau_knee_ff[leg] = cmds[leg].tau[2];
@@ -40,25 +31,17 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
     cmd_.kd_hip[leg] = cmds[leg].kd_joint[1];
     cmd_.kd_knee[leg] = cmds[leg].kd_joint[2];
 
-    if (math::HasNaN(cmds[leg].q_des.cbegin(), cmds[leg].q_des.cend())) {
-      DebugVector("!!!!q_des error, leg " + std::to_string(leg), cmds[leg].q_des);
-      ret = false;
-    }
     cmd_.q_des_abad[leg] = cmds[leg].q_des[0];
     cmd_.q_des_hip[leg] = cmds[leg].q_des[1];
     cmd_.q_des_knee[leg] = cmds[leg].q_des[2];
 
-    if (math::HasNaN(cmds[leg].qd_des.cbegin(), cmds[leg].qd_des.cend())) {
-      DebugVector("!!!!qd_des error, leg " + std::to_string(leg), cmds[leg].qd_des);
-      ret = false;
-    }
     cmd_.qd_des_abad[leg] = cmds[leg].qd_des[0];
     cmd_.qd_des_hip[leg] = cmds[leg].qd_des[1];
     cmd_.qd_des_knee[leg] = cmds[leg].qd_des[2];
 
     cmd_.flags[leg] = 1;
   }
-  return ret;
+  return true;
 }
 
 bool LegImpl::RunOnce() {
