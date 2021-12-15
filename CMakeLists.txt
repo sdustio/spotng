@@ -95,6 +95,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   $<$<STREQUAL:$<UPPER_CASE:${CMAKE_BUILD_TYPE}>,DEBUG>:DEBUG_MODE>
+  $<$<CONFIG:Debug>:DEBUG_MODE>
 )
 
 set_target_properties(${PROJECT_NAME}
