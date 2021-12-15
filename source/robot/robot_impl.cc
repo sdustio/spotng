@@ -1,5 +1,6 @@
 #include "robot/robot_impl.h"
 
+#include <cstring>
 #include <memory>
 #include <unordered_map>
 
@@ -50,9 +51,9 @@ bool RobotCtrlImpl::RunOnce() {
 bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   std::shared_ptr<spdlog::logger> logger;
   auto logt = opts->log_target;
-  if (logt == "console") {
+  if (std::strcmp(logt, "console") == 0) {
     logger = spdlog::stdout_color_mt("sdlogger");
-  } else if (logt == "file") {
+  } else if (std::strcmp(logt, "file") == 0) {
     auto fn = opts->log_filename;
     logger = spdlog::rotating_logger_mt("sdlogger", fn, 1073741824, 3);  // max size 1GiB
   }
