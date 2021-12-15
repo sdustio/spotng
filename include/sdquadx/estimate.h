@@ -2,7 +2,6 @@
 
 #include <array>
 #include <memory>
-#include <string>
 
 #include "sdquadx/consts.h"
 #include "sdquadx/types.h"
@@ -48,14 +47,13 @@ class SDQUADX_EXPORT EstimateCtrl {
 
   virtual ~EstimateCtrl() = default;
 
-  virtual bool AddEstimator(std::string const &name, Estimator::SharedPtr const &est) = 0;
-  virtual Estimator::SharedPtr const &GetEstimator(std::string const &name) const = 0;
-  virtual bool RemoveEstimator(std::string const &name) = 0;
+  virtual bool AddEstimator(char const *name, Estimator::SharedPtr const &est) = 0;
+  virtual Estimator::SharedPtr const &GetEstimator(char const *name) const = 0;
+  virtual bool RemoveEstimator(char const *name) = 0;
   virtual bool RemoveAllEstimators() = 0;
-
 
   virtual bool RunOnce() = 0;
 
   virtual State const &GetEstState() const = 0;
 };
-}
+}  // namespace sdquadx::estimate

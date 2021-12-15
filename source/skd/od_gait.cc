@@ -3,7 +3,7 @@
 namespace sdquadx::skd {
 
 OffsetDurationGait::OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations,
-                                       fpt_t dt, std::string const &name)
+                                       fpt_t dt, char const *name)
     : iters_p_(period_iters), iters_o_(offsets), iters_d_(durations), dt_(dt), name_(name) {
   stance_ = durations[0] * dt;
   swing_ = (period_iters - durations[0]) * dt;

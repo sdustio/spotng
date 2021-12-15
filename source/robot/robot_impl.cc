@@ -1,7 +1,6 @@
 #include "robot/robot_impl.h"
 
 #include <memory>
-#include <string>
 #include <unordered_map>
 
 #include "drive/drive_ctrl_impl.h"
@@ -58,11 +57,11 @@ bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
     logger = spdlog::rotating_logger_mt("sdlogger", fn, 1073741824, 3);  // max size 1GiB
   }
 
-  std::unordered_map<std::string, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},
-                                                                            {"info", spdlog::level::info},
-                                                                            {"warn", spdlog::level::warn},
-                                                                            {"err", spdlog::level::err},
-                                                                            {"critical", spdlog::level::critical}};
+  std::unordered_map<char const *, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},
+                                                                             {"info", spdlog::level::info},
+                                                                             {"warn", spdlog::level::warn},
+                                                                             {"err", spdlog::level::err},
+                                                                             {"critical", spdlog::level::critical}};
   logger->set_level(loglevelmap[opts->log_level]);
 
   spdlog::set_default_logger(logger);

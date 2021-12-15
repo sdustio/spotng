@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+
 
 #include "skd/gait.h"
 
@@ -10,7 +10,7 @@ using SdVector4i = std::array<int, consts::model::kNumLeg>;
 class OffsetDurationGait : public Gait {
  public:
   OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations, fpt_t dt,
-                     std::string const &name);
+                     char const *name);
 
   bool SetCurrentIter(std::int64_t iter) override;
 
@@ -25,7 +25,7 @@ class OffsetDurationGait : public Gait {
   SdVector4i const iters_o_;
   SdVector4i const iters_d_;
   fpt_t const dt_;
-  std::string const name_;
+  char const * const name_;
   fpt_t stance_;
   fpt_t swing_;
 

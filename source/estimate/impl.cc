@@ -1,7 +1,5 @@
 #include "estimate/impl.h"
 
-#include <string>
-
 #include "estimate/orientation.h"
 #include "estimate/pos_vel.h"
 #include "spdlog/spdlog.h"
@@ -11,7 +9,7 @@
 #endif
 
 namespace sdquadx::estimate {
-bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est) {
+bool EstimateCtrlImpl::AddEstimator(char const *name, Estimator::SharedPtr const &est) {
   if (ests_map_.find(name) != ests_map_.end()) return false;
   ests_.push_back(est);
   ests_map_[name] = num_ests_;
@@ -19,7 +17,7 @@ bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPt
   return true;
 }
 
-Estimator::SharedPtr const &EstimateCtrlImpl::GetEstimator(std::string const &name) const {
+Estimator::SharedPtr const &EstimateCtrlImpl::GetEstimator(char const *name) const {
   auto iter = ests_map_.find(name);
   if (iter == ests_map_.end()) return null_est_;
   return ests_[iter->second];
@@ -51,7 +49,7 @@ bool EstimateCtrlImpl::RunOnce() {
 
 State const &EstimateCtrlImpl::GetEstState() const { return est_state_; }
 
-bool EstimateCtrlImpl::RemoveEstimator(std::string const &name) {
+bool EstimateCtrlImpl::RemoveEstimator(char const *name) {
   auto iter = ests_map_.find(name);
   if (iter == ests_map_.end()) return false;
   ests_.erase(ests_.begin() + iter->second);

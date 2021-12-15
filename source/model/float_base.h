@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include "dynamics/types.h"
@@ -88,7 +87,7 @@ class FBModel {
   std::vector<dynamics::CoordinateAxis> joint_axes_;
   std::vector<SdMatrix6f> Xtree_;
   std::vector<SdMatrix6f> Ibody_;
-  std::vector<std::string> body_names_;
+  std::vector<char const *> body_names_;
 
   int foot_count_ = 0;
   std::vector<int> gc_parent_;
