@@ -11,8 +11,8 @@ struct SDQUADX_EXPORT ImuData {
 };
 
 struct SDQUADX_EXPORT LegData {
-  SdVector3f q = {};   // 关节角度
-  SdVector3f qd = {};  // 关节角速度
+  SdVector3f q = {};
+  SdVector3f qd = {};
 };
 using LegDatas = std::array<LegData, consts::model::kNumLeg>;
 
