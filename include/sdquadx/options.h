@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string>
 
 #include "sdquadx/consts.h"
 #include "sdquadx/types.h"
@@ -113,10 +112,10 @@ struct SDQUADX_EXPORT Options {
   fpt_t rfmax;
 
   // debug, info, warn, err, critical
-  std::string log_level;
+  char const* log_level;
   // console, file
-  std::string log_target;
-  std::string log_filename;
+  char const* log_target;
+  char const* log_filename;
 
   options::Model model;
   options::Ctrl ctrl;

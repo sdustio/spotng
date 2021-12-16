@@ -50,12 +50,11 @@ bool RobotCtrlImpl::RunOnce() {
 
 bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   std::shared_ptr<spdlog::logger> logger;
-  auto logt = opts->log_target;
+  std::string logt = opts->log_target;
   if (logt == "console") {
     logger = spdlog::stdout_color_mt("sdlogger");
   } else if (logt == "file") {
-    auto fn = opts->log_filename;
-    logger = spdlog::rotating_logger_mt("sdlogger", fn, 1073741824, 3);  // max size 1GiB
+    logger = spdlog::rotating_logger_mt("sdlogger", opts->log_filename, 1073741824, 3);  // max size 1GiB
   }
 
   std::unordered_map<std::string, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},
@@ -63,7 +62,7 @@ bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
                                                                             {"warn", spdlog::level::warn},
                                                                             {"err", spdlog::level::err},
                                                                             {"critical", spdlog::level::critical}};
-  logger->set_level(loglevelmap[opts->log_level]);
+  logger->set_level(loglevelmap[std::string(opts->log_level)]);
 
   spdlog::set_default_logger(logger);
 
