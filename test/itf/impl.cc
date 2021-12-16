@@ -61,6 +61,9 @@ bool ImuImpl::ReadTo(sensor::ImuData &data) const {
   return true;
 }
 
-bool ImuImpl::RunOnce() { return true; }
+bool ImuImpl::RunOnce() {
+  imu_.acc = {0., 0., 9.81};
+  return true;
+}
 
 }  // namespace sdquadx::interface
