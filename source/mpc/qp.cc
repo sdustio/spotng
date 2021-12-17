@@ -19,9 +19,9 @@ void QpData::Zero() {
   qsoln.fill(0.);
 
   A_qp.fill(0.);
-  B_qp_.fill(0.);
+  B_qp.fill(0.);
   S.fill(0.);
-  x_0_.fill(0.);
+  x_0.fill(0.);
   X_d.fill(0.);
 
   qub.fill(0.);

@@ -17,10 +17,10 @@ struct QpData {
   std::array<fpt_t, kNumVariables> qsoln = {};
 
   std::array<fpt_t, (kDimXD * 13)> A_qp = {};
-  std::array<fpt_t, (kDimXD * kNumVariables)> B_qp_ = {};
+  std::array<fpt_t, (kDimXD * kNumVariables)> B_qp = {};
   std::array<fpt_t, (kDimXD * kDimXD)> S = {};
   std::array<fpt_t, (kNumVariables * kNumVariables)> eye_12h = {};
-  std::array<fpt_t, 13> x_0_ = {};
+  std::array<fpt_t, 13> x_0 = {};
   std::array<fpt_t, kDimXD> X_d = {};
 
   std::array<fpt_t, (kNumVariables * kNumVariables)> qH = {};

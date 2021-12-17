@@ -16,10 +16,10 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   qp_data_.Zero();
 
   Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, 13>> A_qp(qp_data_.A_qp.data());
-  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, kNumVariables>> B_qp(qp_data_.B_qp_.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, kNumVariables>> B_qp(qp_data_.B_qp.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, kDimXD>> S(qp_data_.S.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, kNumVariables>> eye_12h(qp_data_.eye_12h.data());
-  Eigen::Map<Eigen::Matrix<fpt_t, 13, 1>> x_0(qp_data_.x_0_.data());
+  Eigen::Map<Eigen::Matrix<fpt_t, 13, 1>> x_0(qp_data_.x_0.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kDimXD, 1>> X_d(qp_data_.X_d.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, kNumVariables>> qH(qp_data_.qH.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kNumConstraints, kNumVariables>> qA(qp_data_.qA.data());
@@ -63,7 +63,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   Rotz << yc, -ys, 0, ys, yc, 0, 0, 0, 1;
   Matrix3 Iinv = (Rotz * ToConstEigenTp(opts_->model.inertia_total) * Rotz.transpose()).inverse();
 
-  x_0 << rpy(2), rpy(1), rpy(0), pos, ToConstEigenTp(estdata.avel), ToConstEigenTp(estdata.lvel), -opts_->gravity;
+  x_0 << rpy, pos, ToConstEigenTp(estdata.avel), ToConstEigenTp(estdata.lvel), -opts_->gravity;
 
   // continuous time state space matrices.
   MatrixX A_ct = Eigen::Matrix<fpt_t, 13, 13>::Zero();
@@ -95,7 +95,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   Adt = expmm.block<13, 13>(0, 0);
   Bdt = expmm.block<13, 12>(0, 13);
 
-  MatrixX powerMats[20];  // 20 是预留长度 shape: 13 x 13
+  MatrixX powerMats[kPredLength + 1];
   powerMats[0].setIdentity(13, 13);
   for (int i = 1; i < kPredLength + 1; i++) {
     powerMats[i] = Adt * powerMats[i - 1];
