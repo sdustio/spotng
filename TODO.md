@@ -1,6 +1,3 @@
-- 预申请空间(Eigen::Map) 代替 动态内存申请(Eigen::MatrixX/VectorX)
-  - wbc
-  - pos_vel est
 - 重构仿真和实体程序
   - sdnova_ros2(暂时)
   - sdnova_webots(暂时)

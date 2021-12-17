@@ -1,8 +1,8 @@
 #pragma once
 
-#include "utils/eigen.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/options.h"
+#include "utils/eigen.h"
 
 namespace sdquadx::estimate {
 class PosVel : public Estimator {
@@ -25,9 +25,11 @@ class PosVel : public Estimator {
   std::array<fpt_t, 12> ps_;       // 储存状态p
   std::array<fpt_t, 12> vs_;       // 储存状态v
   std::array<fpt_t, 18 * 18> A_;   // 状态转移阵
-  std::array<fpt_t, 18 * 18> Q0_;  // 初始状态估计噪声
-  std::array<fpt_t, 18 * 18> P_;   // 初始不确定性
-  std::array<fpt_t, 28 * 28> R0_;  // 初始观测噪声
+  std::array<fpt_t, 18 * 18> Q0_;  // 初始状态转移协方差
+  std::array<fpt_t, 18 * 18> Q_;   // 状态转移协方差
+  std::array<fpt_t, 18 * 18> P_;   // 估计协方差矩阵
+  std::array<fpt_t, 28 * 28> R0_;  // 初始观测噪声协方差
+  std::array<fpt_t, 28 * 28> R_;   // 观测噪声协方差
   std::array<fpt_t, 18 * 3> B_;    // 输入阵
   std::array<fpt_t, 28 * 18> C_;   // 观测阵
 };

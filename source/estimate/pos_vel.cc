@@ -78,13 +78,15 @@ bool PosVel::RunOnce(State &ret) {
   Eigen::Map<Matrix18> P(P_.data());
   Eigen::Map<Matrix18> Q0(Q0_.data());
   Eigen::Map<Matrix28> R0(R0_.data());
+  Eigen::Map<Matrix18> Q(Q_.data());
+  Eigen::Map<Matrix28> R(R_.data());
 
   auto rot_mat = ToConstEigenTp(ret.rot_mat);
   // 状态估计噪声
-  MatrixX Q = Q0;
+  Q = Q0;
 
   // 观测噪声矩阵
-  MatrixX R = R0;
+  R = R0;
 
   int qindex = 0;
   int rindex1 = 0;
@@ -155,10 +157,10 @@ bool PosVel::RunOnce(State &ret) {
   // 卡尔曼滤波
   xhat = A * xhat + B * acc;  // 状态预测方程
 
-  MatrixX Pm = A * P * A.transpose() + Q;  // 不确定性预测方程
+  P = A * P * A.transpose() + Q;  // 不确定性预测方程
 
   // 卡尔曼增益准备
-  MatrixX S = C * Pm * C.transpose() + R;
+  MatrixX S = C * P * C.transpose() + R;
 
   Vector28 yModel = C * xhat;  // 预测的观测值
 
@@ -166,11 +168,11 @@ bool PosVel::RunOnce(State &ret) {
 
   Vector28 S_ey = S.lu().solve(ey);  // 求逆
 
-  xhat += Pm * C.transpose() * S_ey;
+  xhat += P * C.transpose() * S_ey;
 
   MatrixX S_C = S.lu().solve(C);  // 求逆
 
-  P = (Matrix18::Identity() - Pm * C.transpose() * S_C) * Pm;
+  P = (Matrix18::Identity() - P * C.transpose() * S_C) * P;
 
   // 修正 P
   P = (P + P.transpose()) / 2.;
