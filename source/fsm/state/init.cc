@@ -52,8 +52,8 @@ bool StateInit::SetJPosInterPts(interface::LegCmd &cmd, int const curr_iter, int
                                 SdVector3f const &fin) {
   math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
                            std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
-  cmd.kp_joint = opts_->ctrl.kp_jpos;
-  cmd.kd_joint = opts_->ctrl.kd_jpos;
+  cmd.kp = opts_->ctrl.kp_jpos;
+  cmd.kd = opts_->ctrl.kd_jpos;
 
   return true;
 }

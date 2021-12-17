@@ -243,8 +243,8 @@ bool Wbic::_UpdateLegCMD(interface::LegCmds &cmds) {
       cmds[leg].tau[jidx] = tau_ff_[consts::model::kNumLegJoint * leg + jidx];
       cmds[leg].q_des[jidx] = q_cmd_[consts::model::kNumLegJoint * leg + jidx];
       cmds[leg].qd_des[jidx] = qd_cmd_[consts::model::kNumLegJoint * leg + jidx];
-      cmds[leg].kp_joint = opts_->ctrl.kp_joint;
-      cmds[leg].kd_joint = opts_->ctrl.kd_joint;
+      cmds[leg].kp = opts_->ctrl.kp_joint;
+      cmds[leg].kd = opts_->ctrl.kd_joint;
     }
   }
   return true;

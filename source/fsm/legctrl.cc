@@ -26,8 +26,8 @@ void LegCtrl::ZeroCmds() {
     cmd.tau.fill(0.);
     cmd.q_des.fill(0.);
     cmd.qd_des.fill(0.);
-    cmd.kp_joint.fill(0.);
-    cmd.kd_joint.fill(0.);
+    cmd.kp.fill(0.);
+    cmd.kd.fill(0.);
   }
 }
 }  // namespace sdquadx::fsm

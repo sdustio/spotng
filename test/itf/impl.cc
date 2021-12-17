@@ -23,13 +23,13 @@ bool LegImpl::WriteFrom(LegCmds const &cmds) {
     cmd_.tau_knee_ff[leg] = cmds[leg].tau[2];
 
     // joint space pd
-    cmd_.kp_abad[leg] = cmds[leg].kp_joint[0];
-    cmd_.kp_hip[leg] = cmds[leg].kp_joint[1];
-    cmd_.kp_knee[leg] = cmds[leg].kp_joint[2];
+    cmd_.kp_abad[leg] = cmds[leg].kp[0];
+    cmd_.kp_hip[leg] = cmds[leg].kp[1];
+    cmd_.kp_knee[leg] = cmds[leg].kp[2];
 
-    cmd_.kd_abad[leg] = cmds[leg].kd_joint[0];
-    cmd_.kd_hip[leg] = cmds[leg].kd_joint[1];
-    cmd_.kd_knee[leg] = cmds[leg].kd_joint[2];
+    cmd_.kd_abad[leg] = cmds[leg].kd[0];
+    cmd_.kd_hip[leg] = cmds[leg].kd[1];
+    cmd_.kd_knee[leg] = cmds[leg].kd[2];
 
     cmd_.q_des_abad[leg] = cmds[leg].q_des[0];
     cmd_.q_des_hip[leg] = cmds[leg].q_des[1];

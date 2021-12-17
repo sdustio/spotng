@@ -14,8 +14,8 @@ struct SDQUADX_EXPORT LegCmd {
   SdVector3f tau = {};
   SdVector3f q_des = {};
   SdVector3f qd_des = {};
-  SdVector3f kp_joint = {};
-  SdVector3f kd_joint = {};
+  SdVector3f kp = {};
+  SdVector3f kd = {};
 };
 
 using LegCmds = std::array<interface::LegCmd, consts::model::kNumLeg>;
