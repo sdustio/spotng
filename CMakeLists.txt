@@ -35,9 +35,9 @@ option(SDQUADX_BUILD_TESTS "Build examples.")
 #### Library
 find_package(Eigen3 REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(qpOASES REQUIRED)
-find_package(eiquadprog REQUIRED)
 
+add_subdirectory(third_party/eiquadprog)
+add_subdirectory(third_party/qpOASES)
 
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
@@ -75,7 +75,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/robot/options_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
+  PRIVATE Eigen3::Eigen spdlog::spdlog qpOASES eiquadprog
 )
 
 include(GenerateExportHeader)
@@ -177,7 +177,7 @@ if(SDQUADX_BUILD_TESTS)
         ${test_file}
     )
     target_link_libraries(${test_target_name} ${PROJECT_NAME})
-    target_link_libraries(${test_target_name} Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog)
+    target_link_libraries(${test_target_name} Eigen3::Eigen spdlog::spdlog qpOASES::qpOASES eiquadprog)
 
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
   endfunction(sdquadx_test)

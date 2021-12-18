@@ -1,0 +1,6 @@
+[submodule "third_party/eiquadprog/repo"]
+	path = third_party/eiquadprog/repo
+	url = https://gitee.com/stardusts-tech/eiquadprog.git
+[submodule "third_party/qpOASES/repo"]
+	path = third_party/qpOASES/repo
+	url = https://gitee.com/stardusts-tech/qpOASES.git
