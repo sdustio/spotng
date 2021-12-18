@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(sdquadx
   LANGUAGES CXX
-  VERSION 1.0.0
+  VERSION 2.0.0
 )
 
 ### Project properties
@@ -19,26 +19,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+endif(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   add_compile_options(/source-charset:utf-8)
-endif()
+endif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-endif()
+endif(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
-option(BUILD_TESTING "Build examples.")
+option(SDQUADX_BUILD_TESTS "Build examples.")
 
 #### Library
 find_package(Eigen3 REQUIRED)
+find_package(spdlog REQUIRED)
 find_package(qpOASES REQUIRED)
 find_package(eiquadprog REQUIRED)
-find_package(spdlog REQUIRED)
 
-set(LIB_SOURCES
+
+add_library(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE
   source/utils/eigen.cc
   source/utils/debug.cc
   source/math/algebra.cc
@@ -72,9 +74,6 @@ set(LIB_SOURCES
   source/robot/robot_impl.cc
   source/robot/options_impl.cc
 )
-
-add_library(${PROJECT_NAME} SHARED)
-target_sources(${PROJECT_NAME} PRIVATE ${LIB_SOURCES})
 target_link_libraries(${PROJECT_NAME}
   PRIVATE Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog
 )
@@ -88,9 +87,8 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/source>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -100,11 +98,16 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 set_target_properties(${PROJECT_NAME}
   PROPERTIES
-    POSITION_INDEPENDENT_CODE 1
-    CXX_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN 1
-    SOVERSION "${PROJECT_VERSION_MAJOR}"
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+
+if(BUILD_SHARED_LIBS)
+set_target_properties(${PROJECT_NAME}
+  PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+)
+endif(BUILD_SHARED_LIBS)
 
 set(INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})
 
@@ -160,19 +163,28 @@ install(
     ${INSTALL_CMAKEDIR}
 )
 
-if(BUILD_TESTING)
-  add_executable(testmain)
-  target_sources(testmain PRIVATE
-      test/main.cc
-      test/example.cc
-      test/itf/impl.cc
-  )
-  target_include_directories(testmain PRIVATE
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/test
-  )
-  target_link_libraries(testmain
-    PRIVATE ${PROJECT_NAME}
-  )
-endif()
+if(SDQUADX_BUILD_TESTS)
+  enable_testing()
+
+  function(sdquadx_test test_file)
+    get_filename_component(test_target_name ${test_file} NAME_WE)
+
+    add_executable(${test_target_name})
+    target_sources(${test_target_name}
+      PRIVATE
+        source/utils/testitf.cc
+
+        ${test_file}
+    )
+    target_link_libraries(${test_target_name} ${PROJECT_NAME})
+    target_link_libraries(${test_target_name} Eigen3::Eigen qpOASES::qpOASES eiquadprog::eiquadprog spdlog::spdlog)
+
+    add_test(NAME ${test_target_name} COMMAND ${test_target_name})
+  endfunction(sdquadx_test)
+
+  if(NOT BUILD_SHARED_LIBS)
+    sdquadx_test(example/simple_test.cc)
+
+    sdquadx_test(source/dynamics/rotation_test.cc)
+  endif(NOT BUILD_SHARED_LIBS)
+endif(SDQUADX_BUILD_TESTS)

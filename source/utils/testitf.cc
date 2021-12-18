@@ -1,6 +1,6 @@
-#include "itf/impl.h"
+#include "utils/testitf.h"
 
-namespace sdquadx::interface {
+namespace sdquadx::test {
 
 bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
@@ -16,7 +16,7 @@ bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   }
   return true;
 }
-bool LegImpl::WriteFrom(LegCmds const &cmds) {
+bool LegImpl::WriteFrom(interface::LegCmds const &cmds) {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
     cmd_.tau_abad_ff[leg] = cmds[leg].tau[0];
     cmd_.tau_hip_ff[leg] = cmds[leg].tau[1];

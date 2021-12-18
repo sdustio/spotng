@@ -1,8 +1,6 @@
 #include "sdquadx/interface.h"
 
-namespace sdquadx::interface {
-
-using sdquadx::SdVector4f;
+namespace sdquadx::test {
 
 struct JointsCmd {
   SdVector4f q_des_abad = {};
@@ -41,10 +39,10 @@ struct JointsData {
   std::uint8_t driver_status = 0;
 };
 
-class LegImpl : public Leg {
+class LegImpl : public interface::Leg {
  public:
   bool ReadTo(sensor::LegDatas &data) const override;
-  bool WriteFrom(LegCmds const &cmds) override;
+  bool WriteFrom(interface::LegCmds const &cmds) override;
   bool RunOnce() override;  // return true if ok
 
  private:
@@ -52,7 +50,7 @@ class LegImpl : public Leg {
   JointsCmd cmd_;
 };
 
-class ImuImpl : public Imu {
+class ImuImpl : public interface::Imu {
  public:
   bool ReadTo(sensor::ImuData &data) const override;
   bool RunOnce() override;

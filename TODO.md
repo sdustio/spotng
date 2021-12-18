@@ -6,7 +6,6 @@
     - sdnova_webots
     - sdnova_driver
 - webots proto 加 joint limit
-- [CMake 超级构建](https://www.bookstack.cn/read/CMake-Cookbook/content-chapter10-10.4-chinese.md)
 - feature
   - 可以爬坡(接受 pitch 参数)
   - [ ] 自动档
