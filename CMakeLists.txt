@@ -177,7 +177,7 @@ if(SDQUADX_BUILD_TESTS)
         ${test_file}
     )
     target_link_libraries(${test_target_name} ${PROJECT_NAME})
-    target_link_libraries(${test_target_name} Eigen3::Eigen spdlog::spdlog qpOASES::qpOASES eiquadprog)
+    target_link_libraries(${test_target_name} Eigen3::Eigen spdlog::spdlog qpOASES eiquadprog)
 
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
   endfunction(sdquadx_test)
