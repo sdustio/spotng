@@ -59,4 +59,4 @@ class ImuImpl : public interface::Imu {
   sensor::ImuData imu_;
 };
 
-}  // namespace sdquadx::interface
+}  // namespace sdquadx::test
