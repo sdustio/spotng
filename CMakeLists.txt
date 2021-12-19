@@ -30,7 +30,13 @@ endif(NOT CMAKE_BUILD_TYPE)
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
-option(SDQUADX_BUILD_TESTS "Build examples.")
+option(BUILD_SHARED_LIBS "Build shared libs." ON)
+option(SDQUADX_BUILD_TESTS "Build tests." OFF)
+if(SDQUADX_BUILD_TESTS)
+  set(BUILD_SHARED_LIBS OFF)
+  message(STATUS "force building static libs when build tests")
+endif(SDQUADX_BUILD_TESTS)
+
 
 #### Library
 find_package(Eigen3 REQUIRED)
@@ -107,7 +113,6 @@ set_target_properties(${PROJECT_NAME}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     CXX_VISIBILITY_PRESET hidden
 )
-endif(BUILD_SHARED_LIBS)
 
 set(INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})
 
@@ -162,6 +167,7 @@ install(
   DESTINATION
     ${INSTALL_CMAKEDIR}
 )
+endif(BUILD_SHARED_LIBS)
 
 if(SDQUADX_BUILD_TESTS)
   enable_testing()
@@ -182,9 +188,7 @@ if(SDQUADX_BUILD_TESTS)
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
   endfunction(sdquadx_test)
 
-  if(NOT BUILD_SHARED_LIBS)
-    sdquadx_test(example/simple_test.cc)
+  sdquadx_test(example/simple_test.cc)
+  sdquadx_test(source/dynamics/rotation_test.cc)
 
-    sdquadx_test(source/dynamics/rotation_test.cc)
-  endif(NOT BUILD_SHARED_LIBS)
 endif(SDQUADX_BUILD_TESTS)

@@ -40,9 +40,3 @@ add_library(qpOASES STATIC ${SRC})
 target_include_directories(qpOASES PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/repo/include>
 )
-
-install(
-  TARGETS
-    qpOASES
-  EXPORT ${TARGET_NAME}
-)
