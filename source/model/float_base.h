@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -9,7 +10,7 @@
 namespace sdquadx::model {
 
 struct FBModelState {
-  SdMatrix3f rot_mat;  //从世界坐标到机身坐标
+  SdMatrix3f rot_mat;  // 从世界坐标到机身坐标
   SdVector3f pos;
   SdVector6f gvel_robot;  // combine of avel and lvel [avel, lvel]
   std::array<fpt_t, consts::model::kNumJoint> q;

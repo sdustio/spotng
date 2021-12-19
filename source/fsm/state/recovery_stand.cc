@@ -1,9 +1,9 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "utils/eigen.h"
 #include "math/interpolate.h"
 #include "sdquadx/consts.h"
 #include "spdlog/spdlog.h"
+#include "utils/eigen.h"
 
 namespace sdquadx::fsm {
 
@@ -46,8 +46,7 @@ bool StateRecoveryStand::OnEnter() {
 
   flag_ = Flag::FoldLegs;
   if (!UpsideDown()) {  // Proper orientation
-    if ((opts_->model.body_height < body_height) &&
-        (body_height < opts_->model.max_com_height)) {
+    if ((opts_->model.body_height < body_height) && (body_height < opts_->model.max_com_height)) {
       spdlog::info(" body height is {}; Stand Up!!", body_height);
       flag_ = Flag::StandUp;
     }

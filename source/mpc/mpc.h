@@ -5,8 +5,8 @@
 #include "sdquadx/drive.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/model.h"
-#include "wbc/wbc.h"
 #include "skd/gait.h"
+#include "wbc/wbc.h"
 
 namespace sdquadx::mpc {
 namespace params {

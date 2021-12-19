@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sdquadx/consts.h"
 #include "sdquadx/estimate.h"
 #include "sdquadx/interface.h"

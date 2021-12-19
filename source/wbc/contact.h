@@ -1,5 +1,5 @@
-#include "utils/eigen.h"
 #include "sdquadx/consts.h"
+#include "utils/eigen.h"
 
 namespace sdquadx::wbc {
 

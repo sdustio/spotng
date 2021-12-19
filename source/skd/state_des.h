@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sdquadx/consts.h"
 #include "sdquadx/drive.h"
 #include "skd/foot_swing.h"
@@ -16,7 +18,7 @@ class StateDes {
   using SharedPtr = std::shared_ptr<StateDes>;
   using ConstSharedPtr = std::shared_ptr<StateDes const>;
 
-  StateDes(Options::ConstSharedPtr const &opts);
+  explicit StateDes(Options::ConstSharedPtr const &opts);
   bool RunOnce(wbc::InData &des, estimate::State const &estdata, drive::DriveCtrl::ConstSharedPtr const &drivectrl,
                Gait::ConstSharedPtr const &gait_skd);
 

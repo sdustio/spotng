@@ -53,9 +53,8 @@ class SDQUADX_EXPORT EstimateCtrl {
   virtual bool RemoveEstimator(std::string const &name) = 0;
   virtual bool RemoveAllEstimators() = 0;
 
-
   virtual bool RunOnce() = 0;
 
   virtual State const &GetEstState() const = 0;
 };
-}
+}  // namespace sdquadx::estimate

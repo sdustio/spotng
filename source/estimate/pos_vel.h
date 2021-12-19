@@ -7,7 +7,7 @@
 namespace sdquadx::estimate {
 class PosVel : public Estimator {
  public:
-  PosVel(Options::ConstSharedPtr const &opts);
+  explicit PosVel(Options::ConstSharedPtr const &opts);
   bool RunOnce(State &ret) override;
 
  private:
