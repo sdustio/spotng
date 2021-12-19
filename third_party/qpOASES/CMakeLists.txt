@@ -10,7 +10,6 @@ endif()
 
 option(QPOASES_AVOID_LA_NAMING_CONFLICTS "If ON, avoid to re-defined symbols that conflict with Blas/Lapack provided functions." OFF)
 
-
 ############################################################
 #################### compiler flags ########################
 ############################################################

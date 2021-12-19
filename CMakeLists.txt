@@ -178,17 +178,19 @@ if(SDQUADX_BUILD_TESTS)
     add_executable(${test_target_name})
     target_sources(${test_target_name}
       PRIVATE
-        source/utils/testitf.cc
-
+        test/testitf.cc
         ${test_file}
     )
-    target_link_libraries(${test_target_name} ${PROJECT_NAME})
-    target_link_libraries(${test_target_name} Eigen3::Eigen spdlog::spdlog qpOASES eiquadprog)
-
+    target_link_libraries(${test_target_name} PRIVATE ${PROJECT_NAME} qpOASES eiquadprog)
+    target_link_libraries(${test_target_name} PRIVATE Eigen3::Eigen spdlog::spdlog)
+    target_include_directories(${test_target_name}
+      PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
+    )
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
   endfunction(sdquadx_test)
 
-  sdquadx_test(example/simple_test.cc)
-  sdquadx_test(source/dynamics/rotation_test.cc)
+  sdquadx_test(test/simple_test.cc)
+  sdquadx_test(test/dynamics_rotation_test.cc)
 
 endif(SDQUADX_BUILD_TESTS)

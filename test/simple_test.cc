@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "utils/testitf.h"
+#include "testitf.h"
 #include "sdquadx/robot.h"
 
 namespace sdquadx::test {
