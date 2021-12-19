@@ -1,6 +1,6 @@
 [submodule "eiquadprog"]
 	path = third_party/eiquadprog/repo
-	url = https://github.com/stack-of-tasks/eiquadprog.git
+	url = https://github.com/stardust-techinc/eiquadprog.git
 [submodule "qpOASES"]
 	path = third_party/qpOASES/repo
-	url = https://github.com/coin-or/qpOASES.git
+	url = https://github.com/stardust-techinc/qpOASES.git
