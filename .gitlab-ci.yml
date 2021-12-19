@@ -14,11 +14,11 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - cmake "-DCMAKE_CXX_CPPLINT:STRING=cpplint;--quiet" "-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++17;--quiet;--enable=performance,portability" -DBUILD_TESTING:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$CI_PROJECT_DIR -B$CMAKE_BUILD
+    - cmake "-DCMAKE_CXX_CPPLINT:STRING=cpplint;--quiet" "-DCMAKE_CXX_CPPCHECK=cppcheck;--std=c++17;--quiet;--enable=performance,portability" -DSDQUADX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$CI_PROJECT_DIR -B$CMAKE_BUILD
     - cmake --build $CMAKE_BUILD --target all
 
 # run tests using the binary built before
 test:
   stage: test
   script:
-    - $CMAKE_BUILD/testmain
+    - cd build && ctest
