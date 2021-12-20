@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "math/utils.h"
 #include "spdlog/spdlog.h"
 #include "wbc/wbic.h"
 
@@ -33,7 +34,6 @@ bool StateBalanceStand::OnEnter() {
   if (ini_body_pos_[2] < 0.2) {
     ini_body_pos_[2] = 0.25;
   }
-  //   ini_body_pos_[2]=0.26;
 
   ini_body_rpy_ = estdata.rpy;
 
@@ -74,11 +74,11 @@ bool StateBalanceStand::RunOnce() {
   auto const &rpy_des = drictrl_->GetRpyDes();
   for (size_t i = 0; i < rpy_des.size(); i++) wbc_data_.body_rpy_des[i] += rpy_des[i];
   wbc_data_.body_rpy_des[0] =
-      std::fmin(std::fmax(wbc_data_.body_rpy_des[0], -opts_->model.max_body_roll), opts_->model.max_body_roll);
+      math::LimitV(wbc_data_.body_rpy_des[0], opts_->model.max_body_roll, -opts_->model.max_body_roll);
   wbc_data_.body_rpy_des[1] =
-      std::fmin(std::fmax(wbc_data_.body_rpy_des[1], -opts_->model.max_body_pitch), opts_->model.max_body_pitch);
+      math::LimitV(wbc_data_.body_rpy_des[1], opts_->model.max_body_pitch, -opts_->model.max_body_pitch);
   wbc_data_.body_rpy_des[2] =
-      std::fmin(std::fmax(wbc_data_.body_rpy_des[2], -opts_->model.max_body_yaw), opts_->model.max_body_yaw);
+      math::LimitV(wbc_data_.body_rpy_des[2], opts_->model.max_body_yaw, -opts_->model.max_body_yaw);
 
   // Height
   wbc_data_.body_pos_des[2] += drictrl_->GetPosDes()[2];

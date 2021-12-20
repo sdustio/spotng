@@ -34,4 +34,6 @@ inline fpt_t RadToDeg(fpt_t rad) { return rad * 180.0 / consts::math::kPI; }
  */
 inline fpt_t DegToRad(fpt_t deg) { return deg * consts::math::kPI / 180.0; }
 
+inline fpt_t LimitV(fpt_t v, fpt_t max, fpt_t min) { return std::fmin(std::fmax(v, min), max); }
+
 }  // namespace sdquadx::math

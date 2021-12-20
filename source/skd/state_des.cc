@@ -1,6 +1,7 @@
 #include "skd/state_des.h"
 
 #include "dynamics/rotation.h"
+#include "math/utils.h"
 
 namespace sdquadx::skd {
 
@@ -52,8 +53,8 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
   if (fabs(lvel[1]) > 0.01) {
     rpy_int_[0] += opts_->ctrl_sec * (0. - rpy[0]) / lvel[1];
   }
-  rpy_int_[0] = std::fmin(std::fmax(rpy_int_[0], -.25), .25);
-  rpy_int_[1] = std::fmin(std::fmax(rpy_int_[1], -.25), .25);
+  rpy_int_[0] = math::LimitV(rpy_int_[0], .25, -.25);
+  rpy_int_[1] = math::LimitV(rpy_int_[1], .25, -.25);
 
   SdVector3f rpy_des = {lvel[1] * rpy_int_[0], lvel[0] * rpy_int_[1], rpy[2] + opts_->ctrl_sec * avel_des[2]};
 
@@ -117,8 +118,8 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
 
       fpt_t pfy_rel = lvel[1] * .5 * stance_time /* * dt_mpc_ */ + opts_->ctrl.footskd_vkp * (lvel[1] - lvel_des[1]) +
                       (0.5 * pos[2] / opts_->gravity) * (-lvel[0] * avel_des[2]);
-      pfx_rel = std::fmin(std::fmax(pfx_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
-      pfy_rel = std::fmin(std::fmax(pfy_rel, -params::kMaxFootPosRel), params::kMaxFootPosRel);
+      pfx_rel = math::LimitV(pfx_rel, params::kMaxFootPosRel, -params::kMaxFootPosRel);
+      pfy_rel = math::LimitV(pfy_rel, params::kMaxFootPosRel, -params::kMaxFootPosRel);
       Pf[0] += pfx_rel;
       Pf[1] += pfy_rel;
       // TODO(Michael) 估计俯仰角
