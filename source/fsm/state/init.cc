@@ -50,8 +50,8 @@ bool StateInit::RunOnce() {
 
 bool StateInit::SetJPosInterPts(interface::LegCmd &cmd, int const curr_iter, int const max_iter, SdVector3f const &ini,
                                 SdVector3f const &fin) {
-  math::interpolate_linear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
-                           std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
+  math::InterpolateLinear(ToEigenTp(cmd.q_des), ToConstEigenTp(ini), ToConstEigenTp(fin),
+                          std::fmin(static_cast<fpt_t>(curr_iter) / max_iter, 1.));
   cmd.kp = opts_->ctrl.kp_jpos;
   cmd.kd = opts_->ctrl.kd_jpos;
 
