@@ -19,4 +19,4 @@ cmake --build $(pwd)/build --target install
 
 ## Usage
 
-see /test/example.cc
+see /test/example*_test.cc
