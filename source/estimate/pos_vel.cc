@@ -5,7 +5,7 @@
 namespace sdquadx::estimate {
 
 namespace params {
-constexpr inline fpt_t const kBigNumber = 100;
+constexpr fpt_t const kBigNumber = 100;
 }  // namespace params
 
 PosVel::PosVel(Options::ConstSharedPtr const &opts) : opts_(opts) {

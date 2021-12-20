@@ -45,7 +45,6 @@ class SDQUADX_EXPORT DriveCtrl {
 
   virtual bool CmdtoDesData() = 0;
 
-  virtual fpt_t GetDuration() const = 0;
   virtual fpt_t GetStepHeight() const = 0;
   virtual State GetState() const = 0;
   virtual Gait GetGait() const = 0;

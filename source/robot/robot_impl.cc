@@ -24,7 +24,7 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
 
   mquad_ = std::make_shared<model::QuadrupedImpl>(opts);
 
-  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts->ctrl_sec);
+  drivectrl_ = std::make_shared<drive::DriveCtrlImpl>(opts);
 
   estctrl_ = std::make_shared<estimate::EstimateCtrlImpl>();
   estctrl_->AddEstimator("joints", std::make_shared<estimate::Joints>(leg_itf));

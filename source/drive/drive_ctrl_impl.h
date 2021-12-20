@@ -1,11 +1,12 @@
 #pragma once
 
 #include "sdquadx/drive.h"
+#include "sdquadx/options.h"
 
 namespace sdquadx::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
-  explicit DriveCtrlImpl(fpt_t dt);
+  explicit DriveCtrlImpl(Options::ConstSharedPtr const &opts);
 
   bool UpdateMode(Mode const &mode) override;
   bool UpdateTwist(Twist const &twist) override;
@@ -16,7 +17,6 @@ class DriveCtrlImpl : public DriveCtrl {
 
   bool CmdtoDesData() override;
 
-  fpt_t GetDuration() const override;
   fpt_t GetStepHeight() const override;
   State GetState() const override;
   Gait GetGait() const override;
@@ -27,7 +27,7 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f const &GetAvelDes() const override;
 
  private:
-  fpt_t dt_;
+  Options::ConstSharedPtr const opts_;
   Twist twist_;
   Pose pose_;
 

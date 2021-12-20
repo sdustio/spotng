@@ -81,6 +81,10 @@ struct SDQUADX_EXPORT Ctrl {
   std::array<SdVector3f, consts::model::kNumLeg> jpos_fold;
   std::array<SdVector3f, consts::model::kNumLeg> jpos_stand;
   std::array<SdVector3f, consts::model::kNumLeg> jpos_rolling;
+
+  fpt_t max_trot_lvel_x;
+  fpt_t max_trot_lvel_y;
+  fpt_t max_trot_avel_z;
 };
 
 struct SDQUADX_EXPORT Estimate {
@@ -104,7 +108,6 @@ struct SDQUADX_EXPORT Options {
   Options();
 
   fpt_t ctrl_sec;
-  fpt_t jpos_init_sec;
   // gravity scalar
   fpt_t gravity;
 

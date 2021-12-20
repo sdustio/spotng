@@ -71,7 +71,11 @@ Ctrl::Ctrl()
 
       jpos_fold({-0., 1.4, -2.7, 0.0, 1.4, -2.7, -0.0, 1.4, -2.7, 0.0, 1.4, -2.7}),
       jpos_stand({-0., 0.8, -1.6, 0., 0.8, -1.6, -0., 0.9, -1.5, 0., 0.9, -1.5}),
-      jpos_rolling({1.5, 1.6, -2.77, 1.3, 3.1, -2.77, 1.5, 1.6, -2.77, 1.3, 3.1, -2.77}) {}
+      jpos_rolling({1.5, 1.6, -2.77, 1.3, 3.1, -2.77, 1.5, 1.6, -2.77, 1.3, 3.1, -2.77}),
+
+      max_trot_lvel_x(2.2),
+      max_trot_lvel_y(1.2),
+      max_trot_avel_z(1.) {}
 
 Estimate::Estimate()
     : process_noise_pimu(0.02),
@@ -85,7 +89,6 @@ Estimate::Estimate()
 
 Options::Options()
     : ctrl_sec(1.0 / (0.5 * 1'000)),  // 0.5kH
-      jpos_init_sec(3.),
 
       gravity(9.81),
       rfmu(0.4),

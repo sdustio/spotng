@@ -7,7 +7,8 @@
     - sdnova_driver
 - webots proto 加 joint limit
 - feature
-  - 可以爬坡(接受 pitch 参数)
+  - [ ] 确认 MPC 积分补偿
+  - [ ] 可以爬坡
   - [ ] 自动档
   - [ ] 各种保护措施(例如rpy des, height des等参数最终数值的阈值保护)
   - [ ] fsm 状态切换增加鲁棒性

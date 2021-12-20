@@ -9,9 +9,6 @@
 #include "wbc/wbc.h"
 
 namespace sdquadx::mpc {
-namespace params {
-constexpr inline int const cmpc_x_drag = 3;
-}  // namespace params
 
 using SdVector4i = std::array<int, 4>;
 

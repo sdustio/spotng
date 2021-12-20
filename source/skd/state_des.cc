@@ -47,11 +47,11 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
   pos_des_[2] = _body_height;
 
   // Integral-esque pitche and roll compensation
-  if (fabs(lvel[0]) > .02) {  // avoid dividing by zero
-    rpy_int_[1] += 5 * opts_->ctrl_sec * (0. - rpy[1]) / lvel[0];
+  if (fabs(lvel[0]) > 0.02) {  // avoid dividing by zero
+    rpy_int_[1] += 5 * opts_->ctrl_sec * (0./* rpy_des[1]*/ - rpy[1]) / lvel[0];
   }
   if (fabs(lvel[1]) > 0.01) {
-    rpy_int_[0] += opts_->ctrl_sec * (0. - rpy[0]) / lvel[1];
+    rpy_int_[0] += opts_->ctrl_sec * (0./* rpy_des[0]*/ - rpy[0]) / lvel[1];
   }
   rpy_int_[0] = math::LimitV(rpy_int_[0], .25, -.25);
   rpy_int_[1] = math::LimitV(rpy_int_[1], .25, -.25);
