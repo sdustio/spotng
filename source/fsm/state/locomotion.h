@@ -34,6 +34,7 @@ class StateLocomotion : public StateCtrl {
   // Parses contact specific controls to the leg controller
   bool Step();
   bool SafeCheck();
+  bool CanStand();
   bool RunMpcIfNeeded();
 
   std::unordered_map<drive::State, State> state_trans_;

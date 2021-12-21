@@ -25,8 +25,8 @@ class StateBalanceStand : public StateCtrl {
   State GetState() const override { return State::BalanceStand; }
 
  private:
-  // Parses contact specific controls to the leg controller
   bool SafeCheck();
+  bool ExtForceApplied();
 
   std::unordered_map<drive::State, State> state_trans_;
 

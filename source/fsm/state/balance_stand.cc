@@ -48,12 +48,18 @@ bool StateBalanceStand::OnExit() { /* do nothing*/
 
 State StateBalanceStand::CheckTransition() {
   if (!SafeCheck()) return State::RecoveryStand;
+  if (ExtForceApplied()) return State::Locomotion;
   return state_trans_[drictrl_->GetState()];
 }
 
 bool StateBalanceStand::SafeCheck() {
   auto const &state = estctrl_->GetEstState();
-  return (abs(state.rpy[0]) < 0.5 && abs(state.rpy[1]) < 0.5);
+  return (fabs(state.rpy[0]) < opts_->model.max_body_roll && fabs(state.rpy[1]) < opts_->model.max_body_pitch);
+}
+
+bool StateBalanceStand::ExtForceApplied() {
+  auto const &acc = estctrl_->GetEstState().acc;
+  return acc[0] * acc[0] + acc[1] * acc[1] > 16.;
 }
 
 TransitionData StateBalanceStand::Transition(const State next) {

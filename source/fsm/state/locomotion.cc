@@ -19,7 +19,7 @@ StateLocomotion::StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::S
                                  model::Quadruped::SharedPtr const &mquad,
                                  drive::DriveCtrl::ConstSharedPtr const &drictrl,
                                  estimate::EstimateCtrl::ConstSharedPtr const &estctrl)
-    : state_trans_{{drive::State::Init, State::Init},
+    : state_trans_{{drive::State::Init, State::BalanceStand},
                    {drive::State::RecoveryStand, State::RecoveryStand},
                    {drive::State::Locomotion, State::Locomotion},
                    {drive::State::BalanceStand, State::BalanceStand}},
@@ -71,7 +71,9 @@ TransitionData StateLocomotion::Transition(const State next) {
 
 State StateLocomotion::CheckTransition() {
   if (!SafeCheck()) return State::RecoveryStand;
-  return state_trans_[drictrl_->GetState()];
+  auto next = state_trans_[drictrl_->GetState()];
+  if(!CanStand() && next == State::BalanceStand) next = GetState();
+  return next;
 }
 
 // Parses contact specific controls to the leg controller
@@ -132,4 +134,14 @@ bool StateLocomotion::SafeCheck() {
 
   return true;
 }
+
+bool StateLocomotion::CanStand() {
+  bool ret = true;
+  auto const &estdata = estctrl_->GetEstState();
+  ret = ret && estdata.acc[0] * estdata.acc[0] + estdata.acc[1] * estdata.acc[1] < 1.;
+  ret = ret && (ToConstEigenTp(estdata.avel).norm() < .5);
+  ret = ret && (ToConstEigenTp(estdata.lvel).norm() < .1);
+  return ret;
+}
+
 }  // namespace sdquadx::fsm
