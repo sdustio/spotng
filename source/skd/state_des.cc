@@ -52,7 +52,8 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
   wbcdata.body_lvel_des = {lvel_des[0], lvel_des[1], lvel_des[2]};
   wbcdata.body_acc_des.fill(0.);
 
-  wbcdata.body_rpy_des = {rpy[0] + rpy_des[0], rpy[1] + rpy_des[1], rpy[2] + opts_->ctrl_sec * avel_des[2]};
+  // wbcdata.body_rpy_des = {rpy[0] + rpy_des[0], rpy[1] + rpy_des[1], rpy[2] + opts_->ctrl_sec * avel_des[2]};
+  wbcdata.body_rpy_des = {0., 0., rpy[2] + opts_->ctrl_sec * avel_des[2]};
   wbcdata.body_avel_des = {avel_des[0], avel_des[1], avel_des[2]};
   gait_skd->CalcStancePhase(wbcdata.contact_state);
 

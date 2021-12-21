@@ -40,9 +40,9 @@ Model::Model()
       inertia_total({0.07487, 0, 0, 0, 2.1566, 0, 0, 0, 2.1775}),
 
       max_com_height(0.55),
-      max_body_roll(0.785),
-      max_body_pitch(0.96),
-      max_body_yaw(0.785) {}
+      max_body_roll(0.523),
+      max_body_pitch(0.785),
+      max_body_yaw(0.523) {}
 
 Ctrl::Ctrl()
     : mpc_iters(15),  // 30ms, 30/(ctrl_sec * 1000)
@@ -73,9 +73,9 @@ Ctrl::Ctrl()
       jpos_stand({-0., 0.8, -1.6, 0., 0.8, -1.6, -0., 0.9, -1.5, 0., 0.9, -1.5}),
       jpos_rolling({1.5, 1.6, -2.77, 1.3, 3.1, -2.77, 1.5, 1.6, -2.77, 1.3, 3.1, -2.77}),
 
-      max_trot_lvel_x(2.2),
-      max_trot_lvel_y(1.2),
-      max_trot_avel_z(1.) {}
+      max_trot_lvel_x(1.5),
+      max_trot_lvel_y(0.8),
+      max_trot_avel_z(0.8) {}
 
 Estimate::Estimate()
     : process_noise_pimu(0.02),
