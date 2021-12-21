@@ -31,7 +31,6 @@ class StateDes {
   SdVector4f swing_time_remaining_;
 
   SdVector3f pos_des_ = {};
-  SdVector3f rpy_int_ = {};
 
   drive::Gait current_gait_;
   bool first_run_ = true;

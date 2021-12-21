@@ -20,7 +20,9 @@ class CMpc : public Mpc {
   Options::ConstSharedPtr const opts_;
   fpt_t const dt_;
 
-  fpt_t x_comp_integral_ = 0;
+  fpt_t x_integral_ = 0;
+  SdVector3f rpy_integral_ = {};
+
   QpData qp_data_;
   QpSolver qp_solver_;
 };

@@ -5,6 +5,7 @@
 #include "dynamics/rotation.h"
 #include "estimate/contact.h"
 #include "math/algebra.h"
+#include "math/utils.h"
 #include "skd/od_gait.h"
 #include "unsupported/Eigen/MatrixFunctions"
 
@@ -27,8 +28,24 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   Eigen::Map<Eigen::Matrix<fpt_t, kNumConstraints, 1>> qlb(qp_data_.qlb.data());
   Eigen::Map<Eigen::Matrix<fpt_t, kNumVariables, 1>> qg(qp_data_.qg.data());
 
-  X_d[0] = wbcdata.body_rpy_des[0];
-  X_d[1] = wbcdata.body_rpy_des[1];
+  auto const pos = ToConstEigenTp(estdata.pos);
+  auto const rpy = ToConstEigenTp(estdata.rpy);
+  auto const lvel = ToConstEigenTp(estdata.lvel);
+
+  // Integral-esque pitche and roll compensation
+  if (fabs(lvel[0]) > 0.02) {  // avoid dividing by zero
+    rpy_integral_[1] += 5 * opts_->ctrl_sec * (0./*des*/ - rpy[1]) / lvel[0];
+  }
+  if (fabs(lvel[1]) > 0.01) {
+    rpy_integral_[0] += opts_->ctrl_sec * (0./*des*/ - rpy[0]) / lvel[1];
+  }
+  rpy_integral_[0] = math::LimitV(rpy_integral_[0], .25, -.25);
+  rpy_integral_[1] = math::LimitV(rpy_integral_[1], .25, -.25);
+
+  SdVector3f rpy_comp = {lvel[1] * rpy_integral_[0], lvel[0] * rpy_integral_[1], 0};
+
+  X_d[0] = rpy_comp[0];
+  X_d[1] = rpy_comp[1];
   X_d[2] = wbcdata.body_rpy_des[2] + dt_ * wbcdata.body_avel_des[2];
   X_d[3] = wbcdata.body_pos_des[0] + dt_ * wbcdata.body_lvel_des[0];
   X_d[4] = wbcdata.body_pos_des[1] + dt_ * wbcdata.body_lvel_des[1];
@@ -48,13 +65,11 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
     X_d[13 * i + 4] += dt_ * wbcdata.body_lvel_des[1];
   }
 
-  auto const pos = ToConstEigenTp(estdata.pos);  // p
-  auto const rpy = ToConstEigenTp(estdata.rpy);
   fpt_t alpha = 4e-5;
 
-  auto vx = estdata.lvel[0];
+  auto vx = lvel[0];
   if (vx > 0.3 || vx < -0.3) {
-    x_comp_integral_ += opts_->ctrl.mpc_x_drag * (pos[2] - wbcdata.body_pos_des[2]) * dt_ / vx;
+    x_integral_ += opts_->ctrl.mpc_x_drag * (pos[2] - wbcdata.body_pos_des[2]) * dt_ / vx;
   }
 
   auto yc = std::cos(rpy[2]);
@@ -63,7 +78,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   Rotz << yc, -ys, 0, ys, yc, 0, 0, 0, 1;
   Matrix3 Iinv = (Rotz * ToConstEigenTp(opts_->model.inertia_total) * Rotz.transpose()).inverse();
 
-  x_0 << rpy, pos, ToConstEigenTp(estdata.avel), ToConstEigenTp(estdata.lvel), -opts_->gravity;
+  x_0 << rpy, pos, ToConstEigenTp(estdata.avel), lvel, -opts_->gravity;
 
   // continuous time state space matrices.
   MatrixX A_ct = Eigen::Matrix<fpt_t, 13, 13>::Zero();
@@ -72,7 +87,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   A_ct(3, 9) = 1.;
   A_ct(4, 10) = 1.;
   A_ct(5, 11) = 1.;
-  A_ct(11, 9) = x_comp_integral_;
+  A_ct(11, 9) = x_integral_;
   A_ct(11, 12) = 1.;
   A_ct.block<3, 3>(0, 6) = Rotz.transpose();
 
