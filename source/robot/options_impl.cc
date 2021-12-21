@@ -46,7 +46,6 @@ Model::Model()
 
 Ctrl::Ctrl()
     : mpc_iters(15),  // 30ms, 30/(ctrl_sec * 1000)
-      mpc_x_drag(3),
       mpc_weights({1.25, 1.25, 10, 2, 2, 50, 0, 0, 0.3, 1.5, 1.5, 0.2, 0}),
 
       footskd_bonus_swing(0.),
@@ -73,8 +72,9 @@ Ctrl::Ctrl()
       jpos_stand({-0., 0.8, -1.6, 0., 0.8, -1.6, -0., 0.9, -1.5, 0., 0.9, -1.5}),
       jpos_rolling({1.5, 1.6, -2.77, 1.3, 3.1, -2.77, 1.5, 1.6, -2.77, 1.3, 3.1, -2.77}),
 
-      max_trot_lvel_x(1.5),
-      max_trot_lvel_y(0.8),
+      max_trot_lvel_x(1.8),
+      min_trot_lvel_x(-0.8),
+      max_trot_lvel_y(0.4),
       max_trot_avel_z(0.8) {}
 
 Estimate::Estimate()

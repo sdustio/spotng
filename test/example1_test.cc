@@ -24,7 +24,6 @@ void RunRobot(RobotCtrl::Ptr const &robot, std::shared_ptr<LegImpl> const &legit
 void RunExample() {
   auto opts = std::make_shared<Options>();
   opts->ctrl_sec = 0.002;
-  opts->jpos_init_sec = 0.1;
 
   int ctrl_dt = 1000 * opts->ctrl_sec;
 

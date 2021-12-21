@@ -56,7 +56,6 @@ struct SDQUADX_EXPORT Ctrl {
   Ctrl();
 
   int mpc_iters;
-  int mpc_x_drag;
   std::array<fpt_t, 13> mpc_weights;
 
   fpt_t footskd_bonus_swing;
@@ -83,6 +82,7 @@ struct SDQUADX_EXPORT Ctrl {
   std::array<SdVector3f, consts::model::kNumLeg> jpos_rolling;
 
   fpt_t max_trot_lvel_x;
+  fpt_t min_trot_lvel_x;
   fpt_t max_trot_lvel_y;
   fpt_t max_trot_avel_z;
 };

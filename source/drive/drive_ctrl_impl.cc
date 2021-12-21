@@ -37,11 +37,11 @@ bool DriveCtrlImpl::UpdateTwist(Twist const &twist) {
   auto gt = static_cast<size_t>(gait_);
 
   twist_.lvel_x = math::LimitV(twist_.lvel_x, (params::kGiatScale[gt] * opts_->ctrl.max_trot_lvel_x),
-                               (-params::kGiatScale[gt] * opts_->ctrl.max_trot_lvel_x));
+                               (params::kGiatScale[gt] * opts_->ctrl.min_trot_lvel_x));
   twist_.lvel_y = math::LimitV(twist_.lvel_y, (params::kGiatScale[gt] * opts_->ctrl.max_trot_lvel_y),
-                               (-params::kGiatScale[gt] * opts_->ctrl.max_trot_lvel_y));
+                               (params::kGiatScale[gt] * -opts_->ctrl.max_trot_lvel_y));
   twist_.avel_z = math::LimitV(twist_.avel_z, (params::kGiatScale[gt] * opts_->ctrl.max_trot_avel_z),
-                               (-params::kGiatScale[gt] * opts_->ctrl.max_trot_avel_z));
+                               (params::kGiatScale[gt] * -opts_->ctrl.max_trot_avel_z));
 
   return true;
 }

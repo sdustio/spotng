@@ -10,6 +10,11 @@
 #include "unsupported/Eigen/MatrixFunctions"
 
 namespace sdquadx::mpc {
+namespace params {
+constexpr fpt_t const kXPosDrag = 3.;
+constexpr fpt_t const kXRpyDrag = 5.;
+constexpr fpt_t const kYRpyDrag = 1.;
+}  // namespace params
 
 CMpc::CMpc(Options::ConstSharedPtr const &opts) : opts_(opts), dt_(opts->ctrl_sec * opts->ctrl.mpc_iters) {}
 
@@ -34,10 +39,10 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
 
   // Integral-esque pitche and roll compensation
   if (fabs(lvel[0]) > 0.02) {  // avoid dividing by zero
-    rpy_integral_[1] += 5 * opts_->ctrl_sec * (0./*des*/ - rpy[1]) / lvel[0];
+    rpy_integral_[1] += params::kXRpyDrag * opts_->ctrl_sec * (0. /*des*/ - rpy[1]) / lvel[0];
   }
   if (fabs(lvel[1]) > 0.01) {
-    rpy_integral_[0] += opts_->ctrl_sec * (0./*des*/ - rpy[0]) / lvel[1];
+    rpy_integral_[0] += params::kYRpyDrag * opts_->ctrl_sec * (0. /*des*/ - rpy[0]) / lvel[1];
   }
   rpy_integral_[0] = math::LimitV(rpy_integral_[0], .25, -.25);
   rpy_integral_[1] = math::LimitV(rpy_integral_[1], .25, -.25);
@@ -69,7 +74,7 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
 
   auto vx = lvel[0];
   if (vx > 0.3 || vx < -0.3) {
-    x_integral_ += opts_->ctrl.mpc_x_drag * (pos[2] - wbcdata.body_pos_des[2]) * dt_ / vx;
+    x_integral_ += params::kXPosDrag * (pos[2] - wbcdata.body_pos_des[2]) * dt_ / vx;
   }
 
   auto yc = std::cos(rpy[2]);
