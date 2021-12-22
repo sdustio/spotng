@@ -16,16 +16,22 @@ constexpr std::array<fpt_t, 5> const kGiatScale = {1., 0.8, 1.25, 0.6, 1.};
 DriveCtrlImpl::DriveCtrlImpl(Options::ConstSharedPtr const &opts) : opts_(opts) {}
 
 bool DriveCtrlImpl::CmdtoDesData() {
-  lvel_ = {twist_.lvel_x, twist_.lvel_y, 0};
+  lvel_ = {twist_.lvel_x, twist_.lvel_y, 0.};
 
-  avel_ = {0., 0, twist_.avel_z};
+  avel_ = {0., 0., twist_.avel_z};
 
   pos_ = {0., 0., pose_.height};
 
   rpy_ = {pose_.roll, pose_.pitch, pose_.yaw};
 
-  // TODO(Michael Ding) 根据 Drive Mode 进行参数修正。比如 自动档无视 state，
-  // state 和 move 是否冲突等等
+  if (mode_ == Mode::Auto) {
+    if (state_ == State::Locomotion && ZeroVel()) {
+      state_ = State::BalanceStand;
+    } else if (state_ == State::BalanceStand && !ZeroVel()) {
+      state_ = State::Locomotion;
+    }
+  }
+
   return true;
 }
 
@@ -70,6 +76,13 @@ bool DriveCtrlImpl::UpdateGait(Gait const &gait) {
 bool DriveCtrlImpl::UpdateStepHeight(fpt_t const height) {
   step_height_ = height;
   return true;
+}
+
+bool DriveCtrlImpl::ZeroVel() {
+  bool ret = true;
+  ret = ret && (ToConstEigenTp(avel_).norm() < 0.0001);
+  ret = ret && (ToConstEigenTp(lvel_).norm() < 0.0001);
+  return ret;
 }
 
 fpt_t DriveCtrlImpl::GetStepHeight() const { return step_height_; }

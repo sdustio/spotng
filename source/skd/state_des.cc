@@ -110,7 +110,6 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
       pfy_rel = math::LimitV(pfy_rel, params::kMaxFootPosRel, -params::kMaxFootPosRel);
       Pf[0] += pfx_rel;
       Pf[1] += pfy_rel;
-      // TODO(Michael) 估计俯仰角
       // Pf[2] = -0.01;
       Pf[2] = 0.0;
       foot_swing_trajs_[i].UpdateFinalPosition({Pf[0], Pf[1], Pf[2]});

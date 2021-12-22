@@ -27,6 +27,8 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f const &GetAvelDes() const override;
 
  private:
+  bool ZeroVel();
+
   Options::ConstSharedPtr const opts_;
   Twist twist_;
   Pose pose_;
