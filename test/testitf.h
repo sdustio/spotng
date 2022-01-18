@@ -43,7 +43,7 @@ class LegImpl : public interface::Leg {
  public:
   bool ReadTo(sensor::LegDatas &data) const override;
   bool WriteFrom(interface::LegCmds const &cmds) override;
-  bool RunOnce() override;  // return true if ok
+  bool RunOnce();  // return true if ok
 
  private:
   JointsData data_;
@@ -53,7 +53,7 @@ class LegImpl : public interface::Leg {
 class ImuImpl : public interface::Imu {
  public:
   bool ReadTo(sensor::ImuData &data) const override;
-  bool RunOnce() override;
+  bool RunOnce();
 
  private:
   sensor::ImuData imu_;

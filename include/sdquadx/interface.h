@@ -29,7 +29,6 @@ class SDQUADX_EXPORT Leg {
   virtual ~Leg() = default;
   virtual bool ReadTo(sensor::LegDatas &data) const = 0;
   virtual bool WriteFrom(LegCmds const &cmds) = 0;
-  virtual bool RunOnce() = 0;  // return true if ok
 };
 
 class SDQUADX_EXPORT Imu {
@@ -40,6 +39,5 @@ class SDQUADX_EXPORT Imu {
 
   virtual ~Imu() = default;
   virtual bool ReadTo(sensor::ImuData &data) const = 0;
-  virtual bool RunOnce() = 0;  // return true if ok
 };
 }  // namespace sdquadx::interface
