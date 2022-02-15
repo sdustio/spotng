@@ -201,7 +201,7 @@ bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg, Stat
   fpt_t l1 = opts_->model.link_length_abad;
   fpt_t l2 = opts_->model.link_length_hip;
   fpt_t l3 = opts_->model.link_length_knee;
-  fpt_t hx = opts_->model.location_abad_fl[0];
+  fpt_t hx = opts_->model.location_abad_fl[0] + opts_->model.location_hip_fl[0];
   fpt_t hy = opts_->model.location_abad_fl[1];
   fpt_t sign_fh = consts::model::kSignFH[leg];
   fpt_t sign_lr = consts::model::kSignLR[leg];

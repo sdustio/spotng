@@ -77,7 +77,7 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
       fpt_t sign_fh = consts::model::kSignFH[i];
       fpt_t sign_lr = consts::model::kSignLR[i];
 
-      fpt_t hx = opts_->model.location_abad_fl[0];
+      fpt_t hx = opts_->model.location_abad_fl[0] + opts_->model.location_hip_fl[0];
       fpt_t hy = opts_->model.location_abad_fl[1];
       fpt_t l1 = opts_->model.link_length_abad;
 

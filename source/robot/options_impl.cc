@@ -24,12 +24,12 @@ Model::Model()
       foot_offsetx(-0.03),
       foot_offsety(-0.02),
 
-      location_abad_fl({0.34, 0.066, 0.}),
-      location_hip_fl({0., 0.093, 0.}),
+      location_abad_fl({0.29, 0.066, 0.}),
+      location_hip_fl({0.05, 0.093, 0.}),
       location_knee_fl({0., 0., -0.284}),
 
       com_body({0., 0., 0.}),
-      com_abad_fl({0., 0.021, 0.}),
+      com_abad_fl({0.05, 0.021, 0.}),
       com_hip_fl({0., 0., -0.142}),
       com_knee_fl({0., 0., -0.142}),
 
