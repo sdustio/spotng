@@ -117,7 +117,7 @@ struct SDQUADX_EXPORT Options {
 
   logging::Level log_level;
   logging::Target log_target;
-  char const* log_filename;
+  char log_filename[128]; // max 128 bytes
   std::size_t log_max_file_size;
   std::size_t log_max_files;
 
