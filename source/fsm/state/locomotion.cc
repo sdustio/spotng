@@ -72,7 +72,7 @@ TransitionData StateLocomotion::Transition(const State next) {
 State StateLocomotion::CheckTransition() {
   if (!SafeCheck()) return State::RecoveryStand;
   auto next = state_trans_[drictrl_->GetState()];
-  if(!CanStand() && next == State::BalanceStand) next = GetState();
+  if (!CanStand() && next == State::BalanceStand) next = GetState();
   return next;
 }
 

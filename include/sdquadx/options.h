@@ -3,8 +3,8 @@
 #include <memory>
 
 #include "sdquadx/consts.h"
-#include "sdquadx/types.h"
 #include "sdquadx/logging.h"
+#include "sdquadx/types.h"
 
 namespace sdquadx {
 

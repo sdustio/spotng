@@ -97,7 +97,7 @@ Options::Options()
       log_level(logging::Level::Warn),
       log_target(logging::Target::Console),
       log_filename("log/sdquadx.log"),
-      log_max_file_size(1073741824), // 1GiB
+      log_max_file_size(1073741824),  // 1GiB
       log_max_files(3) {}
 
 }  // namespace sdquadx
