@@ -94,8 +94,10 @@ Options::Options()
       rfmu(0.4),
       rfmax(1500),
 
-      log_level("warn"),
-      log_target("console"),
-      log_filename("log/sdquadx.log") {}
+      log_level(logging::Level::Warn),
+      log_target(logging::Target::Console),
+      log_filename("log/sdquadx.log"),
+      log_max_file_size(1073741824), // 1GiB
+      log_max_files(3) {}
 
 }  // namespace sdquadx

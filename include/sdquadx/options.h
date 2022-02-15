@@ -4,6 +4,7 @@
 
 #include "sdquadx/consts.h"
 #include "sdquadx/types.h"
+#include "sdquadx/logging.h"
 
 namespace sdquadx {
 
@@ -114,11 +115,11 @@ struct SDQUADX_EXPORT Options {
   fpt_t rfmu;
   fpt_t rfmax;
 
-  // debug, info, warn, err, critical
-  char const* log_level;
-  // console, file
-  char const* log_target;
+  logging::Level log_level;
+  logging::Target log_target;
   char const* log_filename;
+  std::size_t log_max_file_size;
+  std::size_t log_max_files;
 
   options::Model model;
   options::Ctrl ctrl;

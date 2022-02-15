@@ -12,6 +12,7 @@
 #include "estimate/pos_vel.h"
 #include "fsm/impl.h"
 #include "model/quadruped_impl.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
@@ -50,19 +51,22 @@ bool RobotCtrlImpl::RunOnce() {
 
 bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   std::shared_ptr<spdlog::logger> logger;
-  std::string logt = opts->log_target;
-  if (logt == "console") {
-    logger = spdlog::stdout_color_mt("sdlogger");
-  } else if (logt == "file") {
-    logger = spdlog::rotating_logger_mt("sdlogger", opts->log_filename, 1073741824, 3);  // max size 1GiB
+  auto logt = opts->log_target;
+  if (logt == logging::Target::Console) {
+    logger = spdlog::stdout_color_mt("sdquadx");
+  } else if (logt == logging::Target::File) {
+    logger = spdlog::basic_logger_mt("sdquadx", opts->log_filename);
+  } else if (logt == logging::Target::RotateFile) {
+    logger = spdlog::rotating_logger_mt("sdquadx", opts->log_filename, opts->log_max_file_size, opts->log_max_files);
   }
 
-  std::unordered_map<std::string, spdlog::level::level_enum> loglevelmap = {{"debug", spdlog::level::debug},
-                                                                            {"info", spdlog::level::info},
-                                                                            {"warn", spdlog::level::warn},
-                                                                            {"err", spdlog::level::err},
-                                                                            {"critical", spdlog::level::critical}};
-  logger->set_level(loglevelmap[std::string(opts->log_level)]);
+  std::unordered_map<logging::Level, spdlog::level::level_enum> loglevelmap = {
+      {logging::Level::Debug, spdlog::level::debug},
+      {logging::Level::Info, spdlog::level::info},
+      {logging::Level::Warn, spdlog::level::warn},
+      {logging::Level::Err, spdlog::level::err},
+      {logging::Level::Critical, spdlog::level::critical}};
+  logger->set_level(loglevelmap[opts->log_level]);
 
   spdlog::set_default_logger(logger);
 
