@@ -32,7 +32,7 @@ bool OffsetDurationGait::SetCurrentIter(std::int64_t iter) {
 }
 
 bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
-  for (size_t i = 0; i < ret.size(); i++) {
+  for (std::size_t i = 0; i < ret.size(); i++) {
     if (progress_[i] > iters_d_[i]) {
       ret[i] = 0.;
     } else {
@@ -43,7 +43,7 @@ bool OffsetDurationGait::CalcStancePhase(SdVector4f &ret) const {
 }
 
 bool OffsetDurationGait::CalcSwingPhase(SdVector4f &ret) const {
-  for (size_t i = 0; i < ret.size(); i++) {
+  for (std::size_t i = 0; i < ret.size(); i++) {
     if (progress_[i] > iters_d_[i]) {
       ret[i] = (0.001 + progress_[i] - iters_d_[i]) / (0.001 + iters_p_ - iters_d_[i]);
     } else {

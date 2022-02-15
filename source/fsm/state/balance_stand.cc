@@ -78,7 +78,7 @@ bool StateBalanceStand::RunOnce() {
   wbc_data_.body_rpy_des = ini_body_rpy_;
 
   auto const &rpy_des = drictrl_->GetRpyDes();
-  for (size_t i = 0; i < rpy_des.size(); i++) wbc_data_.body_rpy_des[i] += rpy_des[i];
+  for (std::size_t i = 0; i < rpy_des.size(); i++) wbc_data_.body_rpy_des[i] += rpy_des[i];
   wbc_data_.body_rpy_des[0] =
       math::LimitV(wbc_data_.body_rpy_des[0], opts_->model.max_body_roll, -opts_->model.max_body_roll);
   wbc_data_.body_rpy_des[1] =

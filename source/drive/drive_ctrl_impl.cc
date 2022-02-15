@@ -40,7 +40,7 @@ bool DriveCtrlImpl::UpdateTwist(Twist const &twist) {
   math::InterpolateLinear(twist_.lvel_y, twist_.lvel_y, twist.lvel_y, params::kFilter);
   math::InterpolateLinear(twist_.avel_z, twist_.avel_z, twist.avel_z, params::kFilter);
 
-  auto gt = static_cast<size_t>(gait_);
+  auto gt = static_cast<std::size_t>(gait_);
 
   twist_.lvel_x = math::LimitV(twist_.lvel_x, (params::kGiatScale[gt] * opts_->ctrl.max_trot_lvel_x),
                                (params::kGiatScale[gt] * opts_->ctrl.min_trot_lvel_x));

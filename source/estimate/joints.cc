@@ -11,7 +11,7 @@ bool Joints::RunOnce(State &ret) {
     return false;
   }
 
-  for (size_t leg = 0; leg < consts::model::kNumLeg; leg++) {
+  for (std::size_t leg = 0; leg < consts::model::kNumLeg; leg++) {
     ret.q[leg] = legdatas_[leg].q;
     ret.qd[leg] = legdatas_[leg].qd;
   }
@@ -20,7 +20,7 @@ bool Joints::RunOnce(State &ret) {
 }
 bool Joints::InterfaceValid() {
   itf_->ReadTo(legdatas_);
-  for (size_t leg = 0; leg < consts::model::kNumLeg; leg++) {
+  for (std::size_t leg = 0; leg < consts::model::kNumLeg; leg++) {
     if (math::HasNaN(legdatas_[leg].q.cbegin(), legdatas_[leg].q.cend())) return false;
     if (math::HasNaN(legdatas_[leg].qd.cbegin(), legdatas_[leg].qd.cend())) return false;
   }
