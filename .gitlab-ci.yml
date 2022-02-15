@@ -1,4 +1,4 @@
-image: sd/sdquadx-build #gcc, cmake, eigen, qpOASES, eiquadprog, cpplint, cppcheck
+image: sd/sdquadx-build #gcc, cmake, eigen, spdlog, cpplint, cppcheck
 
 variables:
   CMAKE_BUILD: /build
