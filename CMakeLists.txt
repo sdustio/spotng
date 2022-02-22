@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 project(sdquadx
   LANGUAGES CXX
-  VERSION 2.0.0
+  VERSION 2.0.1
 )
 
 ### Project properties
