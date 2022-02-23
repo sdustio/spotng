@@ -25,8 +25,8 @@ cd $(pwd)/build-test && ctest
 ## Installation
 
 ```sh
-cmake -DCMAKE_INSTALL_PREFIX:STRING=$HOME/.local -H$(pwd) -B$(pwd)/build
-cmake --build $(pwd)/build --target install
+cmake -DCMAKE_INSTALL_PREFIX:STRING=$HOME/.local -H$(pwd) -B$(pwd)/build-release
+cmake --build $(pwd)/build-release --target install
 ```
 
 ## Usage

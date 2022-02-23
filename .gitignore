@@ -31,8 +31,7 @@
 *.out
 *.app
 
-build/
-build-test/
+build*/
 tmp/
 .vs/
 .vscode/
