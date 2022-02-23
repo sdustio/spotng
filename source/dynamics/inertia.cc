@@ -18,7 +18,7 @@ bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen
 
 bool BuildSpatialXform(Eigen::Ref<SpatialXform> ret, CoordinateAxis const axis, fpt_t const theta) {
   RotMat R;
-  CoordinateRot(R, axis, theta);
+  CoordinateRot(R, axis, -theta);
   ret.setZero();
   ret.topLeftCorner<3, 3>() = R;
   ret.bottomRightCorner<3, 3>() = R;

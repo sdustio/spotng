@@ -19,7 +19,7 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
   auto rpy = ToConstEigenTp(estdata.rpy);
 
   auto lvel_des_robot = ToConstEigenTp(drivectrl->GetLvelDes());
-  Vector3 lvel_des = rot_mat.transpose() * lvel_des_robot;
+  Vector3 lvel_des = rot_mat * lvel_des_robot;
 
   // avel_des_robot = [0, 0, wz]，所以 avel_des ~= avel_des_robot
   auto avel_des = ToConstEigenTp(drivectrl->GetAvelDes());
@@ -92,12 +92,12 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
 
       fpt_t stance_time = gait_skd->GetCurrentStanceTime(i);
       Matrix3 _rot;
-      dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, -avel_des[2] * stance_time / 2);
+      dynamics::CoordinateRot(_rot, dynamics::CoordinateAxis::Z, avel_des[2] * stance_time / 2);
 
-      Vector3 Pf = pos + rot_mat.transpose() * (lvel_des_robot * swing_time_remaining_[i] + _rot * pos_hip_robot);
+      Vector3 Pf = pos + rot_mat * (lvel_des_robot * swing_time_remaining_[i] + _rot * pos_hip_robot);
 
       // Using the estimated velocity is correct
-      // Vector3 lvel_des = estdata.rot_mat.transpose() * lvel_des_robot;
+      // Vector3 lvel_des = estdata.rot_mat * lvel_des_robot;
       fpt_t pfx_rel = lvel[0] * (.5 + opts_->ctrl.footskd_bonus_swing) * stance_time +
                       opts_->ctrl.footskd_vkp * (lvel[0] - lvel_des[0]) +
                       (0.5 * pos[2] / opts_->gravity) * (lvel[1] * avel_des[2]);

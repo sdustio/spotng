@@ -14,7 +14,7 @@ TaskBodyOri::TaskBodyOri(SdVector3f const &kp, SdVector3f const &kd) : Task(kp, 
 bool TaskBodyOri::UpdateTask(estimate::State const &estate, SdVector3f const &x_des, SdVector3f const &xd_des,
                              SdVector3f const &xdd_des) {
   Eigen::Map<Jt_t> Jt(Jt_.data());
-  Jt.block<3, 3>(0, 0) = ToConstEigenTp(estate.rot_mat).transpose();
+  Jt.block<3, 3>(0, 0) = ToConstEigenTp(estate.rot_mat);
 
   Vector4 ori_cmd;
   dynamics::RPYToQuat(ori_cmd, ToConstEigenTp(x_des));
@@ -34,7 +34,7 @@ bool TaskBodyOri::UpdateTask(estimate::State const &estate, SdVector3f const &x_
   // Configuration space: Local
   // Operational Space: Global
   Vector3 xd_err =
-      ToConstEigenTp(estate.rot_mat).transpose() * (ToConstEigenTp(xd_des_) - ToConstEigenTp(estate.avel_robot));
+      ToConstEigenTp(estate.rot_mat) * (ToConstEigenTp(xd_des_) - ToConstEigenTp(estate.avel_robot));
 
   for (int m = 0; m < 3; m++) {
     if (fabs(xd_err[m]) > 1000) {

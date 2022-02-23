@@ -13,7 +13,7 @@ TaskBodyPos::TaskBodyPos(SdVector3f const &kp, SdVector3f const &kd) : Task(kp, 
 bool TaskBodyPos::UpdateTask(estimate::State const &estate, SdVector3f const &x_des, SdVector3f const &xd_des,
                              SdVector3f const &xdd_des) {
   Eigen::Map<Jt_t> Jt(Jt_.data());
-  Jt.block<3, 3>(0, 3) = ToConstEigenTp(estate.rot_mat).transpose();
+  Jt.block<3, 3>(0, 3) = ToConstEigenTp(estate.rot_mat);
 
   for (int i = 0; i < 3; i++) {
     x_err_[i] = x_des[i] - estate.pos[i];

@@ -92,8 +92,6 @@ bool PosVel::RunOnce(State &ret) {
   int rindex1 = 0;
   int rindex2 = 0;
   int rindex3 = 0;
-  // 重力向量
-  Matrix3 Rbod = rot_mat.transpose();  // 机身到世界的变换矩阵
   // 输入量a 世界下
   Vector3 acc = ToConstEigenTp(ret.acc) + Vector3(0, 0, -opts_->gravity);
 
@@ -112,8 +110,8 @@ bool PosVel::RunOnce(State &ret) {
     auto p_f = ToEigenTp(ret.foot_pos[i]);
     auto pd_f = ToEigenTp(ret.foot_vel[i]);
 
-    p_f = Rbod * p_rel;  // 足端位置在世界坐标系描述 即方向 大小 没有位置
-    pd_f = Rbod * (ToConstEigenTp(ret.avel_robot).cross(p_rel) + pd_rel);
+    p_f = rot_mat * p_rel;  // 足端位置在世界坐标系描述 即方向 大小 没有位置
+    pd_f = rot_mat * (ToConstEigenTp(ret.avel_robot).cross(p_rel) + pd_rel);
 
     // 更新四条腿用索引
     int i1 = 3 * i;
@@ -186,7 +184,7 @@ bool PosVel::RunOnce(State &ret) {
   pos = xhat.block<3, 1>(0, 0);
   auto lvel = ToEigenTp(ret.lvel);
   lvel = xhat.block<3, 1>(3, 0);
-  ToEigenTp(ret.lvel_robot) = rot_mat * ToConstEigenTp(ret.lvel);
+  ToEigenTp(ret.lvel_robot) = rot_mat.transpose() * ToConstEigenTp(ret.lvel);
 
   // foot world pos and vel
   for (int i = 0; i < consts::model::kNumLeg; i++) {

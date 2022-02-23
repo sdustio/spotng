@@ -32,11 +32,11 @@ bool Orientation::RunOnce(State &ret) {
   dynamics::QuatToRotMat(ToEigenTp(ret.rot_mat), ori);  // 转旋转矩阵
   ret.avel_robot = imu_.gyro;                           // 得机体坐标角速度
 
-  ToEigenTp(ret.avel) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.avel_robot);  // 得世界坐标下角速度
+  ToEigenTp(ret.avel) = ToConstEigenTp(ret.rot_mat) * ToConstEigenTp(ret.avel_robot);  // 得世界坐标下角速度
 
   ret.acc_robot = imu_.acc;  // 得机体坐标加速度
 
-  ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat).transpose() * ToConstEigenTp(ret.acc_robot);  // 得世界坐标加速度
+  ToEigenTp(ret.acc) = ToConstEigenTp(ret.rot_mat) * ToConstEigenTp(ret.acc_robot);  // 得世界坐标加速度
 
   ret.success = true;
   return true;

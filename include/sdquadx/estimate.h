@@ -14,7 +14,7 @@ struct SDQUADX_EXPORT State {
   SdVector3f pos = {};
   SdVector3f rpy = {};
   SdVector4f ori = {};
-  SdMatrix3f rot_mat = {};
+  SdMatrix3f rot_mat = {};  // ^{World}R_{body}
   SdVector3f lvel_robot = {};
   SdVector3f lvel = {};
   SdVector3f avel_robot = {};

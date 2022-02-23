@@ -8,10 +8,10 @@
 namespace sdquadx::dynamics {
 /*!
  * Compute rotation matrix for coordinate transformation. Note that
- * CoordinateRot(CoordinateAxis:X, .1) * v will rotate v by -.1 radians -
+ * CoordinateRot(CoordinateAxis:X, .1) * v will rotate v by .1 radians -
  * this transforms into a frame rotated by .1 radians!.
  * 计算坐标变换的旋转矩阵。请注意,
- * 坐标(坐标轴:X， .1) * v将v旋转-。1弧度-
+ * 坐标(坐标轴:X， .1) * v将v旋转 .1弧度-
  * 转换成一个旋转了1弧度的帧!
  */
 bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t const theta) {
@@ -19,11 +19,11 @@ bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t cons
   fpt_t c = std::cos(theta);
 
   if (axis == CoordinateAxis::X) {
-    ret << 1, 0, 0, 0, c, s, 0, -s, c;
+    ret << 1, 0, 0, 0, c, -s, 0, s, c;
   } else if (axis == CoordinateAxis::Y) {
-    ret << c, 0, -s, 0, 1, 0, s, 0, c;
+    ret << c, 0, s, 0, 1, 0, -s, 0, c;
   } else if (axis == CoordinateAxis::Z) {
-    ret << c, s, 0, -s, c, 0, 0, 0, 1;
+    ret << c, -s, 0, s, c, 0, 0, 0, 1;
   }
   return true;
 }
@@ -32,15 +32,11 @@ bool CoordinateRot(Eigen::Ref<RotMat> ret, CoordinateAxis const axis, fpt_t cons
  * Go from rpy to rotation matrix.从欧拉角转矩阵
  */
 bool RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v) {
-  // ret = CoordinateRot(CoordinateAxis::X, v[0]) *
-  //       CoordinateRot(CoordinateAxis::Y, v[1]) *
-  //       CoordinateRot(CoordinateAxis::Z, v[2]);
-
-  CoordinateRot(ret, CoordinateAxis::X, v[0]);
+  CoordinateRot(ret, CoordinateAxis::Z, v[2]);
   RotMat tmp;
   CoordinateRot(tmp, CoordinateAxis::Y, v[1]);
   ret = ret * tmp;
-  CoordinateRot(tmp, CoordinateAxis::Z, v[2]);
+  CoordinateRot(tmp, CoordinateAxis::X, v[0]);
   ret = ret * tmp;
   return true;
 }
@@ -50,31 +46,30 @@ bool RPYToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Vector3 const> const &v) {
  * 将坐标变换矩阵转换为方向四元数
  */
 bool RotMatToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<RotMat const> const &r1) {
-  RotMat r = r1.transpose();
-  fpt_t tr = r.trace();
+  fpt_t tr = r1.trace();
   if (tr > 0.0) {
     fpt_t S = sqrt(tr + 1.0) * 2.0;
     ret(0) = 0.25 * S;
-    ret(1) = (r(2, 1) - r(1, 2)) / S;
-    ret(2) = (r(0, 2) - r(2, 0)) / S;
-    ret(3) = (r(1, 0) - r(0, 1)) / S;
-  } else if ((r(0, 0) > r(1, 1)) && (r(0, 0) > r(2, 2))) {
-    fpt_t S = sqrt(1.0 + r(0, 0) - r(1, 1) - r(2, 2)) * 2.0;
-    ret(0) = (r(2, 1) - r(1, 2)) / S;
+    ret(1) = (r1(2, 1) - r1(1, 2)) / S;
+    ret(2) = (r1(0, 2) - r1(2, 0)) / S;
+    ret(3) = (r1(1, 0) - r1(0, 1)) / S;
+  } else if ((r1(0, 0) > r1(1, 1)) && (r1(0, 0) > r1(2, 2))) {
+    fpt_t S = sqrt(1.0 + r1(0, 0) - r1(1, 1) - r1(2, 2)) * 2.0;
+    ret(0) = (r1(2, 1) - r1(1, 2)) / S;
     ret(1) = 0.25 * S;
-    ret(2) = (r(0, 1) + r(1, 0)) / S;
-    ret(3) = (r(0, 2) + r(2, 0)) / S;
-  } else if (r(1, 1) > r(2, 2)) {
-    fpt_t S = sqrt(1.0 + r(1, 1) - r(0, 0) - r(2, 2)) * 2.0;
-    ret(0) = (r(0, 2) - r(2, 0)) / S;
-    ret(1) = (r(0, 1) + r(1, 0)) / S;
+    ret(2) = (r1(0, 1) + r1(1, 0)) / S;
+    ret(3) = (r1(0, 2) + r1(2, 0)) / S;
+  } else if (r1(1, 1) > r1(2, 2)) {
+    fpt_t S = sqrt(1.0 + r1(1, 1) - r1(0, 0) - r1(2, 2)) * 2.0;
+    ret(0) = (r1(0, 2) - r1(2, 0)) / S;
+    ret(1) = (r1(0, 1) + r1(1, 0)) / S;
     ret(2) = 0.25 * S;
-    ret(3) = (r(1, 2) + r(2, 1)) / S;
+    ret(3) = (r1(1, 2) + r1(2, 1)) / S;
   } else {
-    fpt_t S = sqrt(1.0 + r(2, 2) - r(0, 0) - r(1, 1)) * 2.0;
-    ret(0) = (r(1, 0) - r(0, 1)) / S;
-    ret(1) = (r(0, 2) + r(2, 0)) / S;
-    ret(2) = (r(1, 2) + r(2, 1)) / S;
+    fpt_t S = sqrt(1.0 + r1(2, 2) - r1(0, 0) - r1(1, 1)) * 2.0;
+    ret(0) = (r1(1, 0) - r1(0, 1)) / S;
+    ret(1) = (r1(0, 2) + r1(2, 0)) / S;
+    ret(2) = (r1(1, 2) + r1(2, 1)) / S;
     ret(3) = 0.25 * S;
   }
   return true;
@@ -96,7 +91,6 @@ bool QuatToRotMat(Eigen::Ref<RotMat> ret, Eigen::Ref<Quat const> const &q) {
   ret << 1 - 2 * (e2 * e2 + e3 * e3), 2 * (e1 * e2 - e0 * e3), 2 * (e1 * e3 + e0 * e2), 2 * (e1 * e2 + e0 * e3),
       1 - 2 * (e1 * e1 + e3 * e3), 2 * (e2 * e3 - e0 * e1), 2 * (e1 * e3 - e0 * e2), 2 * (e2 * e3 + e0 * e1),
       1 - 2 * (e1 * e1 + e2 * e2);
-  ret.transposeInPlace();
   return true;
 }
 
