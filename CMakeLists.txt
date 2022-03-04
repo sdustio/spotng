@@ -74,7 +74,7 @@ target_sources(${PROJECT_NAME} PRIVATE
   source/robot/options_impl.cc
 )
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE Eigen3::Eigen spdlog::spdlog qpOASES eiquadprog
+  PRIVATE Eigen3::Eigen spdlog::spdlog_header_only qpOASES eiquadprog
 )
 
 include(GenerateExportHeader)
