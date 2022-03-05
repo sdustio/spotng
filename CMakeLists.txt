@@ -176,6 +176,10 @@ install(
 endif(BUILD_SHARED_LIBS)
 
 if(SDQUADX_BUILD_TESTS)
+  find_program(MEMORYCHECK_COMMAND NAMES valgrind)
+  set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
+  include (CTest)
+
   enable_testing()
 
   function(sdquadx_test test_file)
@@ -196,7 +200,12 @@ if(SDQUADX_BUILD_TESTS)
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
   endfunction(sdquadx_test)
 
-  sdquadx_test(test/example1_test.cc)
-  sdquadx_test(test/dynamics_rotation_test.cc)
+  set(TEST_FILES
+    test/example1_test.cc
+    test/dynamics_rotation_test.cc
+  )
+  foreach(ELEMENT ${TEST_FILES})
+    sdquadx_test(${ELEMENT})
+  endforeach(ELEMENT ${TEST_FILES})
 
 endif(SDQUADX_BUILD_TESTS)

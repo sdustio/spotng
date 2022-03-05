@@ -19,7 +19,9 @@ cmake -DSDQUADX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -
 cmake --build $(pwd)/build-test --target all
 cpplint --quiet --recursive $(pwd)/source
 cppcheck --std=c++17 --quiet --enable=performance,portability $(pwd)/source
-cd $(pwd)/build-test && ctest
+cd $(pwd)/build-test
+ctest
+ctest -T memcheck
 ```
 
 ## Installation
