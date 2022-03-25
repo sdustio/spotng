@@ -11,12 +11,12 @@ option(QPOASES_AVOID_LA_NAMING_CONFLICTS "If ON, avoid to re-defined symbols tha
 ############################################################
 
 # compile qpOASES libraries
-file(GLOB SRC repo/src/*.cpp)
+file(GLOB SRC qpOASES/src/*.cpp)
 
 # library
 add_library(qpOASES STATIC ${SRC})
 target_include_directories(qpOASES PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/repo/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qpOASES/include>
 )
 target_compile_definitions(qpOASES PRIVATE
   __NO_COPYRIGHT__

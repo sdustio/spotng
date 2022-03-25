@@ -8,8 +8,8 @@ option(EIQUAD_TRACE_SOLVER "trace solver on stderr" OFF)
 
 # Main Library
 add_library(${PROJECT_NAME} STATIC
-  repo/src/eiquadprog-fast.cpp
-  repo/src/eiquadprog.cpp
+  eiquadprog/src/eiquadprog-fast.cpp
+  eiquadprog/src/eiquadprog.cpp
 )
 
 if(EIQUAD_TRACE_SOLVER)
@@ -17,7 +17,7 @@ if(EIQUAD_TRACE_SOLVER)
 endif(EIQUAD_TRACE_SOLVER)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/repo/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/eiquadprog/include>
 )
 if(BUILD_SHARED_LIBS)
   set_target_properties(${PROJECT_NAME}

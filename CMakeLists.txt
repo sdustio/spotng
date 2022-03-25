@@ -35,8 +35,7 @@ endif(SDQUADX_BUILD_TESTS)
 find_package(Eigen3 REQUIRED)
 find_package(spdlog REQUIRED)
 
-add_subdirectory(third_party/eiquadprog)
-add_subdirectory(third_party/qpOASES)
+add_subdirectory(third_party)
 
 add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE

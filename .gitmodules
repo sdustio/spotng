@@ -1,6 +1,6 @@
-[submodule "eiquadprog"]
-	path = third_party/eiquadprog/repo
-	url = git@gitlab.sdust-tech.com:opensource/eiquadprog.git
-[submodule "qpOASES"]
-	path = third_party/qpOASES/repo
+[submodule "third_party/qpOASES"]
+	path = third_party/qpOASES
 	url = git@gitlab.sdust-tech.com:opensource/qpoases.git
+[submodule "third_party/eiquadprog"]
+	path = third_party/eiquadprog
+	url = git@gitlab.sdust-tech.com:opensource/eiquadprog.git
