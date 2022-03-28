@@ -1,9 +1,3 @@
-cmake_minimum_required(VERSION 3.15)
-project(qpOASES
-  LANGUAGES CXX
-  VERSION 3.2.1
-  )
-
 option(QPOASES_AVOID_LA_NAMING_CONFLICTS "If ON, avoid to re-defined symbols that conflict with Blas/Lapack provided functions." OFF)
 
 ############################################################
@@ -36,7 +30,7 @@ elseif(WIN32)
 endif(UNIX)
 
 if(BUILD_SHARED_LIBS)
-  set_target_properties(${PROJECT_NAME}
+  set_target_properties(qpOASES
     PROPERTIES
       POSITION_INDEPENDENT_CODE ON
   )
