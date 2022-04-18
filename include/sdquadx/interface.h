@@ -18,7 +18,7 @@ struct SDQUADX_EXPORT LegCmd {
   SdVector3f kd = {};
 };
 
-using LegCmds = std::array<interface::LegCmd, consts::model::kNumLeg>;
+using LegCmds = std::array<LegCmd, consts::model::kNumLeg>;
 
 class SDQUADX_EXPORT Leg {
  public:
