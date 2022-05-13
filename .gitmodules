@@ -1,6 +1,6 @@
 [submodule "third_party/qpOASES"]
 	path = third_party/qpOASES
-	url = https://gitee.com/sdustio/qpOASES.git
+	url = https://github.com/sdustio/qpOASES.git
 [submodule "third_party/eiquadprog"]
 	path = third_party/eiquadprog
-	url = https://gitee.com/sdustio/eiquadprog.git
+	url = https://github.com/sdustio/eiquadprog.git
