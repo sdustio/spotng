@@ -3,7 +3,7 @@
 #include "dynamics/rotation.h"
 #include "math/utils.h"
 
-namespace sdquadx::skd {
+namespace sdengine::skd {
 
 namespace params {
 constexpr fpt_t const kMaxFootPosRel = 0.35;
@@ -127,4 +127,4 @@ bool StateDes::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata,
 
   return true;
 }
-}  // namespace sdquadx::skd
+}  // namespace sdengine::skd

@@ -5,11 +5,11 @@
 
 #include "estimate/contact.h"
 #include "fsm/legctrl.h"
-#include "sdquadx/fsm.h"
-#include "sdquadx/model.h"
+#include "sdengine/fsm.h"
+#include "sdengine/model.h"
 #include "wbc/wbc.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 class StateBalanceStand : public StateCtrl {
  public:
   StateBalanceStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -44,4 +44,4 @@ class StateBalanceStand : public StateCtrl {
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

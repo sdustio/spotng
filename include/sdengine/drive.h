@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sdquadx/options.h"
+#include "sdengine/options.h"
 
-namespace sdquadx::drive {
+namespace sdengine::drive {
 
 enum class Mode : uint8_t { Auto, Manual };
 
@@ -12,7 +12,7 @@ enum class State : uint8_t { Init, RecoveryStand, Locomotion, BalanceStand };
 
 enum class Gait : uint8_t { Trot, SlowTrot, FlyingTrot, Walk, Bound };
 
-struct SDQUADX_EXPORT Twist {
+struct SDENGINE_EXPORT Twist {
   fpt_t lvel_x = 0.;
   fpt_t lvel_y = 0.;
   fpt_t lvel_z = 0.;  // [reserved, unused]
@@ -21,14 +21,14 @@ struct SDQUADX_EXPORT Twist {
   fpt_t avel_z = 0.;  // yaw vel
 };
 
-struct SDQUADX_EXPORT Pose {
+struct SDENGINE_EXPORT Pose {
   fpt_t roll = 0.;    // roll
   fpt_t pitch = 0.;   // pitch
   fpt_t yaw = 0.;     // yaw
   fpt_t height = 0.;  // height
 };
 
-class SDQUADX_EXPORT DriveCtrl {
+class SDENGINE_EXPORT DriveCtrl {
  public:
   using Ptr = std::unique_ptr<DriveCtrl>;
   using SharedPtr = std::shared_ptr<DriveCtrl>;
@@ -55,4 +55,4 @@ class SDQUADX_EXPORT DriveCtrl {
   virtual SdVector3f const &GetAvelDes() const = 0;
 };
 
-}  // namespace sdquadx::drive
+}  // namespace sdengine::drive

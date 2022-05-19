@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include "sdquadx/consts.h"
+#include "sdengine/consts.h"
 
-namespace sdquadx::math {
+namespace sdengine::math {
 
 bool illegal_coeft(fpt_t t) { return t < consts::math::kZeroEpsilon || t > 1. - consts::math::kZeroEpsilon; }
 
@@ -109,4 +109,4 @@ bool InterpolateCubicBezierSecondDerivative(Eigen::Ref<VectorX> ret, Eigen::Ref<
   return true;
 }
 
-}  // namespace sdquadx::math
+}  // namespace sdengine::math

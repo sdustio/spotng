@@ -9,7 +9,7 @@
 #include "skd/od_gait.h"
 #include "unsupported/Eigen/MatrixFunctions"
 
-namespace sdquadx::mpc {
+namespace sdengine::mpc {
 namespace params {
 constexpr fpt_t const kXPosDrag = 3.;
 constexpr fpt_t const kXRpyDrag = 5.;
@@ -162,4 +162,4 @@ bool CMpc::RunOnce(wbc::InData &wbcdata, estimate::State const &estdata, skd::Pr
   return true;
 }
 
-}  // namespace sdquadx::mpc
+}  // namespace sdengine::mpc

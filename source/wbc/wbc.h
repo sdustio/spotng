@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/model.h"
-#include "sdquadx/types.h"
+#include "sdengine/consts.h"
+#include "sdengine/estimate.h"
+#include "sdengine/interface.h"
+#include "sdengine/model.h"
+#include "sdengine/types.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 using SdVector12f = std::array<fpt_t, consts::model::kNumJoint>;
 using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
@@ -38,4 +38,4 @@ class Wbc {
   virtual bool RunOnce(interface::LegCmds &, InData const &, estimate::State const &) = 0;
 };
 
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

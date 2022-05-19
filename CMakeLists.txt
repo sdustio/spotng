@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(sdquadx
+project(sdengine
   LANGUAGES CXX
   VERSION 2.0.1
 )
 
 ### Project properties
 set(PACKAGE_ORG sd)
-set(PACKAGE_DESCRIPTION "sdquadx lib")
+set(PACKAGE_DESCRIPTION "sdengine lib")
 set(TARGET_NAME ${PROJECT_NAME}Targets)
 
 ### C
@@ -24,11 +24,11 @@ message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
 option(BUILD_SHARED_LIBS "Build shared libs." ON)
-option(SDQUADX_BUILD_TESTS "Build tests." OFF)
-if(SDQUADX_BUILD_TESTS)
+option(SDENGINE_BUILD_TESTS "Build tests." OFF)
+if(SDENGINE_BUILD_TESTS)
   set(BUILD_SHARED_LIBS OFF)
   message(STATUS "force building static libs when build tests")
-endif(SDQUADX_BUILD_TESTS)
+endif(SDENGINE_BUILD_TESTS)
 
 
 #### Library
@@ -174,14 +174,14 @@ install(
 )
 endif(BUILD_SHARED_LIBS)
 
-if(SDQUADX_BUILD_TESTS)
+if(SDENGINE_BUILD_TESTS)
   find_program(MEMORYCHECK_COMMAND NAMES valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
   include (CTest)
 
   enable_testing()
 
-  function(sdquadx_test test_file)
+  function(sdengine_test test_file)
     get_filename_component(test_target_name ${test_file} NAME_WE)
 
     add_executable(${test_target_name})
@@ -197,14 +197,14 @@ if(SDQUADX_BUILD_TESTS)
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
     )
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
-  endfunction(sdquadx_test)
+  endfunction(sdengine_test)
 
   set(TEST_FILES
     test/example1_test.cc
     test/dynamics_rotation_test.cc
   )
   foreach(ELEMENT ${TEST_FILES})
-    sdquadx_test(${ELEMENT})
+    sdengine_test(${ELEMENT})
   endforeach(ELEMENT ${TEST_FILES})
 
-endif(SDQUADX_BUILD_TESTS)
+endif(SDENGINE_BUILD_TESTS)

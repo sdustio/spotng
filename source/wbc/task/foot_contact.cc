@@ -2,7 +2,7 @@
 
 #include "utils/eigen.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 
 TaskFootContact::TaskFootContact(model::Quadruped::ConstSharedPtr const &quad, int leg)
     : Task({}, {}), mquad_(quad), leg_(leg) {}
@@ -18,4 +18,4 @@ bool TaskFootContact::UpdateTask([[maybe_unused]] estimate::State const &estate,
 
   return true;
 }
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

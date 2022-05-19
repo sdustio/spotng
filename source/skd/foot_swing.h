@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdquadx/types.h"
+#include "sdengine/types.h"
 
-namespace sdquadx::skd {
+namespace sdengine::skd {
 class FootSwingTrajectory {
  public:
   FootSwingTrajectory();
@@ -64,4 +64,4 @@ class FootSwingTrajectory {
   SdVector3f p0_, pf_, p_, v_, a_;
   fpt_t height_ = 0;
 };
-}  // namespace sdquadx::skd
+}  // namespace sdengine::skd

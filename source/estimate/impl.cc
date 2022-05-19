@@ -10,7 +10,7 @@
 #include "utils/debug.h"
 #endif
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 bool EstimateCtrlImpl::AddEstimator(std::string const &name, Estimator::SharedPtr const &est) {
   if (ests_map_.find(name) != ests_map_.end()) return false;
   ests_.push_back(est);
@@ -63,4 +63,4 @@ bool EstimateCtrlImpl::RemoveAllEstimators() {
   ests_map_.clear();
   return true;
 }
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

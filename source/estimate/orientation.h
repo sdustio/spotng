@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sdquadx/estimate.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/sensor.h"
+#include "sdengine/estimate.h"
+#include "sdengine/interface.h"
+#include "sdengine/sensor.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -25,4 +25,4 @@ class Orientation : public Estimator {
   sensor::ImuData imu_;
 };
 
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

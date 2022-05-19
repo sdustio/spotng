@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <memory>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/sensor.h"
-#include "sdquadx/types.h"
+#include "sdengine/consts.h"
+#include "sdengine/sensor.h"
+#include "sdengine/types.h"
 
-namespace sdquadx::interface {
+namespace sdengine::interface {
 
-struct SDQUADX_EXPORT LegCmd {
+struct SDENGINE_EXPORT LegCmd {
   SdVector3f tau = {};
   SdVector3f q_des = {};
   SdVector3f qd_des = {};
@@ -20,7 +20,7 @@ struct SDQUADX_EXPORT LegCmd {
 
 using LegCmds = std::array<LegCmd, consts::model::kNumLeg>;
 
-class SDQUADX_EXPORT Leg {
+class SDENGINE_EXPORT Leg {
  public:
   using Ptr = std::unique_ptr<Leg>;
   using SharedPtr = std::shared_ptr<Leg>;
@@ -31,7 +31,7 @@ class SDQUADX_EXPORT Leg {
   virtual bool WriteFrom(LegCmds const &cmds) = 0;
 };
 
-class SDQUADX_EXPORT Imu {
+class SDENGINE_EXPORT Imu {
  public:
   using Ptr = std::unique_ptr<Imu>;
   using SharedPtr = std::shared_ptr<Imu>;
@@ -40,4 +40,4 @@ class SDQUADX_EXPORT Imu {
   virtual ~Imu() = default;
   virtual bool ReadTo(sensor::ImuData &data) const = 0;
 };
-}  // namespace sdquadx::interface
+}  // namespace sdengine::interface

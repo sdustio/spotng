@@ -2,7 +2,7 @@
 
 #include "dynamics/types.h"
 
-namespace sdquadx::dynamics {
+namespace sdengine::dynamics {
 
 /*!
  * Compute rotation matrix for coordinate transformation. Note that
@@ -87,4 +87,4 @@ bool QuatToSO3(Eigen::Ref<Vector3> ret, Eigen::Ref<Quat const> const &q);
 
 bool SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3);
 
-}  // namespace sdquadx::dynamics
+}  // namespace sdengine::dynamics

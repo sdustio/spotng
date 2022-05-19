@@ -3,18 +3,18 @@
 #include <array>
 #include <memory>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/options.h"
-#include "sdquadx/types.h"
+#include "sdengine/consts.h"
+#include "sdengine/estimate.h"
+#include "sdengine/options.h"
+#include "sdengine/types.h"
 
-namespace sdquadx::model {
+namespace sdengine::model {
 
 using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
 using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
 using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
-struct SDQUADX_EXPORT DynamicsData {
+struct SDENGINE_EXPORT DynamicsData {
   MassMatTp M;
   GeneralFTp Cc;
   GeneralFTp Cg;
@@ -26,7 +26,7 @@ struct SDQUADX_EXPORT DynamicsData {
   void Zero();
 };
 
-class SDQUADX_EXPORT Quadruped {
+class SDENGINE_EXPORT Quadruped {
  public:
   using Ptr = std::unique_ptr<Quadruped>;
   using SharedPtr = std::shared_ptr<Quadruped>;
@@ -37,4 +37,4 @@ class SDQUADX_EXPORT Quadruped {
   virtual bool UpdateDynamics(estimate::State const &estdata) = 0;
   virtual DynamicsData const &GetDynamicsData() const = 0;
 };
-}  // namespace sdquadx::model
+}  // namespace sdengine::model

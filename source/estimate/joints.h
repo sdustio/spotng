@@ -2,12 +2,12 @@
 
 #include <array>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/sensor.h"
+#include "sdengine/consts.h"
+#include "sdengine/estimate.h"
+#include "sdengine/interface.h"
+#include "sdengine/sensor.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -26,4 +26,4 @@ class Joints : public Estimator {
   sensor::LegDatas legdatas_;
 };
 
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

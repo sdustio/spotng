@@ -4,14 +4,14 @@
 
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
-#include "sdquadx/consts.h"
+#include "sdengine/consts.h"
 #include "spdlog/spdlog.h"
 
 #ifdef DEBUG_MODE
 #include "utils/debug.h"
 #endif
 
-namespace sdquadx::model {
+namespace sdengine::model {
 
 namespace {
 /*!
@@ -173,4 +173,4 @@ void DynamicsData::Zero() {
     Jcdqd[i].fill(0);
   }
 }
-}  // namespace sdquadx::model
+}  // namespace sdengine::model

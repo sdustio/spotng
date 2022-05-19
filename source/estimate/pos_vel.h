@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sdquadx/estimate.h"
-#include "sdquadx/options.h"
+#include "sdengine/estimate.h"
+#include "sdengine/options.h"
 #include "utils/eigen.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 class PosVel : public Estimator {
  public:
   explicit PosVel(Options::ConstSharedPtr const &opts);
@@ -33,4 +33,4 @@ class PosVel : public Estimator {
   std::array<fpt_t, 18 * 3> B_;    // 输入阵
   std::array<fpt_t, 28 * 18> C_;   // 观测阵
 };
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

@@ -4,7 +4,7 @@
 
 #include "skd/gait.h"
 
-namespace sdquadx::skd {
+namespace sdengine::skd {
 using SdVector4i = std::array<int, consts::model::kNumLeg>;
 
 class OffsetDurationGait : public Gait {
@@ -33,4 +33,4 @@ class OffsetDurationGait : public Gait {
   SdVector4i progress_;
   PredStanceVector stance_states_ = {};
 };
-}  // namespace sdquadx::skd
+}  // namespace sdengine::skd

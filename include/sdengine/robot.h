@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "sdquadx/drive.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/model.h"
-#include "sdquadx/options.h"
+#include "sdengine/drive.h"
+#include "sdengine/estimate.h"
+#include "sdengine/interface.h"
+#include "sdengine/model.h"
+#include "sdengine/options.h"
 
-namespace sdquadx {
-class SDQUADX_EXPORT RobotCtrl {
+namespace sdengine {
+class SDENGINE_EXPORT RobotCtrl {
  public:
   using Ptr = std::unique_ptr<RobotCtrl>;
   using SharedPtr = std::shared_ptr<RobotCtrl>;
@@ -29,4 +29,4 @@ class SDQUADX_EXPORT RobotCtrl {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace sdquadx
+}  // namespace sdengine

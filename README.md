@@ -1,4 +1,4 @@
-# sdquadx
+# sdengine
 
 
 ## Conventions
@@ -15,7 +15,7 @@ Use ZYX, which means `RPY` will rotated in order of Yaw Pitch Roll
 ## Run Test
 
 ```sh
-cmake -DSDQUADX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -B$(pwd)/build-test
+cmake -DSDENGINE_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -B$(pwd)/build-test
 cmake --build $(pwd)/build-test --target all
 cpplint --quiet --recursive $(pwd)/source
 cppcheck --std=c++17 --quiet --enable=performance,portability $(pwd)/source

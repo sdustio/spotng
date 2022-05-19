@@ -2,7 +2,7 @@
 
 #include "utils/eigen.h"
 
-namespace sdquadx::math {
+namespace sdengine::math {
 
 /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
@@ -22,4 +22,4 @@ bool MatToSkewVec(Eigen::Ref<Vector3> ret, Eigen::Ref<Matrix3 const> const &m);
  * @param sigmaThreshold : threshold for singular values being zero
  */
 bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inmat, fpt_t sigma_threshold);
-}  // namespace sdquadx::math
+}  // namespace sdengine::math

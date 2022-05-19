@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 
-#include "sdquadx/interface.h"
+#include "sdengine/interface.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 class LegCtrl {
  public:
   using Ptr = std::unique_ptr<LegCtrl>;
@@ -19,4 +19,4 @@ class LegCtrl {
   interface::Leg::SharedPtr const itf_;
 };
 
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

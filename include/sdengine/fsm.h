@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdquadx/drive.h"
+#include "sdengine/drive.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 /**
  * Enumerate all of the operating modes
  */
-enum class SDQUADX_EXPORT OperatingMode : uint8_t {
+enum class SDENGINE_EXPORT OperatingMode : uint8_t {
   Normal,
   Transitioning,
   EStop,
@@ -16,12 +16,12 @@ enum class SDQUADX_EXPORT OperatingMode : uint8_t {
 
 using State = drive::State;
 
-struct SDQUADX_EXPORT TransitionData {
+struct SDENGINE_EXPORT TransitionData {
   // Flag to mark when transition is done
   bool done = false;
 };
 
-class SDQUADX_EXPORT StateCtrl {
+class SDENGINE_EXPORT StateCtrl {
  public:
   using Ptr = std::unique_ptr<StateCtrl>;
   using SharedPtr = std::shared_ptr<StateCtrl>;
@@ -48,7 +48,7 @@ class SDQUADX_EXPORT StateCtrl {
   virtual State GetState() const = 0;
 };
 
-class SDQUADX_EXPORT FiniteStateMachine {
+class SDENGINE_EXPORT FiniteStateMachine {
  public:
   using Ptr = std::unique_ptr<FiniteStateMachine>;
   using SharedPtr = std::shared_ptr<FiniteStateMachine>;
@@ -65,4 +65,4 @@ class SDQUADX_EXPORT FiniteStateMachine {
    */
   virtual bool RunOnce() = 0;
 };
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

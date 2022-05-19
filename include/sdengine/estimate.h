@@ -4,12 +4,12 @@
 #include <memory>
 #include <string>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/types.h"
+#include "sdengine/consts.h"
+#include "sdengine/types.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 
-struct SDQUADX_EXPORT State {
+struct SDENGINE_EXPORT State {
   SdVector4f contact = {};
   SdVector3f pos = {};
   SdVector3f rpy = {};
@@ -30,7 +30,7 @@ struct SDQUADX_EXPORT State {
   bool success = false;
 };
 
-class SDQUADX_EXPORT Estimator {
+class SDENGINE_EXPORT Estimator {
  public:
   using Ptr = std::unique_ptr<Estimator>;
   using SharedPtr = std::shared_ptr<Estimator>;
@@ -40,7 +40,7 @@ class SDQUADX_EXPORT Estimator {
   virtual bool RunOnce(State &ret) = 0;
 };
 
-class SDQUADX_EXPORT EstimateCtrl {
+class SDENGINE_EXPORT EstimateCtrl {
  public:
   using Ptr = std::unique_ptr<EstimateCtrl>;
   using SharedPtr = std::shared_ptr<EstimateCtrl>;
@@ -57,4 +57,4 @@ class SDQUADX_EXPORT EstimateCtrl {
 
   virtual State const &GetEstState() const = 0;
 };
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

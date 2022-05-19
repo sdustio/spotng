@@ -2,7 +2,7 @@
 
 #include "dynamics/rotation.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 using Jt_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
 
 TaskBodyPos::TaskBodyPos(SdVector3f const &kp, SdVector3f const &kd) : Task(kp, kd) {
@@ -24,4 +24,4 @@ bool TaskBodyPos::UpdateTask(estimate::State const &estate, SdVector3f const &x_
   return true;
 }
 
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

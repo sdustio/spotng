@@ -7,7 +7,7 @@
 #include "utils/debug.h"
 #endif
 
-namespace sdquadx::skd {
+namespace sdengine::skd {
 FootSwingTrajectory::FootSwingTrajectory() {
   p0_.fill(0.);
   pf_.fill(0.);
@@ -57,4 +57,4 @@ bool FootSwingTrajectory::ComputeSwingTrajectoryBezier(fpt_t const phase, fpt_t 
 
   return true;
 }
-}  // namespace sdquadx::skd
+}  // namespace sdengine::skd

@@ -2,15 +2,15 @@
 
 #include <memory>
 
-#include "sdquadx/consts.h"
-#include "sdquadx/logging.h"
-#include "sdquadx/types.h"
+#include "sdengine/consts.h"
+#include "sdengine/logging.h"
+#include "sdengine/types.h"
 
-namespace sdquadx {
+namespace sdengine {
 
 namespace options {
 
-struct SDQUADX_EXPORT Model {
+struct SDENGINE_EXPORT Model {
   Model();
 
   fpt_t body_length;
@@ -53,7 +53,7 @@ struct SDQUADX_EXPORT Model {
   fpt_t max_body_yaw;
 };
 
-struct SDQUADX_EXPORT Ctrl {
+struct SDENGINE_EXPORT Ctrl {
   Ctrl();
 
   int mpc_iters;
@@ -88,7 +88,7 @@ struct SDQUADX_EXPORT Ctrl {
   fpt_t max_trot_avel_z;
 };
 
-struct SDQUADX_EXPORT Estimate {
+struct SDENGINE_EXPORT Estimate {
   Estimate();
 
   fpt_t process_noise_pimu;
@@ -101,7 +101,7 @@ struct SDQUADX_EXPORT Estimate {
 
 }  // namespace options
 
-struct SDQUADX_EXPORT Options {
+struct SDENGINE_EXPORT Options {
   using Ptr = std::unique_ptr<Options>;
   using SharedPtr = std::shared_ptr<Options>;
   using ConstSharedPtr = std::shared_ptr<Options const>;
@@ -126,4 +126,4 @@ struct SDQUADX_EXPORT Options {
   options::Estimate estimate;
 };
 
-}  // namespace sdquadx
+}  // namespace sdengine

@@ -7,14 +7,14 @@
 #include "estimate/contact.h"
 #include "fsm/legctrl.h"
 #include "mpc/mpc.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/fsm.h"
-#include "sdquadx/model.h"
+#include "sdengine/estimate.h"
+#include "sdengine/fsm.h"
+#include "sdengine/model.h"
 #include "skd/gait.h"
 #include "skd/state_des.h"
 #include "wbc/wbc.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 class StateLocomotion : public StateCtrl {
  public:
   StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -54,4 +54,4 @@ class StateLocomotion : public StateCtrl {
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

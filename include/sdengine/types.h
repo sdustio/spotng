@@ -3,9 +3,9 @@
 #include <array>
 #include <vector>
 
-#include "sdquadx/export.h"
+#include "sdengine/export.h"
 
-namespace sdquadx {
+namespace sdengine {
 using fpt_t = double;
 
 using SdVector3f = std::array<fpt_t, 3>;
@@ -18,4 +18,4 @@ using SdMatrix6f = std::array<fpt_t, 6 * 6>;
 
 using SdVectorXf = std::vector<fpt_t>;
 using SdMatrixXf = std::vector<fpt_t>;
-}  // namespace sdquadx
+}  // namespace sdengine

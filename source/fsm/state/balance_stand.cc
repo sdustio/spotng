@@ -6,7 +6,7 @@
 #include "spdlog/spdlog.h"
 #include "wbc/wbic.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 
 StateBalanceStand::StateBalanceStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
                                      model::Quadruped::SharedPtr const &mquad,
@@ -103,4 +103,4 @@ bool StateBalanceStand::RunOnce() {
 
   return wbc_->RunOnce(legctrl_->cmds, wbc_data_, estctrl_->GetEstState());
 }
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "sdquadx/estimate.h"
+#include "sdengine/estimate.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 
 class EstimateCtrlImpl : public EstimateCtrl {
  public:
@@ -28,4 +28,4 @@ class EstimateCtrlImpl : public EstimateCtrl {
   State est_state_;
   Estimator::SharedPtr const null_est_;
 };
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

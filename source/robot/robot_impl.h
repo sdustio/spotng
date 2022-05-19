@@ -1,9 +1,9 @@
-#include "sdquadx/fsm.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/model.h"
-#include "sdquadx/robot.h"
+#include "sdengine/fsm.h"
+#include "sdengine/interface.h"
+#include "sdengine/model.h"
+#include "sdengine/robot.h"
 
-namespace sdquadx {
+namespace sdengine {
 class RobotCtrlImpl : public RobotCtrl {
  public:
   RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
@@ -26,4 +26,4 @@ class RobotCtrlImpl : public RobotCtrl {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace sdquadx
+}  // namespace sdengine

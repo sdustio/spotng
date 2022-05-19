@@ -3,7 +3,7 @@
 #include "math/interpolate.h"
 #include "spdlog/spdlog.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 
 namespace params {
 constexpr int const ramp_iter = 500;
@@ -64,4 +64,4 @@ State StateInit::CheckTransition() {
 }
 
 TransitionData StateInit::Transition([[maybe_unused]] const State next) { return TransitionData{true}; }
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

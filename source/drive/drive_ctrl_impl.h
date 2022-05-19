@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sdquadx/drive.h"
-#include "sdquadx/options.h"
+#include "sdengine/drive.h"
+#include "sdengine/options.h"
 
-namespace sdquadx::drive {
+namespace sdengine::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
   explicit DriveCtrlImpl(Options::ConstSharedPtr const &opts);
@@ -44,4 +44,4 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f avel_ = {};
 };
 
-}  // namespace sdquadx::drive
+}  // namespace sdengine::drive

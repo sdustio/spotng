@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "dynamics/types.h"
-#include "sdquadx/model.h"
+#include "sdengine/model.h"
 
-namespace sdquadx::model {
+namespace sdengine::model {
 
 struct FBModelState {
   SdMatrix3f rot_mat;  // 从世界坐标到机身坐标
@@ -104,4 +104,4 @@ class FBModel {
   bool bias_acc_uptodate_ = false;
   bool composite_inertias_uptodate_ = false;
 };
-}  // namespace sdquadx::model
+}  // namespace sdengine::model

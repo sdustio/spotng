@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sdquadx/model.h"
+#include "sdengine/model.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 
 class Task {
  public:
@@ -36,4 +36,4 @@ class Task {
 
   SdVector3f Kp_, Kd_;
 };
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

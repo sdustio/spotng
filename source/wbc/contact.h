@@ -1,7 +1,7 @@
-#include "sdquadx/consts.h"
+#include "sdengine/consts.h"
 #include "utils/eigen.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 
 // [DIFF]
 bool BuildContactConstraintMat(Eigen::Ref<Eigen::Matrix<fpt_t, 6, 3>> ret, fpt_t mu) {
@@ -15,4 +15,4 @@ bool BuildContactConstraintUpperBoundVec(Eigen::Ref<Eigen::Matrix<fpt_t, 6, 1>> 
   ret[5] = -fmax;
   return true;
 }
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

@@ -1,6 +1,6 @@
-#include "sdquadx/interface.h"
+#include "sdengine/interface.h"
 
-namespace sdquadx::test {
+namespace sdengine::test {
 
 struct JointsCmd {
   SdVector4f q_des_abad = {};
@@ -59,4 +59,4 @@ class ImuImpl : public interface::Imu {
   sensor::ImuData imu_;
 };
 
-}  // namespace sdquadx::test
+}  // namespace sdengine::test

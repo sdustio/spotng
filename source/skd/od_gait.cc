@@ -1,6 +1,6 @@
 #include "skd/od_gait.h"
 
-namespace sdquadx::skd {
+namespace sdengine::skd {
 
 OffsetDurationGait::OffsetDurationGait(int const period_iters, SdVector4i const &offsets, SdVector4i const &durations,
                                        fpt_t dt, std::string const &name)
@@ -58,4 +58,4 @@ fpt_t OffsetDurationGait::GetCurrentStanceTime([[maybe_unused]] int leg) const {
 fpt_t OffsetDurationGait::GetCurrentSwingTime([[maybe_unused]] int leg) const { return swing_; }
 
 PredStanceVector const &OffsetDurationGait::GetNextPeriodStanceStates() const { return stance_states_; }
-}  // namespace sdquadx::skd
+}  // namespace sdengine::skd

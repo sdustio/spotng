@@ -2,7 +2,7 @@
 
 #include "utils/eigen.h"
 
-namespace sdquadx::mpc {
+namespace sdengine::mpc {
 
 namespace {
 bool near_zero(fpt_t a) { return (a < .01 && a > -.01); }
@@ -146,4 +146,4 @@ bool QpSolver::Solve(QpData &data) {
   return true;
 }
 
-}  // namespace sdquadx::mpc
+}  // namespace sdengine::mpc

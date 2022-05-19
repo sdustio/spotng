@@ -3,7 +3,7 @@
 #include "dynamics/rotation.h"
 #include "math/algebra.h"
 
-namespace sdquadx::dynamics {
+namespace sdengine::dynamics {
 bool BuildSpatialInertia(Eigen::Ref<SpatialInertia> ret, fpt_t const mass, Eigen::Ref<Vector3 const> const &com,
                          Eigen::Ref<InertiaTensor const> const &inertia) {
   Matrix3 cSkew;
@@ -291,4 +291,4 @@ bool ForceCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<Vector6 const> con
   return true;
 }
 
-}  // namespace sdquadx::dynamics
+}  // namespace sdengine::dynamics

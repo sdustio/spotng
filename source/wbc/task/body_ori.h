@@ -2,7 +2,7 @@
 
 #include "wbc/task.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 class TaskBodyOri : public Task {
  public:
   TaskBodyOri(SdVector3f const &kp, SdVector3f const &kd);
@@ -10,4 +10,4 @@ class TaskBodyOri : public Task {
                   SdVector3f const &xdd_des) override;
 };
 
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

@@ -3,12 +3,12 @@
 #include <unordered_map>
 
 #include "fsm/legctrl.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/fsm.h"
-#include "sdquadx/interface.h"
-#include "sdquadx/model.h"
+#include "sdengine/estimate.h"
+#include "sdengine/fsm.h"
+#include "sdengine/interface.h"
+#include "sdengine/model.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
   FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, interface::Leg::SharedPtr const &legitf,
@@ -40,4 +40,4 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   TransitionData transition_data_;
 };
 
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

@@ -1,6 +1,6 @@
 #include "testitf.h"
 
-namespace sdquadx::test {
+namespace sdengine::test {
 
 bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
@@ -66,4 +66,4 @@ bool ImuImpl::RunOnce() {
   return true;
 }
 
-}  // namespace sdquadx::test
+}  // namespace sdengine::test

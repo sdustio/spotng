@@ -6,7 +6,7 @@
 #include "wbc/task.h"
 #include "wbc/wbc.h"
 
-namespace sdquadx::wbc {
+namespace sdengine::wbc {
 class Wbic : public Wbc {
  public:
   Wbic(Options::ConstSharedPtr const &opts, model::Quadruped::SharedPtr const &quad, fpt_t weight = 0.1);
@@ -36,4 +36,4 @@ class Wbic : public Wbc {
   fpt_t const weight_q_;
   fpt_t const weight_f_ = 1.;
 };
-}  // namespace sdquadx::wbc
+}  // namespace sdengine::wbc

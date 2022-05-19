@@ -2,9 +2,9 @@
 #include <array>
 #include <qpOASES.hpp>
 
-#include "sdquadx/consts.h"
+#include "sdengine/consts.h"
 
-namespace sdquadx::mpc {
+namespace sdengine::mpc {
 
 using consts::ctrl::kPredLength;
 constexpr inline int const kDimXD = 13 * kPredLength;
@@ -53,4 +53,4 @@ class QpSolver {
   std::array<qpOASES::real_t, kNumVariables> qsoln_red_ = {};
 };
 
-}  // namespace sdquadx::mpc
+}  // namespace sdengine::mpc

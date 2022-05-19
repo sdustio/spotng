@@ -8,7 +8,7 @@
 #include "fsm/state/recovery_stand.h"
 #include "spdlog/spdlog.h"
 
-namespace sdquadx::fsm {
+namespace sdengine::fsm {
 FiniteStateMachineImpl::FiniteStateMachineImpl(Options::ConstSharedPtr const &opts,
                                                interface::Leg::SharedPtr const &legitf,
                                                model::Quadruped::SharedPtr const &mquad,
@@ -104,4 +104,4 @@ bool FiniteStateMachineImpl::PreCheck() { return true; }
 
 bool FiniteStateMachineImpl::PostCheck() { return true; }
 
-}  // namespace sdquadx::fsm
+}  // namespace sdengine::fsm

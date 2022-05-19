@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdquadx/drive.h"
-#include "sdquadx/estimate.h"
-#include "sdquadx/model.h"
+#include "sdengine/drive.h"
+#include "sdengine/estimate.h"
+#include "sdengine/model.h"
 #include "skd/gait.h"
 #include "wbc/wbc.h"
 
-namespace sdquadx::mpc {
+namespace sdengine::mpc {
 
 using SdVector4i = std::array<int, 4>;
 
@@ -22,4 +22,4 @@ class Mpc {
   virtual bool RunOnce(wbc::InData &, estimate::State const &, skd::PredStanceVector const &) = 0;
 };
 
-}  // namespace sdquadx::mpc
+}  // namespace sdengine::mpc

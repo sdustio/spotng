@@ -3,7 +3,7 @@
 #include "dynamics/rotation.h"
 #include "math/utils.h"
 
-namespace sdquadx::estimate {
+namespace sdengine::estimate {
 Orientation::Orientation(interface::Imu::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Orientation::RunOnce(State &ret) {
@@ -50,4 +50,4 @@ bool Orientation::InterfaceValid() {
   if (math::HasNaN(imu_.acc.cbegin(), imu_.acc.cend())) return false;
   return true;
 }
-}  // namespace sdquadx::estimate
+}  // namespace sdengine::estimate

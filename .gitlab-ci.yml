@@ -1,4 +1,4 @@
-image: sd/sdquadx-build #gcc, cmake, eigen, spdlog, cpplint, cppcheck
+image: sd/sdengine-build #gcc, cmake, eigen, spdlog, cpplint, cppcheck
 
 variables:
   CMAKE_BUILD: /build
@@ -14,7 +14,7 @@ build:
   # before_script:
   #   - apt update && apt -y install make autoconf
   script:
-    - cmake -DSDQUADX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$CI_PROJECT_DIR -B$CMAKE_BUILD
+    - cmake -DSDENGINE_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$CI_PROJECT_DIR -B$CMAKE_BUILD
     - cmake --build $CMAKE_BUILD --target all
 
 # run tests using the binary built before

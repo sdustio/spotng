@@ -6,10 +6,10 @@
 
 #include "mpc/mpc.h"
 #include "mpc/qp.h"
-#include "sdquadx/drive.h"
+#include "sdengine/drive.h"
 #include "skd/gait.h"
 
-namespace sdquadx::mpc {
+namespace sdengine::mpc {
 
 class CMpc : public Mpc {
  public:
@@ -26,4 +26,4 @@ class CMpc : public Mpc {
   QpData qp_data_;
   QpSolver qp_solver_;
 };
-}  // namespace sdquadx::mpc
+}  // namespace sdengine::mpc
