@@ -5,6 +5,7 @@ on:
     types:
       - opened
       - reopened
+      - synchronize
   push:
     branches:
       - master
@@ -47,13 +48,14 @@ jobs:
     - name: Install dependency
       run: |
         sudo apt update
-        sudo apt install -y libeigen3-dev libspdlog-dev ccache
+        sudo apt install -y libeigen3-dev libspdlog-dev ccache valgrind
 
     - uses: actions/cache@v3
       id: cache-cmake
       with:
         path: ${{env.CCACHE_DIR}}
-        key: ${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
+        key: ${{ runner.os }}-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
