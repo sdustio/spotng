@@ -36,11 +36,11 @@ void RunExample() {
   auto drive_ctrl = robot->GetDriveCtrl();
 
   // State Init
-  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 510);
+  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 51);
 
   // State Recovery Stand
   drive_ctrl->UpdateState(drive::State::RecoveryStand);
-  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 2'000);
+  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 200);
 
   // State Locomotion
   drive_ctrl->UpdateMode(drive::Mode::Manual);
@@ -48,7 +48,7 @@ void RunExample() {
   drive_ctrl->UpdateState(drive::State::Locomotion);
   drive::Twist drive_twist;
   drive_ctrl->UpdateTwist(drive_twist);
-  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 1'000);
+  RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 100);
 }
 
 }  // namespace sdengine::test

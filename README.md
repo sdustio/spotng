@@ -1,4 +1,6 @@
-# sdengine
+# SdEngine
+
+[![test](https://github.com/sdustio/sdengine/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/sdengine/actions/workflows/test.yml)
 
 
 ## Conventions
