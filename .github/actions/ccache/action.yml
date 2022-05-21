@@ -1,0 +1,19 @@
+name: ccache
+description: install ccache
+runs:
+  using: composite
+  steps:
+    - name: Linux
+      if: runner.os == 'Linux'
+      run: sudo apt install -y ccache valgrind
+      shell: bash
+
+    - name: MacOS
+      if: runner.os == 'macOS'
+      run: brew install ccache
+      shell: bash
+
+    - name: Windows
+      if: runner.os == 'Windows'
+      run: choco install ccache
+      shell: pwsh

@@ -1,0 +1,8 @@
+{
+  "name": "sdengine",
+  "version-string": "1.0.1",
+  "dependencies": [
+    "eigen3",
+    "spdlog"
+  ]
+}
