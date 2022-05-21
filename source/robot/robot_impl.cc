@@ -37,6 +37,7 @@ RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::Sha
 }
 
 drive::DriveCtrl::SharedPtr const &RobotCtrlImpl::GetDriveCtrl() { return drivectrl_; }
+estimate::EstimateCtrl::SharedPtr const &RobotCtrlImpl::GetEstimateCtrl() { return estctrl_; }
 estimate::State const &RobotCtrlImpl::GetEstimatState() const { return estctrl_->GetEstState(); }
 model::DynamicsData const &RobotCtrlImpl::GetDynamicsData() const { return mquad_->GetDynamicsData(); }
 
