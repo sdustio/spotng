@@ -38,8 +38,9 @@ jobs:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Debug
       CMAKE_BUILD: ${{github.workspace}}/build
+      CACHE_DIR: ${{github.workspace}}/.cache
       CCACHE_BASEDIR: ${{github.workspace}}
-      CCACHE_DIR: ${{github.workspace}}/.cache
+      CCACHE_DIR: ${{github.workspace}}/.cache/ccache
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: 600M
@@ -54,7 +55,7 @@ jobs:
     - uses: actions/cache@v3
       id: cache-cmake
       with:
-        path: ${{env.CCACHE_DIR}}
+        path: ${{env.CACHE_DIR}}
         key: ${{ runner.os }}-testbuild-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-testbuild-
