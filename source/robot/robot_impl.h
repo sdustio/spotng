@@ -10,6 +10,8 @@ class RobotCtrlImpl : public RobotCtrl {
                 interface::Imu::ConstSharedPtr const &imu_itf);
 
   drive::DriveCtrl::SharedPtr const &GetDriveCtrl() override;
+  estimate::EstimateCtrl::SharedPtr const &GetEstimateCtrl() override;
+
   estimate::State const &GetEstimatState() const override;
   model::DynamicsData const &GetDynamicsData() const override;
 

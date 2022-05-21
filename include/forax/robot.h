@@ -23,6 +23,8 @@ class FORAX_EXPORT RobotCtrl {
   virtual ~RobotCtrl() = default;
 
   virtual drive::DriveCtrl::SharedPtr const &GetDriveCtrl() = 0;
+  virtual estimate::EstimateCtrl::SharedPtr const &GetEstimateCtrl() = 0;
+
   virtual estimate::State const &GetEstimatState() const = 0;
   virtual model::DynamicsData const &GetDynamicsData() const = 0;
 
