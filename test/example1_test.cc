@@ -2,9 +2,9 @@
 #include <memory>
 
 #include "testitf.h"
-#include "sdengine/robot.h"
+#include "forax/robot.h"
 
-namespace sdengine::test {
+namespace forax::test {
 
 int ctrl_iter = 0;
 
@@ -51,11 +51,11 @@ void RunExample() {
   RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 100);
 }
 
-}  // namespace sdengine::test
+}  // namespace forax::test
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   std::cout << "Start Test!!!" << std::endl;
-  sdengine::test::RunExample();
+  forax::test::RunExample();
   std::cout << "End Test!!!" << std::endl;
   return 0;
 }

@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "sdengine/types.h"
+#include "forax/types.h"
 
-namespace sdengine {
+namespace forax {
 void DebugVector(std::string const &prefix, SdVector3f const &v);
 void DebugVector(std::string const &prefix, SdVector4f const &v);
-}  // namespace sdengine
+}  // namespace forax

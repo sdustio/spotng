@@ -3,11 +3,11 @@
 #include <unordered_map>
 
 #include "fsm/legctrl.h"
-#include "sdengine/estimate.h"
-#include "sdengine/fsm.h"
-#include "sdengine/options.h"
+#include "forax/estimate.h"
+#include "forax/fsm.h"
+#include "forax/options.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 class StateInit : public StateCtrl {
  public:
   StateInit(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -36,4 +36,4 @@ class StateInit : public StateCtrl {
   std::array<SdVector3f, consts::model::kNumLeg> initial_jpos_;
 };
 
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

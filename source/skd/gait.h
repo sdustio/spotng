@@ -4,9 +4,9 @@
 #include <cstdint>
 #include <memory>
 
-#include "sdengine/consts.h"
+#include "forax/consts.h"
 
-namespace sdengine::skd {
+namespace forax::skd {
 
 using PredStanceVector = std::array<int, consts::ctrl::kPredLength * consts::model::kNumLeg>;
 
@@ -25,4 +25,4 @@ class Gait {
   virtual fpt_t GetCurrentSwingTime(int leg) const = 0;
   virtual PredStanceVector const &GetNextPeriodStanceStates() const = 0;
 };
-}  // namespace sdengine::skd
+}  // namespace forax::skd

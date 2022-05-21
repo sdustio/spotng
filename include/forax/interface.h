@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <memory>
 
-#include "sdengine/consts.h"
-#include "sdengine/sensor.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/sensor.h"
+#include "forax/types.h"
 
-namespace sdengine::interface {
+namespace forax::interface {
 
-struct SDENGINE_EXPORT LegCmd {
+struct FORAX_EXPORT LegCmd {
   SdVector3f tau = {};
   SdVector3f q_des = {};
   SdVector3f qd_des = {};
@@ -20,7 +20,7 @@ struct SDENGINE_EXPORT LegCmd {
 
 using LegCmds = std::array<LegCmd, consts::model::kNumLeg>;
 
-class SDENGINE_EXPORT Leg {
+class FORAX_EXPORT Leg {
  public:
   using Ptr = std::unique_ptr<Leg>;
   using SharedPtr = std::shared_ptr<Leg>;
@@ -31,7 +31,7 @@ class SDENGINE_EXPORT Leg {
   virtual bool WriteFrom(LegCmds const &cmds) = 0;
 };
 
-class SDENGINE_EXPORT Imu {
+class FORAX_EXPORT Imu {
  public:
   using Ptr = std::unique_ptr<Imu>;
   using SharedPtr = std::shared_ptr<Imu>;
@@ -40,4 +40,4 @@ class SDENGINE_EXPORT Imu {
   virtual ~Imu() = default;
   virtual bool ReadTo(sensor::ImuData &data) const = 0;
 };
-}  // namespace sdengine::interface
+}  // namespace forax::interface

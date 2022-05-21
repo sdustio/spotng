@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sdengine/drive.h"
-#include "sdengine/options.h"
+#include "forax/drive.h"
+#include "forax/options.h"
 
-namespace sdengine::drive {
+namespace forax::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
   explicit DriveCtrlImpl(Options::ConstSharedPtr const &opts);
@@ -44,4 +44,4 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f avel_ = {};
 };
 
-}  // namespace sdengine::drive
+}  // namespace forax::drive

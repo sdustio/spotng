@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdengine/drive.h"
+#include "forax/drive.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 /**
  * Enumerate all of the operating modes
  */
-enum class SDENGINE_EXPORT OperatingMode : uint8_t {
+enum class FORAX_EXPORT OperatingMode : uint8_t {
   Normal,
   Transitioning,
   EStop,
@@ -16,12 +16,12 @@ enum class SDENGINE_EXPORT OperatingMode : uint8_t {
 
 using State = drive::State;
 
-struct SDENGINE_EXPORT TransitionData {
+struct FORAX_EXPORT TransitionData {
   // Flag to mark when transition is done
   bool done = false;
 };
 
-class SDENGINE_EXPORT StateCtrl {
+class FORAX_EXPORT StateCtrl {
  public:
   using Ptr = std::unique_ptr<StateCtrl>;
   using SharedPtr = std::shared_ptr<StateCtrl>;
@@ -48,7 +48,7 @@ class SDENGINE_EXPORT StateCtrl {
   virtual State GetState() const = 0;
 };
 
-class SDENGINE_EXPORT FiniteStateMachine {
+class FORAX_EXPORT FiniteStateMachine {
  public:
   using Ptr = std::unique_ptr<FiniteStateMachine>;
   using SharedPtr = std::shared_ptr<FiniteStateMachine>;
@@ -65,4 +65,4 @@ class SDENGINE_EXPORT FiniteStateMachine {
    */
   virtual bool RunOnce() = 0;
 };
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

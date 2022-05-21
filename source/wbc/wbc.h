@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdengine/consts.h"
-#include "sdengine/estimate.h"
-#include "sdengine/interface.h"
-#include "sdengine/model.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/estimate.h"
+#include "forax/interface.h"
+#include "forax/model.h"
+#include "forax/types.h"
 
-namespace sdengine::wbc {
+namespace forax::wbc {
 using SdVector12f = std::array<fpt_t, consts::model::kNumJoint>;
 using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
@@ -38,4 +38,4 @@ class Wbc {
   virtual bool RunOnce(interface::LegCmds &, InData const &, estimate::State const &) = 0;
 };
 
-}  // namespace sdengine::wbc
+}  // namespace forax::wbc

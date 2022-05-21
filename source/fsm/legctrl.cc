@@ -6,7 +6,7 @@
 #include "utils/debug.h"
 #endif
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 LegCtrl::LegCtrl(interface::Leg::SharedPtr const &itf) : itf_(itf) {}
 
 bool LegCtrl::RunOnce() {
@@ -30,4 +30,4 @@ void LegCtrl::ZeroCmds() {
     cmd.kd.fill(0.);
   }
 }
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

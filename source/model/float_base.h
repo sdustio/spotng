@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "dynamics/types.h"
-#include "sdengine/model.h"
+#include "forax/model.h"
 
-namespace sdengine::model {
+namespace forax::model {
 
 struct FBModelState {
   SdMatrix3f rot_mat;  // 从世界坐标到机身坐标
@@ -104,4 +104,4 @@ class FBModel {
   bool bias_acc_uptodate_ = false;
   bool composite_inertias_uptodate_ = false;
 };
-}  // namespace sdengine::model
+}  // namespace forax::model

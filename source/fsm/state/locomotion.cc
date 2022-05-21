@@ -10,7 +10,7 @@
 #include "utils/eigen.h"
 #include "wbc/wbic.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 
 using V4i = skd::SdVector4i;
 using GaitSkd = skd::OffsetDurationGait;
@@ -144,4 +144,4 @@ bool StateLocomotion::CanStand() {
   return ret;
 }
 
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

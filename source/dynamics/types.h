@@ -2,7 +2,7 @@
 
 #include "utils/eigen.h"
 
-namespace sdengine::dynamics {
+namespace forax::dynamics {
 
 enum class JointType { Prismatic, Revolute, FloatingBase, Nothing };
 
@@ -30,4 +30,4 @@ using InertiaTensor = Matrix3;  // InertiaMat
 
 using PseudoInertiaTensor = Matrix4;  // PseudoInertiaMat
 
-}  // namespace sdengine::dynamics
+}  // namespace forax::dynamics

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdengine/types.h"
+#include "forax/types.h"
 
-namespace sdengine::skd {
+namespace forax::skd {
 class FootSwingTrajectory {
  public:
   FootSwingTrajectory();
@@ -64,4 +64,4 @@ class FootSwingTrajectory {
   SdVector3f p0_, pf_, p_, v_, a_;
   fpt_t height_ = 0;
 };
-}  // namespace sdengine::skd
+}  // namespace forax::skd

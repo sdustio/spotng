@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include "sdengine/consts.h"
+#include "forax/consts.h"
 
-namespace sdengine::math {
+namespace forax::math {
 
 bool illegal_coeft(fpt_t t) { return t < consts::math::kZeroEpsilon || t > 1. - consts::math::kZeroEpsilon; }
 
@@ -109,4 +109,4 @@ bool InterpolateCubicBezierSecondDerivative(Eigen::Ref<VectorX> ret, Eigen::Ref<
   return true;
 }
 
-}  // namespace sdengine::math
+}  // namespace forax::math

@@ -6,10 +6,10 @@
 
 #include "mpc/mpc.h"
 #include "mpc/qp.h"
-#include "sdengine/drive.h"
+#include "forax/drive.h"
 #include "skd/gait.h"
 
-namespace sdengine::mpc {
+namespace forax::mpc {
 
 class CMpc : public Mpc {
  public:
@@ -26,4 +26,4 @@ class CMpc : public Mpc {
   QpData qp_data_;
   QpSolver qp_solver_;
 };
-}  // namespace sdengine::mpc
+}  // namespace forax::mpc

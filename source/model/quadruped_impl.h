@@ -1,9 +1,9 @@
 #pragma once
 
 #include "model/float_base.h"
-#include "sdengine/model.h"
+#include "forax/model.h"
 
-namespace sdengine::model {
+namespace forax::model {
 class QuadrupedImpl : public Quadruped {
  public:
   explicit QuadrupedImpl(Options::ConstSharedPtr const &opts) : opts_(opts) { BuildFBModel(); }
@@ -18,4 +18,4 @@ class QuadrupedImpl : public Quadruped {
   FBModel::SharedPtr fbmodel_;
   DynamicsData data_;
 };
-}  // namespace sdengine::model
+}  // namespace forax::model

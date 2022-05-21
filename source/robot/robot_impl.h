@@ -1,9 +1,9 @@
-#include "sdengine/fsm.h"
-#include "sdengine/interface.h"
-#include "sdengine/model.h"
-#include "sdengine/robot.h"
+#include "forax/fsm.h"
+#include "forax/interface.h"
+#include "forax/model.h"
+#include "forax/robot.h"
 
-namespace sdengine {
+namespace forax {
 class RobotCtrlImpl : public RobotCtrl {
  public:
   RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
@@ -26,4 +26,4 @@ class RobotCtrlImpl : public RobotCtrl {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace sdengine
+}  // namespace forax

@@ -1,5 +1,5 @@
 {
-  "name": "sdengine",
+  "name": "forax",
   "version-string": "1.0.1",
   "dependencies": [
     "eigen3",

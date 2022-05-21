@@ -3,12 +3,12 @@
 #include <unordered_map>
 
 #include "fsm/legctrl.h"
-#include "sdengine/estimate.h"
-#include "sdengine/fsm.h"
-#include "sdengine/interface.h"
-#include "sdengine/model.h"
+#include "forax/estimate.h"
+#include "forax/fsm.h"
+#include "forax/interface.h"
+#include "forax/model.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
   FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, interface::Leg::SharedPtr const &legitf,
@@ -40,4 +40,4 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   TransitionData transition_data_;
 };
 
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

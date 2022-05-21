@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 
-#include "sdengine/interface.h"
+#include "forax/interface.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 class LegCtrl {
  public:
   using Ptr = std::unique_ptr<LegCtrl>;
@@ -19,4 +19,4 @@ class LegCtrl {
   interface::Leg::SharedPtr const itf_;
 };
 
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

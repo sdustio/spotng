@@ -4,12 +4,12 @@
 #include <memory>
 #include <string>
 
-#include "sdengine/consts.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/types.h"
 
-namespace sdengine::estimate {
+namespace forax::estimate {
 
-struct SDENGINE_EXPORT State {
+struct FORAX_EXPORT State {
   SdVector4f contact = {};
   SdVector3f pos = {};
   SdVector3f rpy = {};
@@ -30,7 +30,7 @@ struct SDENGINE_EXPORT State {
   bool success = false;
 };
 
-class SDENGINE_EXPORT Estimator {
+class FORAX_EXPORT Estimator {
  public:
   using Ptr = std::unique_ptr<Estimator>;
   using SharedPtr = std::shared_ptr<Estimator>;
@@ -40,7 +40,7 @@ class SDENGINE_EXPORT Estimator {
   virtual bool RunOnce(State &ret) = 0;
 };
 
-class SDENGINE_EXPORT EstimateCtrl {
+class FORAX_EXPORT EstimateCtrl {
  public:
   using Ptr = std::unique_ptr<EstimateCtrl>;
   using SharedPtr = std::shared_ptr<EstimateCtrl>;
@@ -57,4 +57,4 @@ class SDENGINE_EXPORT EstimateCtrl {
 
   virtual State const &GetEstState() const = 0;
 };
-}  // namespace sdengine::estimate
+}  // namespace forax::estimate

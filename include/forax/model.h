@@ -3,18 +3,18 @@
 #include <array>
 #include <memory>
 
-#include "sdengine/consts.h"
-#include "sdengine/estimate.h"
-#include "sdengine/options.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/estimate.h"
+#include "forax/options.h"
+#include "forax/types.h"
 
-namespace sdengine::model {
+namespace forax::model {
 
 using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
 using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
 using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
-struct SDENGINE_EXPORT DynamicsData {
+struct FORAX_EXPORT DynamicsData {
   MassMatTp M;
   GeneralFTp Cc;
   GeneralFTp Cg;
@@ -26,7 +26,7 @@ struct SDENGINE_EXPORT DynamicsData {
   void Zero();
 };
 
-class SDENGINE_EXPORT Quadruped {
+class FORAX_EXPORT Quadruped {
  public:
   using Ptr = std::unique_ptr<Quadruped>;
   using SharedPtr = std::shared_ptr<Quadruped>;
@@ -37,4 +37,4 @@ class SDENGINE_EXPORT Quadruped {
   virtual bool UpdateDynamics(estimate::State const &estdata) = 0;
   virtual DynamicsData const &GetDynamicsData() const = 0;
 };
-}  // namespace sdengine::model
+}  // namespace forax::model

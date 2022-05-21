@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "sdengine/model.h"
+#include "forax/model.h"
 #include "wbc/task.h"
 
-namespace sdengine::wbc {
+namespace forax::wbc {
 class TaskFootContact : public Task {
  public:
   TaskFootContact(model::Quadruped::ConstSharedPtr const &quad, int leg);
@@ -17,4 +17,4 @@ class TaskFootContact : public Task {
   int leg_;
 };
 
-}  // namespace sdengine::wbc
+}  // namespace forax::wbc

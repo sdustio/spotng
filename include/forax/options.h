@@ -2,15 +2,15 @@
 
 #include <memory>
 
-#include "sdengine/consts.h"
-#include "sdengine/logging.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/logging.h"
+#include "forax/types.h"
 
-namespace sdengine {
+namespace forax {
 
 namespace options {
 
-struct SDENGINE_EXPORT Model {
+struct FORAX_EXPORT Model {
   Model();
 
   fpt_t body_length;
@@ -53,7 +53,7 @@ struct SDENGINE_EXPORT Model {
   fpt_t max_body_yaw;
 };
 
-struct SDENGINE_EXPORT Ctrl {
+struct FORAX_EXPORT Ctrl {
   Ctrl();
 
   int mpc_iters;
@@ -88,7 +88,7 @@ struct SDENGINE_EXPORT Ctrl {
   fpt_t max_trot_avel_z;
 };
 
-struct SDENGINE_EXPORT Estimate {
+struct FORAX_EXPORT Estimate {
   Estimate();
 
   fpt_t process_noise_pimu;
@@ -101,7 +101,7 @@ struct SDENGINE_EXPORT Estimate {
 
 }  // namespace options
 
-struct SDENGINE_EXPORT Options {
+struct FORAX_EXPORT Options {
   using Ptr = std::unique_ptr<Options>;
   using SharedPtr = std::shared_ptr<Options>;
   using ConstSharedPtr = std::shared_ptr<Options const>;
@@ -126,4 +126,4 @@ struct SDENGINE_EXPORT Options {
   options::Estimate estimate;
 };
 
-}  // namespace sdengine
+}  // namespace forax

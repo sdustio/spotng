@@ -5,11 +5,11 @@
 
 #include "estimate/contact.h"
 #include "fsm/legctrl.h"
-#include "sdengine/fsm.h"
-#include "sdengine/model.h"
+#include "forax/fsm.h"
+#include "forax/model.h"
 #include "wbc/wbc.h"
 
-namespace sdengine::fsm {
+namespace forax::fsm {
 class StateBalanceStand : public StateCtrl {
  public:
   StateBalanceStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -44,4 +44,4 @@ class StateBalanceStand : public StateCtrl {
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };
-}  // namespace sdengine::fsm
+}  // namespace forax::fsm

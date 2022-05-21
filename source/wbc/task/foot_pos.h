@@ -2,7 +2,7 @@
 
 #include "wbc/task.h"
 
-namespace sdengine::wbc {
+namespace forax::wbc {
 class TaskFootPos : public Task {
  public:
   TaskFootPos(SdVector3f const &kp, SdVector3f const &kd, model::Quadruped::ConstSharedPtr const &quad, int leg);
@@ -14,4 +14,4 @@ class TaskFootPos : public Task {
   int const leg_;
 };
 
-}  // namespace sdengine::wbc
+}  // namespace forax::wbc

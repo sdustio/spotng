@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdengine/drive.h"
-#include "sdengine/estimate.h"
-#include "sdengine/model.h"
+#include "forax/drive.h"
+#include "forax/estimate.h"
+#include "forax/model.h"
 #include "skd/gait.h"
 #include "wbc/wbc.h"
 
-namespace sdengine::mpc {
+namespace forax::mpc {
 
 using SdVector4i = std::array<int, 4>;
 
@@ -22,4 +22,4 @@ class Mpc {
   virtual bool RunOnce(wbc::InData &, estimate::State const &, skd::PredStanceVector const &) = 0;
 };
 
-}  // namespace sdengine::mpc
+}  // namespace forax::mpc

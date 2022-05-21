@@ -4,14 +4,14 @@
 
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
-#include "sdengine/consts.h"
+#include "forax/consts.h"
 #include "spdlog/spdlog.h"
 
 #ifdef DEBUG_MODE
 #include "utils/debug.h"
 #endif
 
-namespace sdengine::model {
+namespace forax::model {
 
 namespace {
 /*!
@@ -173,4 +173,4 @@ void DynamicsData::Zero() {
     Jcdqd[i].fill(0);
   }
 }
-}  // namespace sdengine::model
+}  // namespace forax::model

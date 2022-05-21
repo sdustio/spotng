@@ -1,8 +1,8 @@
 #pragma once
 
-#include "sdengine/types.h"
+#include "forax/types.h"
 
-namespace sdengine::consts {
+namespace forax::consts {
 namespace math {
 constexpr inline fpt_t const kZeroEpsilon = 1.e-12;
 constexpr inline fpt_t const kPI = 3.14159265358979323846;
@@ -35,4 +35,4 @@ namespace ctrl {
 constexpr inline int const kPredLength = 10;
 }  // namespace ctrl
 
-}  // namespace sdengine::consts
+}  // namespace forax::consts

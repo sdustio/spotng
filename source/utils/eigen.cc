@@ -1,6 +1,6 @@
 #include "utils/eigen.h"
 
-namespace sdengine {
+namespace forax {
 Eigen::Ref<Vector3> ToEigenTp(SdVector3f &v) {
   Eigen::Map<Vector3> egv(v.data());
   return egv;
@@ -82,4 +82,4 @@ Eigen::Ref<MatrixX const> ToConstEigenTp(SdMatrixXf const &m, int const row, int
   Eigen::Map<MatrixX const> egm(m.data(), row, col);
   return egm;
 }
-}  // namespace sdengine
+}  // namespace forax

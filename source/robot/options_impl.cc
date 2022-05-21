@@ -1,6 +1,6 @@
-#include "sdengine/options.h"
+#include "forax/options.h"
 
-namespace sdengine {
+namespace forax {
 
 namespace options {
 
@@ -96,8 +96,8 @@ Options::Options()
 
       log_level(logging::Level::Warn),
       log_target(logging::Target::Console),
-      log_filename("log/sdengine.log"),
+      log_filename("log/forax.log"),
       log_max_file_size(1073741824),  // 1GiB
       log_max_files(3) {}
 
-}  // namespace sdengine
+}  // namespace forax

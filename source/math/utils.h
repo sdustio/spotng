@@ -3,10 +3,10 @@
 #include <array>
 #include <cmath>
 
-#include "sdengine/consts.h"
-#include "sdengine/types.h"
+#include "forax/consts.h"
+#include "forax/types.h"
 
-namespace sdengine::math {
+namespace forax::math {
 /*!
  * Square a number
  */
@@ -36,4 +36,4 @@ inline fpt_t DegToRad(fpt_t deg) { return deg * consts::math::kPI / 180.0; }
 
 inline fpt_t LimitV(fpt_t v, fpt_t max, fpt_t min) { return std::fmin(std::fmax(v, min), max); }
 
-}  // namespace sdengine::math
+}  // namespace forax::math

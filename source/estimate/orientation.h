@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sdengine/estimate.h"
-#include "sdengine/interface.h"
-#include "sdengine/sensor.h"
+#include "forax/estimate.h"
+#include "forax/interface.h"
+#include "forax/sensor.h"
 
-namespace sdengine::estimate {
+namespace forax::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -25,4 +25,4 @@ class Orientation : public Estimator {
   sensor::ImuData imu_;
 };
 
-}  // namespace sdengine::estimate
+}  // namespace forax::estimate

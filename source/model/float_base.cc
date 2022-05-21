@@ -3,7 +3,7 @@
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
 
-namespace sdengine::model {
+namespace forax::model {
 using genf_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
 using mass_t = Eigen::Matrix<fpt_t, consts::model::kDimConfig, consts::model::kDimConfig>;
 using jc_t = Eigen::Matrix<fpt_t, 3, consts::model::kDimConfig>;
@@ -320,4 +320,4 @@ bool FBModel::ForwardKinematics() {
   return true;
 }
 
-}  // namespace sdengine::model
+}  // namespace forax::model

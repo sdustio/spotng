@@ -14,7 +14,7 @@
 #include "utils/debug.h"
 #endif
 
-namespace sdengine::wbc {
+namespace forax::wbc {
 
 using Vector12 = Eigen::Matrix<fpt_t, consts::model::kNumJoint, 1>;
 using Vector18 = Eigen::Matrix<fpt_t, consts::model::kDimConfig, 1>;
@@ -280,4 +280,4 @@ bool Wbic::_CleanUp() {
   return true;
 }
 
-}  // namespace sdengine::wbc
+}  // namespace forax::wbc

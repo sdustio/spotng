@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "sdengine/consts.h"
-#include "sdengine/drive.h"
+#include "forax/consts.h"
+#include "forax/drive.h"
 #include "skd/foot_swing.h"
 #include "skd/gait.h"
 #include "wbc/wbc.h"
 
-namespace sdengine::skd {
+namespace forax::skd {
 
 // 质心和落足点规划
 
@@ -35,4 +35,4 @@ class StateDes {
   drive::Gait current_gait_;
   bool first_run_ = true;
 };
-}  // namespace sdengine::skd
+}  // namespace forax::skd

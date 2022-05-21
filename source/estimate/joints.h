@@ -2,12 +2,12 @@
 
 #include <array>
 
-#include "sdengine/consts.h"
-#include "sdengine/estimate.h"
-#include "sdengine/interface.h"
-#include "sdengine/sensor.h"
+#include "forax/consts.h"
+#include "forax/estimate.h"
+#include "forax/interface.h"
+#include "forax/sensor.h"
 
-namespace sdengine::estimate {
+namespace forax::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -26,4 +26,4 @@ class Joints : public Estimator {
   sensor::LegDatas legdatas_;
 };
 
-}  // namespace sdengine::estimate
+}  // namespace forax::estimate

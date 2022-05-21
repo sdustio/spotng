@@ -4,9 +4,9 @@
 
 #include "math/interpolate.h"
 #include "math/utils.h"
-#include "sdengine/consts.h"
+#include "forax/consts.h"
 
-namespace sdengine::drive {
+namespace forax::drive {
 
 namespace params {
 constexpr fpt_t const kFilter = 0.1;
@@ -94,4 +94,4 @@ SdVector3f const &DriveCtrlImpl::GetRpyDes() const { return rpy_; }
 SdVector3f const &DriveCtrlImpl::GetLvelDes() const { return lvel_; }
 SdVector3f const &DriveCtrlImpl::GetAvelDes() const { return avel_; }
 
-}  // namespace sdengine::drive
+}  // namespace forax::drive

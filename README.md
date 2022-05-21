@@ -1,6 +1,6 @@
-# SdEngine
+# Forax
 
-[![test](https://github.com/sdustio/sdengine/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/sdengine/actions/workflows/test.yml)
+[![test](https://github.com/sdustio/forax/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/forax/actions/workflows/test.yml)
 
 
 ## Conventions
@@ -17,7 +17,7 @@ Use ZYX, which means `RPY` will rotated in order of Yaw Pitch Roll
 ## Run Test
 
 ```sh
-cmake -DSDENGINE_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -B$(pwd)/build-test
+cmake -DFORAX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -B$(pwd)/build-test
 cmake --build $(pwd)/build-test --target all
 cpplint --quiet --recursive $(pwd)/source
 cppcheck --std=c++17 --quiet --enable=performance,portability $(pwd)/source

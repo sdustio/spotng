@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "sdengine/drive.h"
-#include "sdengine/estimate.h"
-#include "sdengine/interface.h"
-#include "sdengine/model.h"
-#include "sdengine/options.h"
+#include "forax/drive.h"
+#include "forax/estimate.h"
+#include "forax/interface.h"
+#include "forax/model.h"
+#include "forax/options.h"
 
-namespace sdengine {
-class SDENGINE_EXPORT RobotCtrl {
+namespace forax {
+class FORAX_EXPORT RobotCtrl {
  public:
   using Ptr = std::unique_ptr<RobotCtrl>;
   using SharedPtr = std::shared_ptr<RobotCtrl>;
@@ -29,4 +29,4 @@ class SDENGINE_EXPORT RobotCtrl {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace sdengine
+}  // namespace forax

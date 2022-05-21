@@ -2,7 +2,7 @@
 
 #include "math/utils.h"
 
-namespace sdengine::estimate {
+namespace forax::estimate {
 Joints::Joints(interface::Leg::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Joints::RunOnce(State &ret) {
@@ -26,4 +26,4 @@ bool Joints::InterfaceValid() {
   }
   return true;
 }
-}  // namespace sdengine::estimate
+}  // namespace forax::estimate
