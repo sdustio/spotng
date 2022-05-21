@@ -44,6 +44,7 @@ jobs:
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: 600M
+      VCPKG_DEFAULT_BINARY_CACHE: ${{github.workspace}}/.cache/vcpkg
 
     steps:
     - uses: actions/checkout@v3
@@ -51,6 +52,12 @@ jobs:
         submodules: true
 
     - uses: ./.github/actions/ccache
+      name: install ccache
+
+    - name: prepare cache dir
+      run: |
+        mkdir -p ${{env.CCACHE_DIR}}
+        mkdir -p ${{env.VCPKG_DEFAULT_BINARY_CACHE}}
 
     - uses: actions/cache@v3
       id: cache-cmake

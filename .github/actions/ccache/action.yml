@@ -1,5 +1,5 @@
 name: ccache
-description: install ccache
+description: Install ccache
 runs:
   using: composite
   steps:
