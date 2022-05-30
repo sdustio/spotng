@@ -2,9 +2,9 @@
 
 #include <array>
 
+#include "forax/consts.h"
 #include "math/interpolate.h"
 #include "math/utils.h"
-#include "forax/consts.h"
 
 namespace forax::drive {
 

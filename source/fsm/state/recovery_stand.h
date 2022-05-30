@@ -4,10 +4,10 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
-#include "fsm/legctrl.h"
 #include "forax/fsm.h"
 #include "forax/model.h"
 #include "forax/options.h"
+#include "fsm/legctrl.h"
 
 namespace forax::fsm {
 class StateRecoveryStand : public StateCtrl {

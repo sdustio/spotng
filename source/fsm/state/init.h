@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 
-#include "fsm/legctrl.h"
 #include "forax/estimate.h"
 #include "forax/fsm.h"
 #include "forax/options.h"
+#include "fsm/legctrl.h"
 
 namespace forax::fsm {
 class StateInit : public StateCtrl {

@@ -291,7 +291,8 @@ bool FBModel::ForwardKinematics() {
   if (kinematics_uptodate_) return false;
 
   // calculate joint transformations
-  dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), ToConstEigenTp(state_.rot_mat).transpose(), ToConstEigenTp(state_.pos));
+  dynamics::BuildSpatialXform(ToEigenTp(Xup_[5]), ToConstEigenTp(state_.rot_mat).transpose(),
+                              ToConstEigenTp(state_.pos));
   v_[5] = state_.gvel_robot;
 
   for (int i = 6; i < consts::model::kDimConfig; i++) {
