@@ -13,26 +13,44 @@
 #### Euler Angle
 Use ZYX, which means `RPY` will rotated in order of Yaw Pitch Roll
 
+## Install
 
-## Run Test
+#### Install from source
 
-```sh
-cmake -DFORAX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug -H$(pwd) -B$(pwd)/build-test
-cmake --build $(pwd)/build-test --target all
-cpplint --quiet --recursive $(pwd)/source
-cppcheck --std=c++17 --quiet --enable=performance,portability $(pwd)/source
-cd $(pwd)/build-test
-ctest
-ctest -T memcheck
-```
+**Requirements**
 
-## Installation
+- vcpkg
+
+**Build and Install**
+
+assume $VCPKG_ROOT stands for root path of vcpkg
 
 ```sh
-cmake -DCMAKE_INSTALL_PREFIX:STRING=$HOME/.local -H$(pwd) -B$(pwd)/build-release
+cmake -DCMAKE_INSTALL_PREFIX:STRING=$HOME/.local \
+  -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+  -H$(pwd) -B$(pwd)/build-release
 cmake --build $(pwd)/build-release --target install
 ```
 
 ## Usage
 
 see /test/example*_test.cc
+
+
+## Contribute to Forax
+
+- install valgrind clang-format cppcheck cpplint(pip)
+- change some code
+- run linter and test as follows, make them pass
+- create a pull request
+
+```sh
+cmake -DFORAX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug \
+  -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+  -H$(pwd) -B$(pwd)/build-test
+cmake --build $(pwd)/build-test --target all
+cd $(pwd)/build-test
+ctest
+ctest -T memcheck
+./fmt-lint.sh
+```
