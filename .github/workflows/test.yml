@@ -15,19 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: cpp-linter/cpp-linter-action@v1
-        id: linter
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          style: file
-          tidy-checks: bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*
-          ignore: test|third_party
-
-      - name: Fail fast?!
-        if: steps.linter.outputs.checks-failed > 0
+      - name: install tools
+        run: sudo apt install -y cppcheck
+      - name: run clang-format
         run: |
-          echo "Some files failed the linting checks!"
+          find ${{github.workspace}}/include -name '*.h'  -print | xargs clang-format -n -Werror && \
+          find ${{github.workspace}}/source -name '*.h'  -print | xargs clang-format -n -Werror && \
+          find ${{github.workspace}}/source -name '*.cc'  -print | xargs clang-format -n -Werror
+      - name: run cppcheck
+        run: cppcheck --std=c++17 --quiet --enable=performance,portability ${{github.workspace}}/source
   test:
     name: test-${{ matrix.cc }}
     runs-on: ubuntu-latest
