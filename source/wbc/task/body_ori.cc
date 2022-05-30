@@ -33,8 +33,7 @@ bool TaskBodyOri::UpdateTask(estimate::State const &estate, SdVector3f const &x_
 
   // Configuration space: Local
   // Operational Space: Global
-  Vector3 xd_err =
-      ToConstEigenTp(estate.rot_mat) * (ToConstEigenTp(xd_des_) - ToConstEigenTp(estate.avel_robot));
+  Vector3 xd_err = ToConstEigenTp(estate.rot_mat) * (ToConstEigenTp(xd_des_) - ToConstEigenTp(estate.avel_robot));
 
   for (int m = 0; m < 3; m++) {
     if (fabs(xd_err[m]) > 1000) {

@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "forax/drive.h"
 #include "mpc/mpc.h"
 #include "mpc/qp.h"
-#include "forax/drive.h"
 #include "skd/gait.h"
 
 namespace forax::mpc {

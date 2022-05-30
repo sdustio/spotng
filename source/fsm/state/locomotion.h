@@ -5,11 +5,11 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
-#include "fsm/legctrl.h"
-#include "mpc/mpc.h"
 #include "forax/estimate.h"
 #include "forax/fsm.h"
 #include "forax/model.h"
+#include "fsm/legctrl.h"
+#include "mpc/mpc.h"
 #include "skd/gait.h"
 #include "skd/state_des.h"
 #include "wbc/wbc.h"

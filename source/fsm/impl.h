@@ -2,11 +2,11 @@
 
 #include <unordered_map>
 
-#include "fsm/legctrl.h"
 #include "forax/estimate.h"
 #include "forax/fsm.h"
 #include "forax/interface.h"
 #include "forax/model.h"
+#include "fsm/legctrl.h"
 
 namespace forax::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {

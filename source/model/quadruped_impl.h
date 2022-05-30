@@ -1,7 +1,7 @@
 #pragma once
 
-#include "model/float_base.h"
 #include "forax/model.h"
+#include "model/float_base.h"
 
 namespace forax::model {
 class QuadrupedImpl : public Quadruped {

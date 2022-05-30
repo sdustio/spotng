@@ -1,7 +1,7 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "math/interpolate.h"
 #include "forax/consts.h"
+#include "math/interpolate.h"
 #include "spdlog/spdlog.h"
 #include "utils/eigen.h"
 
