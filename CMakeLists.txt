@@ -208,3 +208,6 @@ if(SPOTNG_BUILD_TESTS)
   endforeach(ELEMENT ${TEST_FILES})
 
 endif(SPOTNG_BUILD_TESTS)
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(packing)
