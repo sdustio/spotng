@@ -1,10 +1,10 @@
 #pragma once
 
-#include "forax/estimate.h"
-#include "forax/options.h"
+#include "spotng/estimate.h"
+#include "spotng/options.h"
 #include "utils/eigen.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 class PosVel : public Estimator {
  public:
   explicit PosVel(Options::ConstSharedPtr const &opts);
@@ -33,4 +33,4 @@ class PosVel : public Estimator {
   std::array<fpt_t, 18 * 3> B_;    // 输入阵
   std::array<fpt_t, 28 * 18> C_;   // 观测阵
 };
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

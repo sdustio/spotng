@@ -1,9 +1,9 @@
 #pragma once
 
-#include "forax/drive.h"
-#include "forax/options.h"
+#include "spotng/drive.h"
+#include "spotng/options.h"
 
-namespace forax::drive {
+namespace spotng::drive {
 class DriveCtrlImpl : public DriveCtrl {
  public:
   explicit DriveCtrlImpl(Options::ConstSharedPtr const &opts);
@@ -44,4 +44,4 @@ class DriveCtrlImpl : public DriveCtrl {
   SdVector3f avel_ = {};
 };
 
-}  // namespace forax::drive
+}  // namespace spotng::drive

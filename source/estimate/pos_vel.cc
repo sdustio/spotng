@@ -1,8 +1,8 @@
 #include "estimate/pos_vel.h"
 
-#include "forax/consts.h"
+#include "spotng/consts.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 
 namespace params {
 constexpr fpt_t const kBigNumber = 100;
@@ -235,4 +235,4 @@ bool PosVel::CalcFootPosVelRobot(SdVector3f &pos, SdVector3f &vel, int leg, Stat
   ToEigenTp(vel) = J * ToConstEigenTp(data.qd[leg]);
   return true;
 }
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

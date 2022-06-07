@@ -3,18 +3,18 @@
 #include <array>
 #include <memory>
 
-#include "forax/consts.h"
-#include "forax/estimate.h"
-#include "forax/options.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/estimate.h"
+#include "spotng/options.h"
+#include "spotng/types.h"
 
-namespace forax::model {
+namespace spotng::model {
 
 using GeneralFTp = std::array<fpt_t, consts::model::kDimConfig>;
 using MassMatTp = std::array<fpt_t, consts::model::kDimConfig * consts::model::kDimConfig>;
 using ContactJacobTp = std::array<fpt_t, 3 * consts::model::kDimConfig>;
 
-struct FORAX_EXPORT DynamicsData {
+struct SPOTNG_EXPORT DynamicsData {
   MassMatTp M;
   GeneralFTp Cc;
   GeneralFTp Cg;
@@ -26,7 +26,7 @@ struct FORAX_EXPORT DynamicsData {
   void Zero();
 };
 
-class FORAX_EXPORT Quadruped {
+class SPOTNG_EXPORT Quadruped {
  public:
   using Ptr = std::unique_ptr<Quadruped>;
   using SharedPtr = std::shared_ptr<Quadruped>;
@@ -37,4 +37,4 @@ class FORAX_EXPORT Quadruped {
   virtual bool UpdateDynamics(estimate::State const &estdata) = 0;
   virtual DynamicsData const &GetDynamicsData() const = 0;
 };
-}  // namespace forax::model
+}  // namespace spotng::model

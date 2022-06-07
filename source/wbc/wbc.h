@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "forax/consts.h"
-#include "forax/estimate.h"
-#include "forax/interface.h"
-#include "forax/model.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/estimate.h"
+#include "spotng/interface.h"
+#include "spotng/model.h"
+#include "spotng/types.h"
 
-namespace forax::wbc {
+namespace spotng::wbc {
 using SdVector12f = std::array<fpt_t, consts::model::kNumJoint>;
 using SdVector18f = std::array<fpt_t, consts::model::kDimConfig>;
 
@@ -38,4 +38,4 @@ class Wbc {
   virtual bool RunOnce(interface::LegCmds &, InData const &, estimate::State const &) = 0;
 };
 
-}  // namespace forax::wbc
+}  // namespace spotng::wbc

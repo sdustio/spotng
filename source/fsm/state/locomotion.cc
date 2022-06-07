@@ -10,7 +10,7 @@
 #include "utils/eigen.h"
 #include "wbc/wbic.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 
 using V4i = skd::SdVector4i;
 using GaitSkd = skd::OffsetDurationGait;
@@ -144,4 +144,4 @@ bool StateLocomotion::CanStand() {
   return ret;
 }
 
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

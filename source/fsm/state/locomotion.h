@@ -5,16 +5,16 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
-#include "forax/estimate.h"
-#include "forax/fsm.h"
-#include "forax/model.h"
+#include "spotng/estimate.h"
+#include "spotng/fsm.h"
+#include "spotng/model.h"
 #include "fsm/legctrl.h"
 #include "mpc/mpc.h"
 #include "skd/gait.h"
 #include "skd/state_des.h"
 #include "wbc/wbc.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 class StateLocomotion : public StateCtrl {
  public:
   StateLocomotion(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -54,4 +54,4 @@ class StateLocomotion : public StateCtrl {
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

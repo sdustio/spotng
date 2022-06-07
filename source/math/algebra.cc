@@ -3,7 +3,7 @@
 #include "eigen3/Eigen/LU"
 #include "eigen3/Eigen/SVD"
 
-namespace forax::math {
+namespace spotng::math {
 
 /*!
  * Convert a 3x1 vector to a skew-symmetric 3x3 matrix 向量转反对称阵
@@ -53,4 +53,4 @@ bool PseudoInverse(Eigen::Ref<MatrixX> ret, Eigen::Ref<MatrixX const> const &inm
   ret = svd.matrixV() * invS * svd.matrixU().transpose();
   return true;
 }
-}  // namespace forax::math
+}  // namespace spotng::math

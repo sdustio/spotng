@@ -5,7 +5,7 @@
 
 #include "math/utils.h"
 
-namespace forax::dynamics {
+namespace spotng::dynamics {
 /*!
  * Compute rotation matrix for coordinate transformation. Note that
  * CoordinateRot(CoordinateAxis:X, .1) * v will rotate v by .1 radians -
@@ -238,4 +238,4 @@ bool SO3ToQuat(Eigen::Ref<Quat> ret, Eigen::Ref<Vector3 const> const &so3) {
   ret[3] = so3[2] / theta * std::sin(theta / 2.);
   return true;
 }
-}  // namespace forax::dynamics
+}  // namespace spotng::dynamics

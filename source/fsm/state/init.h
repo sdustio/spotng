@@ -2,12 +2,12 @@
 
 #include <unordered_map>
 
-#include "forax/estimate.h"
-#include "forax/fsm.h"
-#include "forax/options.h"
+#include "spotng/estimate.h"
+#include "spotng/fsm.h"
+#include "spotng/options.h"
 #include "fsm/legctrl.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 class StateInit : public StateCtrl {
  public:
   StateInit(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -36,4 +36,4 @@ class StateInit : public StateCtrl {
   std::array<SdVector3f, consts::model::kNumLeg> initial_jpos_;
 };
 
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

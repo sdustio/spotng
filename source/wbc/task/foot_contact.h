@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "forax/model.h"
+#include "spotng/model.h"
 #include "wbc/task.h"
 
-namespace forax::wbc {
+namespace spotng::wbc {
 class TaskFootContact : public Task {
  public:
   TaskFootContact(model::Quadruped::ConstSharedPtr const &quad, int leg);
@@ -17,4 +17,4 @@ class TaskFootContact : public Task {
   int leg_;
 };
 
-}  // namespace forax::wbc
+}  // namespace spotng::wbc

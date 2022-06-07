@@ -1,6 +1,6 @@
-#include "forax/options.h"
+#include "spotng/options.h"
 
-namespace forax {
+namespace spotng {
 
 namespace options {
 
@@ -96,8 +96,8 @@ Options::Options()
 
       log_level(logging::Level::Warn),
       log_target(logging::Target::Console),
-      log_filename("log/forax.log"),
+      log_filename("log/spotng.log"),
       log_max_file_size(1073741824),  // 1GiB
       log_max_files(3) {}
 
-}  // namespace forax
+}  // namespace spotng

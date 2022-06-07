@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(forax
+project(spotng
   LANGUAGES CXX
   VERSION 1.0.1
 )
 
 ### Project properties
 set(PACKAGE_ORG sd)
-set(PACKAGE_DESCRIPTION "forax lib")
+set(PACKAGE_DESCRIPTION "spotng lib")
 set(TARGET_NAME ${PROJECT_NAME}Targets)
 
 ### C
@@ -24,11 +24,11 @@ message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
 
 option(BUILD_SHARED_LIBS "Build shared libs." ON)
-option(FORAX_BUILD_TESTS "Build tests." OFF)
-if(FORAX_BUILD_TESTS)
+option(SPOTNG_BUILD_TESTS "Build tests." OFF)
+if(SPOTNG_BUILD_TESTS)
   set(BUILD_SHARED_LIBS OFF)
   message(STATUS "force building static libs when build tests")
-endif(FORAX_BUILD_TESTS)
+endif(SPOTNG_BUILD_TESTS)
 
 
 #### Library
@@ -174,14 +174,14 @@ install(
 )
 endif(BUILD_SHARED_LIBS)
 
-if(FORAX_BUILD_TESTS)
+if(SPOTNG_BUILD_TESTS)
   find_program(MEMORYCHECK_COMMAND NAMES valgrind)
   set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
   include (CTest)
 
   enable_testing()
 
-  function(forax_test test_file)
+  function(spotng_test test_file)
     get_filename_component(test_target_name ${test_file} NAME_WE)
 
     add_executable(${test_target_name})
@@ -197,14 +197,14 @@ if(FORAX_BUILD_TESTS)
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/test>
     )
     add_test(NAME ${test_target_name} COMMAND ${test_target_name})
-  endfunction(forax_test)
+  endfunction(spotng_test)
 
   set(TEST_FILES
     test/example1_test.cc
     test/dynamics_rotation_test.cc
   )
   foreach(ELEMENT ${TEST_FILES})
-    forax_test(${ELEMENT})
+    spotng_test(${ELEMENT})
   endforeach(ELEMENT ${TEST_FILES})
 
-endif(FORAX_BUILD_TESTS)
+endif(SPOTNG_BUILD_TESTS)

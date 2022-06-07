@@ -1,9 +1,9 @@
 #pragma once
 
-#include "forax/model.h"
+#include "spotng/model.h"
 #include "model/float_base.h"
 
-namespace forax::model {
+namespace spotng::model {
 class QuadrupedImpl : public Quadruped {
  public:
   explicit QuadrupedImpl(Options::ConstSharedPtr const &opts) : opts_(opts) { BuildFBModel(); }
@@ -18,4 +18,4 @@ class QuadrupedImpl : public Quadruped {
   FBModel::SharedPtr fbmodel_;
   DynamicsData data_;
 };
-}  // namespace forax::model
+}  // namespace spotng::model

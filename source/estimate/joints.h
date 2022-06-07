@@ -2,12 +2,12 @@
 
 #include <array>
 
-#include "forax/consts.h"
-#include "forax/estimate.h"
-#include "forax/interface.h"
-#include "forax/sensor.h"
+#include "spotng/consts.h"
+#include "spotng/estimate.h"
+#include "spotng/interface.h"
+#include "spotng/sensor.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -26,4 +26,4 @@ class Joints : public Estimator {
   sensor::LegDatas legdatas_;
 };
 
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

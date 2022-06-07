@@ -2,11 +2,11 @@
 
 #include <array>
 
-#include "forax/consts.h"
+#include "spotng/consts.h"
 #include "math/interpolate.h"
 #include "math/utils.h"
 
-namespace forax::drive {
+namespace spotng::drive {
 
 namespace params {
 constexpr fpt_t const kFilter = 0.1;
@@ -94,4 +94,4 @@ SdVector3f const &DriveCtrlImpl::GetRpyDes() const { return rpy_; }
 SdVector3f const &DriveCtrlImpl::GetLvelDes() const { return lvel_; }
 SdVector3f const &DriveCtrlImpl::GetAvelDes() const { return avel_; }
 
-}  // namespace forax::drive
+}  // namespace spotng::drive

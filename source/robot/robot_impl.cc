@@ -17,7 +17,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-namespace forax {
+namespace spotng {
 
 RobotCtrlImpl::RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
                              interface::Imu::ConstSharedPtr const &imu_itf) {
@@ -54,11 +54,11 @@ bool RobotCtrlImpl::ParseOptions(Options::SharedPtr const &opts) {
   std::shared_ptr<spdlog::logger> logger;
   auto logt = opts->log_target;
   if (logt == logging::Target::Console) {
-    logger = spdlog::stdout_color_mt("forax");
+    logger = spdlog::stdout_color_mt("spotng");
   } else if (logt == logging::Target::File) {
-    logger = spdlog::basic_logger_mt("forax", opts->log_filename);
+    logger = spdlog::basic_logger_mt("spotng", opts->log_filename);
   } else if (logt == logging::Target::RotateFile) {
-    logger = spdlog::rotating_logger_mt("forax", opts->log_filename, opts->log_max_file_size, opts->log_max_files);
+    logger = spdlog::rotating_logger_mt("spotng", opts->log_filename, opts->log_max_file_size, opts->log_max_files);
   }
 
   std::unordered_map<logging::Level, spdlog::level::level_enum> loglevelmap = {
@@ -87,4 +87,4 @@ bool RobotCtrl::Build(SharedPtr &ret, Options::SharedPtr const &opts, interface:
   ret = std::make_shared<RobotCtrlImpl>(opts, leg_itf, imu_itf);
   return true;
 }
-}  // namespace forax
+}  // namespace spotng

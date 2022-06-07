@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "forax/consts.h"
-#include "forax/drive.h"
+#include "spotng/consts.h"
+#include "spotng/drive.h"
 #include "skd/foot_swing.h"
 #include "skd/gait.h"
 #include "wbc/wbc.h"
 
-namespace forax::skd {
+namespace spotng::skd {
 
 // 质心和落足点规划
 
@@ -35,4 +35,4 @@ class StateDes {
   drive::Gait current_gait_;
   bool first_run_ = true;
 };
-}  // namespace forax::skd
+}  // namespace spotng::skd

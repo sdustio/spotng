@@ -2,13 +2,13 @@
 
 #include <memory>
 
-#include "forax/drive.h"
-#include "forax/estimate.h"
-#include "forax/model.h"
+#include "spotng/drive.h"
+#include "spotng/estimate.h"
+#include "spotng/model.h"
 #include "skd/gait.h"
 #include "wbc/wbc.h"
 
-namespace forax::mpc {
+namespace spotng::mpc {
 
 using SdVector4i = std::array<int, 4>;
 
@@ -22,4 +22,4 @@ class Mpc {
   virtual bool RunOnce(wbc::InData &, estimate::State const &, skd::PredStanceVector const &) = 0;
 };
 
-}  // namespace forax::mpc
+}  // namespace spotng::mpc

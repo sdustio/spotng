@@ -1,6 +1,6 @@
-# Forax
+# Spotng
 
-[![test](https://github.com/sdustio/forax/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/forax/actions/workflows/test.yml)
+[![test](https://github.com/sdustio/spotng/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/spotng/actions/workflows/test.yml)
 
 
 ## Conventions
@@ -37,7 +37,7 @@ cmake --build $(pwd)/build-release --target install
 see /test/example*_test.cc
 
 
-## Contribute to Forax
+## Contribute to Spotng
 
 - install valgrind clang-format cppcheck cpplint(pip)
 - change some code
@@ -45,7 +45,7 @@ see /test/example*_test.cc
 - create a pull request
 
 ```sh
-cmake -DFORAX_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug \
+cmake -DSPOTNG_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
   -H$(pwd) -B$(pwd)/build-test
 cmake --build $(pwd)/build-test --target all

@@ -4,12 +4,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "forax/drive.h"
+#include "spotng/drive.h"
 #include "mpc/mpc.h"
 #include "mpc/qp.h"
 #include "skd/gait.h"
 
-namespace forax::mpc {
+namespace spotng::mpc {
 
 class CMpc : public Mpc {
  public:
@@ -26,4 +26,4 @@ class CMpc : public Mpc {
   QpData qp_data_;
   QpSolver qp_solver_;
 };
-}  // namespace forax::mpc
+}  // namespace spotng::mpc

@@ -2,9 +2,9 @@
 #include <memory>
 
 #include "testitf.h"
-#include "forax/robot.h"
+#include "spotng/robot.h"
 
-namespace forax::test {
+namespace spotng::test {
 
 int ctrl_iter = 0;
 
@@ -51,11 +51,11 @@ void RunExample() {
   RunRobot(robot, leg_itf, imu_itf, ctrl_dt, 100);
 }
 
-}  // namespace forax::test
+}  // namespace spotng::test
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
   std::cout << "Start Test!!!" << std::endl;
-  forax::test::RunExample();
+  spotng::test::RunExample();
   std::cout << "End Test!!!" << std::endl;
   return 0;
 }

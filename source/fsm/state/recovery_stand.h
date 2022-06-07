@@ -4,12 +4,12 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
-#include "forax/fsm.h"
-#include "forax/model.h"
-#include "forax/options.h"
+#include "spotng/fsm.h"
+#include "spotng/model.h"
+#include "spotng/options.h"
 #include "fsm/legctrl.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 class StateRecoveryStand : public StateCtrl {
  public:
   StateRecoveryStand(Options::ConstSharedPtr const &opts, LegCtrl::SharedPtr const &legctrl,
@@ -51,4 +51,4 @@ class StateRecoveryStand : public StateCtrl {
 
   std::shared_ptr<estimate::Contact> estcontact_;
 };
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "forax/model.h"
+#include "spotng/model.h"
 
-namespace forax::wbc {
+namespace spotng::wbc {
 
 class Task {
  public:
@@ -36,4 +36,4 @@ class Task {
 
   SdVector3f Kp_, Kd_;
 };
-}  // namespace forax::wbc
+}  // namespace spotng::wbc

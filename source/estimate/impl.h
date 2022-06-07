@@ -4,9 +4,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "forax/estimate.h"
+#include "spotng/estimate.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 
 class EstimateCtrlImpl : public EstimateCtrl {
  public:
@@ -28,4 +28,4 @@ class EstimateCtrlImpl : public EstimateCtrl {
   State est_state_;
   Estimator::SharedPtr const null_est_;
 };
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

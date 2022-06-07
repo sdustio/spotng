@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include "forax/consts.h"
+#include "spotng/consts.h"
 
-namespace forax::math {
+namespace spotng::math {
 
 bool illegal_coeft(fpt_t t) { return t < consts::math::kZeroEpsilon || t > 1. - consts::math::kZeroEpsilon; }
 
@@ -109,4 +109,4 @@ bool InterpolateCubicBezierSecondDerivative(Eigen::Ref<VectorX> ret, Eigen::Ref<
   return true;
 }
 
-}  // namespace forax::math
+}  // namespace spotng::math

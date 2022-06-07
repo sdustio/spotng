@@ -3,9 +3,9 @@
 #include <array>
 #include <vector>
 
-#include "forax/export.h"
+#include "spotng/export.h"
 
-namespace forax {
+namespace spotng {
 using fpt_t = double;
 
 using SdVector3f = std::array<fpt_t, 3>;
@@ -18,4 +18,4 @@ using SdMatrix6f = std::array<fpt_t, 6 * 6>;
 
 using SdVectorXf = std::vector<fpt_t>;
 using SdMatrixXf = std::vector<fpt_t>;
-}  // namespace forax
+}  // namespace spotng

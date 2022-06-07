@@ -1,6 +1,6 @@
 #include "testitf.h"
 
-namespace forax::test {
+namespace spotng::test {
 
 bool LegImpl::ReadTo(sensor::LegDatas &data) const {
   for (int leg = 0; leg < consts::model::kNumLeg; leg++) {
@@ -66,4 +66,4 @@ bool ImuImpl::RunOnce() {
   return true;
 }
 
-}  // namespace forax::test
+}  // namespace spotng::test

@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "forax/drive.h"
-#include "forax/estimate.h"
-#include "forax/interface.h"
-#include "forax/model.h"
-#include "forax/options.h"
+#include "spotng/drive.h"
+#include "spotng/estimate.h"
+#include "spotng/interface.h"
+#include "spotng/model.h"
+#include "spotng/options.h"
 
-namespace forax {
-class FORAX_EXPORT RobotCtrl {
+namespace spotng {
+class SPOTNG_EXPORT RobotCtrl {
  public:
   using Ptr = std::unique_ptr<RobotCtrl>;
   using SharedPtr = std::shared_ptr<RobotCtrl>;
@@ -31,4 +31,4 @@ class FORAX_EXPORT RobotCtrl {
   virtual bool RunOnce() = 0;
 };
 
-}  // namespace forax
+}  // namespace spotng

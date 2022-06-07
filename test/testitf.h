@@ -1,6 +1,6 @@
-#include "forax/interface.h"
+#include "spotng/interface.h"
 
-namespace forax::test {
+namespace spotng::test {
 
 struct JointsCmd {
   SdVector4f q_des_abad = {};
@@ -59,4 +59,4 @@ class ImuImpl : public interface::Imu {
   sensor::ImuData imu_;
 };
 
-}  // namespace forax::test
+}  // namespace spotng::test

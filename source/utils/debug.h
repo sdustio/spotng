@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "forax/types.h"
+#include "spotng/types.h"
 
-namespace forax {
+namespace spotng {
 void DebugVector(std::string const &prefix, SdVector3f const &v);
 void DebugVector(std::string const &prefix, SdVector4f const &v);
-}  // namespace forax
+}  // namespace spotng

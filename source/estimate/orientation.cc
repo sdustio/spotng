@@ -3,7 +3,7 @@
 #include "dynamics/rotation.h"
 #include "math/utils.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 Orientation::Orientation(interface::Imu::ConstSharedPtr const &itf) : itf_(itf) {}
 
 bool Orientation::RunOnce(State &ret) {
@@ -50,4 +50,4 @@ bool Orientation::InterfaceValid() {
   if (math::HasNaN(imu_.acc.cbegin(), imu_.acc.cend())) return false;
   return true;
 }
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

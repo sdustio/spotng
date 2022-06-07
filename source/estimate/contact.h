@@ -1,8 +1,8 @@
 #pragma once
 
-#include "forax/estimate.h"
+#include "spotng/estimate.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 class Contact : public Estimator {
  public:
   bool UpdateContact(SdVector4f const &contact);
@@ -12,4 +12,4 @@ class Contact : public Estimator {
   SdVector4f contact_ = {0.5, 0.5, 0.5, 0.5};
 };
 
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

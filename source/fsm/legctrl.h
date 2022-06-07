@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 
-#include "forax/interface.h"
+#include "spotng/interface.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 class LegCtrl {
  public:
   using Ptr = std::unique_ptr<LegCtrl>;
@@ -19,4 +19,4 @@ class LegCtrl {
   interface::Leg::SharedPtr const itf_;
 };
 
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

@@ -3,10 +3,10 @@
 #include <array>
 #include <cmath>
 
-#include "forax/consts.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/types.h"
 
-namespace forax::math {
+namespace spotng::math {
 /*!
  * Square a number
  */
@@ -36,4 +36,4 @@ inline fpt_t DegToRad(fpt_t deg) { return deg * consts::math::kPI / 180.0; }
 
 inline fpt_t LimitV(fpt_t v, fpt_t max, fpt_t min) { return std::fmin(std::fmax(v, min), max); }
 
-}  // namespace forax::math
+}  // namespace spotng::math

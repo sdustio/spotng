@@ -2,7 +2,7 @@
 
 #include "dynamics/types.h"
 
-namespace forax::dynamics {
+namespace spotng::dynamics {
 /* Build or Convert Inertias*/
 
 /*!
@@ -187,4 +187,4 @@ bool MotionCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<SpatialVec const>
 bool ForceCrossProduct(Eigen::Ref<SpatialVec> ret, Eigen::Ref<SpatialVec const> const &a,
                        Eigen::Ref<SpatialVec const> const &b);
 
-}  // namespace forax::dynamics
+}  // namespace spotng::dynamics

@@ -3,7 +3,7 @@
 #include "math/interpolate.h"
 #include "spdlog/spdlog.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 
 namespace params {
 constexpr int const ramp_iter = 500;
@@ -64,4 +64,4 @@ State StateInit::CheckTransition() {
 }
 
 TransitionData StateInit::Transition([[maybe_unused]] const State next) { return TransitionData{true}; }
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

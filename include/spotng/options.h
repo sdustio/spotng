@@ -2,15 +2,15 @@
 
 #include <memory>
 
-#include "forax/consts.h"
-#include "forax/logging.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/logging.h"
+#include "spotng/types.h"
 
-namespace forax {
+namespace spotng {
 
 namespace options {
 
-struct FORAX_EXPORT Model {
+struct SPOTNG_EXPORT Model {
   Model();
 
   fpt_t body_length;
@@ -53,7 +53,7 @@ struct FORAX_EXPORT Model {
   fpt_t max_body_yaw;
 };
 
-struct FORAX_EXPORT Ctrl {
+struct SPOTNG_EXPORT Ctrl {
   Ctrl();
 
   int mpc_iters;
@@ -88,7 +88,7 @@ struct FORAX_EXPORT Ctrl {
   fpt_t max_trot_avel_z;
 };
 
-struct FORAX_EXPORT Estimate {
+struct SPOTNG_EXPORT Estimate {
   Estimate();
 
   fpt_t process_noise_pimu;
@@ -101,7 +101,7 @@ struct FORAX_EXPORT Estimate {
 
 }  // namespace options
 
-struct FORAX_EXPORT Options {
+struct SPOTNG_EXPORT Options {
   using Ptr = std::unique_ptr<Options>;
   using SharedPtr = std::shared_ptr<Options>;
   using ConstSharedPtr = std::shared_ptr<Options const>;
@@ -126,4 +126,4 @@ struct FORAX_EXPORT Options {
   options::Estimate estimate;
 };
 
-}  // namespace forax
+}  // namespace spotng

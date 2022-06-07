@@ -4,12 +4,12 @@
 #include <memory>
 #include <string>
 
-#include "forax/consts.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/types.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 
-struct FORAX_EXPORT State {
+struct SPOTNG_EXPORT State {
   SdVector4f contact = {};
   SdVector3f pos = {};
   SdVector3f rpy = {};
@@ -30,7 +30,7 @@ struct FORAX_EXPORT State {
   bool success = false;
 };
 
-class FORAX_EXPORT Estimator {
+class SPOTNG_EXPORT Estimator {
  public:
   using Ptr = std::unique_ptr<Estimator>;
   using SharedPtr = std::shared_ptr<Estimator>;
@@ -40,7 +40,7 @@ class FORAX_EXPORT Estimator {
   virtual bool RunOnce(State &ret) = 0;
 };
 
-class FORAX_EXPORT EstimateCtrl {
+class SPOTNG_EXPORT EstimateCtrl {
  public:
   using Ptr = std::unique_ptr<EstimateCtrl>;
   using SharedPtr = std::shared_ptr<EstimateCtrl>;
@@ -57,4 +57,4 @@ class FORAX_EXPORT EstimateCtrl {
 
   virtual State const &GetEstState() const = 0;
 };
-}  // namespace forax::estimate
+}  // namespace spotng::estimate

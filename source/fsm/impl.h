@@ -2,13 +2,13 @@
 
 #include <unordered_map>
 
-#include "forax/estimate.h"
-#include "forax/fsm.h"
-#include "forax/interface.h"
-#include "forax/model.h"
+#include "spotng/estimate.h"
+#include "spotng/fsm.h"
+#include "spotng/interface.h"
+#include "spotng/model.h"
 #include "fsm/legctrl.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {
  public:
   FiniteStateMachineImpl(Options::ConstSharedPtr const &opts, interface::Leg::SharedPtr const &legitf,
@@ -40,4 +40,4 @@ class FiniteStateMachineImpl : public FiniteStateMachine {
   TransitionData transition_data_;
 };
 
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

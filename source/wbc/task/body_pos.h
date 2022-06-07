@@ -2,7 +2,7 @@
 
 #include "wbc/task.h"
 
-namespace forax::wbc {
+namespace spotng::wbc {
 class TaskBodyPos : public Task {
  public:
   TaskBodyPos(SdVector3f const &kp, SdVector3f const &kd);
@@ -10,4 +10,4 @@ class TaskBodyPos : public Task {
                   SdVector3f const &xdd_des) override;
 };
 
-}  // namespace forax::wbc
+}  // namespace spotng::wbc

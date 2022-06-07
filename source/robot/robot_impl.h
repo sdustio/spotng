@@ -1,9 +1,9 @@
-#include "forax/fsm.h"
-#include "forax/interface.h"
-#include "forax/model.h"
-#include "forax/robot.h"
+#include "spotng/fsm.h"
+#include "spotng/interface.h"
+#include "spotng/model.h"
+#include "spotng/robot.h"
 
-namespace forax {
+namespace spotng {
 class RobotCtrlImpl : public RobotCtrl {
  public:
   RobotCtrlImpl(Options::SharedPtr const &opts, interface::Leg::SharedPtr const &leg_itf,
@@ -28,4 +28,4 @@ class RobotCtrlImpl : public RobotCtrl {
   fsm::FiniteStateMachine::SharedPtr fsm_;
 };
 
-}  // namespace forax
+}  // namespace spotng

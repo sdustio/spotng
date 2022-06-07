@@ -1,11 +1,11 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "forax/consts.h"
+#include "spotng/consts.h"
 #include "math/interpolate.h"
 #include "spdlog/spdlog.h"
 #include "utils/eigen.h"
 
-namespace forax::fsm {
+namespace spotng::fsm {
 
 namespace params {
 
@@ -146,4 +146,4 @@ State StateRecoveryStand::CheckTransition() {
   if (iter_ >= 0) return State::RecoveryStand;
   return state_trans_[drictrl_->GetState()];
 }
-}  // namespace forax::fsm
+}  // namespace spotng::fsm

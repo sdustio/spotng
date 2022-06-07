@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <memory>
 
-#include "forax/consts.h"
-#include "forax/sensor.h"
-#include "forax/types.h"
+#include "spotng/consts.h"
+#include "spotng/sensor.h"
+#include "spotng/types.h"
 
-namespace forax::interface {
+namespace spotng::interface {
 
-struct FORAX_EXPORT LegCmd {
+struct SPOTNG_EXPORT LegCmd {
   SdVector3f tau = {};
   SdVector3f q_des = {};
   SdVector3f qd_des = {};
@@ -20,7 +20,7 @@ struct FORAX_EXPORT LegCmd {
 
 using LegCmds = std::array<LegCmd, consts::model::kNumLeg>;
 
-class FORAX_EXPORT Leg {
+class SPOTNG_EXPORT Leg {
  public:
   using Ptr = std::unique_ptr<Leg>;
   using SharedPtr = std::shared_ptr<Leg>;
@@ -31,7 +31,7 @@ class FORAX_EXPORT Leg {
   virtual bool WriteFrom(LegCmds const &cmds) = 0;
 };
 
-class FORAX_EXPORT Imu {
+class SPOTNG_EXPORT Imu {
  public:
   using Ptr = std::unique_ptr<Imu>;
   using SharedPtr = std::shared_ptr<Imu>;
@@ -40,4 +40,4 @@ class FORAX_EXPORT Imu {
   virtual ~Imu() = default;
   virtual bool ReadTo(sensor::ImuData &data) const = 0;
 };
-}  // namespace forax::interface
+}  // namespace spotng::interface

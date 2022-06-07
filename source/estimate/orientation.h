@@ -1,10 +1,10 @@
 #pragma once
 
-#include "forax/estimate.h"
-#include "forax/interface.h"
-#include "forax/sensor.h"
+#include "spotng/estimate.h"
+#include "spotng/interface.h"
+#include "spotng/sensor.h"
 
-namespace forax::estimate {
+namespace spotng::estimate {
 /*!
  * Get quaternion, rotation matrix, angular velocity (body and world),
  * rpy, acceleration (world, body) from vector nav IMU
@@ -25,4 +25,4 @@ class Orientation : public Estimator {
   sensor::ImuData imu_;
 };
 
-}  // namespace forax::estimate
+}  // namespace spotng::estimate
