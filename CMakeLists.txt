@@ -7,7 +7,7 @@ project(spotng
 
 ### Project properties
 set(PACKAGE_ORG sd)
-set(PACKAGE_DESCRIPTION "spotng lib")
+set(PACKAGE_DESCRIPTION "Core dynamics engine for OpenSpot, a quadruped droid developed by sdustio")
 set(TARGET_NAME ${PROJECT_NAME}Targets)
 
 ### C
