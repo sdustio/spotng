@@ -2,10 +2,10 @@
 
 #include <memory>
 
+#include "skd/gait.h"
 #include "spotng/drive.h"
 #include "spotng/estimate.h"
 #include "spotng/model.h"
-#include "skd/gait.h"
 #include "wbc/wbc.h"
 
 namespace spotng::mpc {

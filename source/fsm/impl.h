@@ -2,11 +2,11 @@
 
 #include <unordered_map>
 
+#include "fsm/legctrl.h"
 #include "spotng/estimate.h"
 #include "spotng/fsm.h"
 #include "spotng/interface.h"
 #include "spotng/model.h"
-#include "fsm/legctrl.h"
 
 namespace spotng::fsm {
 class FiniteStateMachineImpl : public FiniteStateMachine {

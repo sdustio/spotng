@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 
+#include "fsm/legctrl.h"
 #include "spotng/estimate.h"
 #include "spotng/fsm.h"
 #include "spotng/options.h"
-#include "fsm/legctrl.h"
 
 namespace spotng::fsm {
 class StateInit : public StateCtrl {

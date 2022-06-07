@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "spotng/consts.h"
-#include "spotng/drive.h"
 #include "skd/foot_swing.h"
 #include "skd/gait.h"
+#include "spotng/consts.h"
+#include "spotng/drive.h"
 #include "wbc/wbc.h"
 
 namespace spotng::skd {
