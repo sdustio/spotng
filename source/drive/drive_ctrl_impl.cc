@@ -2,9 +2,9 @@
 
 #include <array>
 
-#include "spotng/consts.h"
 #include "math/interpolate.h"
 #include "math/utils.h"
+#include "spotng/consts.h"
 
 namespace spotng::drive {
 

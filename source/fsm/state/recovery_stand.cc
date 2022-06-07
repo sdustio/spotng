@@ -1,8 +1,8 @@
 #include "fsm/state/recovery_stand.h"
 
-#include "spotng/consts.h"
 #include "math/interpolate.h"
 #include "spdlog/spdlog.h"
+#include "spotng/consts.h"
 #include "utils/eigen.h"
 
 namespace spotng::fsm {

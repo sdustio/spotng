@@ -5,13 +5,13 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
-#include "spotng/estimate.h"
-#include "spotng/fsm.h"
-#include "spotng/model.h"
 #include "fsm/legctrl.h"
 #include "mpc/mpc.h"
 #include "skd/gait.h"
 #include "skd/state_des.h"
+#include "spotng/estimate.h"
+#include "spotng/fsm.h"
+#include "spotng/model.h"
 #include "wbc/wbc.h"
 
 namespace spotng::fsm {

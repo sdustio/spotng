@@ -4,9 +4,9 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
+#include "fsm/legctrl.h"
 #include "spotng/fsm.h"
 #include "spotng/model.h"
-#include "fsm/legctrl.h"
 #include "wbc/wbc.h"
 
 namespace spotng::fsm {

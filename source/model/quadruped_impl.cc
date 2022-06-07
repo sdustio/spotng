@@ -4,8 +4,8 @@
 
 #include "dynamics/inertia.h"
 #include "dynamics/rotation.h"
-#include "spotng/consts.h"
 #include "spdlog/spdlog.h"
+#include "spotng/consts.h"
 
 #ifdef DEBUG_MODE
 #include "utils/debug.h"

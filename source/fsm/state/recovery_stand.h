@@ -4,10 +4,10 @@
 #include <unordered_map>
 
 #include "estimate/contact.h"
+#include "fsm/legctrl.h"
 #include "spotng/fsm.h"
 #include "spotng/model.h"
 #include "spotng/options.h"
-#include "fsm/legctrl.h"
 
 namespace spotng::fsm {
 class StateRecoveryStand : public StateCtrl {

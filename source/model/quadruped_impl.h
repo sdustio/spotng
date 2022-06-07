@@ -1,7 +1,7 @@
 #pragma once
 
-#include "spotng/model.h"
 #include "model/float_base.h"
+#include "spotng/model.h"
 
 namespace spotng::model {
 class QuadrupedImpl : public Quadruped {

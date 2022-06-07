@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "spotng/drive.h"
 #include "mpc/mpc.h"
 #include "mpc/qp.h"
 #include "skd/gait.h"
+#include "spotng/drive.h"
 
 namespace spotng::mpc {
 
