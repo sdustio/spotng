@@ -1,6 +1,7 @@
 # Spotng
 
 [![test](https://github.com/sdustio/spotng/actions/workflows/test.yml/badge.svg)](https://github.com/sdustio/spotng/actions/workflows/test.yml)
+[![release](https://github.com/sdustio/spotng/actions/workflows/release.yml/badge.svg)](https://github.com/sdustio/spotng/actions/workflows/release.yml)
 
 
 ## Conventions
