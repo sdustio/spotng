@@ -135,6 +135,8 @@ install(
   DIRECTORY
     "${CMAKE_SOURCE_DIR}/include/"
     "${CMAKE_BINARY_DIR}/include/"
+  COMPONENT
+    dev
   TYPE INCLUDE
   FILES_MATCHING
     PATTERN "*.h"
@@ -143,12 +145,12 @@ install(
 install(
   EXPORT
     ${TARGET_NAME}
+  COMPONENT
+    dev
   NAMESPACE
     "${PROJECT_NAME}::"
   DESTINATION
     ${INSTALL_CMAKEDIR}
-  COMPONENT
-    dev
 )
 
 include(CMakePackageConfigHelpers)
@@ -169,6 +171,8 @@ install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+  COMPONENT
+    dev
   DESTINATION
     ${INSTALL_CMAKEDIR}
 )
