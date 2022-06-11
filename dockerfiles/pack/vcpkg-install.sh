@@ -11,4 +11,4 @@ git clone --depth=1 \
 
 ## Run installer to get latest stable vcpkg binary
 ## https://github.com/microsoft/vcpkg/blob/7e7dad5fe20cdc085731343e0e197a7ae655555b/scripts/bootstrap.sh#L126-L144
-"${VCPKG_ROOT}"/bootstrap-vcpkg.sh
+"${VCPKG_ROOT}"/bootstrap-vcpkg.sh -disableMetrics

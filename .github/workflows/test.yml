@@ -27,6 +27,7 @@ jobs:
   test:
     name: test-${{ matrix.cc }}
     runs-on: ubuntu-latest
+    container: ghcr.io/sdustio/spotng:dev
     strategy:
       matrix:
         cc: [gcc, clang]
@@ -39,13 +40,11 @@ jobs:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Debug
       CMAKE_BUILD: ${{github.workspace}}/build
-      CACHE_DIR: ${{github.workspace}}/.cache
       CCACHE_BASEDIR: ${{github.workspace}}
-      CCACHE_DIR: ${{github.workspace}}/.cache/ccache
+      CCACHE_DIR: ${{github.workspace}}/.cache
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: 600M
-      VCPKG_DEFAULT_BINARY_CACHE: ${{github.workspace}}/.cache/vcpkg
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
 
@@ -54,18 +53,10 @@ jobs:
       with:
         submodules: true
 
-    - name: install tools
-      run: sudo apt install -y ccache
-
-    - name: prepare cache dir
-      run: |
-        mkdir -p ${{env.CCACHE_DIR}}
-        mkdir -p ${{env.VCPKG_DEFAULT_BINARY_CACHE}}
-
     - uses: actions/cache@v3
       id: cache-cmake
       with:
-        path: ${{env.CACHE_DIR}}
+        path: ${{env.CCACHE_DIR}}
         key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.cc }}-testbuild-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-${{ matrix.cc }}-testbuild-
@@ -76,7 +67,7 @@ jobs:
       run: |
         cmake -DSPOTNG_BUILD_TESTS:BOOL=TRUE -B ${{env.CMAKE_BUILD}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
           -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-          "-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+          "-DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 
     - name: Build
       # Build your program with the given configuration

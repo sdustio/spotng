@@ -7,3 +7,5 @@ ENV PATH="${PATH}:${VCPKG_ROOT}"
 
 COPY vcpkg-install.sh /tmp/
 RUN /tmp/vcpkg-install.sh && rm -f /tmp/vcpkg-install.sh
+
+RUN vcpkg install eigen3 spdlog
