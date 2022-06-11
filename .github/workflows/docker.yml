@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - working-directory: ${{github.workspace}}/dockerfiles/devel
+      - working-directory: ./dockerfiles/devel
         run: |
           set -e
 
@@ -41,7 +41,7 @@ jobs:
         pack: [deb, rpm]
     steps:
       - uses: actions/checkout@v2
-      - working-directory: ${{github.workspace}}/dockerfiles/pack
+      - working-directory: ./dockerfiles/pack
         run: |
           set -e
 

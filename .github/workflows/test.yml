@@ -19,11 +19,11 @@ jobs:
         run: sudo apt install -y cppcheck
       - name: run clang-format
         run: |
-          find ${{github.workspace}}/include -name '*.h'  -print | xargs clang-format -n -Werror && \
-          find ${{github.workspace}}/source -name '*.h'  -print | xargs clang-format -n -Werror && \
-          find ${{github.workspace}}/source -name '*.cc'  -print | xargs clang-format -n -Werror
+          find ./include -name '*.h'  -print | xargs clang-format -n -Werror && \
+          find ./source -name '*.h'  -print | xargs clang-format -n -Werror && \
+          find ./source -name '*.cc'  -print | xargs clang-format -n -Werror
       - name: run cppcheck
-        run: cppcheck --std=c++17 --quiet --enable=performance,portability ${{github.workspace}}/source
+        run: cppcheck --std=c++17 --quiet --enable=performance,portability ./source
   test:
     name: test-${{ matrix.cc }}
     runs-on: ubuntu-latest
@@ -39,9 +39,8 @@ jobs:
     env:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Debug
-      CMAKE_BUILD: ${{github.workspace}}/build
-      CCACHE_BASEDIR: ${{github.workspace}}
-      CCACHE_DIR: ${{github.workspace}}/.cache
+      CMAKE_BUILD: ./build
+      CCACHE_DIR: ./.cache
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: 600M
