@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - working-directory: ${{github.workspace}}/dockerfiles/devel
+        run: |
           set -e
 
           # Update this based on your image name and the path of the .devcontainer folder in your repository
-          FOLDER_WITH_DOT_DEVCONTAINER="dockerfiles/devel"
           IMAGE_NAME="spotng:dev"
           IMAGE_REPOSITORY="$(echo "ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"
 
@@ -27,7 +27,29 @@ jobs:
 
           # Do the build - update
           npm install -g "@vscode/dev-container-cli"
-          devcontainer build --no-cache --image-name "${IMAGE_REPOSITORY}" "${FOLDER_WITH_DOT_DEVCONTAINER}"
+          devcontainer build --no-cache --image-name "${IMAGE_REPOSITORY}" .
+
+          # Push image to GitHub Container Registry
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker push "${IMAGE_REPOSITORY}"
+
+  pack:
+    name: build pack image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pack: [deb]
+    steps:
+      - uses: actions/checkout@v2
+      - working-directory: ${{github.workspace}}/dockerfiles/pack
+        run: |
+          set -e
+
+          # Update this based on your image name and the path of the .devcontainer folder in your repository
+          IMAGE_NAME="spotng:pack-${{ matrix.pack }}"
+          IMAGE_REPOSITORY="$(echo "ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"
+
+          docker build -t "${IMAGE_REPOSITORY}" -f ${{ matrix.pack }}.Dockerfile .
 
           # Push image to GitHub Container Registry
           echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
