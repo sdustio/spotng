@@ -55,7 +55,7 @@ jobs:
         submodules: true
 
     - name: install tools
-      run: sudo apt install -y ccache valgrind
+      run: sudo apt install -y ccache
 
     - name: prepare cache dir
       run: |
