@@ -66,6 +66,8 @@ see /test/example*_test.cc
 3. run linter and test as follows, make them pass
 
 ```sh
+./fmt-lint.sh
+cppcheck --std=c++17 --quiet --enable=performance,portability ./source
 cmake -DSPOTNG_BUILD_TESTS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
   -H$(pwd) -B$(pwd)/build
@@ -73,7 +75,6 @@ cmake --build $(pwd)/build --target all
 cd $(pwd)/build
 ctest
 ctest -T memcheck
-./fmt-lint.sh
 ```
 
 4. create a pull request
