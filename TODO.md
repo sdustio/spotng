@@ -3,4 +3,3 @@
     - EStop 的处理
     - PreCheck 内容
     - PostCheck 内容
-- add cpack 提供二进制安装方式
